@@ -21,7 +21,7 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (value) => ['primary', 'secondary', 'tertiary'].includes(value)
+    validator: (value) => ['primary', 'secondary', 'tertiary', 'whatsapp'].includes(value)
   },
   size: {
     type: String,
@@ -115,6 +115,23 @@ const buttonClasses = computed(() => {
         'focus:ring-2',
         'focus:ring-rosa-empolvado/30',
         'focus:ring-offset-2'
+      )
+      break
+    
+    case 'whatsapp':
+      classes.push(
+        'bg-[#D8AFA0]',
+        'text-[#5D4A44]',
+        'rounded-2xl',
+        'shadow-md',
+        'hover:bg-[#EAD5D3]',
+        'hover:shadow-lg',
+        'hover:scale-[1.03]',
+        'active:scale-[0.98]',
+        'focus:ring-2',
+        'focus:ring-[#D8AFA0]/40',
+        'focus:ring-offset-2',
+        'font-lato'
       )
       break
     

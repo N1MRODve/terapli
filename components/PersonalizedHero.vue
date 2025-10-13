@@ -1,33 +1,36 @@
 <template>
-  <section class="relative grid md:grid-cols-2 items-center bg-[#F9F7F3] overflow-hidden py-20 px-6 md:px-12 lg:px-20">
+  <section class="relative grid md:grid-cols-2 items-center bg-[#F9F7F3] overflow-hidden py-12 md:py-20 px-6 md:px-12 lg:px-20">
     <!-- Left column: text content -->
     <div class="z-10 max-w-2xl mx-auto md:mx-0 animate-fade-in-up">
-      <h1 class="text-5xl md:text-6xl font-serif font-semibold text-[#5D4A44] leading-tight tracking-tight">
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-semibold text-[#5D4A44] leading-tight tracking-tight">
         {{ greeting }}
       </h1>
       
-      <p class="text-lg md:text-xl text-[#5D4A44]/70 mt-6 leading-relaxed max-w-xl">
+      <p class="text-base md:text-lg lg:text-xl text-[#5D4A44]/70 mt-4 md:mt-6 leading-relaxed max-w-xl">
         Este espacio está pensado para acompañarte con calma, comprensión y&nbsp;cercanía.
       </p>
 
-      <p class="text-sm text-[#5D4A44]/60 mt-6 animate-fade-in-up [animation-delay:0.2s]">
+      <!-- Mobile optimized CTA message -->
+      <p class="text-sm md:text-base text-[#5D4A44]/70 mt-4 md:mt-6 leading-relaxed animate-fade-in-up [animation-delay:0.2s]">
         {{ ctaMessage }}
       </p>
 
-      <div class="mt-4 flex flex-col sm:flex-row gap-4 animate-fade-in-up [animation-delay:0.4s]">
+      <div class="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in-up [animation-delay:0.4s]">
         <CalmButton 
           v-if="deviceType === 'mobile'" 
-          to="https://wa.me/34123456789"
+          to="https://wa.me/34722377290"
+          variant="whatsapp"
           size="lg"
+          class="text-center"
         >
-          Escríbeme por WhatsApp 📱
+          Contactar por WhatsApp
         </CalmButton>
         <CalmButton to="https://calendly.com/psicologakarem/sesion-de-evaluacion?month=2025-10" size="lg">
           Reservar sesión de orientación
         </CalmButton>
       </div>
 
-      <div class="flex flex-wrap gap-3 mt-6 animate-fade-in-up [animation-delay:0.6s]">
+      <div class="flex flex-wrap gap-2 md:gap-3 mt-6 animate-fade-in-up [animation-delay:0.6s]">
         <span class="text-xs border border-[#EAD5D3]/80 rounded-full px-3 py-1 text-[#5D4A44]/80">
           Psicóloga Colegiada
         </span>
@@ -41,7 +44,7 @@
     </div>
 
     <!-- Right column: Karem's image -->
-    <div class="relative w-full h-[550px] overflow-hidden">
+    <div class="relative w-full h-[400px] md:h-[550px] overflow-hidden mt-8 md:mt-0">
       <img
         src="/images/karem-pena.png"
         alt="Karem Peña Psicóloga"
@@ -64,9 +67,7 @@ const ctaMessage = computed(() => {
   const name = visitorName.value
   
   if (deviceType.value === 'mobile') {
-    return name 
-      ? `${name}, puedes reservar tu sesión directamente por WhatsApp o desde el formulario.`
-      : 'Puedes reservar tu sesión directamente por WhatsApp o desde el formulario.'
+    return '¿Quieres dar el primer paso? Escríbeme por WhatsApp y te ayudaré a encontrar el espacio que necesitas.'
   }
   
   if (timeOfDay === 'night') {
