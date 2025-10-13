@@ -30,6 +30,7 @@ export { requestIdleCallback, cancelIdleCallback } from '#app/compat/idle-callba
 export { setInterval } from '#app/compat/interval';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
+export { useAnalytics } from '../composables/useAnalytics';
 export { useInactivityDetector } from '../composables/useInactivityDetector';
 export { useVisitorContext } from '../composables/useVisitorContext';
 export { capitalizeName } from '../utils/formatName';

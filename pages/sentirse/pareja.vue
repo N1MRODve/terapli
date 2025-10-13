@@ -155,6 +155,7 @@
           to="https://calendly.com/psicologakarem/sesion-de-evaluacion?month=2025-10"
           size="lg"
           aria-label="Reservar sesión de orientación gratuita"
+          @click="handleReservarClick"
         >
           Reserva tu sesión de orientación&nbsp;gratuita
         </CalmButton>
@@ -165,8 +166,14 @@
 
 <script setup>
 import { useVisitorContext } from '@/composables/useVisitorContext'
+import { useAnalytics } from '@/composables/useAnalytics'
 
 const { visitorName } = useVisitorContext()
+const { trackBookingIntent } = useAnalytics()
+
+const handleReservarClick = () => {
+  trackBookingIntent('orientacion_pareja')
+}
 
 useHead({
   title: 'Psicoterapia de Pareja - Karem Peña',

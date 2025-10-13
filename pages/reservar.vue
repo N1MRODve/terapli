@@ -52,6 +52,7 @@
               variant="primary" 
               size="lg"
               aria-label="Reservar sesión de orientación"
+              @click="handleReservarCalendly"
             >
               <a 
                 href="https://calendly.com/psicologakarem/sesion-de-evaluacion" 
@@ -87,6 +88,7 @@
               variant="primary" 
               size="lg"
               aria-label="Contactar por WhatsApp"
+              @click="handleWhatsAppClick"
             >
               <a 
                 :href="whatsappLink"
@@ -129,6 +131,7 @@
               target="_blank"
               rel="noopener noreferrer"
               class="block w-full text-center px-6 py-3 bg-white border-2 border-[#D8AFA0] text-[#5D4A44] rounded-full hover:bg-[#D8AFA0]/10 transition-all duration-300"
+              @click="handleWhatsAppClick"
             >
               WhatsApp: +34 640 533 697
             </a>
@@ -201,6 +204,7 @@
           variant="primary" 
           size="lg"
           aria-label="Reservar sesión de orientación gratuita"
+          @click="handleReservarCalendly"
         >
           <a 
             href="https://calendly.com/psicologakarem/sesion-de-evaluacion" 
@@ -227,6 +231,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { visitorName, deviceType } = useVisitorContext()
+const { trackBookingIntent, trackWhatsAppClick } = useAnalytics()
 
 // Show transition overlay if coming from "como-empezar" page
 const showTransition = ref(false)
@@ -240,6 +245,16 @@ onMounted(() => {
     }, 2000)
   }
 })
+
+// Funciones de tracking
+const handleReservarCalendly = () => {
+  trackBookingIntent('orientacion_calendly_reservar')
+}
+
+const handleWhatsAppClick = () => {
+  trackWhatsAppClick()
+  trackBookingIntent('orientacion_whatsapp_reservar')
+}
 
 // Construct personalized WhatsApp link
 const whatsappLink = computed(() => {

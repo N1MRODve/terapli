@@ -122,6 +122,7 @@
             variant="primary"
             size="lg"
             aria-label="Reservar sesión de orientación gratuita"
+            @click="handleReservarClick"
           >
             {{ personalized('Reserva tu sesión de orientación gratuita', 'Reserva tu sesión de orientación, {name}') }}
           </CalmButton>
@@ -154,6 +155,12 @@ import { useVisitorContext } from '@/composables/useVisitorContext'
 import ConocemeSection from '@/components/ConocemeSection.vue'
 
 const { personalized } = useVisitorContext()
+const { trackBookingIntent } = useAnalytics()
+
+// Función para trackear clic en reservar
+const handleReservarClick = () => {
+  trackBookingIntent('orientacion_gratuita_home')
+}
 
 useHead({
   title: 'Psicóloga en Ciempozuelos | Terapia para Ansiedad y Bienestar Emocional',

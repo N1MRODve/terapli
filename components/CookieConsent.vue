@@ -255,22 +255,25 @@ const saveConsent = () => {
 
 // Aplicar preferencias (activar/desactivar servicios)
 const applyPreferences = () => {
-  // Aquí se implementaría la lógica para activar/desactivar Google Analytics, etc.
+  // Emitir evento personalizado para que GA4 lo escuche
+  if (typeof window !== 'undefined') {
+    const event = new CustomEvent('cookie-consent-updated', {
+      detail: preferences.value
+    })
+    window.dispatchEvent(event)
+  }
+  
+  // Log para debugging
   if (preferences.value.analytics) {
-    // Activar Google Analytics
-    console.log('Google Analytics activado')
-    // window.gtag('consent', 'update', { analytics_storage: 'granted' })
+    console.log('✅ Google Analytics activado por el usuario')
   } else {
-    // Desactivar Google Analytics
-    console.log('Google Analytics desactivado')
-    // window.gtag('consent', 'update', { analytics_storage: 'denied' })
+    console.log('❌ Google Analytics desactivado por el usuario')
   }
   
   if (preferences.value.personalization) {
-    // Activar cookies de personalización
-    console.log('Cookies de personalización activadas')
+    console.log('✅ Cookies de personalización activadas')
   } else {
-    console.log('Cookies de personalización desactivadas')
+    console.log('❌ Cookies de personalización desactivadas')
   }
 }
 
