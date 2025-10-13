@@ -21,7 +21,9 @@
         <!-- Contenido de texto -->
         <div class="order-1 md:order-2 animate-fade-in-up [animation-delay:0.2s]">
           <h2 class="text-4xl md:text-5xl font-serif font-semibold text-[#5D4A44] leading-tight mb-6">
-            Un espacio seguro para ti
+            <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
+              {{ userName ? `${userName}, un espacio seguro para ti` : 'Un espacio seguro para ti' }}
+            </span>
           </h2>
           
           <p class="text-lg text-[#5D4A44]/80 leading-relaxed mb-6" style="line-height: 1.7;">
@@ -127,7 +129,12 @@
           <!-- CTA suave -->
           <div class="text-center">
             <p class="text-[#5D4A44]/80 mb-6 leading-relaxed" style="line-height: 1.7;">
-              ¿Te gustaría saber cómo puedo acompañarte en tu proceso?
+              <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
+                {{ userName 
+                  ? `${userName}, ¿te gustaría saber cómo puedo acompañarte en tu proceso?`
+                  : '¿Te gustaría saber cómo puedo acompañarte en tu proceso?'
+                }}
+              </span>
             </p>
             <NuxtLink 
               to="/como-empezar"
@@ -231,6 +238,9 @@
 </template>
 
 <script setup>
+import { useUserName } from '@/composables/useUserName'
+
+const { userName } = useUserName()
 </script>
 
 <style scoped>

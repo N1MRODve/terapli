@@ -177,6 +177,7 @@ declare global {
   const useSupabaseClient: typeof import('../../utils/supabase')['useSupabaseClient']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTransitionState: typeof import('vue')['useTransitionState']
+  const useUserName: typeof import('../../composables/useUserName')['useUserName']
   const useVisitorContext: typeof import('../../composables/useVisitorContext')['useVisitorContext']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
@@ -375,6 +376,7 @@ declare module 'vue' {
     readonly useSupabaseClient: UnwrapRef<typeof import('../../utils/supabase')['useSupabaseClient']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTransitionState: UnwrapRef<typeof import('vue')['useTransitionState']>
+    readonly useUserName: UnwrapRef<typeof import('../../composables/useUserName')['useUserName']>
     readonly useVisitorContext: UnwrapRef<typeof import('../../composables/useVisitorContext')['useVisitorContext']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

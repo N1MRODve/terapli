@@ -1,7 +1,7 @@
 <template>
   <div>
-    <!-- Greeting Modal for First-Time Visitors -->
-    <GreetingModal />
+    <!-- Welcome Modal for First-Time Visitors -->
+    <WelcomeModal />
 
     <!-- Personalized Hero Section -->
     <PersonalizedHero />
@@ -11,10 +11,12 @@
       <div class="max-w-7xl mx-auto">
         <!-- Section Title -->
         <h2 class="text-3xl md:text-4xl font-serif text-[#5D4A44]">
-          {{ personalized(
-            'Acompaño diferentes procesos emocionales, quizás te reconozcas en alguno de ellos.',
-            '{name}, acompaño diferentes procesos emocionales. Quizás te reconozcas en alguno de ellos.'
-          ) }}
+          <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
+            {{ userName 
+              ? `${userName}, acompaño diferentes procesos emocionales. Quizás te reconozcas en alguno de ellos.`
+              : 'Acompaño diferentes procesos emocionales, quizás te reconozcas en alguno de ellos.'
+            }}
+          </span>
         </h2>
         
         <!-- Intro Paragraph -->
@@ -112,10 +114,12 @@
         <!-- Optional CTA Below Grid -->
         <div class="mt-12 animate-fade-up opacity-0 [animation-delay:700ms] [animation-fill-mode:forwards]">
           <p class="text-[#5D4A44]/70 text-sm mb-4">
-            {{ personalized(
-              'No siempre es fácil dar el primer paso, pero hablarlo puede ser el comienzo del alivio.',
-              '{name}, no siempre es fácil dar el primer paso, pero hablarlo puede ser el comienzo del alivio.'
-            ) }}
+            <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
+              {{ userName
+                ? `${userName}, si aún no estás seguro de cómo empezar, te ofrezco una sesión gratuita de orientación para escucharte y acompañarte.`
+                : 'Si aún no estás seguro de cómo empezar, te ofrezco una sesión gratuita de orientación para escucharte y acompañarte.'
+              }}
+            </span>
           </p>
           <CalmButton 
             to="https://calendly.com/psicologakarem/sesion-de-evaluacion?month=2025-10"
@@ -124,7 +128,7 @@
             aria-label="Reservar sesión de orientación gratuita"
             @click="handleReservarClick"
           >
-            {{ personalized('Reserva tu sesión de orientación gratuita', 'Reserva tu sesión de orientación, {name}') }}
+            {{ userName ? `Reserva tu orientación, ${userName}` : 'Reserva tu sesión de orientación gratuita' }}
           </CalmButton>
         </div>
       </div>
@@ -140,7 +144,12 @@
       <div class="max-w-4xl mx-auto text-center">
         <h2 class="text-3xl md:text-4xl font-serif mb-6">Un espacio seguro para ti</h2>
         <p class="text-lg text-cafe/80 leading-relaxed mb-8">
-          En mis sesiones encontrarás un ambiente cálido, confidencial y sin juicios. Trabajo desde un enfoque humanista e integrador, adaptando cada proceso a tus necesidades únicas.
+          <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
+            {{ userName 
+              ? `${userName}, en mis sesiones encontrarás un ambiente cálido, confidencial y sin juicios. Trabajo desde un enfoque humanista e integrador, adaptando cada proceso a tus necesidades únicas.`
+              : 'En mis sesiones encontrarás un ambiente cálido, confidencial y sin juicios. Trabajo desde un enfoque humanista e integrador, adaptando cada proceso a tus necesidades únicas.'
+            }}
+          </span>
         </p>
         <NuxtLink to="/conoceme" class="text-terracota hover:text-cafe transition font-semibold">
           Descubre más sobre mi forma de trabajar →
@@ -151,10 +160,11 @@
 </template>
 
 <script setup>
-import { useVisitorContext } from '@/composables/useVisitorContext'
+import { useUserName } from '@/composables/useUserName'
+import { useAnalytics } from '@/composables/useAnalytics'
 import ConocemeSection from '@/components/ConocemeSection.vue'
 
-const { personalized } = useVisitorContext()
+const { userName } = useUserName()
 const { trackBookingIntent } = useAnalytics()
 
 // Función para trackear clic en reservar
@@ -175,7 +185,7 @@ useHead({
     { property: 'og:url', content: 'https://psicologakarem.com' },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:title', content: 'Psicóloga en Ciempozuelos | Terapia para Ansiedad y Bienestar Emocional' },
-    { name: 'twitter:description', content: 'Recupera tu calma con un acompañamiento cálido y profesional. Terapia individual, de pareja y para autoestima en Ciempozuelos.' }
+    { name: 'twitter:description', content: 'Recupera tu calma con un acompañamiento cálido y profesional. Terapia individual, de pareja y para autoestima en Ciempozueles.' }
   ],
   link: [
     { rel: 'canonical', href: 'https://psicologakarem.com' }

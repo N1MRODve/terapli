@@ -25,6 +25,7 @@ export const InactivityModal: typeof import("../components/InactivityModal.vue")
 export const InversionSection: typeof import("../components/InversionSection.vue")['default']
 export const PersonalizedHero: typeof import("../components/PersonalizedHero.vue")['default']
 export const TestimoniosSection: typeof import("../components/TestimoniosSection.vue")['default']
+export const WelcomeModal: typeof import("../components/WelcomeModal.vue")['default']
 export const ProseA: typeof import("../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseA.vue")['default']
 export const ProseBlockquote: typeof import("../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseBlockquote.vue")['default']
 export const ProseCode: typeof import("../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseCode.vue")['default']
@@ -89,6 +90,7 @@ export const LazyInactivityModal: LazyComponent<typeof import("../components/Ina
 export const LazyInversionSection: LazyComponent<typeof import("../components/InversionSection.vue")['default']>
 export const LazyPersonalizedHero: LazyComponent<typeof import("../components/PersonalizedHero.vue")['default']>
 export const LazyTestimoniosSection: LazyComponent<typeof import("../components/TestimoniosSection.vue")['default']>
+export const LazyWelcomeModal: LazyComponent<typeof import("../components/WelcomeModal.vue")['default']>
 export const LazyProseA: LazyComponent<typeof import("../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseA.vue")['default']>
 export const LazyProseBlockquote: LazyComponent<typeof import("../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseBlockquote.vue")['default']>
 export const LazyProseCode: LazyComponent<typeof import("../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseCode.vue")['default']>

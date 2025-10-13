@@ -3,7 +3,9 @@
     <!-- Left column: text content -->
     <div class="z-10 max-w-2xl mx-auto md:mx-0 animate-fade-in-up">
       <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-semibold text-[#5D4A44] leading-tight tracking-tight">
-        {{ greeting }}
+        <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
+          {{ userName ? `Hola ${userName}, ${greetingWithoutName}` : greeting }}
+        </span>
       </h1>
       
       <p class="text-base md:text-lg lg:text-xl text-[#5D4A44]/70 mt-4 md:mt-6 leading-relaxed max-w-xl">
@@ -26,7 +28,7 @@
           Contactar por WhatsApp
         </CalmButton>
         <CalmButton to="https://calendly.com/psicologakarem/sesion-de-evaluacion?month=2025-10" size="lg">
-          Reservar sesión de orientación
+          {{ userName ? `Reservar tu sesión, ${userName}` : 'Reservar sesión de orientación' }}
         </CalmButton>
       </div>
 
@@ -59,15 +61,37 @@
 <script setup>
 import { computed } from 'vue'
 import { useVisitorContext } from '@/composables/useVisitorContext'
+import { useUserName } from '@/composables/useUserName'
 
 const { greeting, deviceType, visitorName, getTimeOfDay } = useVisitorContext()
+const { userName } = useUserName()
+
+// Eliminar el nombre del saludo existente si userName está presente
+const greetingWithoutName = computed(() => {
+  if (!greeting.value) return 'reserva tu espacio de bienestar emocional'
+  
+  // Extraer solo la parte del saludo sin el nombre
+  const greetingText = greeting.value.toLowerCase()
+  
+  if (greetingText.includes('espero')) {
+    return 'espero que tu mañana esté siendo tranquila'
+  } else if (greetingText.includes('alegría')) {
+    return 'qué alegría verte de nuevo'
+  } else if (greetingText.includes('me alegra')) {
+    return 'me alegra que estés aquí'
+  }
+  
+  return 'reserva tu espacio de bienestar emocional'
+})
 
 const ctaMessage = computed(() => {
   const timeOfDay = getTimeOfDay()
-  const name = visitorName.value
+  const name = userName.value
   
   if (deviceType.value === 'mobile') {
-    return '¿Quieres dar el primer paso? Escríbeme por WhatsApp y te ayudaré a encontrar el espacio que necesitas.'
+    return name 
+      ? `${name}, si lo prefieres, escríbeme por WhatsApp y te ayudaré a encontrar el espacio que necesitas.`
+      : '¿Quieres dar el primer paso? Escríbeme por WhatsApp y te ayudaré a encontrar el espacio que necesitas.'
   }
   
   if (timeOfDay === 'night') {

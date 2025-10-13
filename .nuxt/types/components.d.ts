@@ -25,6 +25,7 @@ interface _GlobalComponents {
   'InversionSection': typeof import("../../components/InversionSection.vue")['default']
   'PersonalizedHero': typeof import("../../components/PersonalizedHero.vue")['default']
   'TestimoniosSection': typeof import("../../components/TestimoniosSection.vue")['default']
+  'WelcomeModal': typeof import("../../components/WelcomeModal.vue")['default']
   'ProseA': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseA.vue")['default']
   'ProseBlockquote': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseBlockquote.vue")['default']
   'ProseCode': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseCode.vue")['default']
@@ -89,6 +90,7 @@ interface _GlobalComponents {
   'LazyInversionSection': LazyComponent<typeof import("../../components/InversionSection.vue")['default']>
   'LazyPersonalizedHero': LazyComponent<typeof import("../../components/PersonalizedHero.vue")['default']>
   'LazyTestimoniosSection': LazyComponent<typeof import("../../components/TestimoniosSection.vue")['default']>
+  'LazyWelcomeModal': LazyComponent<typeof import("../../components/WelcomeModal.vue")['default']>
   'LazyProseA': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseA.vue")['default']>
   'LazyProseBlockquote': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseBlockquote.vue")['default']>
   'LazyProseCode': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseCode.vue")['default']>

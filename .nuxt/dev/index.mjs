@@ -657,7 +657,7 @@ const _inlineRuntimeConfig = {
     "supabaseUrl": "",
     "supabaseKey": "",
     "content": {
-      "wsUrl": "ws://localhost:4001/"
+      "wsUrl": "ws://localhost:4002/"
     },
     "mdc": {
       "components": {
