@@ -24,7 +24,22 @@ const { data: articles } = await useAsyncData('articles', () =>
 )
 
 useHead({
-  title: 'Blog - Karem Peña',
-  meta: [{ name: 'description', content: 'Artículos sobre psicología, bienestar emocional y autocuidado.' }]
+  title: 'Blog de Psicología y Bienestar | Consejos desde Ciempozuelos – Karem Peña',
+  meta: [
+    { 
+      name: 'description', 
+      content: 'Artículos sobre ansiedad, relaciones y autoestima. Recursos prácticos escritos por Karem Peña, psicóloga en Ciempozuelos para tu bienestar emocional.' 
+    },
+    { name: 'keywords', content: 'blog psicología Ciempozuelos, bienestar emocional, consejos ansiedad, artículos psicología' },
+    { property: 'og:title', content: 'Blog de Psicología y Bienestar | Consejos desde Ciempozuelos' },
+    { property: 'og:description', content: 'Artículos sobre ansiedad, relaciones y autoestima. Recursos prácticos para tu bienestar emocional.' },
+    { property: 'og:url', content: 'https://psicologakarem.com/blog' },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:title', content: 'Blog de Psicología y Bienestar | Consejos desde Ciempozuelos' },
+    { name: 'twitter:description', content: 'Artículos sobre ansiedad, relaciones y autoestima. Recursos prácticos para tu bienestar emocional.' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://psicologakarem.com/blog' }
+  ]
 })
 </script>

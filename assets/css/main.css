@@ -1,19 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Lora:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply font-body text-cafe antialiased;
+    @apply font-sans text-cafe bg-base-bg antialiased;
+    padding-top: 6rem; /* Espacio para el navbar flotante */
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif text-cafe;
+    @apply font-serif font-semibold;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    @apply font-bold;
+  }
+
+  /* Añadimos una transición suave a los enlaces para una mejor UX */
+  a {
+    @apply transition-colors duration-300;
   }
 }
 
 @layer utilities {
+  /* Hacemos el padding un poco más generoso para un look más "aireado" y premium */
   .section-padding {
-    @apply px-6 py-16 md:py-24;
+    @apply px-6 py-20 md:py-28;
+  }
+
+  /* Animación sutil de fade-in para las secciones */
+  .fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Therapeutic fade-in-up animation for emotional content */
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 1s ease-out forwards;
+  }
+
+  /* Hero sequential animations */
+  .animate-fade-up {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-down {
+    animation: fadeDown 0.8s ease-out forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Staggered animation delays for scroll reveals */
+  .delay-100 {
+    animation-delay: 0.1s;
+  }
+  
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
+  
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Calm breathing animation for CTAs - mimics deep breathing (4s inhale + 4s exhale) */
+  @keyframes calm-pulse {
+    0%, 100% { 
+      transform: scale(1); 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    50% { 
+      transform: scale(1.02); 
+      box-shadow: 0 0 20px rgba(232, 186, 170, 0.25), 0 0 30px rgba(239, 160, 139, 0.15);
+    }
+  }
+
+  .calm-button {
+    animation: calm-pulse 8s ease-in-out infinite;
+  }
+
+  /* Pausar animación al hacer hover para mejor UX */
+  .calm-button:hover {
+    animation-play-state: paused;
+  }
+}
+
+/* Floating background blobs for hero section */
+@layer components {
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.3;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .blob-1 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #EAD5D3, #D8AFA0);
+    top: -100px;
+    right: -100px;
+    animation-delay: 0s;
+  }
+
+  .blob-2 {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #D8AFA0, #EFA08B);
+    bottom: -50px;
+    left: -50px;
+    animation-delay: 2s;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    25% {
+      transform: translate(20px, -20px) scale(1.05);
+    }
+    50% {
+      transform: translate(-20px, 20px) scale(0.95);
+    }
+    75% {
+      transform: translate(20px, 10px) scale(1.02);
+    }
+  }
+
+  /* ===================================
+     CALM BUTTON BREATHING ANIMATION
+     =================================== */
+
+  @keyframes calm-pulse {
+    0%, 100% { 
+      transform: scale(1); 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    50% { 
+      transform: scale(1.02); 
+      box-shadow: 0 0 25px rgba(232, 186, 170, 0.3), 0 10px 30px -5px rgba(216, 175, 160, 0.2);
+    }
+  }
+
+  .calm-button {
+    animation: calm-pulse 8s ease-in-out infinite;
+  }
+
+  /* Pausar la animación cuando el usuario hace hover o focus 
+     para evitar confusión durante la interacción */
+  .calm-button:hover,
+  .calm-button:focus {
+    animation-play-state: paused;
   }
 }
