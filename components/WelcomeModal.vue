@@ -16,11 +16,11 @@
         <div v-if="!nameSaved">
           <h2 
             id="welcome-title"
-            class="font-lora text-2xl mb-4 text-[#5D4A44]"
+            class="font-serif text-2xl mb-4 text-[#5D4A44]"
           >
             👋 Hola, soy Karem
           </h2>
-          <p class="font-lato text-[#5D4A44] mb-6 leading-relaxed">
+          <p class="font-sans text-[#5D4A44] mb-6 leading-relaxed">
             Me alegra que estés aquí.<br />
             ¿Te gustaría que te llame por tu nombre mientras exploras este espacio?
           </p>
@@ -40,7 +40,7 @@
               <button
                 type="submit"
                 :disabled="!userName.trim()"
-                class="bg-[#D8AFA0] text-[#5D4A44] px-6 py-2.5 rounded-xl font-lato font-medium hover:bg-[#C89B8C] disabled:bg-[#EAD5D3] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-md"
+                class="bg-[#D8AFA0] text-[#5D4A44] px-6 py-2.5 rounded-xl font-sans font-medium hover:bg-[#C89B8C] disabled:bg-[#EAD5D3] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-md"
               >
                 Continuar
               </button>
@@ -57,10 +57,10 @@
 
         <!-- Mensaje de confirmación -->
         <div v-else class="animate-fade-in">
-          <h2 class="font-lora text-2xl mb-4 text-[#5D4A44]">
+          <h2 class="font-serif text-2xl mb-4 text-[#5D4A44]">
             Encantada de conocerte, {{ savedUserName }} 🌿
           </h2>
-          <p class="font-lato text-[#5D4A44] leading-relaxed">
+          <p class="font-sans text-[#5D4A44] leading-relaxed">
             Espero que encuentres aquí justo lo que necesitas.
           </p>
         </div>

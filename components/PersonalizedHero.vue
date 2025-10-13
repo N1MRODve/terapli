@@ -2,18 +2,18 @@
   <section class="relative grid md:grid-cols-2 items-center bg-[#F9F7F3] overflow-hidden py-12 md:py-20 px-6 md:px-12 lg:px-20">
     <!-- Left column: text content -->
     <div class="z-10 max-w-2xl mx-auto md:mx-0 animate-fade-in-up">
-      <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-semibold text-[#5D4A44] leading-tight tracking-tight">
+      <h1 class="hero-title mb-6">
         <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
           {{ userName ? `Hola ${userName}, ${greetingWithoutName}` : greeting }}
         </span>
       </h1>
       
-      <p class="text-base md:text-lg lg:text-xl text-[#5D4A44]/70 mt-4 md:mt-6 leading-relaxed max-w-xl">
+      <p class="lead-text max-w-xl mb-6">
         Este espacio está pensado para acompañarte con calma, comprensión y&nbsp;cercanía.
       </p>
 
       <!-- Mobile optimized CTA message -->
-      <p class="text-sm md:text-base text-[#5D4A44]/70 mt-4 md:mt-6 leading-relaxed animate-fade-in-up [animation-delay:0.2s]">
+      <p class="body-text animate-fade-in-up [animation-delay:0.2s]">
         {{ ctaMessage }}
       </p>
 
@@ -33,13 +33,13 @@
       </div>
 
       <div class="flex flex-wrap gap-2 md:gap-3 mt-6 animate-fade-in-up [animation-delay:0.6s]">
-        <span class="text-xs border border-[#EAD5D3]/80 rounded-full px-3 py-1 text-[#5D4A44]/80">
+        <span class="microcopy border border-[#EAD5D3]/80 rounded-full px-3 py-1">
           Psicóloga Colegiada
         </span>
-        <span class="text-xs border border-[#EAD5D3]/80 rounded-full px-3 py-1 text-[#5D4A44]/80">
+        <span class="microcopy border border-[#EAD5D3]/80 rounded-full px-3 py-1">
           100% Confidencial
         </span>
-        <span class="text-xs border border-[#EAD5D3]/80 rounded-full px-3 py-1 text-[#5D4A44]/80">
+        <span class="microcopy border border-[#EAD5D3]/80 rounded-full px-3 py-1">
           Online o Presencial
         </span>
       </div>

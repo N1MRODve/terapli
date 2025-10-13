@@ -1,12 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Lora:wght@400;500;600&display=swap');
 
+/* Importar sistema tipográfico global */
+@import './typography.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply font-sans text-cafe bg-base-bg antialiased;
+    @apply font-sans text-[#5D4A44] bg-[#F9F7F3] antialiased;
     padding-top: 6rem; /* Espacio para el navbar flotante */
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
   }

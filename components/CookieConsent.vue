@@ -13,10 +13,10 @@
         </div>
 
         <div class="flex-1">
-          <h3 class="font-lora text-lg font-semibold mb-2 text-[#5D4A44]">
+          <h3 class="font-serif text-lg font-semibold mb-2 text-[#5D4A44]">
             🍪 Uso de cookies
           </h3>
-          <p class="font-lato text-sm leading-relaxed mb-4">
+          <p class="font-sans text-sm leading-relaxed mb-4">
             Utilizamos cookies propias y de terceros para mejorar tu experiencia y analizar el uso del sitio. 
             Puedes aceptar todas las cookies o configurarlas según tus preferencias.
           </p>
@@ -25,19 +25,19 @@
           <div class="flex flex-wrap gap-3 items-center">
             <button 
               @click="acceptAll"
-              class="bg-[#D8AFA0] text-white px-5 py-2.5 rounded-xl font-lato font-medium hover:bg-[#EFA08B] transition-all shadow-md hover:shadow-lg">
+              class="bg-[#D8AFA0] text-white px-5 py-2.5 rounded-xl font-sans font-medium hover:bg-[#EFA08B] transition-all shadow-md hover:shadow-lg">
               Aceptar todas
             </button>
             
             <button 
               @click="showSettings = true"
-              class="bg-transparent border border-[#D8AFA0] text-[#5D4A44] px-5 py-2.5 rounded-xl font-lato hover:bg-[#EAD5D3] transition-all">
+              class="bg-transparent border border-[#D8AFA0] text-[#5D4A44] px-5 py-2.5 rounded-xl font-sans hover:bg-[#EAD5D3] transition-all">
               Configurar
             </button>
             
             <button 
               @click="rejectNonEssential"
-              class="text-sm text-[#5D4A44]/70 hover:text-[#5D4A44] underline font-lato">
+              class="text-sm text-[#5D4A44]/70 hover:text-[#5D4A44] underline font-sans">
               Rechazar no esenciales
             </button>
           </div>
@@ -56,7 +56,7 @@
         <!-- Header -->
         <div class="sticky top-0 bg-[#F9F7F3] border-b border-[#EAD5D3] p-6">
           <div class="flex items-center justify-between">
-            <h2 class="font-lora text-2xl font-semibold text-[#5D4A44]">
+            <h2 class="font-serif text-2xl font-semibold text-[#5D4A44]">
               Configuración de Cookies
             </h2>
             <button 
@@ -71,7 +71,7 @@
 
         <!-- Contenido -->
         <div class="p-6 space-y-6">
-          <p class="font-lato text-sm text-[#5D4A44]/80 leading-relaxed">
+          <p class="font-sans text-sm text-[#5D4A44]/80 leading-relaxed">
             Aquí puedes gestionar tus preferencias de cookies. Las cookies técnicas son necesarias para el funcionamiento del sitio y no pueden desactivarse.
           </p>
 
@@ -79,18 +79,18 @@
           <div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]">
             <div class="flex items-center justify-between mb-3">
               <div>
-                <h3 class="font-lora text-lg font-semibold text-[#5D4A44]">
+                <h3 class="font-serif text-lg font-semibold text-[#5D4A44]">
                   Cookies necesarias
                 </h3>
-                <p class="font-lato text-sm text-[#5D4A44]/70 mt-1">
+                <p class="font-sans text-sm text-[#5D4A44]/70 mt-1">
                   Esenciales para el funcionamiento del sitio
                 </p>
               </div>
               <div class="bg-[#D8AFA0]/20 px-4 py-1.5 rounded-full">
-                <span class="font-lato text-sm font-medium text-[#5D4A44]">Siempre activas</span>
+                <span class="font-sans text-sm font-medium text-[#5D4A44]">Siempre activas</span>
               </div>
             </div>
-            <p class="font-lato text-sm text-[#5D4A44]/70 leading-relaxed">
+            <p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed">
               Permiten la navegación básica y el acceso a áreas seguras. Sin estas cookies, el sitio no puede funcionar correctamente.
             </p>
           </div>
@@ -99,10 +99,10 @@
           <div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]">
             <div class="flex items-center justify-between mb-3">
               <div class="flex-1">
-                <h3 class="font-lora text-lg font-semibold text-[#5D4A44]">
+                <h3 class="font-serif text-lg font-semibold text-[#5D4A44]">
                   Cookies de análisis
                 </h3>
-                <p class="font-lato text-sm text-[#5D4A44]/70 mt-1">
+                <p class="font-sans text-sm text-[#5D4A44]/70 mt-1">
                   Nos ayudan a mejorar el rendimiento del sitio
                 </p>
               </div>
@@ -114,7 +114,7 @@
                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#D8AFA0]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D8AFA0]"></div>
               </label>
             </div>
-            <p class="font-lato text-sm text-[#5D4A44]/70 leading-relaxed">
+            <p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed">
               Recopilan información anónima sobre cómo utilizas el sitio para ayudarnos a mejorarlo (ej. Google Analytics).
             </p>
           </div>
@@ -123,10 +123,10 @@
           <div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]">
             <div class="flex items-center justify-between mb-3">
               <div class="flex-1">
-                <h3 class="font-lora text-lg font-semibold text-[#5D4A44]">
+                <h3 class="font-serif text-lg font-semibold text-[#5D4A44]">
                   Cookies de personalización
                 </h3>
-                <p class="font-lato text-sm text-[#5D4A44]/70 mt-1">
+                <p class="font-sans text-sm text-[#5D4A44]/70 mt-1">
                   Adaptan la experiencia a tus preferencias
                 </p>
               </div>
@@ -138,14 +138,14 @@
                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#D8AFA0]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D8AFA0]"></div>
               </label>
             </div>
-            <p class="font-lato text-sm text-[#5D4A44]/70 leading-relaxed">
+            <p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed">
               Recuerdan tus elecciones y preferencias para ofrecerte una experiencia más personalizada.
             </p>
           </div>
 
           <!-- Info adicional -->
           <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-4 rounded-r-xl">
-            <p class="font-lato text-sm text-[#5D4A44]/80">
+            <p class="font-sans text-sm text-[#5D4A44]/80">
               Puedes cambiar estas preferencias en cualquier momento desde el pie de página del sitio. 
               <NuxtLink to="/legal/cookies" class="text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold">
                 Ver política completa →
@@ -158,12 +158,12 @@
         <div class="sticky bottom-0 bg-[#F9F7F3] border-t border-[#EAD5D3] p-6 flex gap-3 justify-end">
           <button 
             @click="savePreferences"
-            class="bg-[#D8AFA0] text-white px-6 py-2.5 rounded-xl font-lato font-medium hover:bg-[#EFA08B] transition-all shadow-md hover:shadow-lg">
+            class="bg-[#D8AFA0] text-white px-6 py-2.5 rounded-xl font-sans font-medium hover:bg-[#EFA08B] transition-all shadow-md hover:shadow-lg">
             Guardar preferencias
           </button>
           <button 
             @click="showSettings = false"
-            class="bg-transparent border border-[#D8AFA0] text-[#5D4A44] px-6 py-2.5 rounded-xl font-lato hover:bg-[#EAD5D3] transition-all">
+            class="bg-transparent border border-[#D8AFA0] text-[#5D4A44] px-6 py-2.5 rounded-xl font-sans hover:bg-[#EAD5D3] transition-all">
             Cancelar
           </button>
         </div>

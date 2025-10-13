@@ -3,10 +3,10 @@
     <!-- Hero Section -->
     <section class="bg-gradient-to-b from-[#EAD5D3]/20 to-[#F9F7F3] py-16 border-b border-[#EAD5D3]">
       <div class="max-w-5xl mx-auto px-6 text-center">
-        <h1 class="font-lora text-4xl md:text-5xl font-semibold text-[#5D4A44] mb-4">
+        <h1 class="font-serif text-4xl md:text-5xl font-semibold text-[#5D4A44] mb-4">
           Política de Cookies
         </h1>
-        <p class="text-lg text-[#5D4A44]/80 font-lato max-w-3xl mx-auto">
+        <p class="text-lg text-[#5D4A44]/80 font-sans max-w-3xl mx-auto">
           Transparencia sobre cómo usamos cookies en nuestro sitio web
         </p>
         <div class="mt-6 flex items-center justify-center gap-2 text-sm text-[#5D4A44]/60">
@@ -24,7 +24,7 @@
         
         <!-- Introducción -->
         <div class="mb-12 p-6 bg-white/50 rounded-2xl border border-[#EAD5D3]">
-          <p class="font-lato text-lg leading-relaxed">
+          <p class="font-sans text-lg leading-relaxed">
             En <strong>psicologakarem.com</strong> utilizamos cookies propias y de terceros con el objetivo de ofrecerte una mejor experiencia de navegación, 
             analizar el tráfico y mejorar los servicios que ofrecemos.  
             Queremos que conozcas con total transparencia cómo y por qué usamos las cookies.
@@ -33,10 +33,10 @@
 
         <!-- Sección 1: ¿Qué son las cookies? -->
         <article class="mb-12 border-b border-[#EAD5D3] pb-12">
-          <h2 class="font-lora text-3xl font-semibold mb-6 text-[#5D4A44]">
+          <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             1. ¿Qué son las cookies?
           </h2>
-          <p class="font-lato leading-relaxed">
+          <p class="font-sans leading-relaxed">
             Las cookies son <strong>pequeños archivos de texto</strong> que se almacenan en tu dispositivo cuando visitas una página web.  
             Sirven para que la web funcione correctamente, recuerde tus preferencias y nos ayude a comprender cómo interactúas con el sitio.
           </p>
@@ -44,10 +44,10 @@
 
         <!-- Sección 2: Tipos de cookies -->
         <article class="mb-12 border-b border-[#EAD5D3] pb-12">
-          <h2 class="font-lora text-3xl font-semibold mb-6 text-[#5D4A44]">
+          <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             2. Tipos de cookies utilizadas
           </h2>
-          <p class="font-lato leading-relaxed mb-6">
+          <p class="font-sans leading-relaxed mb-6">
             En este sitio utilizamos los siguientes tipos de cookies:
           </p>
 
@@ -60,10 +60,10 @@
                   </svg>
                 </div>
                 <div class="flex-1">
-                  <h3 class="font-lora text-xl font-semibold mb-2 text-[#5D4A44]">
+                  <h3 class="font-serif text-xl font-semibold mb-2 text-[#5D4A44]">
                     Cookies técnicas o necesarias
                   </h3>
-                  <p class="font-lato leading-relaxed text-[#5D4A44]/80">
+                  <p class="font-sans leading-relaxed text-[#5D4A44]/80">
                     Permiten el funcionamiento básico del sitio web (por ejemplo, acceder a áreas seguras o recordar tus preferencias de idioma). 
                     Sin ellas, el sitio no puede funcionar correctamente.
                   </p>
@@ -79,10 +79,10 @@
                   </svg>
                 </div>
                 <div class="flex-1">
-                  <h3 class="font-lora text-xl font-semibold mb-2 text-[#5D4A44]">
+                  <h3 class="font-serif text-xl font-semibold mb-2 text-[#5D4A44]">
                     Cookies de análisis o rendimiento
                   </h3>
-                  <p class="font-lato leading-relaxed text-[#5D4A44]/80">
+                  <p class="font-sans leading-relaxed text-[#5D4A44]/80">
                     Nos ayudan a entender cómo los visitantes utilizan el sitio, recopilando información anónima que mejora su funcionamiento.  
                     Estas cookies pueden ser de terceros, como <strong>Google Analytics</strong>.
                   </p>
@@ -98,10 +98,10 @@
                   </svg>
                 </div>
                 <div class="flex-1">
-                  <h3 class="font-lora text-xl font-semibold mb-2 text-[#5D4A44]">
+                  <h3 class="font-serif text-xl font-semibold mb-2 text-[#5D4A44]">
                     Cookies de personalización
                   </h3>
-                  <p class="font-lato leading-relaxed text-[#5D4A44]/80">
+                  <p class="font-sans leading-relaxed text-[#5D4A44]/80">
                     Recuerdan tus elecciones y preferencias para ofrecerte una experiencia más adaptada.
                   </p>
                 </div>
@@ -112,16 +112,16 @@
 
         <!-- Sección 3: Cookies de terceros -->
         <article class="mb-12 border-b border-[#EAD5D3] pb-12">
-          <h2 class="font-lora text-3xl font-semibold mb-6 text-[#5D4A44]">
+          <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             3. Cookies de terceros
           </h2>
           <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-6 rounded-r-2xl mb-6">
-            <p class="font-lato leading-relaxed mb-4">
+            <p class="font-sans leading-relaxed mb-4">
               Este sitio puede utilizar servicios de terceros, como <strong>Google Analytics</strong>, gestionados por Google LLC (EE. UU.).  
               La información recopilada incluye dirección IP, navegador, dispositivo y patrones de navegación.  
               Estos datos se procesan de forma agregada y anónima, sin identificar personalmente a los usuarios.
             </p>
-            <p class="font-lato leading-relaxed">
+            <p class="font-sans leading-relaxed">
               Puedes consultar la política de privacidad de Google aquí:  
               <a href="https://policies.google.com/privacy?hl=es" target="_blank" rel="noopener noreferrer" 
                  class="text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold">
@@ -133,10 +133,10 @@
 
         <!-- Sección 4: Gestión de cookies -->
         <article class="mb-12 border-b border-[#EAD5D3] pb-12">
-          <h2 class="font-lora text-3xl font-semibold mb-6 text-[#5D4A44]">
+          <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             4. Gestión de cookies
           </h2>
-          <p class="font-lato leading-relaxed mb-6">
+          <p class="font-sans leading-relaxed mb-6">
             Puedes permitir, bloquear o eliminar las cookies instaladas en tu dispositivo configurando las opciones de tu navegador.  
             A continuación te indicamos enlaces con instrucciones para los navegadores más comunes:
           </p>
@@ -148,8 +148,8 @@
                 <span class="text-[#D8AFA0] font-bold">C</span>
               </div>
               <div>
-                <p class="font-lato font-semibold text-[#5D4A44]">Google Chrome</p>
-                <p class="font-lato text-sm text-[#5D4A44]/70">Configurar cookies →</p>
+                <p class="font-sans font-semibold text-[#5D4A44]">Google Chrome</p>
+                <p class="font-sans text-sm text-[#5D4A44]/70">Configurar cookies →</p>
               </div>
             </a>
 
@@ -159,8 +159,8 @@
                 <span class="text-[#D8AFA0] font-bold">F</span>
               </div>
               <div>
-                <p class="font-lato font-semibold text-[#5D4A44]">Mozilla Firefox</p>
-                <p class="font-lato text-sm text-[#5D4A44]/70">Configurar cookies →</p>
+                <p class="font-sans font-semibold text-[#5D4A44]">Mozilla Firefox</p>
+                <p class="font-sans text-sm text-[#5D4A44]/70">Configurar cookies →</p>
               </div>
             </a>
 
@@ -170,8 +170,8 @@
                 <span class="text-[#D8AFA0] font-bold">S</span>
               </div>
               <div>
-                <p class="font-lato font-semibold text-[#5D4A44]">Safari</p>
-                <p class="font-lato text-sm text-[#5D4A44]/70">Configurar cookies →</p>
+                <p class="font-sans font-semibold text-[#5D4A44]">Safari</p>
+                <p class="font-sans text-sm text-[#5D4A44]/70">Configurar cookies →</p>
               </div>
             </a>
 
@@ -181,8 +181,8 @@
                 <span class="text-[#D8AFA0] font-bold">E</span>
               </div>
               <div>
-                <p class="font-lato font-semibold text-[#5D4A44]">Microsoft Edge</p>
-                <p class="font-lato text-sm text-[#5D4A44]/70">Configurar cookies →</p>
+                <p class="font-sans font-semibold text-[#5D4A44]">Microsoft Edge</p>
+                <p class="font-sans text-sm text-[#5D4A44]/70">Configurar cookies →</p>
               </div>
             </a>
           </div>
@@ -190,15 +190,15 @@
 
         <!-- Sección 5: Configuración o revocación -->
         <article class="mb-12 border-b border-[#EAD5D3] pb-12">
-          <h2 class="font-lora text-3xl font-semibold mb-6 text-[#5D4A44]">
+          <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             5. Configuración o revocación del consentimiento
           </h2>
           <div class="bg-gradient-to-br from-[#EAD5D3]/30 to-[#D8AFA0]/20 p-6 rounded-2xl border border-[#EAD5D3]">
-            <p class="font-lato leading-relaxed mb-4">
+            <p class="font-sans leading-relaxed mb-4">
               En cualquier momento puedes <strong>cambiar o retirar tu consentimiento</strong> sobre el uso de cookies 
               haciendo clic en el botón "Configurar cookies" disponible en el pie de página del sitio.
             </p>
-            <p class="font-lato leading-relaxed text-[#5D4A44]/80">
+            <p class="font-sans leading-relaxed text-[#5D4A44]/80">
               La retirada del consentimiento no afectará a la legalidad del tratamiento basado en el consentimiento previo.
             </p>
           </div>
@@ -206,15 +206,15 @@
 
         <!-- Sección 6: Base legal -->
         <article class="mb-12 border-b border-[#EAD5D3] pb-12">
-          <h2 class="font-lora text-3xl font-semibold mb-6 text-[#5D4A44]">
+          <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             6. Base legal del tratamiento
           </h2>
           <div class="space-y-4">
-            <p class="font-lato leading-relaxed">
+            <p class="font-sans leading-relaxed">
               El uso de <strong>cookies técnicas</strong> se basa en el interés legítimo del responsable para garantizar 
               el correcto funcionamiento del sitio.
             </p>
-            <p class="font-lato leading-relaxed">
+            <p class="font-sans leading-relaxed">
               El uso de <strong>cookies de análisis o personalización</strong> se basa en tu consentimiento, 
               que puedes gestionar o retirar libremente.
             </p>
@@ -223,20 +223,20 @@
 
         <!-- Sección 7: Responsable -->
         <article class="mb-12">
-          <h2 class="font-lora text-3xl font-semibold mb-6 text-[#5D4A44]">
+          <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             7. Responsable del tratamiento
           </h2>
           <div class="bg-white/40 p-6 rounded-2xl border border-[#EAD5D3]">
-            <p class="font-lato leading-relaxed mb-2">
+            <p class="font-sans leading-relaxed mb-2">
               <strong>Responsable:</strong> Karem Eydelys Peña Marcano
             </p>
-            <p class="font-lato leading-relaxed mb-2">
+            <p class="font-sans leading-relaxed mb-2">
               <strong>Correo:</strong> <a href="mailto:reservas@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline">reservas@psicologakarem.com</a>
             </p>
-            <p class="font-lato leading-relaxed mb-2">
+            <p class="font-sans leading-relaxed mb-2">
               <strong>Domicilio:</strong> Calle del Dr. Rivas 2, Nº8, 28350 Ciempozuelos (Madrid)
             </p>
-            <p class="font-lato leading-relaxed">
+            <p class="font-sans leading-relaxed">
               <strong>Teléfono:</strong> <a href="tel:+34722377290" class="text-[#D8AFA0] hover:text-[#EFA08B]">+34 722 377 290</a>
             </p>
           </div>
@@ -244,7 +244,7 @@
 
         <!-- Footer con fecha -->
         <div class="mt-12 p-4 bg-white/30 rounded-2xl text-center">
-          <p class="font-lato italic text-sm text-[#5D4A44]/70">
+          <p class="font-sans italic text-sm text-[#5D4A44]/70">
             Última actualización: Octubre de 2025
           </p>
         </div>

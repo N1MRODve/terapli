@@ -1,0 +1,110 @@
+/* ============================================
+   SISTEMA TIPOGRÁFICO GLOBAL
+   Psicóloga Karem Peña
+   Jerarquía UX + Accesibilidad WCAG 2.1
+   ============================================ */
+
+@layer base {
+  /* Encabezados principales */
+  h1 {
+    @apply font-serif text-4xl md:text-5xl text-[#5D4A44] font-semibold leading-snug;
+  }
+  
+  h2 {
+    @apply font-serif text-3xl md:text-4xl text-[#5D4A44] font-semibold leading-snug;
+  }
+  
+  h3 {
+    @apply font-serif text-2xl md:text-3xl text-[#5D4A44] font-medium;
+  }
+  
+  h4 {
+    @apply font-serif text-xl md:text-2xl text-[#5D4A44] font-medium;
+  }
+  
+  /* Párrafos y texto general */
+  p {
+    @apply font-sans text-base md:text-lg text-[#5D4A44] leading-relaxed;
+  }
+  
+  /* Microtextos y notas legales */
+  small {
+    @apply font-sans text-sm text-[#5D4A44]/80;
+  }
+  
+  /* Enlaces y botones */
+  a {
+    @apply font-sans;
+  }
+  
+  button {
+    @apply font-sans font-medium;
+  }
+}
+
+/* ============================================
+   UTILIDADES TIPOGRÁFICAS PERSONALIZADAS
+   ============================================ */
+
+@layer components {
+  /* Títulos de hero/landing - MÁS GRANDES Y PROMINENTES */
+  .hero-title {
+    @apply font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-[#5D4A44] leading-tight tracking-tight;
+  }
+  
+  /* Subtítulos de sección - AUMENTADOS PARA MAYOR JERARQUÍA */
+  .section-title {
+    @apply font-serif text-4xl md:text-5xl font-semibold text-[#5D4A44] leading-snug;
+  }
+  
+  /* Títulos de tarjetas */
+  .card-title {
+    @apply font-serif text-2xl md:text-3xl font-medium text-[#5D4A44];
+  }
+  
+  /* Párrafos destacados/intro */
+  .lead-text {
+    @apply font-sans text-lg md:text-xl text-[#5D4A44]/80 leading-relaxed;
+  }
+  
+  /* Texto de cuerpo general */
+  .body-text {
+    @apply font-sans text-base md:text-lg text-[#5D4A44]/80 leading-relaxed;
+  }
+  
+  /* Citas o frases destacadas */
+  .quote-text {
+    @apply font-serif text-xl md:text-2xl text-[#5D4A44]/90 font-medium italic leading-relaxed;
+  }
+  
+  /* Microcopy (disclaimers, notas) */
+  .microcopy {
+    @apply font-sans text-sm text-[#5D4A44]/60;
+  }
+  
+  /* Texto de botones CTA */
+  .btn-text {
+    @apply font-sans text-base md:text-lg font-medium tracking-wide;
+  }
+}
+
+/* ============================================
+   RESTRICCIONES DE ANCHO PARA LEGIBILIDAD
+   ============================================ */
+
+@layer utilities {
+  /* Ancho óptimo para lectura (65-70 caracteres) */
+  .prose-optimal {
+    @apply max-w-prose mx-auto;
+  }
+  
+  /* Ancho amplio para contenido */
+  .content-width {
+    @apply max-w-3xl mx-auto;
+  }
+  
+  /* Ancho completo para heros */
+  .hero-width {
+    @apply max-w-7xl mx-auto;
+  }
+}

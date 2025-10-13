@@ -131,7 +131,7 @@ const buttonClasses = computed(() => {
         'focus:ring-2',
         'focus:ring-[#D8AFA0]/40',
         'focus:ring-offset-2',
-        'font-lato'
+        'font-sans'
       )
       break
     

@@ -8,9 +8,9 @@
 
     <!-- Emotionally Empathetic "How I Can Help" Section -->
     <section class="bg-[#F9F7F3] py-16 px-6 md:px-12 lg:px-20 text-center">
-      <div class="max-w-7xl mx-auto">
+      <div class="hero-width">
         <!-- Section Title -->
-        <h2 class="text-3xl md:text-4xl font-serif text-[#5D4A44]">
+        <h2 class="section-title mb-4">
           <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
             {{ userName 
               ? `${userName}, acompaño diferentes procesos emocionales. Quizás te reconozcas en alguno de ellos.`
@@ -20,7 +20,7 @@
         </h2>
         
         <!-- Intro Paragraph -->
-        <p class="text-[#5D4A44]/80 max-w-2xl mx-auto mt-3 text-base md:text-lg">
+        <p class="body-text prose-optimal">
           No importa en qué punto te encuentres, este espacio está pensado para ayudarte a entender lo que sientes y dar el primer paso hacia tu bienestar.
         </p>
 
@@ -32,10 +32,10 @@
             class="block p-6 bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-[#EAD5D3]/30 animate-fade-up opacity-0 [animation-delay:100ms] [animation-fill-mode:forwards]"
             aria-label="Información sobre acompañamiento en ansiedad"
           >
-            <h3 class="text-lg font-serif text-[#5D4A44] leading-tight">
+            <h3 class="font-serif text-lg md:text-xl text-[#5D4A44] font-medium leading-tight mb-3">
               Cuando la mente no para y la preocupación te acompaña a todas partes.
             </h3>
-            <p class="text-sm text-[#5D4A44]/80 mt-3">
+            <p class="microcopy">
               Te ayudo a comprender tu ansiedad y a recuperar la calma que tu cuerpo y tu mente necesitan.
             </p>
           </NuxtLink>
@@ -46,10 +46,10 @@
             class="block p-6 bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-[#EAD5D3]/30 animate-fade-up opacity-0 [animation-delay:200ms] [animation-fill-mode:forwards]"
             aria-label="Información sobre acompañamiento en autoestima"
           >
-            <h3 class="text-lg font-serif text-[#5D4A44] leading-tight">
+            <h3 class="font-serif text-lg md:text-xl text-[#5D4A44] font-medium leading-tight mb-3">
               Cuando dudas de tu valor o sientes que no eres suficiente.
             </h3>
-            <p class="text-sm text-[#5D4A44]/80 mt-3">
+            <p class="microcopy">
               Te acompaño a reconectar con tu confianza y tu valor personal, aprendiendo a tratarte con más compasión.
             </p>
           </NuxtLink>
@@ -60,10 +60,10 @@
             class="block p-6 bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-[#EAD5D3]/30 animate-fade-up opacity-0 [animation-delay:300ms] [animation-fill-mode:forwards]"
             aria-label="Información sobre acompañamiento en relaciones"
           >
-            <h3 class="text-lg font-serif text-[#5D4A44] leading-tight">
+            <h3 class="font-serif text-lg md:text-xl text-[#5D4A44] font-medium leading-tight mb-3">
               Cuando tus vínculos se vuelven una fuente de estrés en lugar de apoyo.
             </h3>
-            <p class="text-sm text-[#5D4A44]/80 mt-3">
+            <p class="microcopy">
               Juntos exploramos cómo construir relaciones más sanas, desde el respeto y la comunicación.
             </p>
           </NuxtLink>
@@ -74,10 +74,10 @@
             class="block p-6 bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-[#EAD5D3]/30 animate-fade-up opacity-0 [animation-delay:400ms] [animation-fill-mode:forwards]"
             aria-label="Información sobre acompañamiento en duelo"
           >
-            <h3 class="text-lg font-serif text-[#5D4A44] leading-tight">
+            <h3 class="font-serif text-lg md:text-xl text-[#5D4A44] font-medium leading-tight mb-3">
               Cuando una pérdida deja un vacío que cuesta comprender.
             </h3>
-            <p class="text-sm text-[#5D4A44]/80 mt-3">
+            <p class="microcopy">
               Te ofrezco un espacio seguro para procesar el dolor y transformar la ausencia en significado.
             </p>
           </NuxtLink>
@@ -88,10 +88,10 @@
             class="block p-6 bg-white rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-[#EAD5D3]/30 animate-fade-up opacity-0 [animation-delay:500ms] [animation-fill-mode:forwards]"
             aria-label="Información sobre acompañamiento en procesos migratorios"
           >
-            <h3 class="text-lg font-serif text-[#5D4A44] leading-tight">
+            <h3 class="font-serif text-lg md:text-xl text-[#5D4A44] font-medium leading-tight mb-3">
               Cuando estás lejos de casa y sientes que una parte de ti también se quedó allí.
             </h3>
-            <p class="text-sm text-[#5D4A44]/80 mt-3">
+            <p class="microcopy">
               Te acompaño a adaptarte a tu nueva etapa, reconectando con tus raíces y tu identidad.
             </p>
           </NuxtLink>
@@ -102,10 +102,10 @@
             class="block p-6 bg-gradient-to-br from-[#EAD5D3]/20 to-[#D8AFA0]/10 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border-2 border-[#D8AFA0]/40 animate-fade-up opacity-0 [animation-delay:600ms] [animation-fill-mode:forwards]"
             aria-label="Explorar más áreas de acompañamiento"
           >
-            <h3 class="text-lg font-serif text-[#5D4A44] leading-tight">
+            <h3 class="font-serif text-lg md:text-xl text-[#5D4A44] font-medium leading-tight mb-3">
               Explora otras formas en las que puedo acompañarte.
             </h3>
-            <p class="text-sm text-[#5D4A44]/80 mt-3">
+            <p class="microcopy">
               Descubre más sobre los procesos que trabajamos juntos y cómo empezar tu acompañamiento.
             </p>
           </NuxtLink>
@@ -113,7 +113,7 @@
 
         <!-- Optional CTA Below Grid -->
         <div class="mt-12 animate-fade-up opacity-0 [animation-delay:700ms] [animation-fill-mode:forwards]">
-          <p class="text-[#5D4A44]/70 text-sm mb-4">
+          <p class="body-text mb-4">
             <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
               {{ userName
                 ? `${userName}, si aún no estás seguro de cómo empezar, te ofrezco una sesión gratuita de orientación para escucharte y acompañarte.`
@@ -140,10 +140,10 @@
     <!-- Testimonios (Prueba Social Cálida) -->
     <TestimoniosSection />
 
-    <section class="section-padding bg-fondo">
-      <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-serif mb-6">Un espacio seguro para ti</h2>
-        <p class="text-lg text-cafe/80 leading-relaxed mb-8">
+    <section class="section-padding bg-white">
+      <div class="content-width text-center">
+        <h2 class="section-title mb-6">Un espacio seguro para ti</h2>
+        <p class="body-text mb-8">
           <span :class="{ 'transition-opacity duration-300 ease-in': userName }">
             {{ userName 
               ? `${userName}, en mis sesiones encontrarás un ambiente cálido, confidencial y sin juicios. Trabajo desde un enfoque humanista e integrador, adaptando cada proceso a tus necesidades únicas.`
@@ -151,8 +151,14 @@
             }}
           </span>
         </p>
-        <NuxtLink to="/conoceme" class="text-terracota hover:text-cafe transition font-semibold">
-          Descubre más sobre mi forma de trabajar →
+        <NuxtLink 
+          to="/conoceme" 
+          class="inline-flex items-center gap-2 text-[#D8AFA0] hover:text-[#5D4A44] transition-colors font-medium text-base md:text-lg"
+        >
+          <span>Descubre más sobre mi forma de trabajar</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
         </NuxtLink>
       </div>
     </section>
@@ -185,7 +191,7 @@ useHead({
     { property: 'og:url', content: 'https://psicologakarem.com' },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:title', content: 'Psicóloga en Ciempozuelos | Terapia para Ansiedad y Bienestar Emocional' },
-    { name: 'twitter:description', content: 'Recupera tu calma con un acompañamiento cálido y profesional. Terapia individual, de pareja y para autoestima en Ciempozueles.' }
+    { name: 'twitter:description', content: 'Recupera tu calma con un acompañamiento cálido y profesional. Terapia individual, de pareja y para autoestima en Ciempozuelos.' }
   ],
   link: [
     { rel: 'canonical', href: 'https://psicologakarem.com' }

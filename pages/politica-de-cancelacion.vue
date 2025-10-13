@@ -3,10 +3,10 @@
     <!-- Hero Section -->
     <section class="bg-gradient-to-b from-[#EAD5D3]/20 to-[#F9F7F3] py-16 border-b border-[#EAD5D3]">
       <div class="max-w-5xl mx-auto px-6 text-center">
-        <h1 class="font-lora text-4xl md:text-5xl font-semibold text-[#5D4A44] mb-4">
+        <h1 class="font-serif text-4xl md:text-5xl font-semibold text-[#5D4A44] mb-4">
           Política de Cancelación de Sesiones
         </h1>
-        <p class="text-lg text-[#5D4A44]/80 font-lato max-w-3xl mx-auto">
+        <p class="text-lg text-[#5D4A44]/80 font-sans max-w-3xl mx-auto">
           Transparencia y flexibilidad para cuidar nuestro proceso terapéutico juntos
         </p>
       </div>
@@ -18,7 +18,7 @@
         
         <!-- Introducción -->
         <div class="mb-12 p-6 bg-white/50 rounded-2xl border border-[#EAD5D3]">
-          <p class="font-lato text-lg leading-relaxed">
+          <p class="font-sans text-lg leading-relaxed">
             Entiendo que en ocasiones pueden surgir imprevistos que te lleven a necesitar cancelar o reprogramar una sesión conmigo.  
             Para asegurar una buena planificación y mantener la calidad de nuestro trabajo juntos, te presento mi política de cancelación:
           </p>
@@ -33,10 +33,10 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h2 class="font-lora text-3xl font-semibold mb-4 text-[#5D4A44]">
+              <h2 class="font-serif text-3xl font-semibold mb-4 text-[#5D4A44]">
                 1. Cancelaciones con antelación
               </h2>
-              <p class="font-lato leading-relaxed">
+              <p class="font-sans leading-relaxed">
                 Si necesitas cancelar una sesión, te pido que lo hagas con un mínimo de <strong>24 horas de antelación</strong>.  
                 Esto significa que debes notificarme al menos 24 horas antes de la hora programada para nuestra sesión.
               </p>
@@ -53,16 +53,16 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h2 class="font-lora text-3xl font-semibold mb-4 text-[#5D4A44]">
+              <h2 class="font-serif text-3xl font-semibold mb-4 text-[#5D4A44]">
                 2. Cancelaciones tardías
               </h2>
               <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-6 rounded-r-2xl mb-4">
-                <p class="font-lato leading-relaxed">
+                <p class="font-sans leading-relaxed">
                   En caso de que la cancelación se realice con <strong>menos de 24 horas de antelación</strong>, se aplicará un 
                   <strong class="text-[#D8AFA0]">recargo del 20%</strong> en nuestra siguiente sesión.
                 </p>
               </div>
-              <p class="font-lato leading-relaxed text-[#5D4A44]/80">
+              <p class="font-sans leading-relaxed text-[#5D4A44]/80">
                 Este recargo tiene como propósito compensar el tiempo reservado para ti que no pudo ser utilizado y cubrir los gastos asociados.
               </p>
             </div>
@@ -78,23 +78,23 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h2 class="font-lora text-3xl font-semibold mb-4 text-[#5D4A44]">
+              <h2 class="font-serif text-3xl font-semibold mb-4 text-[#5D4A44]">
                 3. Cómo cancelar o reprogramar
               </h2>
-              <p class="font-lato leading-relaxed mb-4">
+              <p class="font-sans leading-relaxed mb-4">
                 Si necesitas cancelar o modificar el día y la hora de nuestra cita, puedes hacerlo utilizando los 
                 <strong>enlaces del correo electrónico de confirmación</strong>.
               </p>
               <div class="bg-white/40 p-6 rounded-2xl space-y-3">
                 <div class="flex items-start gap-3">
                   <span class="text-[#D8AFA0] font-bold mt-1">→</span>
-                  <p class="font-lato leading-relaxed">
+                  <p class="font-sans leading-relaxed">
                     Estos enlaces te permitirán acceder a un <strong>sistema de gestión de citas en línea</strong>, donde podrás realizar los cambios necesarios.
                   </p>
                 </div>
                 <div class="flex items-start gap-3">
                   <span class="text-[#D8AFA0] font-bold mt-1">→</span>
-                  <p class="font-lato leading-relaxed">
+                  <p class="font-sans leading-relaxed">
                     Si deseas reprogramar, usa el mismo sistema para seleccionar una <strong>nueva fecha y hora disponible</strong>.
                   </p>
                 </div>
@@ -112,15 +112,15 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h2 class="font-lora text-3xl font-semibold mb-4 text-[#5D4A44]">
+              <h2 class="font-serif text-3xl font-semibold mb-4 text-[#5D4A44]">
                 4. Bonos de sesiones
               </h2>
-              <p class="font-lato leading-relaxed mb-4">
+              <p class="font-sans leading-relaxed mb-4">
                 Si tienes programadas nuestras citas dentro de un bono de sesiones, te pido de igual forma que anticipes cualquier 
                 cancelación o reprogramación con un mínimo de 24 horas.
               </p>
               <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-6 rounded-r-2xl">
-                <p class="font-lato leading-relaxed">
+                <p class="font-sans leading-relaxed">
                   Si la cancelación o la reprogramación ocurre con menos de ese plazo, 
                   <strong class="text-[#D8AFA0]">la sesión se descontará del bono prepagado</strong>.
                 </p>
@@ -138,11 +138,11 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h2 class="font-lora text-3xl font-semibold mb-4 text-[#5D4A44]">
+              <h2 class="font-serif text-3xl font-semibold mb-4 text-[#5D4A44]">
                 5. Situaciones excepcionales
               </h2>
               <div class="bg-gradient-to-br from-[#EAD5D3]/30 to-[#D8AFA0]/20 p-6 rounded-2xl border border-[#EAD5D3]">
-                <p class="font-lato leading-relaxed">
+                <p class="font-sans leading-relaxed">
                   Entiendo que pueden surgir <strong>emergencias o circunstancias imprevistas</strong> que dificulten cumplir con el plazo establecido.  
                   Evaluaré estas situaciones de manera individual y podré hacer excepciones a esta política cuando sea necesario.
                 </p>
@@ -160,14 +160,14 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h2 class="font-lora text-3xl font-semibold mb-4 text-[#5D4A44]">
+              <h2 class="font-serif text-3xl font-semibold mb-4 text-[#5D4A44]">
                 6. Actualizaciones de la política
               </h2>
-              <p class="font-lato leading-relaxed mb-4">
+              <p class="font-sans leading-relaxed mb-4">
                 Esta política está sujeta a cambios.  
                 Te recomiendo revisarla periódicamente para estar al tanto de cualquier actualización.
               </p>
-              <p class="font-lato leading-relaxed text-[#5D4A44]/80">
+              <p class="font-sans leading-relaxed text-[#5D4A44]/80">
                 Cualquier modificación será comunicada en esta página y, si corresponde, por los medios de contacto habituales.
               </p>
             </div>
@@ -176,24 +176,24 @@
 
         <!-- Mensaje final -->
         <div class="mt-16 p-8 bg-gradient-to-br from-[#EAD5D3]/40 to-[#D8AFA0]/30 rounded-2xl border border-[#EAD5D3]">
-          <p class="font-lato text-lg leading-relaxed mb-6">
+          <p class="font-sans text-lg leading-relaxed mb-6">
             Agradezco tu comprensión y colaboración.  
             Esta política está diseñada para asegurar la continuidad y la calidad de nuestro trabajo terapéutico juntos.
           </p>
-          <p class="font-lato leading-relaxed mb-6">
+          <p class="font-sans leading-relaxed mb-6">
             Si tienes alguna pregunta o necesitas más información, no dudes en contactarme a través del correo  
             <a href="mailto:reservas@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold transition-colors">reservas@psicologakarem.com</a> 
             o por WhatsApp al  
             <a href="https://wa.me/34722377290" class="text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold transition-colors">+34 722 377 290</a>.
           </p>
-          <p class="font-lato italic text-[#5D4A44]/80 mt-8">
+          <p class="font-sans italic text-[#5D4A44]/80 mt-8">
             – Psicóloga Karem Peña
           </p>
         </div>
 
         <!-- Resumen visual -->
         <div class="mt-16">
-          <h3 class="font-lora text-2xl font-semibold mb-8 text-[#5D4A44] text-center">
+          <h3 class="font-serif text-2xl font-semibold mb-8 text-[#5D4A44] text-center">
             Resumen de la Política
           </h3>
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -201,48 +201,48 @@
               <div class="w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center mb-4">
                 <span class="text-[#D8AFA0] font-bold text-lg">✓</span>
               </div>
-              <h4 class="font-lora font-semibold text-lg mb-2 text-[#5D4A44]">Aviso con 24h</h4>
-              <p class="font-lato text-sm text-[#5D4A44]/80">Cancelación sin recargos</p>
+              <h4 class="font-serif font-semibold text-lg mb-2 text-[#5D4A44]">Aviso con 24h</h4>
+              <p class="font-sans text-sm text-[#5D4A44]/80">Cancelación sin recargos</p>
             </div>
 
             <div class="bg-white/40 p-6 rounded-2xl border border-[#EAD5D3] hover:shadow-lg transition-shadow">
               <div class="w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center mb-4">
                 <span class="text-[#D8AFA0] font-bold text-lg">%</span>
               </div>
-              <h4 class="font-lora font-semibold text-lg mb-2 text-[#5D4A44]">Menos de 24h</h4>
-              <p class="font-lato text-sm text-[#5D4A44]/80">Recargo del 20% siguiente sesión</p>
+              <h4 class="font-serif font-semibold text-lg mb-2 text-[#5D4A44]">Menos de 24h</h4>
+              <p class="font-sans text-sm text-[#5D4A44]/80">Recargo del 20% siguiente sesión</p>
             </div>
 
             <div class="bg-white/40 p-6 rounded-2xl border border-[#EAD5D3] hover:shadow-lg transition-shadow">
               <div class="w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center mb-4">
                 <span class="text-[#D8AFA0] font-bold text-lg">📋</span>
               </div>
-              <h4 class="font-lora font-semibold text-lg mb-2 text-[#5D4A44]">Bonos</h4>
-              <p class="font-lato text-sm text-[#5D4A44]/80">Cancelación tardía = sesión perdida</p>
+              <h4 class="font-serif font-semibold text-lg mb-2 text-[#5D4A44]">Bonos</h4>
+              <p class="font-sans text-sm text-[#5D4A44]/80">Cancelación tardía = sesión perdida</p>
             </div>
 
             <div class="bg-white/40 p-6 rounded-2xl border border-[#EAD5D3] hover:shadow-lg transition-shadow">
               <div class="w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center mb-4">
                 <span class="text-[#D8AFA0] font-bold text-lg">📧</span>
               </div>
-              <h4 class="font-lora font-semibold text-lg mb-2 text-[#5D4A44]">Gestión online</h4>
-              <p class="font-lato text-sm text-[#5D4A44]/80">Enlaces en correo de confirmación</p>
+              <h4 class="font-serif font-semibold text-lg mb-2 text-[#5D4A44]">Gestión online</h4>
+              <p class="font-sans text-sm text-[#5D4A44]/80">Enlaces en correo de confirmación</p>
             </div>
 
             <div class="bg-white/40 p-6 rounded-2xl border border-[#EAD5D3] hover:shadow-lg transition-shadow">
               <div class="w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center mb-4">
                 <span class="text-[#D8AFA0] font-bold text-lg">💚</span>
               </div>
-              <h4 class="font-lora font-semibold text-lg mb-2 text-[#5D4A44]">Emergencias</h4>
-              <p class="font-lato text-sm text-[#5D4A44]/80">Se evalúan excepciones</p>
+              <h4 class="font-serif font-semibold text-lg mb-2 text-[#5D4A44]">Emergencias</h4>
+              <p class="font-sans text-sm text-[#5D4A44]/80">Se evalúan excepciones</p>
             </div>
 
             <div class="bg-white/40 p-6 rounded-2xl border border-[#EAD5D3] hover:shadow-lg transition-shadow">
               <div class="w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center mb-4">
                 <span class="text-[#D8AFA0] font-bold text-lg">🔄</span>
               </div>
-              <h4 class="font-lora font-semibold text-lg mb-2 text-[#5D4A44]">Actualizaciones</h4>
-              <p class="font-lato text-sm text-[#5D4A44]/80">Política sujeta a cambios</p>
+              <h4 class="font-serif font-semibold text-lg mb-2 text-[#5D4A44]">Actualizaciones</h4>
+              <p class="font-sans text-sm text-[#5D4A44]/80">Política sujeta a cambios</p>
             </div>
           </div>
         </div>
