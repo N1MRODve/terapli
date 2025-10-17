@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '~/types/database.types'
 
-export const useSupabaseClient = () => {
+export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
-  return createClient<Database>(
+  const supabase = createClient<Database>(
     config.public.supabaseUrl as string,
     config.public.supabaseAnonKey as string,
     {
@@ -15,4 +15,10 @@ export const useSupabaseClient = () => {
       }
     }
   )
-}
+
+  return {
+    provide: {
+      supabase
+    }
+  }
+})

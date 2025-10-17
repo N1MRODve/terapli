@@ -32,6 +32,8 @@ export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composab
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
 export { useAnalytics } from '../composables/useAnalytics';
 export { useInactivityDetector } from '../composables/useInactivityDetector';
+export { usePacientes } from '../composables/usePacientes';
+export { useSupabase } from '../composables/useSupabase';
 export { useUserName } from '../composables/useUserName';
 export { useVisitorContext } from '../composables/useVisitorContext';
 export { capitalizeName } from '../utils/formatName';

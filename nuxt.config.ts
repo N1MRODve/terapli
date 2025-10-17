@@ -9,7 +9,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.VITE_SUPABASE_URL,
-      supabaseKey: process.env.VITE_SUPABASE_SUPABASE_ANON_KEY
+      supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY,
+      googleAnalyticsId: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID
     }
   },
 

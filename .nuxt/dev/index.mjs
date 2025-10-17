@@ -654,8 +654,9 @@ const _inlineRuntimeConfig = {
     }
   },
   "public": {
-    "supabaseUrl": "",
-    "supabaseKey": "",
+    "supabaseUrl": "https://your-project-url.supabase.co",
+    "supabaseAnonKey": "your-anon-key-here",
+    "googleAnalyticsId": "G-XXXXXXXXXX",
     "content": {
       "wsUrl": "ws://localhost:4000/"
     },

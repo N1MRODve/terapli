@@ -125,6 +125,7 @@ declare global {
   const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']
   const useNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']
   const useNuxtDevTools: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']
+  const usePacientes: typeof import('../../composables/usePacientes')['usePacientes']
   const usePreviewMode: typeof import('../../node_modules/nuxt/dist/app/composables/preview')['usePreviewMode']
   const useRequestEvent: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestEvent']
   const useRequestFetch: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestFetch']
@@ -174,6 +175,7 @@ declare global {
   const useShadowRoot: typeof import('vue')['useShadowRoot']
   const useSlots: typeof import('vue')['useSlots']
   const useState: typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']
+  const useSupabase: typeof import('../../composables/useSupabase')['useSupabase']
   const useSupabaseClient: typeof import('../../utils/supabase')['useSupabaseClient']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTransitionState: typeof import('vue')['useTransitionState']
@@ -324,6 +326,7 @@ declare module 'vue' {
     readonly useNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']>
     readonly useNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']>
     readonly useNuxtDevTools: UnwrapRef<typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']>
+    readonly usePacientes: UnwrapRef<typeof import('../../composables/usePacientes')['usePacientes']>
     readonly usePreviewMode: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/preview')['usePreviewMode']>
     readonly useRequestEvent: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestEvent']>
     readonly useRequestFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestFetch']>
@@ -373,6 +376,7 @@ declare module 'vue' {
     readonly useShadowRoot: UnwrapRef<typeof import('vue')['useShadowRoot']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']>
+    readonly useSupabase: UnwrapRef<typeof import('../../composables/useSupabase')['useSupabase']>
     readonly useSupabaseClient: UnwrapRef<typeof import('../../utils/supabase')['useSupabaseClient']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTransitionState: UnwrapRef<typeof import('vue')['useTransitionState']>

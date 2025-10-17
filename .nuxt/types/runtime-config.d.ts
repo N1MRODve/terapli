@@ -37,7 +37,9 @@ import { RuntimeConfig as UserRuntimeConfig, PublicRuntimeConfig as UserPublicRu
   interface SharedPublicRuntimeConfig {
    supabaseUrl: string,
 
-   supabaseKey: string,
+   supabaseAnonKey: string,
+
+   googleAnalyticsId: string,
 
    content: {
       wsUrl: string,
