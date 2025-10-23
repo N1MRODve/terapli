@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="to"
-    class="block bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+    class="group block bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
     :class="colorClass"
   >
     <div class="flex items-start justify-between">
@@ -105,9 +105,3 @@ const badgeDotClass = computed(() => {
   return classes[props.variant]
 })
 </script>
-
-<style scoped>
-a {
-  @apply group;
-}
-</style>
