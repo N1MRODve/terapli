@@ -6,7 +6,7 @@
  * 2. Obtiene el rol del usuario desde la tabla profiles
  * 3. Redirige al dashboard correspondiente según el rol:
  *    - psicologa → /terapeuta/dashboard
- *    - coordinacion → /coordinacion/dashboard
+ *    - coordinadora → /coordinacion/dashboard
  *    - paciente → /paciente/dashboard
  */
 
@@ -16,9 +16,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   const { user, getUserRole, loadUserProfile } = useSupabase()
 
-  // Si no hay usuario autenticado, redirigir al login
+  // Si no hay usuario autenticado, dejar que el middleware auth.ts maneje la redirección
   if (!user.value) {
-    return navigateTo('/login')
+    console.warn('[auth-role] No hay usuario autenticado, omitiendo verificación de rol')
+    return
   }
 
   // Cargar el perfil del usuario para obtener su rol
@@ -27,8 +28,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   if (!userRole) {
     console.error('[auth-role] No se pudo determinar el rol del usuario')
-    return navigateTo('/login')
+    // No redirigir, simplemente registrar el error
+    return
   }
+
+  console.log('[auth-role] Usuario con rol:', userRole, 'accediendo a:', to.path)
 
   // Determinar la ruta base según el rol
   const roleBasePath: Record<string, string> = {
@@ -41,7 +45,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   if (!basePath) {
     console.error(`[auth-role] Rol desconocido: ${userRole}`)
-    return navigateTo('/login')
+    return
   }
 
   // Si el usuario está intentando acceder a una ruta que no corresponde a su rol

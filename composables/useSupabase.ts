@@ -22,6 +22,11 @@ export const useSupabase = () => {
     if (process.client) {
       const { data } = await supabase.auth.getSession()
       session.value = data.session
+      
+      // Si hay sesión, cargar el perfil
+      if (data.session?.user) {
+        await loadUserProfile()
+      }
     }
   }
 
@@ -43,7 +48,9 @@ export const useSupabase = () => {
 
   // Cargar el perfil del usuario desde la tabla profiles
   const loadUserProfile = async () => {
-    if (!user.value) {
+    // Validar que hay usuario y tiene ID
+    if (!user.value?.id) {
+      console.warn('[useSupabase] No hay usuario autenticado o ID inválido')
       userProfile.value = null
       return null
     }
@@ -56,15 +63,22 @@ export const useSupabase = () => {
         .single()
 
       if (error) {
-        console.error('Error al cargar perfil:', error)
+        console.error('[useSupabase] Error al cargar perfil:', error)
+        userProfile.value = null
+        return null
+      }
+
+      if (!data) {
+        console.warn('[useSupabase] No se encontró perfil para el usuario:', user.value.id)
         userProfile.value = null
         return null
       }
 
       userProfile.value = data as UserProfile
+      console.log('[useSupabase] Perfil cargado:', data.email, 'Rol:', data.rol)
       return data as UserProfile
     } catch (err) {
-      console.error('Error en loadUserProfile:', err)
+      console.error('[useSupabase] Error en loadUserProfile:', err)
       userProfile.value = null
       return null
     }
@@ -72,6 +86,12 @@ export const useSupabase = () => {
 
   // Obtener el rol del usuario actual
   const getUserRole = async (): Promise<UserRole | null> => {
+    // Validar que hay usuario primero
+    if (!user.value?.id) {
+      console.warn('[useSupabase] getUserRole: No hay usuario autenticado')
+      return null
+    }
+
     // Si ya tenemos el perfil cargado, retornarlo
     if (userProfile.value) {
       return userProfile.value.rol

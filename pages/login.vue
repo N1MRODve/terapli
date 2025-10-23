@@ -135,13 +135,7 @@ definePageMeta({
 
 const { signInWithEmail, resetPassword, isAuthenticated, getUserRole, loadUserProfile } = useSupabase()
 
-// Si ya está autenticado, redirigir según rol
-onMounted(async () => {
-  if (isAuthenticated.value) {
-    await redirectBasedOnRole()
-  }
-})
-
+// Estado reactivo
 const email = ref('')
 const password = ref('')
 const resetEmail = ref('')
@@ -154,11 +148,15 @@ const showResetPassword = ref(false)
 // Función para redirigir según el rol del usuario
 const redirectBasedOnRole = async () => {
   try {
+    // Esperar un poco para que el estado se actualice
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
     await loadUserProfile()
     const userRole = await getUserRole()
     
     if (!userRole) {
-      console.error('No se pudo obtener el rol del usuario')
+      console.error('[Login] No se pudo obtener el rol del usuario')
+      errorMessage.value = 'Error al obtener tu rol. Por favor, contacta a soporte.'
       return
     }
 
@@ -171,12 +169,20 @@ const redirectBasedOnRole = async () => {
 
     const redirectTo = roleRoutes[userRole] || '/paciente/dashboard'
     
-    console.log(`Redirigiendo usuario con rol '${userRole}' a ${redirectTo}`)
+    console.log(`[Login] Redirigiendo usuario con rol '${userRole}' a ${redirectTo}`)
     await navigateTo(redirectTo, { replace: true })
   } catch (error) {
-    console.error('Error al redirigir:', error)
+    console.error('[Login] Error al redirigir:', error)
+    errorMessage.value = 'Error al iniciar sesión. Por favor, intenta de nuevo.'
   }
 }
+
+// Si ya está autenticado al montar, redirigir
+onMounted(async () => {
+  if (isAuthenticated.value) {
+    await redirectBasedOnRole()
+  }
+})
 
 const handleLogin = async () => {
   errorMessage.value = ''
@@ -187,18 +193,28 @@ const handleLogin = async () => {
     const { data, error } = await signInWithEmail(email.value, password.value)
 
     if (error) {
+      console.error('[Login] Error de autenticación:', error)
       errorMessage.value = 'Credenciales incorrectas. Por favor, verifica tu correo y contraseña.'
-    } else {
-      successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...'
-      
-      // Esperar a que el estado de autenticación se actualice
-      await nextTick()
-      
-      // Redirigir según el rol del usuario
-      await redirectBasedOnRole()
+      isLoading.value = false
+      return
     }
+
+    if (!data?.user) {
+      errorMessage.value = 'Error al iniciar sesión. Por favor, intenta de nuevo.'
+      isLoading.value = false
+      return
+    }
+
+    console.log('[Login] Usuario autenticado:', data.user.email)
+    successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...'
+    
+    // Esperar a que el estado se actualice completamente
+    await nextTick()
+    
+    // Redirigir según el rol del usuario
+    await redirectBasedOnRole()
   } catch (err) {
-    console.error('Error en handleLogin:', err)
+    console.error('[Login] Error en handleLogin:', err)
     errorMessage.value = 'Ocurrió un error. Por favor, intenta de nuevo.'
   } finally {
     isLoading.value = false
