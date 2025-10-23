@@ -81,10 +81,12 @@
   "exclude": [
     "../node_modules",
     "../node_modules/nuxt/node_modules",
+    "../node_modules/@nuxtjs/supabase/node_modules",
     "../node_modules/@nuxtjs/tailwindcss/node_modules",
     "../node_modules/@nuxtjs/mdc/node_modules",
     "../node_modules/@nuxt/content/node_modules",
     "../node_modules/@nuxtjs/google-fonts/node_modules",
+    "../node_modules/@vite-pwa/nuxt/node_modules",
     "../node_modules/@nuxt/devtools/node_modules",
     "../node_modules/@nuxt/telemetry/node_modules",
     "../dist",

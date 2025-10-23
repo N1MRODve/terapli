@@ -105,12 +105,16 @@ declare global {
   const updateAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']
   const useAnalytics: typeof import('../../composables/useAnalytics')['useAnalytics']
   const useAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']
+  const useApplePwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useApplePwaIcon']
+  const useAppleSplashScreenPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useAppleSplashScreenPwaIcon']
   const useAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']
   const useAttrs: typeof import('vue')['useAttrs']
+  const useCitas: typeof import('../../composables/useCitas')['useCitas']
   const useCookie: typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['useCookie']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useError: typeof import('../../node_modules/nuxt/dist/app/composables/error')['useError']
+  const useFaviconPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useFaviconPwaIcon']
   const useFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']
   const useHead: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHead']
   const useHeadSafe: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHeadSafe']
@@ -121,12 +125,19 @@ declare global {
   const useLazyFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useLazyFetch']
   const useLink: typeof import('vue-router')['useLink']
   const useLoadingIndicator: typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator')['useLoadingIndicator']
+  const useMaskablePwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useMaskablePwaIcon']
+  const useMensajeria: typeof import('../../composables/useMensajeria')['useMensajeria']
+  const useMensajes: typeof import('../../composables/useMensajes')['useMensajes']
   const useModel: typeof import('vue')['useModel']
+  const useNotificaciones: typeof import('../../composables/useNotificaciones')['useNotificaciones']
   const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']
   const useNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']
   const useNuxtDevTools: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']
+  const usePWA: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['usePWA']
+  const usePWAInstallPrompt: typeof import('../../composables/usePWAInstallPrompt')['usePWAInstallPrompt']
   const usePacientes: typeof import('../../composables/usePacientes')['usePacientes']
   const usePreviewMode: typeof import('../../node_modules/nuxt/dist/app/composables/preview')['usePreviewMode']
+  const useRecursos: typeof import('../../composables/useRecursos')['useRecursos']
   const useRequestEvent: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestEvent']
   const useRequestFetch: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestFetch']
   const useRequestHeader: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestHeader']
@@ -172,13 +183,20 @@ declare global {
   const useServerHead: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerHead']
   const useServerHeadSafe: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerHeadSafe']
   const useServerSeoMeta: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerSeoMeta']
+  const useSesiones: typeof import('../../composables/useSesiones')['useSesiones']
+  const useSesionesDemo: typeof import('../../composables/useSesionesDemo')['useSesionesDemo']
   const useShadowRoot: typeof import('vue')['useShadowRoot']
   const useSlots: typeof import('vue')['useSlots']
   const useState: typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']
   const useSupabase: typeof import('../../composables/useSupabase')['useSupabase']
-  const useSupabaseClient: typeof import('../../utils/supabase')['useSupabaseClient']
+  const useSupabaseClient: typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseClient')['useSupabaseClient']
+  const useSupabaseCookieRedirect: typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseCookieRedirect')['useSupabaseCookieRedirect']
+  const useSupabaseSession: typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseSession')['useSupabaseSession']
+  const useSupabaseUser: typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseUser')['useSupabaseUser']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
+  const useTerapeuta: typeof import('../../composables/useTerapeuta')['useTerapeuta']
   const useTransitionState: typeof import('vue')['useTransitionState']
+  const useTransparentPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useTransparentPwaIcon']
   const useUserName: typeof import('../../composables/useUserName')['useUserName']
   const useVisitorContext: typeof import('../../composables/useVisitorContext')['useVisitorContext']
   const watch: typeof import('vue')['watch']
@@ -197,6 +215,18 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { Mensaje, Conversacion } from '../../composables/useMensajes'
+  import('../../composables/useMensajes')
+  // @ts-ignore
+  export type { Notificacion } from '../../composables/useNotificaciones'
+  import('../../composables/useNotificaciones')
+  // @ts-ignore
+  export type { TipoRecurso, Recurso, RecursoPaciente, CrearRecursoInput, EditarRecursoInput, EnviarRecursoInput, FiltrosRecursos, EstadisticasRecursos } from '../../composables/useRecursos'
+  import('../../composables/useRecursos')
+  // @ts-ignore
+  export type { EstadoSesion, ModalidadSesion, Sesion, SesionDetallada, ResumenFinanciero } from '../../composables/useSesiones'
+  import('../../composables/useSesiones')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
@@ -306,12 +336,16 @@ declare module 'vue' {
     readonly updateAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']>
     readonly useAnalytics: UnwrapRef<typeof import('../../composables/useAnalytics')['useAnalytics']>
     readonly useAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']>
+    readonly useApplePwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useApplePwaIcon']>
+    readonly useAppleSplashScreenPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useAppleSplashScreenPwaIcon']>
     readonly useAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
+    readonly useCitas: UnwrapRef<typeof import('../../composables/useCitas')['useCitas']>
     readonly useCookie: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['useCookie']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['useError']>
+    readonly useFaviconPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useFaviconPwaIcon']>
     readonly useFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']>
     readonly useHead: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHead']>
     readonly useHeadSafe: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHeadSafe']>
@@ -322,12 +356,19 @@ declare module 'vue' {
     readonly useLazyFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useLazyFetch']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoadingIndicator: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator')['useLoadingIndicator']>
+    readonly useMaskablePwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useMaskablePwaIcon']>
+    readonly useMensajeria: UnwrapRef<typeof import('../../composables/useMensajeria')['useMensajeria']>
+    readonly useMensajes: UnwrapRef<typeof import('../../composables/useMensajes')['useMensajes']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly useNotificaciones: UnwrapRef<typeof import('../../composables/useNotificaciones')['useNotificaciones']>
     readonly useNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']>
     readonly useNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']>
     readonly useNuxtDevTools: UnwrapRef<typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']>
+    readonly usePWA: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['usePWA']>
+    readonly usePWAInstallPrompt: UnwrapRef<typeof import('../../composables/usePWAInstallPrompt')['usePWAInstallPrompt']>
     readonly usePacientes: UnwrapRef<typeof import('../../composables/usePacientes')['usePacientes']>
     readonly usePreviewMode: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/preview')['usePreviewMode']>
+    readonly useRecursos: UnwrapRef<typeof import('../../composables/useRecursos')['useRecursos']>
     readonly useRequestEvent: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestEvent']>
     readonly useRequestFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestFetch']>
     readonly useRequestHeader: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestHeader']>
@@ -373,13 +414,20 @@ declare module 'vue' {
     readonly useServerHead: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerHead']>
     readonly useServerHeadSafe: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerHeadSafe']>
     readonly useServerSeoMeta: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerSeoMeta']>
+    readonly useSesiones: UnwrapRef<typeof import('../../composables/useSesiones')['useSesiones']>
+    readonly useSesionesDemo: UnwrapRef<typeof import('../../composables/useSesionesDemo')['useSesionesDemo']>
     readonly useShadowRoot: UnwrapRef<typeof import('vue')['useShadowRoot']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']>
     readonly useSupabase: UnwrapRef<typeof import('../../composables/useSupabase')['useSupabase']>
-    readonly useSupabaseClient: UnwrapRef<typeof import('../../utils/supabase')['useSupabaseClient']>
+    readonly useSupabaseClient: UnwrapRef<typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseClient')['useSupabaseClient']>
+    readonly useSupabaseCookieRedirect: UnwrapRef<typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseCookieRedirect')['useSupabaseCookieRedirect']>
+    readonly useSupabaseSession: UnwrapRef<typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseSession')['useSupabaseSession']>
+    readonly useSupabaseUser: UnwrapRef<typeof import('../../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseUser')['useSupabaseUser']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useTerapeuta: UnwrapRef<typeof import('../../composables/useTerapeuta')['useTerapeuta']>
     readonly useTransitionState: UnwrapRef<typeof import('vue')['useTransitionState']>
+    readonly useTransparentPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useTransparentPwaIcon']>
     readonly useUserName: UnwrapRef<typeof import('../../composables/useUserName')['useUserName']>
     readonly useVisitorContext: UnwrapRef<typeof import('../../composables/useVisitorContext')['useVisitorContext']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>

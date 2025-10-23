@@ -10,8 +10,18 @@ import { RuntimeConfig as UserRuntimeConfig, PublicRuntimeConfig as UserPublicRu
       cdnURL: string,
    },
 
+   supabaseUrl: string,
+
+   supabaseKey: string,
+
    nitro: {
       envPrefix: string,
+   },
+
+   supabase: {
+      serviceKey: any,
+
+      secretKey: any,
    },
 
    content: {
@@ -37,9 +47,47 @@ import { RuntimeConfig as UserRuntimeConfig, PublicRuntimeConfig as UserPublicRu
   interface SharedPublicRuntimeConfig {
    supabaseUrl: string,
 
+   supabaseKey: string,
+
    supabaseAnonKey: string,
 
    googleAnalyticsId: string,
+
+   supabase: {
+      url: string,
+
+      key: string,
+
+      redirect: boolean,
+
+      redirectOptions: {
+         login: string,
+
+         callback: string,
+
+         exclude: Array<any>,
+
+         cookieRedirect: boolean,
+
+         saveRedirectToCookie: boolean,
+      },
+
+      cookieName: string,
+
+      cookiePrefix: string,
+
+      useSsrCookies: boolean,
+
+      cookieOptions: {
+         maxAge: number,
+
+         sameSite: string,
+
+         secure: boolean,
+      },
+
+      clientOptions: any,
+   },
 
    content: {
       wsUrl: string,

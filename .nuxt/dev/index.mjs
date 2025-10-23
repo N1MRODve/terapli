@@ -654,9 +654,31 @@ const _inlineRuntimeConfig = {
     }
   },
   "public": {
-    "supabaseUrl": "https://your-project-url.supabase.co",
-    "supabaseAnonKey": "your-anon-key-here",
+    "supabaseUrl": "https://pcbchuaezokqppwsbnty.supabase.co",
+    "supabaseKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjYmNodWFlem9rcXBwd3NibnR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NzQzODEsImV4cCI6MjA3NjI1MDM4MX0.CM-C7CMAUcMvC50U4cN4XgWoiUhazSCIX1x9syD0D3k",
+    "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjYmNodWFlem9rcXBwd3NibnR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NzQzODEsImV4cCI6MjA3NjI1MDM4MX0.CM-C7CMAUcMvC50U4cN4XgWoiUhazSCIX1x9syD0D3k",
     "googleAnalyticsId": "G-XXXXXXXXXX",
+    "supabase": {
+      "url": "https://pcbchuaezokqppwsbnty.supabase.co",
+      "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjYmNodWFlem9rcXBwd3NibnR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NzQzODEsImV4cCI6MjA3NjI1MDM4MX0.CM-C7CMAUcMvC50U4cN4XgWoiUhazSCIX1x9syD0D3k",
+      "redirect": false,
+      "redirectOptions": {
+        "login": "/login",
+        "callback": "/confirm",
+        "exclude": [],
+        "cookieRedirect": false,
+        "saveRedirectToCookie": false
+      },
+      "cookieName": "sb",
+      "cookiePrefix": "sb-pcbchuaezokqppwsbnty-auth-token",
+      "useSsrCookies": true,
+      "cookieOptions": {
+        "maxAge": 28800,
+        "sameSite": "lax",
+        "secure": true
+      },
+      "clientOptions": {}
+    },
     "content": {
       "wsUrl": "ws://localhost:4000/"
     },
@@ -676,6 +698,12 @@ const _inlineRuntimeConfig = {
         }
       }
     }
+  },
+  "supabaseUrl": "https://pcbchuaezokqppwsbnty.supabase.co",
+  "supabaseKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjYmNodWFlem9rcXBwd3NibnR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NzQzODEsImV4cCI6MjA3NjI1MDM4MX0.CM-C7CMAUcMvC50U4cN4XgWoiUhazSCIX1x9syD0D3k",
+  "supabase": {
+    "serviceKey": "",
+    "secretKey": ""
   },
   "content": {
     "databaseVersion": "v3.5.0",

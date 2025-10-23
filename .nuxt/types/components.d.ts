@@ -14,18 +14,58 @@ type HydrationStrategies = {
 type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }> & T
 
 interface _GlobalComponents {
+  'AlertaBono': typeof import("../../components/AlertaBono.vue")['default']
+  'BonosPaciente': typeof import("../../components/BonosPaciente.vue")['default']
   'CalmButton': typeof import("../../components/CalmButton.vue")['default']
+  'Card': typeof import("../../components/Card.vue")['default']
+  'CardRecurso': typeof import("../../components/CardRecurso.vue")['default']
   'ConocemeSection': typeof import("../../components/ConocemeSection.vue")['default']
   'CookieConsent': typeof import("../../components/CookieConsent.vue")['default']
   'EmotionalTransition': typeof import("../../components/EmotionalTransition.vue")['default']
+  'EmptyState': typeof import("../../components/EmptyState.vue")['default']
+  'EvolucionEmocional': typeof import("../../components/EvolucionEmocional.vue")['default']
   'Footer': typeof import("../../components/Footer.vue")['default']
   'GreetingModal': typeof import("../../components/GreetingModal.vue")['default']
   'Header': typeof import("../../components/Header.vue")['default']
+  'HistorialSesiones': typeof import("../../components/HistorialSesiones.vue")['default']
   'InactivityModal': typeof import("../../components/InactivityModal.vue")['default']
+  'InstallPWAButton': typeof import("../../components/InstallPWAButton.vue")['default']
+  'InstallPWAModal': typeof import("../../components/InstallPWAModal.vue")['default']
   'InversionSection': typeof import("../../components/InversionSection.vue")['default']
+  'LoadingSpinner': typeof import("../../components/LoadingSpinner.vue")['default']
+  'MensajeCard': typeof import("../../components/MensajeCard.vue")['default']
+  'MensajeInput': typeof import("../../components/MensajeInput.vue")['default']
+  'ModalCompartirRecurso': typeof import("../../components/ModalCompartirRecurso.vue")['default']
+  'ModalEnviarRecurso': typeof import("../../components/ModalEnviarRecurso.vue")['default']
+  'ModalNuevaCita': typeof import("../../components/ModalNuevaCita.vue")['default']
+  'ModalNuevoBloqueo': typeof import("../../components/ModalNuevoBloqueo.vue")['default']
+  'ModalNuevoPaciente': typeof import("../../components/ModalNuevoPaciente.vue")['default']
+  'ModalNuevoRecurso': typeof import("../../components/ModalNuevoRecurso.vue")['default']
+  'ModalRecurso': typeof import("../../components/ModalRecurso.vue")['default']
+  'NotasPrivadas': typeof import("../../components/NotasPrivadas.vue")['default']
+  'NotificacionesBell': typeof import("../../components/NotificacionesBell.vue")['default']
+  'PWAInstallWrapper': typeof import("../../components/PWAInstallWrapper.vue")['default']
+  'PacienteCard': typeof import("../../components/PacienteCard.vue")['default']
+  'PacienteEvolucion': typeof import("../../components/PacienteEvolucion.vue")['default']
+  'PanelEmocionalAvanzado': typeof import("../../components/PanelEmocionalAvanzado.vue")['default']
   'PersonalizedHero': typeof import("../../components/PersonalizedHero.vue")['default']
+  'ProgressBar': typeof import("../../components/ProgressBar.vue")['default']
+  'RecursoCard': typeof import("../../components/RecursoCard.vue")['default']
+  'ResumenCard': typeof import("../../components/ResumenCard.vue")['default']
+  'SesionCard': typeof import("../../components/SesionCard.vue")['default']
+  'TablaSesiones': typeof import("../../components/TablaSesiones.vue")['default']
   'TestimoniosSection': typeof import("../../components/TestimoniosSection.vue")['default']
+  'VisualizacionEmocional': typeof import("../../components/VisualizacionEmocional.vue")['default']
   'WelcomeModal': typeof import("../../components/WelcomeModal.vue")['default']
+  'CoordinacionDashboardCard': typeof import("../../components/coordinacion/DashboardCard.vue")['default']
+  'DashboardDailyQuote': typeof import("../../components/dashboard/DailyQuote.vue")['default']
+  'DashboardCard': typeof import("../../components/dashboard/DashboardCard.vue")['default']
+  'DashboardEmotionChart': typeof import("../../components/dashboard/EmotionChart.vue")['default']
+  'DashboardEmotionTracker': typeof import("../../components/dashboard/EmotionTracker.vue")['default']
+  'DashboardEmotionalInsight': typeof import("../../components/dashboard/EmotionalInsight.vue")['default']
+  'DashboardHeaderGreeting': typeof import("../../components/dashboard/HeaderGreeting.vue")['default']
+  'DashboardNextSessionCard': typeof import("../../components/dashboard/NextSessionCard.vue")['default']
+  'DashboardResourceGrid': typeof import("../../components/dashboard/ResourceGrid.vue")['default']
   'ProseA': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseA.vue")['default']
   'ProseBlockquote': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseBlockquote.vue")['default']
   'ProseCode': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseCode.vue")['default']
@@ -68,6 +108,14 @@ interface _GlobalComponents {
   'MDCCached': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/MDCCached.vue")['default']
   'MDCRenderer': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/MDCRenderer.vue")['default']
   'MDCSlot': typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/MDCSlot.vue")['default']
+  'VitePwaManifest': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/VitePwaManifest")['default']
+  'NuxtPwaManifest': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/VitePwaManifest")['default']
+  'NuxtPwaAssets': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/NuxtPwaAssets")['default']
+  'PwaAppleImage': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaAppleImage")['default']
+  'PwaAppleSplashScreenImage': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaAppleSplashScreenImage")['default']
+  'PwaFaviconImage': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaFaviconImage")['default']
+  'PwaMaskableImage': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaMaskableImage")['default']
+  'PwaTransparentImage': typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaTransparentImage")['default']
   'NuxtPage': typeof import("../../node_modules/nuxt/dist/pages/runtime/page")['default']
   'NoScript': typeof import("../../node_modules/nuxt/dist/head/runtime/components")['NoScript']
   'Link': typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Link']
@@ -79,18 +127,58 @@ interface _GlobalComponents {
   'Html': typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Html']
   'Body': typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Body']
   'NuxtIsland': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-island")['default']
+  'LazyAlertaBono': LazyComponent<typeof import("../../components/AlertaBono.vue")['default']>
+  'LazyBonosPaciente': LazyComponent<typeof import("../../components/BonosPaciente.vue")['default']>
   'LazyCalmButton': LazyComponent<typeof import("../../components/CalmButton.vue")['default']>
+  'LazyCard': LazyComponent<typeof import("../../components/Card.vue")['default']>
+  'LazyCardRecurso': LazyComponent<typeof import("../../components/CardRecurso.vue")['default']>
   'LazyConocemeSection': LazyComponent<typeof import("../../components/ConocemeSection.vue")['default']>
   'LazyCookieConsent': LazyComponent<typeof import("../../components/CookieConsent.vue")['default']>
   'LazyEmotionalTransition': LazyComponent<typeof import("../../components/EmotionalTransition.vue")['default']>
+  'LazyEmptyState': LazyComponent<typeof import("../../components/EmptyState.vue")['default']>
+  'LazyEvolucionEmocional': LazyComponent<typeof import("../../components/EvolucionEmocional.vue")['default']>
   'LazyFooter': LazyComponent<typeof import("../../components/Footer.vue")['default']>
   'LazyGreetingModal': LazyComponent<typeof import("../../components/GreetingModal.vue")['default']>
   'LazyHeader': LazyComponent<typeof import("../../components/Header.vue")['default']>
+  'LazyHistorialSesiones': LazyComponent<typeof import("../../components/HistorialSesiones.vue")['default']>
   'LazyInactivityModal': LazyComponent<typeof import("../../components/InactivityModal.vue")['default']>
+  'LazyInstallPWAButton': LazyComponent<typeof import("../../components/InstallPWAButton.vue")['default']>
+  'LazyInstallPWAModal': LazyComponent<typeof import("../../components/InstallPWAModal.vue")['default']>
   'LazyInversionSection': LazyComponent<typeof import("../../components/InversionSection.vue")['default']>
+  'LazyLoadingSpinner': LazyComponent<typeof import("../../components/LoadingSpinner.vue")['default']>
+  'LazyMensajeCard': LazyComponent<typeof import("../../components/MensajeCard.vue")['default']>
+  'LazyMensajeInput': LazyComponent<typeof import("../../components/MensajeInput.vue")['default']>
+  'LazyModalCompartirRecurso': LazyComponent<typeof import("../../components/ModalCompartirRecurso.vue")['default']>
+  'LazyModalEnviarRecurso': LazyComponent<typeof import("../../components/ModalEnviarRecurso.vue")['default']>
+  'LazyModalNuevaCita': LazyComponent<typeof import("../../components/ModalNuevaCita.vue")['default']>
+  'LazyModalNuevoBloqueo': LazyComponent<typeof import("../../components/ModalNuevoBloqueo.vue")['default']>
+  'LazyModalNuevoPaciente': LazyComponent<typeof import("../../components/ModalNuevoPaciente.vue")['default']>
+  'LazyModalNuevoRecurso': LazyComponent<typeof import("../../components/ModalNuevoRecurso.vue")['default']>
+  'LazyModalRecurso': LazyComponent<typeof import("../../components/ModalRecurso.vue")['default']>
+  'LazyNotasPrivadas': LazyComponent<typeof import("../../components/NotasPrivadas.vue")['default']>
+  'LazyNotificacionesBell': LazyComponent<typeof import("../../components/NotificacionesBell.vue")['default']>
+  'LazyPWAInstallWrapper': LazyComponent<typeof import("../../components/PWAInstallWrapper.vue")['default']>
+  'LazyPacienteCard': LazyComponent<typeof import("../../components/PacienteCard.vue")['default']>
+  'LazyPacienteEvolucion': LazyComponent<typeof import("../../components/PacienteEvolucion.vue")['default']>
+  'LazyPanelEmocionalAvanzado': LazyComponent<typeof import("../../components/PanelEmocionalAvanzado.vue")['default']>
   'LazyPersonalizedHero': LazyComponent<typeof import("../../components/PersonalizedHero.vue")['default']>
+  'LazyProgressBar': LazyComponent<typeof import("../../components/ProgressBar.vue")['default']>
+  'LazyRecursoCard': LazyComponent<typeof import("../../components/RecursoCard.vue")['default']>
+  'LazyResumenCard': LazyComponent<typeof import("../../components/ResumenCard.vue")['default']>
+  'LazySesionCard': LazyComponent<typeof import("../../components/SesionCard.vue")['default']>
+  'LazyTablaSesiones': LazyComponent<typeof import("../../components/TablaSesiones.vue")['default']>
   'LazyTestimoniosSection': LazyComponent<typeof import("../../components/TestimoniosSection.vue")['default']>
+  'LazyVisualizacionEmocional': LazyComponent<typeof import("../../components/VisualizacionEmocional.vue")['default']>
   'LazyWelcomeModal': LazyComponent<typeof import("../../components/WelcomeModal.vue")['default']>
+  'LazyCoordinacionDashboardCard': LazyComponent<typeof import("../../components/coordinacion/DashboardCard.vue")['default']>
+  'LazyDashboardDailyQuote': LazyComponent<typeof import("../../components/dashboard/DailyQuote.vue")['default']>
+  'LazyDashboardCard': LazyComponent<typeof import("../../components/dashboard/DashboardCard.vue")['default']>
+  'LazyDashboardEmotionChart': LazyComponent<typeof import("../../components/dashboard/EmotionChart.vue")['default']>
+  'LazyDashboardEmotionTracker': LazyComponent<typeof import("../../components/dashboard/EmotionTracker.vue")['default']>
+  'LazyDashboardEmotionalInsight': LazyComponent<typeof import("../../components/dashboard/EmotionalInsight.vue")['default']>
+  'LazyDashboardHeaderGreeting': LazyComponent<typeof import("../../components/dashboard/HeaderGreeting.vue")['default']>
+  'LazyDashboardNextSessionCard': LazyComponent<typeof import("../../components/dashboard/NextSessionCard.vue")['default']>
+  'LazyDashboardResourceGrid': LazyComponent<typeof import("../../components/dashboard/ResourceGrid.vue")['default']>
   'LazyProseA': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseA.vue")['default']>
   'LazyProseBlockquote': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseBlockquote.vue")['default']>
   'LazyProseCode': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/prose/ProseCode.vue")['default']>
@@ -133,6 +221,14 @@ interface _GlobalComponents {
   'LazyMDCCached': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/MDCCached.vue")['default']>
   'LazyMDCRenderer': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/MDCRenderer.vue")['default']>
   'LazyMDCSlot': LazyComponent<typeof import("../../node_modules/@nuxtjs/mdc/dist/runtime/components/MDCSlot.vue")['default']>
+  'LazyVitePwaManifest': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/VitePwaManifest")['default']>
+  'LazyNuxtPwaManifest': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/VitePwaManifest")['default']>
+  'LazyNuxtPwaAssets': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/NuxtPwaAssets")['default']>
+  'LazyPwaAppleImage': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaAppleImage")['default']>
+  'LazyPwaAppleSplashScreenImage': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaAppleSplashScreenImage")['default']>
+  'LazyPwaFaviconImage': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaFaviconImage")['default']>
+  'LazyPwaMaskableImage': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaMaskableImage")['default']>
+  'LazyPwaTransparentImage': LazyComponent<typeof import("../../node_modules/@vite-pwa/nuxt/dist/runtime/components/nuxt4/PwaTransparentImage")['default']>
   'LazyNuxtPage': LazyComponent<typeof import("../../node_modules/nuxt/dist/pages/runtime/page")['default']>
   'LazyNoScript': LazyComponent<typeof import("../../node_modules/nuxt/dist/head/runtime/components")['NoScript']>
   'LazyLink': LazyComponent<typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Link']>

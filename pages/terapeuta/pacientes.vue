@@ -1,22 +1,5 @@
 <template>
-  <div>
-    <!-- Banner de Modo Demo -->
-    <div v-if="MODO_DEMO" class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
-      <div class="flex items-start gap-3">
-        <span class="text-3xl">🎭</span>
-        <div class="flex-1">
-          <h3 class="font-serif text-lg font-semibold text-purple-900 mb-1">
-            Modo Demostración Activo
-          </h3>
-          <p class="text-sm text-purple-700 leading-relaxed">
-            Estás viendo <strong>7 pacientes de prueba</strong> con datos simulados. 
-            Para usar datos reales de Supabase, cambia <code class="px-2 py-0.5 bg-purple-100 rounded">MODO_DEMO = false</code> 
-            en el código de esta página.
-          </p>
-        </div>
-      </div>
-    </div>
-
+  <div class="section-padding">
     <!-- Header -->
     <div class="mb-8">
       <h1 class="text-4xl font-serif font-bold text-cafe mb-2">
@@ -144,11 +127,6 @@ const user = useSupabaseUser()
 // Estado del modal
 const mostrarModalNuevo = ref(false)
 
-// ============================================================================
-// 🎭 MODO DEMO - Cambiar a false para usar datos reales de Supabase
-// ============================================================================
-const MODO_DEMO = ref(true) // ← Cambiar a false cuando tengas datos reales
-
 // Estado
 const pacientes = ref([])
 const loading = ref(true)
@@ -163,147 +141,10 @@ const filtrosEstado = [
   { valor: 'finalizado', label: 'Finalizados', emoji: '🏁' }
 ]
 
-// Cargar pacientes
+// Cargar pacientes desde Supabase
 const cargarPacientes = async () => {
   loading.value = true
   try {
-    // ========================================================================
-    // 🎭 MODO DEMO: Datos mock para demostración
-    // ========================================================================
-    if (MODO_DEMO.value) {
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 800))
-      
-      pacientes.value = [
-        {
-          id: 'demo-1',
-          nombre: 'María',
-          apellidos: 'González Pérez',
-          email: 'maria.gonzalez@demo.com',
-          activo: true,
-          en_pausa: false,
-          area_de_acompanamiento: 'Ansiedad y autoestima',
-          frecuencia: 'semanal',
-          ultima_sesion: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 12,
-          estado_emocional_promedio: 4.2,
-          evolucion_porcentaje: 78,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'demo-2',
-          nombre: 'Carlos',
-          apellidos: 'Mendoza Silva',
-          email: 'carlos.mendoza@demo.com',
-          activo: true,
-          en_pausa: false,
-          area_de_acompanamiento: 'Gestión emocional',
-          frecuencia: 'quincenal',
-          ultima_sesion: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 8,
-          estado_emocional_promedio: 2.3,
-          evolucion_porcentaje: 45,
-          requiere_atencion: true,
-          created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'demo-3',
-          nombre: 'Ana',
-          apellidos: 'Rodríguez López',
-          email: 'ana.rodriguez@demo.com',
-          activo: true,
-          en_pausa: false,
-          area_de_acompanamiento: 'Desarrollo personal',
-          frecuencia: 'semanal',
-          ultima_sesion: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 4,
-          estado_emocional_promedio: 4.8,
-          evolucion_porcentaje: 82,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'demo-4',
-          nombre: 'Laura',
-          apellidos: 'Martínez García',
-          email: 'laura.martinez@demo.com',
-          activo: true,
-          en_pausa: false, // Cambiado a false para que muestre alerta de inactividad
-          area_de_acompanamiento: 'Estrés laboral',
-          frecuencia: 'mensual',
-          ultima_sesion: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: null,
-          total_sesiones: 15,
-          estado_emocional_promedio: 3.5,
-          evolucion_porcentaje: 65,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'demo-5',
-          nombre: 'Pedro',
-          apellidos: 'Sánchez Ruiz',
-          email: 'pedro.sanchez@demo.com',
-          activo: false,
-          en_pausa: false,
-          area_de_acompanamiento: 'Duelo',
-          frecuencia: 'semanal',
-          ultima_sesion: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: null,
-          total_sesiones: 20,
-          estado_emocional_promedio: 4.0,
-          evolucion_porcentaje: 85,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'demo-6',
-          nombre: 'Sofía',
-          apellidos: 'Torres Moreno',
-          email: 'sofia.torres@demo.com',
-          activo: true,
-          en_pausa: false,
-          area_de_acompanamiento: 'Relaciones interpersonales',
-          frecuencia: 'semanal',
-          ultima_sesion: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 6,
-          estado_emocional_promedio: 3.8,
-          evolucion_porcentaje: 70,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'demo-7',
-          nombre: 'Roberto',
-          apellidos: 'Flores Vega',
-          email: 'roberto.flores@demo.com',
-          activo: true,
-          en_pausa: false,
-          area_de_acompanamiento: 'Ansiedad',
-          frecuencia: 'quincenal',
-          ultima_sesion: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 días sin sesión
-          proxima_sesion: null,
-          total_sesiones: 10,
-          estado_emocional_promedio: 3.2,
-          evolucion_porcentaje: 55,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString()
-        }
-      ]
-      
-      loading.value = false
-      return
-    }
-    
-    // ========================================================================
-    // 📊 MODO PRODUCCIÓN: Datos reales de Supabase
-    // ========================================================================
-    
     // Obtener pacientes del terapeuta autenticado
     const { data: pacientesData, error: pacientesError } = await supabase
       .from('pacientes')
@@ -315,7 +156,7 @@ const cargarPacientes = async () => {
         frecuencia,
         metadata,
         profiles!inner(
-          nombre_completo,
+          nombre,
           email
         )
       `)
@@ -355,13 +196,29 @@ const cargarPacientes = async () => {
           .eq('paciente_id', paciente.id)
           .eq('estado', 'realizada')
 
+        // Obtener bono activo
+        const { data: bonoActivo } = await supabase
+          .from('bonos')
+          .select('id, total_sesiones, sesiones_restantes, created_at')
+          .eq('paciente_id', paciente.id)
+          .eq('estado', 'activo')
+          .single()
+
+        // Contar sesiones completadas desde la última renovación de bono
+        let sesionesCompletadasBono = 0
+        let totalSesionesBono = 0
+        if (bonoActivo) {
+          totalSesionesBono = bonoActivo.total_sesiones
+          sesionesCompletadasBono = totalSesionesBono - bonoActivo.sesiones_restantes
+        }
+
         // Obtener promedio emocional de últimos 7 días
         const hace7Dias = new Date()
         hace7Dias.setDate(hace7Dias.getDate() - 7)
         
         const { data: emocionesRecientes } = await supabase
-          .from('emociones_avanzadas')
-          .select('nivel_animo, nivel_energia, nivel_estres')
+          .from('metricas_bienestar')
+          .select('estado_animo, nivel_energia, nivel_estres')
           .eq('paciente_id', paciente.id)
           .gte('fecha', hace7Dias.toISOString())
 
@@ -370,27 +227,24 @@ const cargarPacientes = async () => {
         let evolucionPorcentaje = 50
 
         if (emocionesRecientes && emocionesRecientes.length > 0) {
-          const promedioAnimo = emocionesRecientes.reduce((sum, e) => sum + e.nivel_animo, 0) / emocionesRecientes.length
+          const promedioAnimo = emocionesRecientes.reduce((sum, e) => sum + e.estado_animo, 0) / emocionesRecientes.length
           estadoEmocionalPromedio = promedioAnimo
-          evolucionPorcentaje = Math.round((promedioAnimo / 5) * 100)
+          evolucionPorcentaje = Math.round((promedioAnimo / 10) * 100) // Estado de ánimo es 1-10
           
           // Detectar si requiere atención (3 o más registros bajos consecutivos)
           const ultimosTres = emocionesRecientes.slice(-3)
           if (ultimosTres.length >= 3) {
-            requiereAtencion = ultimosTres.every(e => e.nivel_animo <= 2)
+            requiereAtencion = ultimosTres.every(e => e.estado_animo <= 4) // Bajo es 4 o menos en escala 1-10
           }
         }
 
-        // Parsear nombre completo
-        const nombreCompleto = paciente.profiles.nombre_completo || ''
-        const partesNombre = nombreCompleto.split(' ')
-        const nombre = partesNombre[0] || ''
-        const apellidos = partesNombre.slice(1).join(' ') || ''
+        // Obtener datos del nombre
+        const nombre = paciente.profiles.nombre || ''
 
         return {
           id: paciente.id,
           nombre: nombre,
-          apellidos: apellidos,
+          apellidos: '', // No tenemos apellidos separados en la BD
           email: paciente.profiles.email,
           activo: paciente.activo,
           en_pausa: paciente.metadata?.en_pausa || false,
@@ -402,7 +256,12 @@ const cargarPacientes = async () => {
           estado_emocional_promedio: estadoEmocionalPromedio,
           evolucion_porcentaje: evolucionPorcentaje,
           requiere_atencion: requiereAtencion,
-          created_at: paciente.created_at
+          created_at: paciente.created_at,
+          bono_activo: bonoActivo ? {
+            sesiones_completadas: sesionesCompletadasBono,
+            total_sesiones: totalSesionesBono,
+            sesiones_restantes: bonoActivo.sesiones_restantes
+          } : null
         }
       })
     )

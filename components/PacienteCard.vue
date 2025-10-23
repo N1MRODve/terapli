@@ -71,6 +71,15 @@
         <span class="text-terracota">💬</span>
         <span>{{ totalSesiones }} sesiones completadas</span>
       </div>
+
+      <!-- Información del bono activo -->
+      <div v-if="bonoActivo" class="flex items-center gap-2 text-sm">
+        <span class="text-terracota">🎫</span>
+        <span class="font-medium text-cafe">
+          Bono: <span :class="bonoColorClass">{{ bonoActivo.sesiones_completadas }}/{{ bonoActivo.total_sesiones }}</span>
+          <span class="text-xs text-cafe/60 ml-1">({{ bonoActivo.sesiones_restantes }} pendientes)</span>
+        </span>
+      </div>
     </div>
 
     <!-- Indicador de evolución -->
@@ -90,6 +99,38 @@
 
     <!-- Alertas -->
     <div class="mt-4 space-y-2">
+      <!-- Alerta de bono por agotarse (1 sesión restante) -->
+      <div 
+        v-if="tieneAlertaBonoCritica"
+        class="flex items-start gap-2 p-3 bg-red-50 border border-red-300 rounded-lg animate-pulse-subtle"
+      >
+        <span class="text-red-600 text-sm">🎫</span>
+        <div class="flex-1">
+          <p class="text-xs font-semibold text-red-800 mb-0.5">
+            Bono casi agotado
+          </p>
+          <p class="text-xs text-red-700">
+            Solo queda {{ bonoActivo.sesiones_restantes }} sesión. Informar para renovación.
+          </p>
+        </div>
+      </div>
+
+      <!-- Alerta de bono con pocas sesiones (2 sesiones restantes) -->
+      <div 
+        v-else-if="tieneAlertaBonoAdvertencia"
+        class="flex items-start gap-2 p-3 bg-amber-50 border border-amber-300 rounded-lg"
+      >
+        <span class="text-amber-600 text-sm">🎫</span>
+        <div class="flex-1">
+          <p class="text-xs font-semibold text-amber-800 mb-0.5">
+            Bono próximo a agotar
+          </p>
+          <p class="text-xs text-amber-700">
+            Quedan {{ bonoActivo.sesiones_restantes }} sesiones. Considerar renovación.
+          </p>
+        </div>
+      </div>
+
       <!-- Alerta de inactividad (más de 45 días sin sesión) -->
       <div 
         v-if="tieneAlertaInactividad"
@@ -277,6 +318,37 @@ const tieneAlertaInactividad = computed(() => {
 // Alerta emocional (tendencia negativa)
 const tieneAlertaEmocional = computed(() => {
   return props.paciente.requiere_atencion || false
+})
+
+// ============================================================================
+// INFORMACIÓN DE BONO
+// ============================================================================
+
+// Bono activo (si existe)
+const bonoActivo = computed(() => {
+  return props.paciente.bono_activo || null
+})
+
+// Color del texto del bono según sesiones restantes
+const bonoColorClass = computed(() => {
+  if (!bonoActivo.value) return 'text-terracota'
+  
+  const restantes = bonoActivo.value.sesiones_restantes
+  if (restantes <= 1) return 'text-red-600 font-semibold'
+  if (restantes <= 2) return 'text-orange-600 font-semibold'
+  return 'text-terracota font-semibold'
+})
+
+// Alerta crítica de bono (1 sesión restante)
+const tieneAlertaBonoCritica = computed(() => {
+  if (!bonoActivo.value) return false
+  return bonoActivo.value.sesiones_restantes === 1
+})
+
+// Alerta de advertencia de bono (2 sesiones restantes)
+const tieneAlertaBonoAdvertencia = computed(() => {
+  if (!bonoActivo.value) return false
+  return bonoActivo.value.sesiones_restantes === 2
 })
 </script>
 

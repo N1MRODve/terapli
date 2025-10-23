@@ -255,7 +255,7 @@ const props = defineProps({
 
 const emit = defineEmits(['cerrar', 'paciente-creado'])
 
-const supabase = useSupabase()
+const { supabase } = useSupabase()
 const user = useSupabaseUser()
 
 const formulario = ref({
@@ -310,182 +310,96 @@ const guardarPaciente = async () => {
     guardando.value = true
     error.value = ''
 
-    // 1. Crear usuario en auth.users con email temporal
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+    // 1. Crear usuario en auth.users - Generar contraseña temporal
+    console.log('Creando nuevo paciente...')
+    const tempPassword = generateTemporaryPassword()
+    
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: formulario.value.email,
-      email_confirm: true,
-      user_metadata: {
-        nombre: formulario.value.nombre,
-        apellido_paterno: formulario.value.apellido_paterno,
-        apellido_materno: formulario.value.apellido_materno
+      password: tempPassword,
+      options: {
+        data: {
+          nombre: formulario.value.nombre,
+          apellido_paterno: formulario.value.apellido_paterno,
+          apellido_materno: formulario.value.apellido_materno,
+          telefono: formulario.value.telefono,
+          fecha_nacimiento: formulario.value.fecha_nacimiento
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     })
 
-    if (authError) {
-      // Si el método admin no está disponible, usar signUp
-      console.log('Usando método alternativo de registro...')
-      
-      // Generar contraseña temporal segura
-      const tempPassword = generateTemporaryPassword()
-      
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: formulario.value.email,
-        password: tempPassword,
-        options: {
-          data: {
-            nombre: formulario.value.nombre,
-            apellido_paterno: formulario.value.apellido_paterno,
-            apellido_materno: formulario.value.apellido_materno,
-            telefono: formulario.value.telefono,
-            fecha_nacimiento: formulario.value.fecha_nacimiento
-          }
+    if (authError) throw authError
+    
+    if (!authData.user) {
+      throw new Error('No se pudo crear el usuario')
+    }
+
+    // Usar el ID del usuario creado
+    const userId = authData.user.id
+
+    // 2. Actualizar perfil en profiles (el trigger ya lo creó con email)
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        nombre: `${formulario.value.nombre} ${formulario.value.apellido_paterno} ${formulario.value.apellido_materno || ''}`.trim(),
+        telefono: formulario.value.telefono,
+        rol: 'paciente'
+      })
+      .eq('id', userId)
+
+    if (profileError) throw profileError
+
+    // 3. Crear registro en pacientes
+    const { data: pacienteData, error: pacienteError } = await supabase
+      .from('pacientes')
+      .insert({
+        id: userId,
+        psicologa_id: user.value?.id,
+        area_de_acompanamiento: formulario.value.area_acompanamiento,
+        frecuencia: formulario.value.frecuencia,
+        activo: formulario.value.activo,
+        metadata: {
+          notas_iniciales: formulario.value.notas_iniciales,
+          fecha_registro: new Date().toISOString(),
+          primera_sesion: formulario.value.primera_sesion
         }
       })
+      .select()
+      .single()
 
-      if (signUpError) throw signUpError
-      
-      if (!signUpData.user) {
-        throw new Error('No se pudo crear el usuario')
-      }
+    if (pacienteError) throw pacienteError
 
-      // Usar el ID del usuario creado
-      const userId = signUpData.user.id
-
-      // 2. Crear perfil en profiles
-      const { error: profileError } = await supabase
-        .from('profiles')
+    // 4. Crear registro de primera sesión programada
+    if (formulario.value.primera_sesion) {
+      await supabase
+        .from('sesiones')
         .insert({
-          id: userId,
-          nombre: formulario.value.nombre,
-          apellido_paterno: formulario.value.apellido_paterno,
-          apellido_materno: formulario.value.apellido_materno,
-          email: formulario.value.email,
-          telefono: formulario.value.telefono,
-          fecha_nacimiento: formulario.value.fecha_nacimiento,
-          rol: 'paciente'
-        })
-
-      if (profileError) throw profileError
-
-      // 3. Crear registro en pacientes
-      const { data: pacienteData, error: pacienteError } = await supabase
-        .from('pacientes')
-        .insert({
-          id: userId,
+          paciente_id: userId,
           psicologa_id: user.value?.id,
-          area_de_acompanamiento: formulario.value.area_acompanamiento,
-          frecuencia: formulario.value.frecuencia,
-          activo: formulario.value.activo,
-          metadata: {
-            notas_iniciales: formulario.value.notas_iniciales,
-            fecha_registro: new Date().toISOString(),
-            primera_sesion: formulario.value.primera_sesion
-          }
+          fecha: formulario.value.primera_sesion,
+          estado: 'pendiente',
+          notas: 'Primera sesión programada'
         })
-        .select()
-        .single()
-
-      if (pacienteError) throw pacienteError
-
-      // 4. Crear registro de primera sesión programada
-      if (formulario.value.primera_sesion) {
-        await supabase
-          .from('sesiones')
-          .insert({
-            paciente_id: userId,
-            fecha: formulario.value.primera_sesion,
-            estado: 'pendiente',
-            notas: 'Primera sesión programada'
-          })
-      }
-
-      // 5. Si hay notas iniciales, crear registro en notas_terapeuticas
-      if (formulario.value.notas_iniciales) {
-        await supabase
-          .from('notas_terapeuticas')
-          .insert({
-            paciente_id: userId,
-            contenido: formulario.value.notas_iniciales,
-            tipo: 'inicial'
-          })
-      }
-
-      // Emitir evento de éxito
-      emit('paciente-creado', pacienteData)
-      emit('cerrar')
-      
-      // Resetear formulario
-      resetearFormulario()
-    } else {
-      // Flujo original con admin
-      const userId = authData.user.id
-
-      // 2. Crear perfil en profiles
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          nombre: formulario.value.nombre,
-          apellido_paterno: formulario.value.apellido_paterno,
-          apellido_materno: formulario.value.apellido_materno,
-          email: formulario.value.email,
-          telefono: formulario.value.telefono,
-          fecha_nacimiento: formulario.value.fecha_nacimiento,
-          rol: 'paciente'
-        })
-
-      if (profileError) throw profileError
-
-      // 3. Crear registro en pacientes
-      const { data: pacienteData, error: pacienteError } = await supabase
-        .from('pacientes')
-        .insert({
-          id: userId,
-          psicologa_id: user.value?.id,
-          area_de_acompanamiento: formulario.value.area_acompanamiento,
-          frecuencia: formulario.value.frecuencia,
-          activo: formulario.value.activo,
-          metadata: {
-            notas_iniciales: formulario.value.notas_iniciales,
-            fecha_registro: new Date().toISOString(),
-            primera_sesion: formulario.value.primera_sesion
-          }
-        })
-        .select()
-        .single()
-
-      if (pacienteError) throw pacienteError
-
-      // 4. Crear registro de primera sesión programada
-      if (formulario.value.primera_sesion) {
-        await supabase
-          .from('sesiones')
-          .insert({
-            paciente_id: userId,
-            fecha: formulario.value.primera_sesion,
-            estado: 'pendiente',
-            notas: 'Primera sesión programada'
-          })
-      }
-
-      // 5. Si hay notas iniciales, crear registro en notas_terapeuticas
-      if (formulario.value.notas_iniciales) {
-        await supabase
-          .from('notas_terapeuticas')
-          .insert({
-            paciente_id: userId,
-            contenido: formulario.value.notas_iniciales,
-            tipo: 'inicial'
-          })
-      }
-
-      // Emitir evento de éxito
-      emit('paciente-creado', pacienteData)
-      emit('cerrar')
-      
-      // Resetear formulario
-      resetearFormulario()
     }
+
+    // 5. Si hay notas iniciales, crear registro en notas_terapeuticas
+    if (formulario.value.notas_iniciales) {
+      await supabase
+        .from('notas_terapeuticas')
+        .insert({
+          paciente_id: userId,
+          psicologa_id: user.value?.id,
+          contenido: formulario.value.notas_iniciales
+        })
+    }
+
+    // Emitir evento de éxito
+    emit('paciente-creado', pacienteData)
+    emit('cerrar')
+    
+    // Resetear formulario
+    resetearFormulario()
 
   } catch (err) {
     console.error('Error al crear paciente:', err)
