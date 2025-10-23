@@ -1,3 +1,8 @@
+/**
+ * Middleware básico de autenticación
+ * Solo verifica que el usuario esté autenticado
+ * La redirección basada en roles la maneja auth-role.ts
+ */
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // Solo ejecutar en el cliente
   if (process.server) return
@@ -13,4 +18,5 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return navigateTo('/login')
   }
 })
+
 

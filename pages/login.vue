@@ -3,9 +3,12 @@
     <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
       <!-- Logo o Título -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-['Lora'] font-medium text-[#5D4A44]">Mi espacio de bienestar</h1>
+        <h1 class="text-3xl font-['Lora'] font-medium text-[#5D4A44]">Bienvenida</h1>
         <p class="font-['Lato'] text-[#5D4A44] opacity-70 mt-2">
-          Inicia sesión para acceder a tu espacio personal
+          Inicia sesión para acceder a tu espacio
+        </p>
+        <p class="font-['Lato'] text-sm text-[#D8AFA0] mt-3">
+          Sistema de gestión para psicólogas y espacio de bienestar para pacientes
         </p>
       </div>
 
@@ -130,12 +133,14 @@ definePageMeta({
   layout: false
 })
 
-const { signInWithEmail, resetPassword, isAuthenticated } = useSupabase()
+const { signInWithEmail, resetPassword, isAuthenticated, getUserRole, loadUserProfile } = useSupabase()
 
-// Si ya está autenticado, redirigir
-if (isAuthenticated.value) {
-  navigateTo('/paciente')
-}
+// Si ya está autenticado, redirigir según rol
+onMounted(async () => {
+  if (isAuthenticated.value) {
+    await redirectBasedOnRole()
+  }
+})
 
 const email = ref('')
 const password = ref('')
@@ -145,6 +150,33 @@ const isResetting = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 const showResetPassword = ref(false)
+
+// Función para redirigir según el rol del usuario
+const redirectBasedOnRole = async () => {
+  try {
+    await loadUserProfile()
+    const userRole = await getUserRole()
+    
+    if (!userRole) {
+      console.error('No se pudo obtener el rol del usuario')
+      return
+    }
+
+    // Mapeo de roles a rutas
+    const roleRoutes: Record<string, string> = {
+      psicologa: '/terapeuta/dashboard',
+      coordinadora: '/coordinacion/dashboard',
+      paciente: '/paciente/dashboard'
+    }
+
+    const redirectTo = roleRoutes[userRole] || '/paciente/dashboard'
+    
+    console.log(`Redirigiendo usuario con rol '${userRole}' a ${redirectTo}`)
+    await navigateTo(redirectTo, { replace: true })
+  } catch (error) {
+    console.error('Error al redirigir:', error)
+  }
+}
 
 const handleLogin = async () => {
   errorMessage.value = ''
@@ -162,8 +194,8 @@ const handleLogin = async () => {
       // Esperar a que el estado de autenticación se actualice
       await nextTick()
       
-      // Redirigir directamente al dashboard
-      await navigateTo('/paciente/dashboard', { replace: true })
+      // Redirigir según el rol del usuario
+      await redirectBasedOnRole()
     }
   } catch (err) {
     console.error('Error en handleLogin:', err)

@@ -6,9 +6,52 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+export type UserRole = 'paciente' | 'psicologa' | 'coordinadora'
+
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          id: string
+          email: string | null
+          nombre: string | null
+          telefono: string | null
+          rol: UserRole
+          created_at: string
+          updated_at: string
+          avatar_url: string | null
+        }
+        Insert: {
+          id: string
+          email?: string | null
+          nombre?: string | null
+          telefono?: string | null
+          rol?: UserRole
+          created_at?: string
+          updated_at?: string
+          avatar_url?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string | null
+          nombre?: string | null
+          telefono?: string | null
+          rol?: UserRole
+          created_at?: string
+          updated_at?: string
+          avatar_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       pacientes: {
         Row: {
           id: string
@@ -237,7 +280,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: UserRole
     }
     CompositeTypes: {
       [_ in never]: never

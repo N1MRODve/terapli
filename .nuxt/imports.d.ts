@@ -37,9 +37,10 @@ export { useNotificaciones, Notificacion } from '../composables/useNotificacione
 export { usePWAInstallPrompt } from '../composables/usePWAInstallPrompt';
 export { usePacientes } from '../composables/usePacientes';
 export { useRecursos, TipoRecurso, Recurso, RecursoPaciente, CrearRecursoInput, EditarRecursoInput, EnviarRecursoInput, FiltrosRecursos, EstadisticasRecursos } from '../composables/useRecursos';
+export { useRoles } from '../composables/useRoles';
 export { useSesiones, EstadoSesion, ModalidadSesion, Sesion, SesionDetallada, ResumenFinanciero } from '../composables/useSesiones';
 export { useSesionesDemo } from '../composables/useSesionesDemo';
-export { useSupabase } from '../composables/useSupabase';
+export { useSupabase, UserProfile, UserRole } from '../composables/useSupabase';
 export { useTerapeuta } from '../composables/useTerapeuta';
 export { useVisitorContext } from '../composables/useVisitorContext';
 export { capitalizeName } from '../utils/formatName';
