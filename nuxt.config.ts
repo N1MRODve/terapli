@@ -2,13 +2,25 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/content', '@nuxtjs/google-fonts'],
+  modules: ['@nuxtjs/supabase', '@nuxtjs/tailwindcss', '@nuxt/content', '@nuxtjs/google-fonts', '@vite-pwa/nuxt'],
 
-  css: ['assets/css/main.css'],
+  css: ['~/assets/css/main.css'],
+
+  supabase: {
+    redirect: false,
+    url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    key: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
+  },
 
   runtimeConfig: {
+    // Variables privadas para SSR
+    supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
+    
+    // Variables públicas accesibles en cliente
     public: {
       supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
+      supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
       supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
       googleAnalyticsId: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID
     }
@@ -19,11 +31,106 @@ export default defineNuxtConfig({
       'Lora': [400, 500, 600, 700],
       'Lato': [300, 400, 500, 600, 700]
     },
-    display: 'swap'
+    display: 'swap',
+    prefetch: true,
+    preconnect: true,
+    preload: true
+  },
+
+  tailwindcss: {
+    exposeConfig: true,
+    viewer: false
   },
 
   content: {
     // highlight configuration is not supported, removing it
+  },
+
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Psicóloga Karem',
+      short_name: 'Karem',
+      description: 'Tu espacio terapéutico digital 🌿',
+      theme_color: '#D8AFA0',
+      background_color: '#F9F7F3',
+      display: 'standalone',
+      start_url: '/paciente/dashboard',
+      orientation: 'portrait',
+      lang: 'es',
+      scope: '/',
+      icons: [
+        {
+          src: '/icons/icon-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'any'
+        },
+        {
+          src: '/icons/icon-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any'
+        },
+        {
+          src: '/icons/maskable_icon.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable'
+        }
+      ]
+    },
+    workbox: {
+      cleanupOutdatedCaches: true,
+      clientsClaim: true,
+      skipWaiting: true,
+      navigateFallback: '/',
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts-cache',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 365 // 1 año
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
+            }
+          }
+        },
+        {
+          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'gstatic-fonts-cache',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 365 // 1 año
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
+            }
+          }
+        },
+        {
+          urlPattern: /\.(png|jpg|jpeg|svg|gif|webp)$/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'image-cache',
+            expiration: {
+              maxEntries: 60,
+              maxAgeSeconds: 60 * 60 * 24 * 30 // 30 días
+            }
+          }
+        }
+      ]
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module'
+    }
   },
 
   app: {

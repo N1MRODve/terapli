@@ -1,27 +1,27 @@
-import type { Database } from '~/types/database.types'
-import type { SupabaseClient, User, Session } from '@supabase/supabase-js'
+import type { User, Session } from '@supabase/supabase-js'
 
 export const useSupabase = () => {
-  const { $supabase } = useNuxtApp()
-  const supabase = $supabase as SupabaseClient<Database>
+  const supabase = useSupabaseClient()
+  const user = useSupabaseUser()
 
-  // Estado reactivo para el usuario y la sesión
-  const user = useState<User | null>('supabase-user', () => null)
+  // Estado reactivo para la sesión
   const session = useState<Session | null>('supabase-session', () => null)
 
   // Inicializar la sesión
   const initSession = async () => {
-    const { data } = await supabase.auth.getSession()
-    session.value = data.session
-    user.value = data.session?.user ?? null
+    if (process.client) {
+      const { data } = await supabase.auth.getSession()
+      session.value = data.session
+    }
   }
 
   // Escuchar cambios en la autenticación
   const setupAuthListener = () => {
-    supabase.auth.onAuthStateChange((_event, newSession) => {
-      session.value = newSession
-      user.value = newSession?.user ?? null
-    })
+    if (process.client) {
+      supabase.auth.onAuthStateChange((_event, newSession) => {
+        session.value = newSession
+      })
+    }
   }
 
   // Métodos de autenticación
@@ -30,6 +30,11 @@ export const useSupabase = () => {
       email,
       password
     })
+    
+    if (!error && data.session) {
+      session.value = data.session
+    }
+    
     return { data, error }
   }
 
@@ -47,7 +52,6 @@ export const useSupabase = () => {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (!error) {
-      user.value = null
       session.value = null
     }
     return { error }

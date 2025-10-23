@@ -1,0 +1,316 @@
+<template>
+  <div>
+    <PacienteLoadingSpinner v-if="loading" text="Cargando información de tu bono..." full-height />
+
+    <div v-else class="max-w-4xl mx-auto space-y-6">
+      <!-- Header -->
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-['Lora'] font-medium text-[#5D4A44]">
+          Mi Bono
+        </h1>
+        <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato'] mt-1">
+          Gestiona y consulta tu bono de sesiones
+        </p>
+      </div>
+
+      <!-- Contenido -->
+      <div v-if="bonos.length > 0" class="space-y-6">
+        <!-- Bono activo principal -->
+        <PacienteCard v-if="bonoActivo">
+          <div class="space-y-6">
+            <!-- Header del bono -->
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center space-x-3 mb-2">
+                  <h2 class="text-xl font-['Lora'] font-medium text-[#5D4A44]">
+                    Bono de {{ bonoActivo.total_sesiones }} Sesiones
+                  </h2>
+                  <span
+                    class="px-3 py-1 rounded-full text-xs font-['Lato'] font-medium"
+                    :class="estadoBonoClass(bonoActivo.estado)"
+                  >
+                    {{ estadoBonoTexto(bonoActivo.estado) }}
+                  </span>
+                </div>
+                <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato']">
+                  Contratado el {{ formatearFecha(bonoActivo.created_at) }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Progreso principal -->
+            <div class="bg-[#F9F7F3] rounded-lg p-6">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <!-- Sesiones disponibles -->
+                <div class="text-center">
+                  <p class="text-4xl font-['Lora'] font-bold text-[#D8AFA0]">
+                    {{ bonoActivo.sesiones_restantes }}
+                  </p>
+                  <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato'] mt-1">
+                    Sesiones disponibles
+                  </p>
+                </div>
+
+                <!-- Sesiones usadas -->
+                <div class="text-center">
+                  <p class="text-4xl font-['Lora'] font-bold text-[#5D4A44]">
+                    {{ sesionesUsadas }}
+                  </p>
+                  <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato'] mt-1">
+                    Sesiones utilizadas
+                  </p>
+                </div>
+
+                <!-- Total -->
+                <div class="text-center">
+                  <p class="text-4xl font-['Lora'] font-bold text-[#5D4A44]">
+                    {{ bonoActivo.total_sesiones }}
+                  </p>
+                  <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato'] mt-1">
+                    Total de sesiones
+                  </p>
+                </div>
+              </div>
+
+              <!-- Barra de progreso -->
+              <PacienteProgressBar
+                :current="sesionesUsadas"
+                :total="bonoActivo.total_sesiones"
+                label="Progreso del bono"
+                show-percentage
+                color="terracota"
+                animated
+              />
+            </div>
+
+            <!-- Detalles adicionales -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Precio -->
+              <div v-if="bonoActivo.precio_total" class="flex items-start space-x-3 p-4 bg-[#F9F7F3] rounded-lg">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm font-['Lato'] text-[#5D4A44] opacity-70">
+                    Precio del bono
+                  </p>
+                  <p class="text-lg font-['Lora'] font-medium text-[#5D4A44]">
+                    {{ formatearPrecio(bonoActivo.precio_total) }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Precio por sesión -->
+              <div v-if="bonoActivo.precio_total" class="flex items-start space-x-3 p-4 bg-[#F9F7F3] rounded-lg">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm font-['Lato'] text-[#5D4A44] opacity-70">
+                    Precio por sesión
+                  </p>
+                  <p class="text-lg font-['Lora'] font-medium text-[#5D4A44]">
+                    {{ formatearPrecio(bonoActivo.precio_total / bonoActivo.total_sesiones) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Alerta si quedan pocas sesiones -->
+            <div
+              v-if="bonoActivo.sesiones_restantes <= 2 && bonoActivo.sesiones_restantes > 0"
+              class="flex items-start space-x-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
+            >
+              <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p class="text-sm font-['Lato'] font-medium text-yellow-800">
+                  Quedan pocas sesiones
+                </p>
+                <p class="text-xs font-['Lato'] text-yellow-700 mt-1">
+                  Te quedan {{ bonoActivo.sesiones_restantes }} sesión(es). Considera renovar tu bono pronto.
+                </p>
+              </div>
+            </div>
+
+            <!-- Alerta si está agotado -->
+            <div
+              v-if="bonoActivo.sesiones_restantes === 0"
+              class="flex items-start space-x-3 p-4 bg-red-50 border border-red-200 rounded-lg"
+            >
+              <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p class="text-sm font-['Lato'] font-medium text-red-800">
+                  Bono agotado
+                </p>
+                <p class="text-xs font-['Lato'] text-red-700 mt-1">
+                  Has utilizado todas las sesiones de este bono. Contacta para adquirir un nuevo bono.
+                </p>
+              </div>
+            </div>
+          </div>
+        </PacienteCard>
+
+        <!-- Historial de bonos -->
+        <div v-if="bonosAnteriores.length > 0">
+          <h3 class="text-lg font-['Lora'] font-medium text-[#5D4A44] mb-4">
+            Bonos Anteriores
+          </h3>
+          <div class="space-y-3">
+            <PacienteCard
+              v-for="bono in bonosAnteriores"
+              :key="bono.id"
+              padding="compact"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <p class="text-sm font-['Lato'] font-medium text-[#5D4A44]">
+                      Bono de {{ bono.total_sesiones }} sesiones
+                    </p>
+                    <span
+                      class="px-2 py-0.5 rounded-full text-xs font-['Lato']"
+                      :class="estadoBonoClass(bono.estado)"
+                    >
+                      {{ estadoBonoTexto(bono.estado) }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-[#5D4A44] opacity-60 font-['Lato']">
+                    {{ formatearFecha(bono.created_at) }}
+                  </p>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-['Lato'] text-[#5D4A44] opacity-70">
+                    {{ bono.total_sesiones - bono.sesiones_restantes }}/{{ bono.total_sesiones }} utilizadas
+                  </p>
+                </div>
+              </div>
+            </PacienteCard>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado vacío -->
+      <PacienteEmptyState
+        v-else
+        title="No tienes bonos registrados"
+        description="Actualmente no tienes ningún bono de sesiones. Contacta con tu psicóloga para adquirir uno y comenzar tu proceso terapéutico."
+      >
+        <template #icon>
+          <svg class="w-16 h-16 text-[#D8AFA0] opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+          </svg>
+        </template>
+        <template #action>
+          <NuxtLink
+            to="/contacto"
+            class="inline-flex items-center space-x-2 px-6 py-3 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#c99d8d] transition-colors font-['Lato'] text-sm"
+          >
+            <span>Contactar</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </NuxtLink>
+        </template>
+      </PacienteEmptyState>
+    </div>
+  </div>
+</template>
+
+<script setup>
+definePageMeta({
+  layout: 'paciente',
+  middleware: 'auth'
+})
+
+const { getBonos } = usePacientes()
+
+// Estados
+const loading = ref(true)
+const bonos = ref([])
+
+// Bono activo (el más reciente con sesiones disponibles)
+const bonoActivo = computed(() => {
+  return bonos.value.find(b => 
+    b.estado === 'activo' && b.sesiones_restantes > 0
+  ) || bonos.value.find(b => b.estado === 'activo')
+})
+
+// Bonos anteriores (cerrados o agotados)
+const bonosAnteriores = computed(() => {
+  return bonos.value.filter(b => 
+    b.id !== bonoActivo.value?.id
+  )
+})
+
+// Sesiones usadas del bono activo
+const sesionesUsadas = computed(() => {
+  if (!bonoActivo.value) return 0
+  return bonoActivo.value.total_sesiones - bonoActivo.value.sesiones_restantes
+})
+
+// Funciones de formato
+const formatearFecha = (fecha) => {
+  return new Date(fecha).toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
+}
+
+const formatearPrecio = (precio) => {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(precio)
+}
+
+const estadoBonoClass = (estado) => {
+  const classes = {
+    activo: 'bg-green-100 text-green-800',
+    pausado: 'bg-yellow-100 text-yellow-800',
+    agotado: 'bg-red-100 text-red-800',
+    cerrado: 'bg-gray-100 text-gray-800'
+  }
+  return classes[estado] || classes.activo
+}
+
+const estadoBonoTexto = (estado) => {
+  const textos = {
+    activo: 'Activo',
+    pausado: 'Pausado',
+    agotado: 'Agotado',
+    cerrado: 'Cerrado'
+  }
+  return textos[estado] || 'Activo'
+}
+
+// Cargar bonos
+const cargarBonos = async () => {
+  loading.value = true
+
+  try {
+    const { data, error } = await getBonos()
+    
+    if (!error && data) {
+      bonos.value = data
+    }
+  } catch (error) {
+    console.error('Error cargando bonos:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Cargar al montar
+onMounted(() => {
+  cargarBonos()
+})
+</script>

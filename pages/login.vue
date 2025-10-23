@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-sage-50">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-gentle p-8">
+  <div class="min-h-screen flex items-center justify-center bg-[#F9F7F3]">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
       <!-- Logo o Título -->
       <div class="text-center mb-8">
-        <h1 class="section-title text-sage-800">Área de Pacientes</h1>
-        <p class="body-text text-sage-600 mt-2">
+        <h1 class="text-3xl font-['Lora'] font-medium text-[#5D4A44]">Mi espacio de bienestar</h1>
+        <p class="font-['Lato'] text-[#5D4A44] opacity-70 mt-2">
           Inicia sesión para acceder a tu espacio personal
         </p>
       </div>
@@ -13,7 +13,7 @@
       <form @submit.prevent="handleLogin" class="space-y-6">
         <!-- Email -->
         <div>
-          <label for="email" class="label-text text-sage-700 mb-2">
+          <label for="email" class="block font-['Lato'] text-sm font-medium text-[#5D4A44] mb-2">
             Correo electrónico
           </label>
           <input
@@ -21,14 +21,14 @@
             v-model="email"
             type="email"
             required
-            class="w-full px-4 py-3 border border-sage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 transition-all"
+            class="w-full px-4 py-3 border border-[#EAD5D3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] transition-all font-['Lato']"
             placeholder="tu@email.com"
           />
         </div>
 
         <!-- Contraseña -->
         <div>
-          <label for="password" class="label-text text-sage-700 mb-2">
+          <label for="password" class="block font-['Lato'] text-sm font-medium text-[#5D4A44] mb-2">
             Contraseña
           </label>
           <input
@@ -36,7 +36,7 @@
             v-model="password"
             type="password"
             required
-            class="w-full px-4 py-3 border border-sage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 transition-all"
+            class="w-full px-4 py-3 border border-[#EAD5D3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] transition-all font-['Lato']"
             placeholder="••••••••"
           />
         </div>
@@ -44,7 +44,7 @@
         <!-- Error Message -->
         <div
           v-if="errorMessage"
-          class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg microcopy"
+          class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm font-['Lato']"
         >
           {{ errorMessage }}
         </div>
@@ -52,7 +52,7 @@
         <!-- Success Message -->
         <div
           v-if="successMessage"
-          class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg microcopy"
+          class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm font-['Lato']"
         >
           {{ successMessage }}
         </div>
@@ -61,7 +61,7 @@
         <button
           type="submit"
           :disabled="isLoading"
-          class="w-full bg-sage-600 hover:bg-sage-700 text-white py-3 rounded-lg transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full bg-[#D8AFA0] hover:bg-[#c99d8d] text-white py-3 rounded-lg transition-all duration-300 font-['Lato'] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
         </button>
@@ -71,13 +71,13 @@
       <div class="mt-6 text-center space-y-2">
         <button
           @click="showResetPassword = true"
-          class="microcopy text-sage-600 hover:text-sage-800 underline"
+          class="text-sm font-['Lato'] text-[#5D4A44] hover:text-[#D8AFA0] underline"
         >
           ¿Olvidaste tu contraseña?
         </button>
-        <p class="microcopy text-sage-600">
+        <p class="text-sm font-['Lato'] text-[#5D4A44] opacity-70">
           ¿Necesitas acceso?
-          <NuxtLink to="/contacto" class="text-sage-700 hover:text-sage-900 font-medium">
+          <NuxtLink to="/contacto" class="text-[#D8AFA0] hover:text-[#c99d8d] font-medium">
             Contáctame
           </NuxtLink>
         </p>
@@ -90,8 +90,8 @@
         @click.self="showResetPassword = false"
       >
         <div class="bg-white rounded-lg p-6 max-w-md w-full">
-          <h3 class="card-title text-sage-800 mb-4">Recuperar Contraseña</h3>
-          <p class="body-text text-sage-600 mb-4">
+          <h3 class="text-xl font-['Lora'] font-medium text-[#5D4A44] mb-4">Recuperar Contraseña</h3>
+          <p class="font-['Lato'] text-[#5D4A44] opacity-70 mb-4">
             Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
           </p>
           <form @submit.prevent="handleResetPassword" class="space-y-4">
@@ -99,21 +99,21 @@
               v-model="resetEmail"
               type="email"
               required
-              class="w-full px-4 py-3 border border-sage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500"
+              class="w-full px-4 py-3 border border-[#EAD5D3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] font-['Lato']"
               placeholder="tu@email.com"
             />
             <div class="flex gap-3">
               <button
                 type="button"
                 @click="showResetPassword = false"
-                class="flex-1 px-4 py-2 border border-sage-300 text-sage-700 rounded-lg hover:bg-sage-50 transition-colors"
+                class="flex-1 px-4 py-2 border border-[#EAD5D3] text-[#5D4A44] rounded-lg hover:bg-[#F9F7F3] transition-colors font-['Lato']"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 :disabled="isResetting"
-                class="flex-1 px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors disabled:opacity-50"
+                class="flex-1 px-4 py-2 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#c99d8d] transition-colors disabled:opacity-50 font-['Lato']"
               >
                 {{ isResetting ? 'Enviando...' : 'Enviar' }}
               </button>
@@ -152,17 +152,21 @@ const handleLogin = async () => {
   isLoading.value = true
 
   try {
-    const { error } = await signInWithEmail(email.value, password.value)
+    const { data, error } = await signInWithEmail(email.value, password.value)
 
     if (error) {
       errorMessage.value = 'Credenciales incorrectas. Por favor, verifica tu correo y contraseña.'
     } else {
       successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...'
-      setTimeout(() => {
-        navigateTo('/paciente')
-      }, 1000)
+      
+      // Esperar a que el estado de autenticación se actualice
+      await nextTick()
+      
+      // Redirigir directamente al dashboard
+      await navigateTo('/paciente/dashboard', { replace: true })
     }
   } catch (err) {
+    console.error('Error en handleLogin:', err)
     errorMessage.value = 'Ocurrió un error. Por favor, intenta de nuevo.'
   } finally {
     isLoading.value = false

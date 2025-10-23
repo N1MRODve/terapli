@@ -1,0 +1,612 @@
+<template>
+  <div class="min-h-screen bg-fondo pb-20">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-serif font-bold text-cafe mb-2">
+        Recursos
+      </h1>
+      <p class="text-lg text-cafe/70">
+        Material terapéutico y herramientas
+      </p>
+    </div>
+
+    <!-- Botón crear -->
+    <div class="mb-6">
+      <button
+        @click="abrirModalNuevo"
+        class="inline-flex items-center gap-2 px-5 py-3 bg-terracota text-white font-semibold rounded-lg hover:bg-terracota/90 transition-colors shadow-sm"
+      >
+        <span class="text-xl">➕</span>
+        <span>Crear Recurso</span>
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="mb-6 border-b border-gray-200">
+      <nav class="-mb-px flex gap-6">
+        <button
+          v-for="tab in tabs"
+          :key="tab.id"
+          @click="tabActivo = tab.id"
+          :class="[
+            'py-3 px-1 border-b-2 font-medium text-sm',
+            tabActivo === tab.id ? 'border-terracota text-terracota' : 'border-transparent text-gray-500'
+          ]"
+        >
+          {{ tab.icono }} {{ tab.label }} ({{ tab.contador }})
+        </button>
+      </nav>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
+      <div class="flex gap-4">
+        <input
+          v-model="filtros.busqueda"
+          type="text"
+          placeholder="Buscar recursos..."
+          class="flex-1 px-4 py-2 border rounded-lg"
+        />
+        <select v-model="filtros.tipo" class="px-4 py-2 border rounded-lg">
+          <option value="">Todos los tipos</option>
+          <option value="pdf">📄 PDF</option>
+          <option value="video">🎥 Video</option>
+          <option value="articulo">📰 Artículo</option>
+
+          <option value="audio">🎧 Audio</option>      </div><script setup>
+
+          <option value="ejercicio">🧘 Ejercicio</option>
+
+        </select>    </div>definePageMeta({
+
+      </div>
+
+    </div>  layout: 'terapeuta'
+
+
+
+    <!-- Loading -->    <!-- Contenido principal -->})
+
+    <div v-if="cargando" class="text-center py-12">
+
+      <LoadingSpinner class="w-12 h-12 text-terracota mx-auto" />    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"></script>
+
+    </div>
+
+      <!-- Tabs de vista -->
+
+    <!-- Sin recursos -->      <div class="mb-6">
+
+    <div v-else-if="recursosFiltrados.length === 0" class="text-center py-12">        <div class="border-b border-gray-200">
+
+      <EmptyState          <nav class="-mb-px flex gap-6" aria-label="Tabs">
+
+        emoji="📚"            <button
+
+        titulo="No hay recursos"              v-for="tab in tabs"
+
+        descripcion="Crea el primer recurso para comenzar"              :key="tab.id"
+
+      />              @click="tabActivo = tab.id"
+
+    </div>              :class="[
+
+                'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors',
+
+    <!-- Grid -->                tabActivo === tab.id
+
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">                  ? 'border-terracota text-terracota'
+
+      <CardRecurso                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+
+        v-for="recurso in recursosFiltrados"              ]"
+
+        :key="recurso.id"            >
+
+        :recurso="recurso"              <span class="mr-2">{{ tab.icono }}</span>
+
+        :mostrar-boton-enviar="true"              {{ tab.label }}
+
+        :mostrar-estadisticas="true"              <span v-if="tab.contador !== undefined" class="ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+
+        @enviar="abrirModalEnviar(recurso)"                {{ tab.contador }}
+
+        @editar="abrirModalEditar(recurso)"              </span>
+
+        @eliminar="eliminarRecurso(recurso)"            </button>
+
+      />          </nav>
+
+    </div>        </div>
+
+      </div>
+
+    <!-- Modales -->
+
+    <ModalNuevoRecurso      <!-- Filtros y búsqueda -->
+
+      v-model="modalNuevoAbierto"      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+
+      :recurso-editar="recursoEditar"        <div class="flex flex-col lg:flex-row gap-4">
+
+      @guardado="handleGuardado"          <!-- Buscador -->
+
+    />          <div class="flex-1">
+
+            <div class="relative">
+
+    <ModalEnviarRecurso              <input
+
+      v-model="modalEnviarAbierto"                v-model="filtros.busqueda"
+
+      :recurso="recursoEnviar"                type="text"
+
+      @enviado="handleEnviado"                placeholder="Buscar por título o descripción..."
+
+    />                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota focus:border-transparent transition-all"
+
+  </div>              />
+
+</template>              <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+<script setup lang="ts">              </svg>
+
+import type { Recurso, TipoRecurso } from '~/composables/useRecursos'            </div>
+
+          </div>
+
+definePageMeta({
+
+  layout: 'terapeuta',          <!-- Filtro por tipo -->
+
+  middleware: 'auth'          <div class="w-full lg:w-64">
+
+})            <select
+
+              v-model="filtros.tipo"
+
+const { recursos, cargando, obtenerRecursos, eliminarRecurso: eliminarRecursoAPI } = useRecursos()              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota focus:border-transparent transition-all"
+
+const user = useSupabaseUser()            >
+
+              <option value="">Todos los tipos</option>
+
+const tabActivo = ref('todos')              <option value="pdf">📄 PDF</option>
+
+const modalNuevoAbierto = ref(false)              <option value="video">🎥 Video</option>
+
+const modalEnviarAbierto = ref(false)              <option value="articulo">📰 Artículo</option>
+
+const recursoEditar = ref<Recurso | null>(null)              <option value="audio">🎧 Audio</option>
+
+const recursoEnviar = ref<Recurso | null>(null)              <option value="ejercicio">🧘 Ejercicio</option>
+
+              <option value="imagen">🖼️ Imagen</option>
+
+const filtros = ref({              <option value="otro">📎 Otro</option>
+
+  busqueda: '',            </select>
+
+  tipo: '' as TipoRecurso | ''          </div>
+
+})
+
+          <!-- Botón limpiar filtros -->
+
+const tabs = computed(() => {          <button
+
+  const misRecursos = recursos.value.filter((r: any) => r.creado_por_terapeuta_id === user.value?.id)            v-if="tieneFiltrosActivos"
+
+  return [            @click="limpiarFiltros"
+
+    { id: 'todos', label: 'Todos', icono: '📚', contador: recursos.value.length },            class="px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
+
+    { id: 'mis-recursos', label: 'Mis Recursos', icono: '✨', contador: misRecursos.length },          >
+
+    { id: 'populares', label: 'Populares', icono: '🔥', contador: 0 }            🔄 Limpiar
+
+  ]          </button>
+
+})        </div>
+
+
+
+const recursosFiltrados = computed(() => {        <!-- Etiquetas populares -->
+
+  let resultado = [...recursos.value]        <div v-if="etiquetasPopulares.length > 0" class="mt-4 pt-4 border-t border-gray-200">
+
+          <div class="flex flex-wrap items-center gap-2">
+
+  if (tabActivo.value === 'mis-recursos') {            <span class="text-sm text-gray-600 font-medium">Etiquetas:</span>
+
+    resultado = resultado.filter((r: any) => r.creado_por_terapeuta_id === user.value?.id)            <button
+
+  } else if (tabActivo.value === 'populares') {              v-for="etiqueta in etiquetasPopulares"
+
+    resultado = resultado.sort((a: any, b: any) => b.veces_enviado - a.veces_enviado).slice(0, 20)              :key="etiqueta"
+
+  }              @click="filtrarPorEtiqueta(etiqueta)"
+
+              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-terracota/20 hover:text-terracota transition-colors"
+
+  if (filtros.value.busqueda) {            >
+
+    const t = filtros.value.busqueda.toLowerCase()              #{{ etiqueta }}
+
+    resultado = resultado.filter((r: any) =>            </button>
+
+      r.titulo.toLowerCase().includes(t) || r.descripcion?.toLowerCase().includes(t)          </div>
+
+    )        </div>
+
+  }      </div>
+
+
+
+  if (filtros.value.tipo) {      <!-- Estado: Cargando -->
+
+    resultado = resultado.filter((r: any) => r.tipo === filtros.value.tipo)      <div v-if="cargando" class="flex items-center justify-center py-20">
+
+  }        <div class="text-center">
+
+          <LoadingSpinner class="w-12 h-12 text-terracota mx-auto mb-4" />
+
+  return resultado          <p class="text-gray-600">Cargando recursos...</p>
+
+})        </div>
+
+      </div>
+
+const abrirModalNuevo = () => {
+
+  recursoEditar.value = null      <!-- Estado: Sin recursos -->
+
+  modalNuevoAbierto.value = true      <div v-else-if="recursosFiltrados.length === 0" class="text-center py-20">
+
+}        <EmptyState
+
+          emoji="📚"
+
+const abrirModalEditar = (recurso: Recurso) => {          titulo="No hay recursos disponibles"
+
+  recursoEditar.value = recurso          :descripcion="mensajeSinRecursos"
+
+  modalNuevoAbierto.value = true        >
+
+}          <button
+
+            @click="abrirModalNuevo"
+
+const abrirModalEnviar = (recurso: Recurso) => {            class="inline-flex items-center gap-2 px-5 py-3 bg-terracota text-white font-semibold rounded-lg hover:bg-terracota/90 transition-colors"
+
+  recursoEnviar.value = recurso          >
+
+  modalEnviarAbierto.value = true            <span>➕</span>
+
+}            <span>Crear primer recurso</span>
+
+          </button>
+
+const eliminarRecurso = async (recurso: Recurso) => {        </EmptyState>
+
+  await eliminarRecursoAPI(recurso.id)      </div>
+
+}
+
+      <!-- Grid de recursos -->
+
+const handleGuardado = async () => {      <div v-else>
+
+  await obtenerRecursos()        <!-- Contador de resultados -->
+
+}        <div class="mb-4 text-sm text-gray-600">
+
+          Mostrando <span class="font-semibold">{{ recursosFiltrados.length }}</span> 
+
+const handleEnviado = async () => {          {{ recursosFiltrados.length === 1 ? 'recurso' : 'recursos' }}
+
+  await obtenerRecursos()        </div>
+
+}
+
+        <!-- Grid responsive -->
+
+onMounted(async () => {        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+  await obtenerRecursos()          <CardRecurso
+
+})            v-for="recurso in recursosFiltrados"
+
+</script>            :key="recurso.id"
+
+            :recurso="recurso"
+            :mostrar-boton-enviar="true"
+            :mostrar-estadisticas="true"
+            @enviar="abrirModalEnviar(recurso)"
+            @editar="abrirModalEditar(recurso)"
+            @eliminar="eliminarRecurso(recurso)"
+          />
+        </div>
+      </div>
+
+      <!-- Estadísticas (solo si hay recursos) -->
+      <div v-if="!cargando && recursos.length > 0" class="mt-12 bg-gradient-to-r from-terracota/10 to-rosa/20 rounded-xl p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">📊 Tus Estadísticas</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-terracota">
+              {{ estadisticas?.recursos_creados || 0 }}
+            </div>
+            <div class="text-sm text-gray-600 mt-1">Recursos creados</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-terracota">
+              {{ estadisticas?.recursos_enviados || 0 }}
+            </div>
+            <div class="text-sm text-gray-600 mt-1">Envíos totales</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-terracota">
+              {{ estadisticas?.recursos_vistos || 0 }}
+            </div>
+            <div class="text-sm text-gray-600 mt-1">Recursos vistos</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-terracota">
+              {{ tasaVisualizacion }}%
+            </div>
+            <div class="text-sm text-gray-600 mt-1">Tasa de visualización</div>
+          </div>
+        </div>
+
+        <!-- Recurso más popular -->
+        <div v-if="estadisticas?.recurso_mas_enviado" class="mt-6 pt-6 border-t border-terracota/20">
+          <div class="flex items-center gap-3">
+            <div class="text-2xl">🏆</div>
+            <div>
+              <div class="text-sm text-gray-600">Tu recurso más enviado:</div>
+              <div class="font-semibold text-gray-900">
+                {{ estadisticas.recurso_mas_enviado.titulo }}
+                <span class="text-terracota ml-2">({{ estadisticas.recurso_mas_enviado.veces }} envíos)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modales -->
+    <ModalNuevoRecurso
+      v-model="modalNuevoAbierto"
+      :recurso-editar="recursoEditar"
+      @guardado="handleRecursoGuardado"
+    />
+
+    <ModalEnviarRecurso
+      v-model="modalEnviarAbierto"
+      :recurso="recursoEnviar"
+      @enviado="handleRecursoEnviado"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import type { Recurso, TipoRecurso } from '~/composables/useRecursos'
+
+// ============================================
+// METADATA
+// ============================================
+
+definePageMeta({
+  layout: 'terapeuta',
+  middleware: 'auth'
+})
+
+// ============================================
+// COMPOSABLES
+// ============================================
+
+const {
+  recursos,
+  cargando,
+  error,
+  obtenerRecursos,
+  eliminarRecurso: eliminarRecursoAPI,
+  obtenerEstadisticas,
+} = useRecursos()
+
+const user = useSupabaseUser()
+
+// ============================================
+// ESTADO
+// ============================================
+
+const tabActivo = ref<'todos' | 'mis-recursos' | 'populares'>('todos')
+const modalNuevoAbierto = ref(false)
+const modalEnviarAbierto = ref(false)
+const recursoEditar = ref<Recurso | null>(null)
+const recursoEnviar = ref<Recurso | null>(null)
+const estadisticas = ref<any>(null)
+
+const filtros = ref({
+  busqueda: '',
+  tipo: '' as TipoRecurso | '',
+  etiqueta: '',
+})
+
+// ============================================
+// COMPUTED
+// ============================================
+
+const tabs = computed(() => {
+  const misRecursos = recursos.value.filter(r => r.creado_por_terapeuta_id === user.value?.id)
+  
+  return [
+    {
+      id: 'todos',
+      label: 'Todos',
+      icono: '📚',
+      contador: recursos.value.length
+    },
+    {
+      id: 'mis-recursos',
+      label: 'Mis Recursos',
+      icono: '✨',
+      contador: misRecursos.length
+    },
+    {
+      id: 'populares',
+      label: 'Más Populares',
+      icono: '🔥',
+    }
+  ]
+})
+
+const recursosFiltrados = computed(() => {
+  let resultado = [...recursos.value]
+
+  // Filtrar por tab
+  if (tabActivo.value === 'mis-recursos') {
+    resultado = resultado.filter(r => r.creado_por_terapeuta_id === user.value?.id)
+  } else if (tabActivo.value === 'populares') {
+    resultado = resultado.sort((a, b) => b.veces_enviado - a.veces_enviado).slice(0, 20)
+  }
+
+  // Filtrar por búsqueda
+  if (filtros.value.busqueda) {
+    const termino = filtros.value.busqueda.toLowerCase()
+    resultado = resultado.filter(r =>
+      r.titulo.toLowerCase().includes(termino) ||
+      r.descripcion?.toLowerCase().includes(termino)
+    )
+  }
+
+  // Filtrar por tipo
+  if (filtros.value.tipo) {
+    resultado = resultado.filter(r => r.tipo === filtros.value.tipo)
+  }
+
+  // Filtrar por etiqueta
+  if (filtros.value.etiqueta) {
+    resultado = resultado.filter(r =>
+      r.etiquetas?.includes(filtros.value.etiqueta)
+    )
+  }
+
+  return resultado
+})
+
+const etiquetasPopulares = computed(() => {
+  // Obtener todas las etiquetas y contar su frecuencia
+  const todasEtiquetas: string[] = []
+  recursos.value.forEach(r => {
+    if (r.etiquetas) {
+      todasEtiquetas.push(...r.etiquetas)
+    }
+  })
+
+  // Contar frecuencias
+  const frecuencias: Record<string, number> = {}
+  todasEtiquetas.forEach(e => {
+    frecuencias[e] = (frecuencias[e] || 0) + 1
+  })
+
+  // Ordenar por frecuencia y tomar top 10
+  return Object.entries(frecuencias)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([etiqueta]) => etiqueta)
+})
+
+const tieneFiltrosActivos = computed(() => {
+  return filtros.value.busqueda || filtros.value.tipo || filtros.value.etiqueta
+})
+
+const mensajeSinRecursos = computed(() => {
+  if (tieneFiltrosActivos.value) {
+    return 'No se encontraron recursos con los filtros aplicados'
+  }
+  if (tabActivo.value === 'mis-recursos') {
+    return 'Aún no has creado ningún recurso. ¡Crea el primero!'
+  }
+  return 'No hay recursos disponibles en este momento'
+})
+
+const tasaVisualizacion = computed(() => {
+  if (!estadisticas.value) return 0
+  const { recursos_enviados, recursos_vistos } = estadisticas.value
+  if (recursos_enviados === 0) return 0
+  return Math.round((recursos_vistos / recursos_enviados) * 100)
+})
+
+// ============================================
+// MÉTODOS
+// ============================================
+
+const abrirModalNuevo = () => {
+  recursoEditar.value = null
+  modalNuevoAbierto.value = true
+}
+
+const abrirModalEditar = (recurso: Recurso) => {
+  recursoEditar.value = recurso
+  modalNuevoAbierto.value = true
+}
+
+const abrirModalEnviar = (recurso: Recurso) => {
+  recursoEnviar.value = recurso
+  modalEnviarAbierto.value = true
+}
+
+const eliminarRecurso = async (recurso: Recurso) => {
+  const exito = await eliminarRecursoAPI(recurso.id)
+  if (exito) {
+    // Recursos ya actualizado por el composable
+  }
+}
+
+const filtrarPorEtiqueta = (etiqueta: string) => {
+  filtros.value.etiqueta = etiqueta
+  // Scroll a resultados
+  window.scrollTo({ top: 300, behavior: 'smooth' })
+}
+
+const limpiarFiltros = () => {
+  filtros.value = {
+    busqueda: '',
+    tipo: '',
+    etiqueta: '',
+  }
+}
+
+const handleRecursoGuardado = async () => {
+  // Recargar recursos
+  await obtenerRecursos()
+  // Recargar estadísticas
+  await cargarEstadisticas()
+}
+
+const handleRecursoEnviado = async () => {
+  // Recargar recursos para actualizar contadores
+  await obtenerRecursos()
+  // Recargar estadísticas
+  await cargarEstadisticas()
+}
+
+const cargarEstadisticas = async () => {
+  estadisticas.value = await obtenerEstadisticas()
+}
+
+// ============================================
+// LIFECYCLE
+// ============================================
+
+onMounted(async () => {
+  // Cargar recursos
+  await obtenerRecursos()
+  // Cargar estadísticas
+  await cargarEstadisticas()
+})
+</script>

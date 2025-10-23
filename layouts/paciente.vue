@@ -20,7 +20,10 @@
           </div>
 
           <!-- Usuario y acciones -->
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-3">
+            <!-- Notificaciones -->
+            <NotificacionesBell />
+
             <!-- Nombre del usuario -->
             <div class="hidden sm:block text-right">
               <p class="text-sm font-medium text-[#5D4A44] font-['Lato']">
@@ -119,13 +122,24 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
 const route = useRoute()
 const { signOut, user } = useSupabase()
-const { getPaciente } = usePacientes()
+const supabase = useSupabaseClient()
 
 // Estado
 const sidebarOpen = ref(false)
 const nombrePaciente = ref('Cargando...')
+
+// Agregar clase al body para quitar padding-top
+onMounted(() => {
+  document.body.classList.add('layout-paciente')
+})
+
+onUnmounted(() => {
+  document.body.classList.remove('layout-paciente')
+})
 
 // Menú de navegación
 const menuItems = [
@@ -165,11 +179,26 @@ const isActive = (path) => {
 const loadPacienteData = async () => {
   if (!user.value) return
   
-  const { data, error } = await getPaciente()
-  if (!error && data) {
-    nombrePaciente.value = data.nombre || user.value.email
-  } else {
-    nombrePaciente.value = user.value.email
+  try {
+    // Intentar obtener el perfil del paciente desde la tabla pacientes
+    const { data, error } = await supabase
+      .from('pacientes')
+      .select('nombre')
+      .eq('id', user.value.id)
+      .single()
+    
+    if (!error && data?.nombre) {
+      nombrePaciente.value = data.nombre
+    } else {
+      // Si no hay nombre en la base de datos, usar el email o metadata
+      nombrePaciente.value = user.value.user_metadata?.nombre || 
+                            user.value.user_metadata?.name || 
+                            user.value.email?.split('@')[0] || 
+                            'Paciente'
+    }
+  } catch (err) {
+    console.error('Error cargando datos del paciente:', err)
+    nombrePaciente.value = user.value.email?.split('@')[0] || 'Paciente'
   }
 }
 
