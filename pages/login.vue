@@ -146,19 +146,45 @@ const successMessage = ref('')
 const showResetPassword = ref(false)
 
 // Función para redirigir según el rol del usuario
-const redirectBasedOnRole = async () => {
+const redirectBasedOnRole = async (userId?: string) => {
   try {
-    // Esperar un poco para que el estado se actualice
-    await new Promise(resolve => setTimeout(resolve, 100))
+    const supabase = useSupabaseClient()
     
-    await loadUserProfile()
-    const userRole = await getUserRole()
+    // Si no se proporciona userId, intentar obtenerlo de la sesión actual
+    if (!userId) {
+      const { data: { session } } = await supabase.auth.getSession()
+      userId = session?.user?.id
+      
+      if (!userId) {
+        console.error('[Login] No se pudo obtener el ID del usuario')
+        errorMessage.value = 'Error al obtener tu información. Por favor, intenta de nuevo.'
+        return
+      }
+    }
     
-    if (!userRole) {
-      console.error('[Login] No se pudo obtener el rol del usuario')
-      errorMessage.value = 'Error al obtener tu rol. Por favor, contacta a soporte.'
+    console.log('[Login] Obteniendo perfil para usuario:', userId)
+    
+    // Consultar el perfil directamente con el userId
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('rol, nombre, email')
+      .eq('id', userId)
+      .single()
+    
+    if (error) {
+      console.error('[Login] Error al obtener perfil:', error)
+      errorMessage.value = 'Error al obtener tu perfil. Por favor, contacta a soporte.'
       return
     }
+    
+    if (!profile) {
+      console.error('[Login] No se encontró perfil para el usuario')
+      errorMessage.value = 'No se encontró tu perfil. Por favor, contacta a soporte.'
+      return
+    }
+
+    const userRole = profile.rol
+    console.log('[Login] Perfil obtenido:', profile.email, 'Rol:', userRole)
 
     // Mapeo de roles a rutas
     const roleRoutes: Record<string, string> = {
@@ -180,6 +206,7 @@ const redirectBasedOnRole = async () => {
 // Si ya está autenticado al montar, redirigir
 onMounted(async () => {
   if (isAuthenticated.value) {
+    // Sin userId, la función lo obtendrá de la sesión
     await redirectBasedOnRole()
   }
 })
@@ -205,14 +232,11 @@ const handleLogin = async () => {
       return
     }
 
-    console.log('[Login] Usuario autenticado:', data.user.email)
+    console.log('[Login] Usuario autenticado:', data.user.email, 'ID:', data.user.id)
     successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...'
     
-    // Esperar a que el estado se actualice completamente
-    await nextTick()
-    
-    // Redirigir según el rol del usuario
-    await redirectBasedOnRole()
+    // Pasar el userId directamente de la respuesta de autenticación
+    await redirectBasedOnRole(data.user.id)
   } catch (err) {
     console.error('[Login] Error en handleLogin:', err)
     errorMessage.value = 'Ocurrió un error. Por favor, intenta de nuevo.'
