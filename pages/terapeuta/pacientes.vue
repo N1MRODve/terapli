@@ -159,13 +159,12 @@ const cargarPacientes = async () => {
         id,
         created_at,
         activo,
+        email,
+        nombre_completo,
+        telefono,
         area_de_acompanamiento,
         frecuencia,
-        metadata,
-        profiles!inner(
-          nombre,
-          email
-        )
+        metadata
       `)
       .eq('psicologa_id', user.value.id)
       .order('created_at', { ascending: false })
@@ -246,13 +245,17 @@ const cargarPacientes = async () => {
         }
 
         // Obtener datos del nombre
-        const nombre = paciente.profiles.nombre || ''
+        const nombre = paciente.nombre_completo || 
+                      paciente.metadata?.nombre_completo ||
+                      `${paciente.metadata?.nombre || ''} ${paciente.metadata?.apellido_paterno || ''}`.trim() ||
+                      paciente.email
 
         return {
           id: paciente.id,
           nombre: nombre,
           apellidos: '', // No tenemos apellidos separados en la BD
-          email: paciente.profiles.email,
+          email: paciente.email,
+          telefono: paciente.telefono,
           activo: paciente.activo,
           en_pausa: paciente.metadata?.en_pausa || false,
           area_de_acompanamiento: paciente.area_de_acompanamiento,
