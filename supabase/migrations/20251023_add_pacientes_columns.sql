@@ -55,7 +55,7 @@ CREATE POLICY "Psicólogas pueden ver sus pacientes"
     EXISTS (
       SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.rol = 'terapeuta'
+      AND profiles.rol = 'psicologa'
       AND pacientes.psicologa_id = auth.uid()
     )
   );
@@ -66,7 +66,7 @@ CREATE POLICY "Psicólogas pueden crear pacientes"
     EXISTS (
       SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.rol = 'terapeuta'
+      AND profiles.rol = 'psicologa'
       AND psicologa_id = auth.uid()
     )
   );
@@ -77,7 +77,7 @@ CREATE POLICY "Psicólogas pueden actualizar sus pacientes"
     EXISTS (
       SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.rol = 'terapeuta'
+      AND profiles.rol = 'psicologa'
       AND pacientes.psicologa_id = auth.uid()
     )
   );
