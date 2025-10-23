@@ -16,10 +16,8 @@ type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {},
 interface _GlobalComponents {
   'AlertaBono': typeof import("../../components/AlertaBono.vue")['default']
   'BonosPaciente': typeof import("../../components/BonosPaciente.vue")['default']
-  'CalmButton': typeof import("../../components/CalmButton.vue")['default']
   'Card': typeof import("../../components/Card.vue")['default']
   'CardRecurso': typeof import("../../components/CardRecurso.vue")['default']
-  'ConocemeSection': typeof import("../../components/ConocemeSection.vue")['default']
   'CookieConsent': typeof import("../../components/CookieConsent.vue")['default']
   'EmotionalTransition': typeof import("../../components/EmotionalTransition.vue")['default']
   'EmptyState': typeof import("../../components/EmptyState.vue")['default']
@@ -48,15 +46,12 @@ interface _GlobalComponents {
   'PacienteCard': typeof import("../../components/PacienteCard.vue")['default']
   'PacienteEvolucion': typeof import("../../components/PacienteEvolucion.vue")['default']
   'PanelEmocionalAvanzado': typeof import("../../components/PanelEmocionalAvanzado.vue")['default']
-  'PersonalizedHero': typeof import("../../components/PersonalizedHero.vue")['default']
   'ProgressBar': typeof import("../../components/ProgressBar.vue")['default']
   'RecursoCard': typeof import("../../components/RecursoCard.vue")['default']
   'ResumenCard': typeof import("../../components/ResumenCard.vue")['default']
   'SesionCard': typeof import("../../components/SesionCard.vue")['default']
   'TablaSesiones': typeof import("../../components/TablaSesiones.vue")['default']
-  'TestimoniosSection': typeof import("../../components/TestimoniosSection.vue")['default']
   'VisualizacionEmocional': typeof import("../../components/VisualizacionEmocional.vue")['default']
-  'WelcomeModal': typeof import("../../components/WelcomeModal.vue")['default']
   'CoordinacionDashboardCard': typeof import("../../components/coordinacion/DashboardCard.vue")['default']
   'DashboardDailyQuote': typeof import("../../components/dashboard/DailyQuote.vue")['default']
   'DashboardCard': typeof import("../../components/dashboard/DashboardCard.vue")['default']
@@ -129,10 +124,8 @@ interface _GlobalComponents {
   'NuxtIsland': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-island")['default']
   'LazyAlertaBono': LazyComponent<typeof import("../../components/AlertaBono.vue")['default']>
   'LazyBonosPaciente': LazyComponent<typeof import("../../components/BonosPaciente.vue")['default']>
-  'LazyCalmButton': LazyComponent<typeof import("../../components/CalmButton.vue")['default']>
   'LazyCard': LazyComponent<typeof import("../../components/Card.vue")['default']>
   'LazyCardRecurso': LazyComponent<typeof import("../../components/CardRecurso.vue")['default']>
-  'LazyConocemeSection': LazyComponent<typeof import("../../components/ConocemeSection.vue")['default']>
   'LazyCookieConsent': LazyComponent<typeof import("../../components/CookieConsent.vue")['default']>
   'LazyEmotionalTransition': LazyComponent<typeof import("../../components/EmotionalTransition.vue")['default']>
   'LazyEmptyState': LazyComponent<typeof import("../../components/EmptyState.vue")['default']>
@@ -161,15 +154,12 @@ interface _GlobalComponents {
   'LazyPacienteCard': LazyComponent<typeof import("../../components/PacienteCard.vue")['default']>
   'LazyPacienteEvolucion': LazyComponent<typeof import("../../components/PacienteEvolucion.vue")['default']>
   'LazyPanelEmocionalAvanzado': LazyComponent<typeof import("../../components/PanelEmocionalAvanzado.vue")['default']>
-  'LazyPersonalizedHero': LazyComponent<typeof import("../../components/PersonalizedHero.vue")['default']>
   'LazyProgressBar': LazyComponent<typeof import("../../components/ProgressBar.vue")['default']>
   'LazyRecursoCard': LazyComponent<typeof import("../../components/RecursoCard.vue")['default']>
   'LazyResumenCard': LazyComponent<typeof import("../../components/ResumenCard.vue")['default']>
   'LazySesionCard': LazyComponent<typeof import("../../components/SesionCard.vue")['default']>
   'LazyTablaSesiones': LazyComponent<typeof import("../../components/TablaSesiones.vue")['default']>
-  'LazyTestimoniosSection': LazyComponent<typeof import("../../components/TestimoniosSection.vue")['default']>
   'LazyVisualizacionEmocional': LazyComponent<typeof import("../../components/VisualizacionEmocional.vue")['default']>
-  'LazyWelcomeModal': LazyComponent<typeof import("../../components/WelcomeModal.vue")['default']>
   'LazyCoordinacionDashboardCard': LazyComponent<typeof import("../../components/coordinacion/DashboardCard.vue")['default']>
   'LazyDashboardDailyQuote': LazyComponent<typeof import("../../components/dashboard/DailyQuote.vue")['default']>
   'LazyDashboardCard': LazyComponent<typeof import("../../components/dashboard/DashboardCard.vue")['default']>

@@ -103,7 +103,6 @@ declare global {
   const unref: typeof import('vue')['unref']
   const unwrapSlot: typeof import('../../node_modules/@nuxtjs/mdc/dist/runtime/utils/node')['flatUnwrap']
   const updateAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']
-  const useAnalytics: typeof import('../../composables/useAnalytics')['useAnalytics']
   const useAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']
   const useApplePwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useApplePwaIcon']
   const useAppleSplashScreenPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useAppleSplashScreenPwaIcon']
@@ -126,7 +125,6 @@ declare global {
   const useLink: typeof import('vue-router')['useLink']
   const useLoadingIndicator: typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator')['useLoadingIndicator']
   const useMaskablePwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useMaskablePwaIcon']
-  const useMensajeria: typeof import('../../composables/useMensajeria')['useMensajeria']
   const useMensajes: typeof import('../../composables/useMensajes')['useMensajes']
   const useModel: typeof import('vue')['useModel']
   const useNotificaciones: typeof import('../../composables/useNotificaciones')['useNotificaciones']
@@ -197,7 +195,6 @@ declare global {
   const useTerapeuta: typeof import('../../composables/useTerapeuta')['useTerapeuta']
   const useTransitionState: typeof import('vue')['useTransitionState']
   const useTransparentPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useTransparentPwaIcon']
-  const useUserName: typeof import('../../composables/useUserName')['useUserName']
   const useVisitorContext: typeof import('../../composables/useVisitorContext')['useVisitorContext']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
@@ -334,7 +331,6 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly unwrapSlot: UnwrapRef<typeof import('../../node_modules/@nuxtjs/mdc/dist/runtime/utils/node')['flatUnwrap']>
     readonly updateAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']>
-    readonly useAnalytics: UnwrapRef<typeof import('../../composables/useAnalytics')['useAnalytics']>
     readonly useAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']>
     readonly useApplePwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useApplePwaIcon']>
     readonly useAppleSplashScreenPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useAppleSplashScreenPwaIcon']>
@@ -357,7 +353,6 @@ declare module 'vue' {
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoadingIndicator: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator')['useLoadingIndicator']>
     readonly useMaskablePwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useMaskablePwaIcon']>
-    readonly useMensajeria: UnwrapRef<typeof import('../../composables/useMensajeria')['useMensajeria']>
     readonly useMensajes: UnwrapRef<typeof import('../../composables/useMensajes')['useMensajes']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useNotificaciones: UnwrapRef<typeof import('../../composables/useNotificaciones')['useNotificaciones']>
@@ -428,7 +423,6 @@ declare module 'vue' {
     readonly useTerapeuta: UnwrapRef<typeof import('../../composables/useTerapeuta')['useTerapeuta']>
     readonly useTransitionState: UnwrapRef<typeof import('vue')['useTransitionState']>
     readonly useTransparentPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useTransparentPwaIcon']>
-    readonly useUserName: UnwrapRef<typeof import('../../composables/useUserName')['useUserName']>
     readonly useVisitorContext: UnwrapRef<typeof import('../../composables/useVisitorContext')['useVisitorContext']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

@@ -30,7 +30,9 @@ export const useNotificaciones = () => {
    * Listar notificaciones del usuario actual
    */
   const listar = async (limite: number = 20) => {
-    if (!user.value) {
+    // Verificar autenticación
+    if (!user.value?.id) {
+      console.warn('Usuario no autenticado o ID no disponible')
       error.value = 'Usuario no autenticado'
       return []
     }

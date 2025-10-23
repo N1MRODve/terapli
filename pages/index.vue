@@ -1,11 +1,6 @@
 <script setup>
 // Redirigir automáticamente a la página de login
 definePageMeta({
-  middleware: 'redirect-to-login'
-})
-
-// Crear el middleware inline para esta página
-definePageMeta({
   middleware: async () => {
     return navigateTo('/login')
   }

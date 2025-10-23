@@ -30,10 +30,8 @@ export { requestIdleCallback, cancelIdleCallback } from '#app/compat/idle-callba
 export { setInterval } from '#app/compat/interval';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
-export { useAnalytics } from '../composables/useAnalytics';
 export { useCitas } from '../composables/useCitas';
 export { useInactivityDetector } from '../composables/useInactivityDetector';
-export { useMensajeria } from '../composables/useMensajeria';
 export { useMensajes, Mensaje, Conversacion } from '../composables/useMensajes';
 export { useNotificaciones, Notificacion } from '../composables/useNotificaciones';
 export { usePWAInstallPrompt } from '../composables/usePWAInstallPrompt';
@@ -43,7 +41,6 @@ export { useSesiones, EstadoSesion, ModalidadSesion, Sesion, SesionDetallada, Re
 export { useSesionesDemo } from '../composables/useSesionesDemo';
 export { useSupabase } from '../composables/useSupabase';
 export { useTerapeuta } from '../composables/useTerapeuta';
-export { useUserName } from '../composables/useUserName';
 export { useVisitorContext } from '../composables/useVisitorContext';
 export { capitalizeName } from '../utils/formatName';
 export { useSupabaseClient } from '../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseClient';
