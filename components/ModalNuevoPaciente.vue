@@ -310,6 +310,11 @@ const guardarPaciente = async () => {
     guardando.value = true
     error.value = ''
 
+    // Verificar que el usuario esté autenticado
+    if (!user.value?.id) {
+      throw new Error('Usuario no autenticado. Por favor, vuelve a iniciar sesión.')
+    }
+
     // 1. Crear usuario en auth.users - Generar contraseña temporal
     console.log('Creando nuevo paciente...')
     const tempPassword = generateTemporaryPassword()
@@ -355,7 +360,7 @@ const guardarPaciente = async () => {
       .from('pacientes')
       .insert({
         id: userId,
-        psicologa_id: user.value?.id,
+        psicologa_id: user.value.id, // Ya verificamos que existe arriba
         area_de_acompanamiento: formulario.value.area_acompanamiento,
         frecuencia: formulario.value.frecuencia,
         activo: formulario.value.activo,
@@ -376,7 +381,7 @@ const guardarPaciente = async () => {
         .from('sesiones')
         .insert({
           paciente_id: userId,
-          psicologa_id: user.value?.id,
+          psicologa_id: user.value.id, // Ya verificamos que existe arriba
           fecha: formulario.value.primera_sesion,
           estado: 'pendiente',
           notas: 'Primera sesión programada'
@@ -389,7 +394,7 @@ const guardarPaciente = async () => {
         .from('notas_terapeuticas')
         .insert({
           paciente_id: userId,
-          psicologa_id: user.value?.id,
+          psicologa_id: user.value.id, // Ya verificamos que existe arriba
           contenido: formulario.value.notas_iniciales
         })
     }

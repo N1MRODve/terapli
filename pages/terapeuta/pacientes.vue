@@ -145,6 +145,13 @@ const filtrosEstado = [
 const cargarPacientes = async () => {
   loading.value = true
   try {
+    // Verificar que el usuario esté autenticado
+    if (!user.value?.id) {
+      console.error('Usuario no autenticado')
+      loading.value = false
+      return
+    }
+
     // Obtener pacientes del terapeuta autenticado
     const { data: pacientesData, error: pacientesError } = await supabase
       .from('pacientes')
@@ -160,7 +167,7 @@ const cargarPacientes = async () => {
           email
         )
       `)
-      .eq('psicologa_id', user.value?.id)
+      .eq('psicologa_id', user.value.id)
       .order('created_at', { ascending: false })
     
     if (pacientesError) throw pacientesError
@@ -332,8 +339,26 @@ const manejarPacienteCreado = async (nuevoPaciente) => {
 }
 
 // Lifecycle
-onMounted(() => {
-  cargarPacientes()
+onMounted(async () => {
+  // Esperar a que el usuario esté disponible
+  if (!user.value) {
+    // Esperar un poco por si el usuario se está cargando
+    await new Promise(resolve => setTimeout(resolve, 500))
+  }
+  
+  if (user.value?.id) {
+    await cargarPacientes()
+  } else {
+    console.error('No se pudo obtener el usuario autenticado')
+    loading.value = false
+  }
+})
+
+// Watch para recargar si el usuario cambia
+watch(() => user.value?.id, (newUserId) => {
+  if (newUserId && pacientes.value.length === 0) {
+    cargarPacientes()
+  }
 })
 </script>
 
