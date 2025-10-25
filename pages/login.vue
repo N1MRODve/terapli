@@ -173,7 +173,19 @@ const redirectBasedOnRole = async (userId?: string) => {
     
     if (error) {
       console.error('[Login] Error al obtener perfil:', error)
-      errorMessage.value = 'Error al obtener tu perfil. Por favor, contacta a soporte.'
+      console.error('[Login] Error code:', error.code)
+      console.error('[Login] Error message:', error.message)
+      console.error('[Login] Error details:', error.details)
+      console.error('[Login] Error hint:', error.hint)
+      
+      // Mensajes de error más específicos
+      if (error.code === 'PGRST116') {
+        errorMessage.value = 'No se encontró tu perfil. Por favor, contacta a soporte para crear tu cuenta.'
+      } else if (error.code === '42501' || error.message?.includes('permission denied')) {
+        errorMessage.value = 'No tienes permisos para acceder. Verifica tu configuración de cuenta.'
+      } else {
+        errorMessage.value = `Error al obtener tu perfil: ${error.message || 'Error desconocido'}`
+      }
       return
     }
     

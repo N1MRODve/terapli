@@ -64,12 +64,17 @@ export const useSupabase = () => {
 
       if (error) {
         console.error('[useSupabase] Error al cargar perfil:', error)
+        console.error('[useSupabase] Error code:', error.code)
+        console.error('[useSupabase] Error message:', error.message)
+        console.error('[useSupabase] Error details:', error.details)
+        console.error('[useSupabase] User ID:', user.value.id)
         userProfile.value = null
         return null
       }
 
       if (!data) {
         console.warn('[useSupabase] No se encontró perfil para el usuario:', user.value.id)
+        console.warn('[useSupabase] El usuario existe en auth pero no tiene perfil en la tabla profiles')
         userProfile.value = null
         return null
       }
