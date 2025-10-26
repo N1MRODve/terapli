@@ -10,7 +10,7 @@
  * - Sin rol de terapeuta -> /
  */
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   // Solo aplicar a rutas de terapeuta (excepto login)
   if (!to.path.startsWith('/terapeuta') || to.path === '/terapeuta/login') {
     return
@@ -22,7 +22,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // 1. Verificar si el usuario está autenticado
   if (!user.value) {
     console.log('[Middleware] Usuario no autenticado, redirigiendo a login')
-    return navigateTo('/terapeuta/login')
+    return navigateTo('/terapeuta/login', { replace: true })
   }
 
   try {
@@ -35,9 +35,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
     if (profileError) {
       console.error('[Middleware] Error al obtener perfil:', profileError)
-      // Si hay error al obtener el perfil, cerrar sesión por seguridad
-      await supabase.auth.signOut()
-      return navigateTo('/terapeuta/login')
+      // Si hay error al obtener el perfil, redirigir a login
+      return navigateTo('/terapeuta/login', { replace: true })
     }
 
     // 3. Verificar que el usuario tenga rol de terapeuta, psicóloga, admin o coordinadora
@@ -46,9 +45,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
     
     if (!userRole || !rolesPermitidos.includes(userRole)) {
       console.log(`[Middleware] Usuario con rol '${userRole}' sin acceso, redirigiendo a home`)
-      // Cerrar sesión si no tiene rol permitido
-      await supabase.auth.signOut()
-      return navigateTo('/')
+      // Redirigir si no tiene rol permitido (sin cerrar sesión, puede tener acceso a otra área)
+      return navigateTo('/', { replace: true })
     }
 
     // Usuario autenticado y con rol correcto, permitir acceso
@@ -57,7 +55,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   } catch (err) {
     console.error('[Middleware] Error inesperado:', err)
     // En caso de error, redirigir a login por seguridad
-    await supabase.auth.signOut()
-    return navigateTo('/terapeuta/login')
+    return navigateTo('/terapeuta/login', { replace: true })
   }
 })

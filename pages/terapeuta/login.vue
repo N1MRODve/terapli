@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 // Definir metadata de la página (no requiere autenticación)
 definePageMeta({
@@ -103,12 +103,42 @@ useHead({
 
 const router = useRouter()
 const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 
 // Estado del formulario
 const email = ref('')
 const password = ref('')
 const error = ref<string | null>(null)
 const loading = ref(false)
+
+// Al montar el componente, verificar si hay sesión activa
+onMounted(async () => {
+  // Si hay un usuario autenticado, verificar su rol
+  if (user.value) {
+    try {
+      const { data: perfil } = await supabase
+        .from('profiles' as any)
+        .select('rol')
+        .eq('id', user.value.id)
+        .single()
+
+      const userRole = (perfil as any)?.rol
+      const rolesPermitidos = ['psicologa', 'admin', 'coordinadora']
+      
+      // Si tiene rol permitido, redirigir al dashboard
+      if (userRole && rolesPermitidos.includes(userRole)) {
+        await router.push('/terapeuta/dashboard')
+      } else {
+        // Si no tiene rol permitido, cerrar sesión
+        await supabase.auth.signOut({ scope: 'local' })
+      }
+    } catch (err) {
+      console.error('Error al verificar sesión:', err)
+      // En caso de error, cerrar sesión por seguridad
+      await supabase.auth.signOut({ scope: 'local' })
+    }
+  }
+})
 
 /**
  * Maneja el proceso de autenticación
@@ -147,7 +177,7 @@ const handleLogin = async () => {
     if (perfilError) {
       console.error('Error al verificar perfil:', perfilError)
       error.value = 'Error al validar tu perfil. Contacta a soporte.'
-      await supabase.auth.signOut()
+      await supabase.auth.signOut({ scope: 'local' })
       loading.value = false
       return
     }
@@ -158,7 +188,7 @@ const handleLogin = async () => {
     
     if (!userRole || !rolesPermitidos.includes(userRole)) {
       error.value = 'Acceso no autorizado. Esta área es exclusiva para terapeutas.'
-      await supabase.auth.signOut()
+      await supabase.auth.signOut({ scope: 'local' })
       loading.value = false
       return
     }

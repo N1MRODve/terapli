@@ -89,6 +89,8 @@
         :key="paciente.id"
         :paciente="paciente"
         @click="irAFichaPaciente(paciente.id)"
+        @editar="abrirModalEditar"
+        @eliminar="abrirModalEliminar"
       />
     </div>
 
@@ -111,6 +113,23 @@
       :mostrar="mostrarModalNuevo"
       @cerrar="cerrarModalNuevo"
       @paciente-creado="manejarPacienteCreado"
+    />
+
+    <!-- Modal Editar Paciente -->
+    <ModalEditarPaciente
+      :mostrar="mostrarModalEditar"
+      :paciente="pacienteSeleccionado"
+      @cerrar="cerrarModalEditar"
+      @paciente-actualizado="manejarPacienteActualizado"
+    />
+
+    <!-- Modal Eliminar Paciente -->
+    <ModalEliminarPaciente
+      :mostrar="mostrarModalEliminar"
+      :paciente="pacienteSeleccionado"
+      @cerrar="cerrarModalEliminar"
+      @paciente-eliminado="manejarPacienteEliminado"
+      @paciente-desactivado="manejarPacienteDesactivado"
     />
   </div>
 </template>
@@ -143,6 +162,9 @@ watch(user, (newUser, oldUser) => {
 
 // Estado del modal
 const mostrarModalNuevo = ref(false)
+const mostrarModalEditar = ref(false)
+const mostrarModalEliminar = ref(false)
+const pacienteSeleccionado = ref(null)
 
 // Estado
 const pacientes = ref([])
@@ -358,6 +380,28 @@ const cerrarModalNuevo = () => {
   mostrarModalNuevo.value = false
 }
 
+const abrirModalEditar = (paciente) => {
+  console.log('Abriendo modal de edición para:', paciente)
+  pacienteSeleccionado.value = paciente
+  mostrarModalEditar.value = true
+}
+
+const cerrarModalEditar = () => {
+  mostrarModalEditar.value = false
+  pacienteSeleccionado.value = null
+}
+
+const abrirModalEliminar = (paciente) => {
+  console.log('Abriendo modal de eliminación para:', paciente)
+  pacienteSeleccionado.value = paciente
+  mostrarModalEliminar.value = true
+}
+
+const cerrarModalEliminar = () => {
+  mostrarModalEliminar.value = false
+  pacienteSeleccionado.value = null
+}
+
 const manejarPacienteCreado = async (nuevoPaciente) => {
   console.log('Nuevo paciente creado:', nuevoPaciente)
   
@@ -366,6 +410,36 @@ const manejarPacienteCreado = async (nuevoPaciente) => {
   
   // Opcional: Mostrar notificación de éxito
   // toast.success('Paciente creado exitosamente')
+}
+
+const manejarPacienteActualizado = async (pacienteActualizado) => {
+  console.log('Paciente actualizado:', pacienteActualizado)
+  
+  // Recargar la lista de pacientes
+  await cargarPacientes()
+  
+  // Opcional: Mostrar notificación de éxito
+  // toast.success('Paciente actualizado exitosamente')
+}
+
+const manejarPacienteEliminado = async (pacienteId) => {
+  console.log('Paciente eliminado:', pacienteId)
+  
+  // Eliminar de la lista local
+  pacientes.value = pacientes.value.filter(p => p.id !== pacienteId)
+  
+  // Opcional: Mostrar notificación de éxito
+  // toast.success('Paciente eliminado exitosamente')
+}
+
+const manejarPacienteDesactivado = async (pacienteId) => {
+  console.log('Paciente desactivado:', pacienteId)
+  
+  // Recargar la lista de pacientes
+  await cargarPacientes()
+  
+  // Opcional: Mostrar notificación de éxito
+  // toast.success('Paciente desactivado exitosamente')
 }
 
 // Lifecycle

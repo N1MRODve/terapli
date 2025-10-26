@@ -15,6 +15,7 @@ type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {},
 
 
 export const AlertaBono: typeof import("../components/AlertaBono.vue")['default']
+export const AuthDebugPanel: typeof import("../components/AuthDebugPanel.vue")['default']
 export const BonosPaciente: typeof import("../components/BonosPaciente.vue")['default']
 export const Card: typeof import("../components/Card.vue")['default']
 export const CardRecurso: typeof import("../components/CardRecurso.vue")['default']
@@ -34,6 +35,8 @@ export const LoadingSpinner: typeof import("../components/LoadingSpinner.vue")['
 export const MensajeCard: typeof import("../components/MensajeCard.vue")['default']
 export const MensajeInput: typeof import("../components/MensajeInput.vue")['default']
 export const ModalCompartirRecurso: typeof import("../components/ModalCompartirRecurso.vue")['default']
+export const ModalEditarPaciente: typeof import("../components/ModalEditarPaciente.vue")['default']
+export const ModalEliminarPaciente: typeof import("../components/ModalEliminarPaciente.vue")['default']
 export const ModalEnviarRecurso: typeof import("../components/ModalEnviarRecurso.vue")['default']
 export const ModalNuevaCita: typeof import("../components/ModalNuevaCita.vue")['default']
 export const ModalNuevoBloqueo: typeof import("../components/ModalNuevoBloqueo.vue")['default']
@@ -123,6 +126,7 @@ export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const LazyAlertaBono: LazyComponent<typeof import("../components/AlertaBono.vue")['default']>
+export const LazyAuthDebugPanel: LazyComponent<typeof import("../components/AuthDebugPanel.vue")['default']>
 export const LazyBonosPaciente: LazyComponent<typeof import("../components/BonosPaciente.vue")['default']>
 export const LazyCard: LazyComponent<typeof import("../components/Card.vue")['default']>
 export const LazyCardRecurso: LazyComponent<typeof import("../components/CardRecurso.vue")['default']>
@@ -142,6 +146,8 @@ export const LazyLoadingSpinner: LazyComponent<typeof import("../components/Load
 export const LazyMensajeCard: LazyComponent<typeof import("../components/MensajeCard.vue")['default']>
 export const LazyMensajeInput: LazyComponent<typeof import("../components/MensajeInput.vue")['default']>
 export const LazyModalCompartirRecurso: LazyComponent<typeof import("../components/ModalCompartirRecurso.vue")['default']>
+export const LazyModalEditarPaciente: LazyComponent<typeof import("../components/ModalEditarPaciente.vue")['default']>
+export const LazyModalEliminarPaciente: LazyComponent<typeof import("../components/ModalEliminarPaciente.vue")['default']>
 export const LazyModalEnviarRecurso: LazyComponent<typeof import("../components/ModalEnviarRecurso.vue")['default']>
 export const LazyModalNuevaCita: LazyComponent<typeof import("../components/ModalNuevaCita.vue")['default']>
 export const LazyModalNuevoBloqueo: LazyComponent<typeof import("../components/ModalNuevoBloqueo.vue")['default']>

@@ -313,8 +313,11 @@ const handleLogout = async () => {
       return
     }
 
-    // Cerrar sesión en Supabase
-    const { error } = await supabase.auth.signOut()
+    // Cerrar el menú móvil si está abierto
+    mobileMenuOpen.value = false
+
+    // Cerrar sesión en Supabase con scope 'local' para asegurar cierre completo
+    const { error } = await supabase.auth.signOut({ scope: 'local' })
     
     if (error) {
       console.error('Error al cerrar sesión:', error)
@@ -322,8 +325,8 @@ const handleLogout = async () => {
       return
     }
 
-    // Redirigir al login
-    await router.push('/terapeuta/login')
+    // Forzar recarga completa de la página para limpiar todo el estado
+    window.location.href = '/terapeuta/login'
     
   } catch (err) {
     console.error('Error inesperado al cerrar sesión:', err)
