@@ -7,6 +7,7 @@
 export const useTerapeuta = () => {
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
+  const { getUserId } = useSupabase();
 
   /**
    * Obtiene la lista de todos los pacientes del terapeuta
@@ -79,11 +80,16 @@ export const useTerapeuta = () => {
     }
 
     try {
+      const userId = getUserId()
+      if (!userId) {
+        return { success: false, error: 'Usuario no autenticado' }
+      }
+      
       // Crear registros de recursos compartidos para cada paciente
       const recursosCompartidos = pacientesIds.map(pacienteId => ({
         recurso_id: recursoId,
         paciente_id: pacienteId,
-        terapeuta_id: user.value?.id,
+        terapeuta_id: userId,
         nota_personal: notaPersonal || null,
         compartido_at: new Date().toISOString()
       }));
@@ -228,7 +234,8 @@ export const useTerapeuta = () => {
   }) => {
     if (!process.client) return { success: false };
     
-    if (!user.value) {
+    const userId = getUserId()
+    if (!userId) {
       return { success: false, error: 'User not logged in' };
     }
 
@@ -237,7 +244,7 @@ export const useTerapeuta = () => {
         .from('recursos_repositorio' as any)
         .insert({
           ...recursoData,
-          created_by: user.value?.id,
+          created_by: userId,
           created_at: new Date().toISOString()
         })
         .select()

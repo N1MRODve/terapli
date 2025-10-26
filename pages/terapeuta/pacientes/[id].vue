@@ -272,6 +272,7 @@ const route = useRoute()
 const router = useRouter()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const { getUserId } = useSupabase()
 
 // ============================================================================
 // 🎭 MODO DEMO - Cambiar a false para usar datos reales de Supabase
@@ -506,6 +507,12 @@ Se muestra motivada y comprometida con el proceso.`
     // 📊 MODO PRODUCCIÓN: Datos reales de Supabase
     // ========================================================================
     
+    const userId = getUserId()
+    if (!userId) {
+      error.value = 'Usuario no autenticado'
+      return
+    }
+    
     // Obtener datos básicos del paciente
     const { data: pacienteData, error: pacienteError } = await supabase
       .from('pacientes')
@@ -522,7 +529,7 @@ Se muestra motivada y comprometida con el proceso.`
         )
       `)
       .eq('id', pacienteId.value)
-      .eq('psicologa_id', user.value?.id)
+      .eq('psicologa_id', userId)
       .single()
 
     if (pacienteError) throw pacienteError
@@ -600,7 +607,7 @@ Se muestra motivada y comprometida con el proceso.`
       .from('notas_terapeuticas')
       .select('contenido, updated_at')
       .eq('paciente_id', pacienteId.value)
-      .eq('psicologa_id', user.value?.id)
+      .eq('psicologa_id', userId)
       .order('updated_at', { ascending: false })
       .limit(1)
       .single()
@@ -647,12 +654,17 @@ Se muestra motivada y comprometida con el proceso.`
 // Guardar notas clínicas
 const guardarNotasClinicas = async ({ pacienteId, contenido }) => {
   try {
+    const userId = getUserId()
+    if (!userId) {
+      throw new Error('Usuario no autenticado')
+    }
+    
     // Verificar si ya existe una nota
     const { data: notaExistente } = await supabase
       .from('notas_terapeuticas')
       .select('id')
       .eq('paciente_id', pacienteId)
-      .eq('psicologa_id', user.value?.id)
+      .eq('psicologa_id', userId)
       .single()
 
     if (notaExistente) {
@@ -672,7 +684,7 @@ const guardarNotasClinicas = async ({ pacienteId, contenido }) => {
         .from('notas_terapeuticas')
         .insert({
           paciente_id: pacienteId,
-          psicologa_id: user.value?.id,
+          psicologa_id: userId,
           contenido: contenido
         })
 

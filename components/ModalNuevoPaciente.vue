@@ -255,7 +255,7 @@ const props = defineProps({
 
 const emit = defineEmits(['cerrar', 'paciente-creado'])
 
-const { supabase } = useSupabase()
+const { supabase, waitForUser, getUserId } = useSupabase()
 const user = useSupabaseUser()
 
 const formulario = ref({
@@ -310,21 +310,25 @@ const guardarPaciente = async () => {
     guardando.value = true
     error.value = ''
 
+    // Esperar a que el usuario esté disponible (fix para race condition)
+    await waitForUser()
+
     // Verificar que el usuario esté autenticado
-    if (!user.value?.id) {
+    const userId = getUserId()
+    if (!userId) {
       throw new Error('Usuario no autenticado. Por favor, vuelve a iniciar sesión.')
     }
 
     console.log('Creando nuevo paciente...')
 
     // 1. Crear registro en pacientes directamente (sin crear usuario auth primero)
-    // El ID se generará automáticamente
+    // El ID se generará automáticamente con gen_random_uuid()
     const nombreCompleto = `${formulario.value.nombre} ${formulario.value.apellido_paterno} ${formulario.value.apellido_materno || ''}`.trim()
     
     const { data: pacienteData, error: pacienteError } = await supabase
       .from('pacientes')
       .insert({
-        psicologa_id: user.value.id,
+        psicologa_id: userId,
         email: formulario.value.email, // Guardamos el email para futuro registro
         nombre_completo: nombreCompleto, // Guardamos el nombre temporalmente
         telefono: formulario.value.telefono,

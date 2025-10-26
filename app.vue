@@ -1,4 +1,9 @@
 <script setup>
+import { ref } from 'vue'
+
+// Mostrar panel de debug (solo en desarrollo)
+const mostrarDebug = ref(process.env.NODE_ENV === 'development')
+
 // Metadatos PWA para iOS
 useHead({
   meta: [
@@ -14,6 +19,20 @@ useHead({
     { rel: 'apple-touch-icon', sizes: '512x512', href: '/icons/icon-512x512.png' }
   ]
 })
+
+// Atajos de teclado para activar/desactivar debug
+onMounted(() => {
+  if (process.client) {
+    window.addEventListener('keydown', (e) => {
+      // Ctrl+Shift+D o Cmd+Shift+D para toggle debug
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
+        e.preventDefault()
+        mostrarDebug.value = !mostrarDebug.value
+        console.log('🔍 Debug panel:', mostrarDebug.value ? 'Activado' : 'Desactivado')
+      }
+    })
+  }
+})
 </script>
 
 <template>
@@ -24,6 +43,13 @@ useHead({
         mode: 'out-in'
       }" />
     </NuxtLayout>
+    
+    <!-- Panel de debug de autenticación -->
+    <AuthDebugPanel 
+      v-if="mostrarDebug" 
+      :mostrar="mostrarDebug"
+      @cerrar="mostrarDebug = false" 
+    />
   </div>
 </template>
 

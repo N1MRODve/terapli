@@ -80,6 +80,7 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const { getUserId } = useSupabase()
 
 const pacientes = ref<any[]>([])
 const pacienteSeleccionado = ref<any>(null)
@@ -93,10 +94,16 @@ const enviarMensajeInterno = async () => {
   if (!mensaje.value.trim() || !pacienteSeleccionado.value) return
 
   try {
+    const userId = getUserId()
+    if (!userId) {
+      alert('❌ No estás autenticado')
+      return
+    }
+    
     const { error } = await supabase
       .from('mensajes' as any)
       .insert({
-        remitente_id: user.value?.id,
+        remitente_id: userId,
         destinatario_id: pacienteSeleccionado.value.id,
         mensaje: mensaje.value,
         visto: false

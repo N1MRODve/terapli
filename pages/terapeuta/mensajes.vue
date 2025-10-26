@@ -241,6 +241,7 @@ definePageMeta({
 
 const { conversaciones, mensajes, loadingConversaciones, loadingMensajes, listarConversaciones, listarConversacion, marcarVistos, suscribirseAConversacion, desuscribirse } = useMensajes()
 const user = useSupabaseUser()
+const { getUserId } = useSupabase()
 
 const pacienteSeleccionado = ref<any>(null)
 const mensajesContainer = ref<HTMLDivElement | null>(null)
@@ -276,7 +277,7 @@ const seleccionarPaciente = async (conv: any) => {
 
 // Verificar si el mensaje es mío
 const esMensajeMio = (mensaje: any) => {
-  return mensaje.remitente_id === user.value?.id
+  return mensaje.remitente_id === getUserId()
 }
 
 // Scroll al final del chat

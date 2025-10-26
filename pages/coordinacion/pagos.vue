@@ -229,6 +229,7 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const { getUserId } = useSupabase()
 
 // Estado
 const pagos = ref<any[]>([])
@@ -333,15 +334,19 @@ const totalPorEstado = (estado: string) => {
     .reduce((sum, p) => sum + parseFloat(p.monto), 0)
 }
 
-const confirmarPagoPaciente = async (pago: any) => {
-  if (!confirm(`¿Confirmar pago de ${pago.paciente_nombre} por $${pago.monto}?`)) return
-
+const confirmarPago = async (pago: any) => {
   try {
+    const userId = getUserId()
+    if (!userId) {
+      alert('❌ No estás autenticado')
+      return
+    }
+    
     const { error } = await supabase
       .from('pagos' as any)
       .update({
         estado: 'confirmado_paciente',
-        confirmado_por: user.value?.id,
+        confirmado_por: userId,
         updated_at: new Date().toISOString()
       })
       .eq('id', pago.id)

@@ -174,6 +174,7 @@ defineEmits(['click'])
 // Computar nombre con inicial del segundo apellido
 const nombreMostrar = computed(() => {
   const { nombre, apellidos } = props.paciente
+  if (!nombre) return 'Sin nombre'
   if (!apellidos) return nombre
   
   const apellidosArray = apellidos.split(' ')
@@ -186,8 +187,10 @@ const nombreMostrar = computed(() => {
 // Computar iniciales para avatar
 const iniciales = computed(() => {
   const { nombre, apellidos } = props.paciente
+  if (!nombre) return '??'
+  
   const nombreInicial = nombre.charAt(0).toUpperCase()
-  const apellidoInicial = apellidos ? apellidos.charAt(0).toUpperCase() : ''
+  const apellidoInicial = (apellidos && apellidos.length > 0) ? apellidos.charAt(0).toUpperCase() : ''
   return `${nombreInicial}${apellidoInicial}`
 })
 

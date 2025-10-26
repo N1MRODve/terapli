@@ -246,6 +246,8 @@
 </template>
 
 <script setup>
+const { getUserId } = useSupabase()
+
 // Configuración de niveles emocionales
 const niveles = [
   { valor: 'muy bien', icono: '😁', texto: 'Muy bien' },
@@ -381,14 +383,15 @@ const guardarRegistro = async () => {
     const supabase = useSupabaseClient()
     const user = useSupabaseUser()
     
-    if (!user.value?.id) {
+    const userId = getUserId()
+    if (!userId) {
       mensajeError.value = 'Debes iniciar sesión para guardar el registro.'
       setTimeout(() => { mensajeError.value = '' }, 4000)
       return
     }
 
     const nuevo = {
-      paciente_id: user.value.id,
+      paciente_id: userId,
       estado_general: estado.value,
       emociones: emociones.value,
       influencias: influencias.value,
@@ -435,12 +438,13 @@ const cargarRegistros = async () => {
     const supabase = useSupabaseClient()
     const user = useSupabaseUser()
     
-    if (!user.value?.id) return
+    const userId = getUserId()
+    if (!userId) return
 
     const { data, error } = await supabase
       .from('emociones_avanzadas')
       .select('*')
-      .eq('paciente_id', user.value.id)
+      .eq('paciente_id', userId)
       .order('fecha', { ascending: true })
 
     if (error) {

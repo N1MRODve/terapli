@@ -122,7 +122,24 @@ definePageMeta({
 
 const router = useRouter()
 const supabase = useSupabaseClient()
+const { getUserId, waitForUser } = useSupabase()
 const user = useSupabaseUser()
+
+// Log inicial del estado del usuario
+console.log('👤 [Pacientes] Estado inicial del usuario:', {
+  existe: !!user.value,
+  id: getUserId(),
+  email: user.value?.email
+})
+
+// Watch para detectar cambios en el usuario
+watch(user, (newUser, oldUser) => {
+  console.log('🔄 [Pacientes] Usuario cambió:', {
+    antes: oldUser?.email || 'null',
+    ahora: newUser?.email || 'null',
+    id: getUserId()
+  })
+})
 
 // Estado del modal
 const mostrarModalNuevo = ref(false)
@@ -145,13 +162,23 @@ const filtrosEstado = [
 const cargarPacientes = async () => {
   loading.value = true
   try {
+    const userId = getUserId()
+    console.log('📥 [Pacientes] Iniciando carga de pacientes...')
+    console.log('📥 [Pacientes] Usuario actual:', {
+      existe: !!user.value,
+      id: userId,
+      email: user.value?.email
+    })
+    
     // Verificar que el usuario esté autenticado
-    if (!user.value?.id) {
-      console.error('Usuario no autenticado')
+    if (!userId) {
+      console.error('❌ [Pacientes] Usuario no autenticado')
       loading.value = false
       return
     }
 
+    console.log('✅ [Pacientes] Usuario verificado, consultando database...')
+    
     // Obtener pacientes del terapeuta autenticado
     const { data: pacientesData, error: pacientesError } = await supabase
       .from('pacientes')
@@ -166,7 +193,7 @@ const cargarPacientes = async () => {
         frecuencia,
         metadata
       `)
-      .eq('psicologa_id', user.value.id)
+      .eq('psicologa_id', userId)
       .order('created_at', { ascending: false })
     
     if (pacientesError) throw pacientesError
@@ -343,23 +370,41 @@ const manejarPacienteCreado = async (nuevoPaciente) => {
 
 // Lifecycle
 onMounted(async () => {
-  // Esperar a que el usuario esté disponible
-  if (!user.value) {
-    // Esperar un poco por si el usuario se está cargando
-    await new Promise(resolve => setTimeout(resolve, 500))
-  }
+  console.log('🚀 [Pacientes] Componente montado')
   
-  if (user.value?.id) {
-    await cargarPacientes()
-  } else {
-    console.error('No se pudo obtener el usuario autenticado')
+  try {
+    // Esperar a que el usuario y el perfil estén completamente cargados
+    console.log('⏳ [Pacientes] Esperando a que el usuario esté disponible...')
+    await waitForUser()
+    
+    const userId = getUserId()
+    console.log('👤 [Pacientes] Usuario después de waitForUser:', {
+      existe: !!user.value,
+      id: userId,
+      email: user.value?.email
+    })
+    
+    if (userId) {
+      console.log('✅ [Pacientes] Usuario disponible, cargando pacientes...')
+      await cargarPacientes()
+    } else {
+      console.error('❌ [Pacientes] No se pudo obtener el usuario autenticado')
+      loading.value = false
+    }
+  } catch (error) {
+    console.error('❌ [Pacientes] Error en onMounted:', error)
     loading.value = false
   }
 })
 
 // Watch para recargar si el usuario cambia
-watch(() => user.value?.id, (newUserId) => {
+watch(() => getUserId(), (newUserId, oldUserId) => {
+  console.log('🔄 [Pacientes] ID de usuario cambió:', {
+    antes: oldUserId,
+    ahora: newUserId
+  })
   if (newUserId && pacientes.value.length === 0) {
+    console.log('📥 [Pacientes] Recargando pacientes por cambio de usuario...')
     cargarPacientes()
   }
 })

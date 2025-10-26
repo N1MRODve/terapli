@@ -7,14 +7,15 @@ export type UserProfile = Database['public']['Tables']['profiles']['Row']
 // Re-exportar UserRole para facilitar su uso
 export type { UserRole }
 
+// Flag global para evitar múltiples cargas simultáneas
+let isLoadingProfile = false
+
 export const useSupabase = () => {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
 
-  // Estado reactivo para la sesión
+  // Estado global compartido (singleton) - ahora dentro de la función
   const session = useState<Session | null>('supabase-session', () => null)
-  
-  // Estado reactivo para el perfil del usuario
   const userProfile = useState<UserProfile | null>('user-profile', () => null)
 
   // Inicializar la sesión
@@ -33,14 +34,29 @@ export const useSupabase = () => {
   // Escuchar cambios en la autenticación
   const setupAuthListener = () => {
     if (process.client) {
-      supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      supabase.auth.onAuthStateChange(async (event, newSession) => {
+        console.log('🔐 [Auth State Change]', event, {
+          hasSession: !!newSession,
+          userId: newSession?.user?.id,
+          email: newSession?.user?.email
+        })
+        
         session.value = newSession
         
-        // Cargar perfil cuando cambia la sesión
-        if (newSession?.user) {
-          await loadUserProfile()
-        } else {
+        // Solo limpiar perfil en eventos de cierre de sesión
+        if (event === 'SIGNED_OUT') {
+          console.warn('⚠️ [Auth] Sesión cerrada, limpiando perfil')
           userProfile.value = null
+          isLoadingProfile = false
+          return
+        }
+        
+        // Cargar perfil cuando cambia la sesión (login, token refresh, etc.)
+        if (newSession?.user && !userProfile.value) {
+          console.log('✅ [Auth] Usuario autenticado sin perfil, cargando...')
+          await loadUserProfile()
+        } else if (newSession?.user && userProfile.value) {
+          console.log('✅ [Auth] Usuario autenticado, perfil ya cargado')
         }
       })
     }
@@ -48,18 +64,47 @@ export const useSupabase = () => {
 
   // Cargar el perfil del usuario desde la tabla profiles
   const loadUserProfile = async () => {
-    // Validar que hay usuario y tiene ID
-    if (!user.value?.id) {
-      console.warn('[useSupabase] No hay usuario autenticado o ID inválido')
-      userProfile.value = null
-      return null
+    // Evitar llamadas múltiples simultáneas
+    if (isLoadingProfile) {
+      console.log('[useSupabase] Ya hay una carga de perfil en progreso, esperando...')
+      // Esperar a que termine la carga actual
+      while (isLoadingProfile) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      // Si ya se cargó el perfil mientras esperábamos, retornarlo
+      if (userProfile.value) {
+        console.log('[useSupabase] Perfil ya cargado por otra instancia')
+        return userProfile.value
+      }
     }
 
+    isLoadingProfile = true
+
     try {
+      // Esperar a que el usuario esté disponible (fix para race condition)
+      let attempts = 0
+      while (!user.value && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+        attempts++
+      }
+
+      // Obtener el ID del usuario (puede estar en .id o .sub dependiendo del tipo)
+      const userId = (user.value as any)?.id || (user.value as any)?.sub
+
+      // Validar que hay usuario y tiene ID
+      if (!userId) {
+        console.warn('[useSupabase] No hay usuario autenticado o ID inválido después de esperar')
+        console.warn('[useSupabase] user.value:', user.value)
+        userProfile.value = null
+        return null
+      }
+
+      console.log('[useSupabase] Cargando perfil para usuario:', userId)
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.value.id)
+        .eq('id', userId)
         .single()
 
       if (error) {
@@ -67,32 +112,37 @@ export const useSupabase = () => {
         console.error('[useSupabase] Error code:', error.code)
         console.error('[useSupabase] Error message:', error.message)
         console.error('[useSupabase] Error details:', error.details)
-        console.error('[useSupabase] User ID:', user.value.id)
+        console.error('[useSupabase] User ID:', userId)
         userProfile.value = null
         return null
       }
 
       if (!data) {
-        console.warn('[useSupabase] No se encontró perfil para el usuario:', user.value.id)
+        console.warn('[useSupabase] No se encontró perfil para el usuario:', userId)
         console.warn('[useSupabase] El usuario existe en auth pero no tiene perfil en la tabla profiles')
         userProfile.value = null
         return null
       }
 
       userProfile.value = data as UserProfile
-      console.log('[useSupabase] Perfil cargado:', data.email, 'Rol:', data.rol)
+      console.log('[useSupabase] ✅ Perfil cargado correctamente:', data.email, 'Rol:', data.rol)
       return data as UserProfile
     } catch (err) {
       console.error('[useSupabase] Error en loadUserProfile:', err)
       userProfile.value = null
       return null
+    } finally {
+      isLoadingProfile = false
     }
   }
 
   // Obtener el rol del usuario actual
   const getUserRole = async (): Promise<UserRole | null> => {
+    // Obtener el ID del usuario (puede estar en .id o .sub)
+    const userId = (user.value as any)?.id || (user.value as any)?.sub
+    
     // Validar que hay usuario primero
-    if (!user.value?.id) {
+    if (!userId) {
       console.warn('[useSupabase] getUserRole: No hay usuario autenticado')
       return null
     }
@@ -155,10 +205,38 @@ export const useSupabase = () => {
     return { data, error }
   }
 
+  // Esperar a que el usuario esté disponible (útil en onMounted)
+  const waitForUser = async (maxAttempts = 20) => {
+    let attempts = 0
+    while (!user.value && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      attempts++
+    }
+    return user.value
+  }
+
+  // Helper para obtener el ID del usuario (maneja tanto .id como .sub)
+  const getUserId = () => {
+    return (user.value as any)?.id || (user.value as any)?.sub || null
+  }
+
   // Inicializar cuando se monta
   if (process.client) {
     initSession()
     setupAuthListener()
+    
+    // Watch para detectar cuando se pierde el perfil inesperadamente
+    watch(userProfile, (newProfile, oldProfile) => {
+      if (oldProfile && !newProfile) {
+        console.warn('⚠️ [useSupabase] PERFIL SE PERDIÓ - Intentando recargar...')
+        // Si había perfil y se perdió, intentar recargarlo
+        if (user.value) {
+          loadUserProfile()
+        }
+      } else if (newProfile && !oldProfile) {
+        console.log('✅ [useSupabase] Perfil cargado:', newProfile.email, 'Rol:', newProfile.rol)
+      }
+    })
   }
 
   return {
@@ -173,6 +251,8 @@ export const useSupabase = () => {
     updatePassword,
     loadUserProfile,
     getUserRole,
+    waitForUser,
+    getUserId, // Nueva función helper
     isAuthenticated: computed(() => !!user.value)
   }
 }

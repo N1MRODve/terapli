@@ -173,6 +173,8 @@
 </template>
 
 <script setup>
+const { getUserId } = useSupabase()
+
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -525,7 +527,8 @@ const cargarRegistros = async () => {
     const supabase = useSupabaseClient()
     const user = useSupabaseUser()
     
-    if (!user.value?.id) {
+    const userId = getUserId()
+    if (!userId) {
       cargando.value = false
       return
     }
@@ -536,7 +539,7 @@ const cargarRegistros = async () => {
     const { data, error } = await supabase
       .from('emociones_avanzadas')
       .select('*')
-      .eq('paciente_id', user.value.id)
+      .eq('paciente_id', userId)
       .gte('fecha', fechaInicio.toISOString())
       .order('fecha', { ascending: true })
 

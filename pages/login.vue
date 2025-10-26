@@ -148,55 +148,41 @@ const showResetPassword = ref(false)
 // Función para redirigir según el rol del usuario
 const redirectBasedOnRole = async (userId?: string) => {
   try {
-    const supabase = useSupabaseClient()
+    // Esperar a que el usuario y perfil estén completamente cargados
+    console.log('[Login] Esperando a que el usuario y perfil estén disponibles...')
+    const { waitForUser, userProfile, loadUserProfile, getUserId } = useSupabase()
     
-    // Si no se proporciona userId, intentar obtenerlo de la sesión actual
-    if (!userId) {
-      const { data: { session } } = await supabase.auth.getSession()
-      userId = session?.user?.id
-      
-      if (!userId) {
-        console.error('[Login] No se pudo obtener el ID del usuario')
-        errorMessage.value = 'Error al obtener tu información. Por favor, intenta de nuevo.'
-        return
-      }
+    console.log('[Login] Estado ANTES de waitForUser:', {
+      userProfileExists: !!userProfile.value,
+      userId: getUserId()
+    })
+    
+    await waitForUser()
+    
+    console.log('[Login] Estado DESPUÉS de waitForUser:', {
+      userProfileExists: !!userProfile.value,
+      userId: getUserId(),
+      profile: userProfile.value
+    })
+    
+    // Si después de waitForUser aún no hay perfil, intentar cargarlo manualmente
+    if (!userProfile.value) {
+      console.log('[Login] Perfil no cargado después de waitForUser, intentando carga manual...')
+      await loadUserProfile()
+      console.log('[Login] Estado DESPUÉS de loadUserProfile:', {
+        userProfileExists: !!userProfile.value,
+        profile: userProfile.value
+      })
     }
     
-    console.log('[Login] Obteniendo perfil para usuario:', userId)
-    
-    // Consultar el perfil directamente con el userId
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('rol, nombre, email')
-      .eq('id', userId)
-      .single()
-    
-    if (error) {
-      console.error('[Login] Error al obtener perfil:', error)
-      console.error('[Login] Error code:', error.code)
-      console.error('[Login] Error message:', error.message)
-      console.error('[Login] Error details:', error.details)
-      console.error('[Login] Error hint:', error.hint)
-      
-      // Mensajes de error más específicos
-      if (error.code === 'PGRST116') {
-        errorMessage.value = 'No se encontró tu perfil. Por favor, contacta a soporte para crear tu cuenta.'
-      } else if (error.code === '42501' || error.message?.includes('permission denied')) {
-        errorMessage.value = 'No tienes permisos para acceder. Verifica tu configuración de cuenta.'
-      } else {
-        errorMessage.value = `Error al obtener tu perfil: ${error.message || 'Error desconocido'}`
-      }
-      return
-    }
-    
-    if (!profile) {
-      console.error('[Login] No se encontró perfil para el usuario')
-      errorMessage.value = 'No se encontró tu perfil. Por favor, contacta a soporte.'
+    if (!userProfile.value) {
+      console.error('[Login] No se pudo cargar el perfil después de todos los intentos')
+      errorMessage.value = 'Error al cargar tu perfil. Por favor, intenta de nuevo.'
       return
     }
 
-    const userRole = profile.rol
-    console.log('[Login] Perfil obtenido:', profile.email, 'Rol:', userRole)
+    const userRole = userProfile.value.rol
+    console.log('[Login] Perfil obtenido:', userProfile.value.email, 'Rol:', userRole)
 
     // Mapeo de roles a rutas
     const roleRoutes: Record<string, string> = {
