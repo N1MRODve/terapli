@@ -154,16 +154,21 @@ const timeUntilSession = computed(() => {
 
 const handleAction = () => {
   if (!nextSession.value) {
-    navigateTo('/reservar')
+    // Si no hay sesión y estamos en contexto de terapeuta, ir a agenda
+    const router = useRouter()
+    router.push('/terapeuta/agenda')
     return
   }
   
   if (canJoin.value) {
     // Abrir el link de la videollamada
-    window.open(nextSession.value.meetingLink, '_blank')
+    if (nextSession.value.meetingLink) {
+      window.open(nextSession.value.meetingLink, '_blank')
+    }
   } else {
-    // Navegar a detalles de la sesión
-    navigateTo('/paciente/sesiones')
+    // Navegar a agenda de terapeuta en lugar de sesiones de paciente
+    const router = useRouter()
+    router.push('/terapeuta/agenda')
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <main class="dashboard-container">
     <!-- Page Title -->
     <div class="mb-8">
       <h1 class="text-4xl font-serif font-bold text-cafe mb-2">
@@ -55,12 +55,12 @@
                   {{ sesion.modalidad }}
                 </p>
               </div>
-              <NuxtLink
-                :to="`/terapeuta/sesiones/${sesion.id}`"
+              <button
+                @click="abrirDetalles(sesion.id)"
                 class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors"
               >
                 Ver detalles
-              </NuxtLink>
+              </button>
             </div>
           </div>
         </div>
@@ -256,38 +256,92 @@
         </div>
       </div>
     </DashboardCard>
-  </div>
+
+    <!-- Modal de Detalles de Cita -->
+    <ModalDetallesCita
+      :is-open="modalDetallesAbierto"
+      :cita-id="citaSeleccionada"
+      @close="cerrarModalDetalles"
+    />
+  </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { useCitas } from '~/composables/useCitas'
+
 definePageMeta({
   layout: 'terapeuta'
 })
 
-// Datos simulados - Próximas Sesiones
-const proximasSesiones = ref([
-  {
-    id: 1,
-    hora: '14:00',
-    paciente: 'María González',
-    tipo: 'Online',
-    modalidad: 'Terapia individual'
-  },
-  {
-    id: 2,
-    hora: '16:00',
-    paciente: 'Carlos Mendoza',
-    tipo: 'Presencial',
-    modalidad: 'Terapia de pareja'
-  },
-  {
-    id: 3,
-    hora: '18:00',
-    paciente: 'Ana Rodríguez',
-    tipo: 'Online',
-    modalidad: 'Seguimiento'
+// Composables
+const { getCitas } = useCitas()
+const user = useSupabaseUser()
+
+// Estado
+const cargandoCitas = ref(true)
+const proximasSesiones = ref<any[]>([])
+const modalDetallesAbierto = ref(false)
+const citaSeleccionada = ref<string | null>(null)
+
+// Funciones para el modal
+const abrirDetalles = (citaId: string) => {
+  citaSeleccionada.value = citaId
+  modalDetallesAbierto.value = true
+}
+
+const cerrarModalDetalles = () => {
+  modalDetallesAbierto.value = false
+  citaSeleccionada.value = null
+}
+
+// Cargar próximas citas (hoy y próximos 7 días)
+async function cargarProximasCitas() {
+  cargandoCitas.value = true
+  try {
+    const citas = await getCitas()
+    
+    const hoy = new Date()
+    const en7Dias = new Date(hoy)
+    en7Dias.setDate(en7Dias.getDate() + 7)
+    
+    // Filtrar solo próximas citas (pendiente/confirmada) de hoy y próximos 7 días
+    const citasProximas = citas
+      .filter((c: any) => {
+        const fechaCita = new Date(c.fecha_cita)
+        const estadoValido = ['pendiente', 'confirmada'].includes(c.estado)
+        const esProxima = fechaCita >= hoy && fechaCita <= en7Dias
+        return estadoValido && esProxima
+      })
+      .sort((a: any, b: any) => {
+        const fechaA = new Date(`${a.fecha_cita}T${a.hora_inicio}`)
+        const fechaB = new Date(`${b.fecha_cita}T${b.hora_inicio}`)
+        return fechaA.getTime() - fechaB.getTime()
+      })
+      .slice(0, 3) // Solo las 3 próximas
+    
+    proximasSesiones.value = citasProximas.map((c: any) => ({
+      id: c.id,
+      hora: c.hora_inicio.substring(0, 5), // HH:MM
+      paciente: c.pacientes?.metadata?.nombre_completo || c.pacientes?.email || 'Paciente',
+      tipo: c.modalidad === 'presencial' ? 'Presencial' : c.modalidad === 'online' ? 'Online' : 'Telefónica',
+      modalidad: c.observaciones || 'Sesión terapéutica',
+      fecha: c.fecha_cita
+    }))
+  } catch (error) {
+    console.error('Error al cargar próximas citas:', error)
+    // Si hay error, mostrar array vacío en lugar de datos simulados
+    proximasSesiones.value = []
+  } finally {
+    cargandoCitas.value = false
   }
-])
+}
+
+// Lifecycle
+onMounted(async () => {
+  if (user.value) {
+    await cargarProximasCitas()
+  }
+})
 
 // Datos simulados - Pacientes Activos
 const pacientesActivos = ref([
@@ -335,7 +389,7 @@ const resumen = ref({
 })
 
 // Helper function para el color de bienestar
-const getBienestarColor = (valor) => {
+const getBienestarColor = (valor: number) => {
   if (valor >= 70) return 'bg-green-500'
   if (valor >= 50) return 'bg-yellow-500'
   return 'bg-orange-500'

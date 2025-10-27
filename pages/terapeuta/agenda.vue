@@ -9,22 +9,6 @@
       @cerrar="alertaBono.visible = false"
       @notificar="notificarPaciente"
     />
-    
-    <!-- Banner de Modo Demo -->
-    <div class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
-      <div class="flex items-start gap-3">
-        <span class="text-3xl">🎭</span>
-        <div class="flex-1">
-          <h3 class="font-serif text-lg font-semibold text-purple-900 mb-1">
-            Modo Demostración Activo
-          </h3>
-          <p class="text-sm text-purple-700 leading-relaxed">
-            Estás viendo <strong>citas de prueba</strong> con datos simulados. 
-            La tabla de citas se agregará a Supabase próximamente.
-          </p>
-        </div>
-      </div>
-    </div>
 
     <!-- Header -->
     <div class="mb-8">
@@ -332,14 +316,27 @@
             </div>
           </div>
 
-          <div class="space-y-1">
+          <div class="space-y-1.5 overflow-hidden">
             <div
-              v-for="cita in obtenerCitasPorFecha(fecha)"
+              v-for="cita in obtenerCitasPorFecha(fecha).slice(0, 4)"
               :key="cita.id"
-              class="text-xs bg-terracota/10 rounded p-1 truncate"
+              class="text-xs rounded p-1.5 transition-all cursor-pointer hover:shadow-sm"
+              :class="obtenerEstiloTarjetaCita(cita.estado)"
+              :title="`${cita.paciente_nombre || 'Sin nombre'} - ${cita.hora_inicio} (${cita.tipo})`"
             >
-              <div class="font-medium text-cafe">{{ cita.hora_inicio }}</div>
-              <div class="text-cafe/60 truncate">{{ cita.paciente_nombre }}</div>
+              <div class="font-semibold truncate flex items-center gap-1">
+                <span>{{ obtenerIconoTipo(cita.tipo) }}</span>
+                <span>{{ cita.hora_inicio }}</span>
+              </div>
+              <div class="text-[11px] truncate font-medium opacity-90">
+                {{ cita.paciente_nombre || 'Sin nombre' }}
+              </div>
+            </div>
+            <div
+              v-if="obtenerCitasPorFecha(fecha).length > 4"
+              class="text-xs text-cafe/60 font-medium text-center py-0.5"
+            >
+              +{{ obtenerCitasPorFecha(fecha).length - 4 }} más
             </div>
           </div>
         </div>
@@ -410,19 +407,22 @@
             </div>
           </div>
 
-          <div v-if="fecha" class="flex flex-col items-center gap-0.5">
+          <div v-if="fecha" class="space-y-1 overflow-hidden">
             <div
-              v-for="cita in obtenerCitasPorFecha(fecha).slice(0, 2)"
+              v-for="cita in obtenerCitasPorFecha(fecha).slice(0, 3)"
               :key="cita.id"
-              class="w-full text-xs bg-terracota/20 rounded px-1 py-0.5 text-center"
+              class="w-full text-xs rounded px-1.5 py-1 hover:shadow-sm transition-all cursor-pointer"
+              :class="obtenerEstiloTarjetaCita(cita.estado)"
+              :title="`${cita.hora_inicio} - ${cita.paciente_nombre || 'Sin nombre'}`"
             >
-              {{ cita.hora_inicio }}
+              <div class="font-medium truncate">{{ cita.hora_inicio }}</div>
+              <div class="text-[10px] truncate opacity-90">{{ cita.paciente_nombre || 'Sin nombre' }}</div>
             </div>
             <div
-              v-if="obtenerCitasPorFecha(fecha).length > 2"
-              class="text-xs text-cafe/60 font-medium"
+              v-if="obtenerCitasPorFecha(fecha).length > 3"
+              class="text-xs text-cafe/60 font-medium text-center py-1"
             >
-              +{{ obtenerCitasPorFecha(fecha).length - 2 }}
+              +{{ obtenerCitasPorFecha(fecha).length - 3 }} más
             </div>
           </div>
         </div>
@@ -565,7 +565,13 @@ const fechasMes = computed(() => {
 async function cargarCitasDelDia() {
   cargando.value = true
   try {
-    citasDelDia.value = await getCitasPorDia(fechaSeleccionada.value)
+    const todasLasCitas = await getCitasPorDia(fechaSeleccionada.value)
+    // Filtrar solo citas activas (no canceladas ni en borrador)
+    citasDelDia.value = todasLasCitas.filter((cita: any) => 
+      cita.estado !== 'cancelada' && 
+      cita.estado !== 'borrador' &&
+      cita.estado !== null
+    )
   } finally {
     cargando.value = false
   }
@@ -577,7 +583,13 @@ async function cargarCitasSemana() {
     const inicio = fechasSemana.value[0] || ''
     const fin = fechasSemana.value[6] || ''
     if (inicio && fin) {
-      citasSemana.value = await getCitasRango(inicio, fin)
+      const todasLasCitas = await getCitasRango(inicio, fin)
+      // Filtrar solo citas activas (no canceladas ni en borrador)
+      citasSemana.value = todasLasCitas.filter((cita: any) => 
+        cita.estado !== 'cancelada' && 
+        cita.estado !== 'borrador' &&
+        cita.estado !== null
+      )
     }
   } finally {
     cargando.value = false
@@ -590,9 +602,15 @@ async function cargarCitasMes() {
     const primerDia = new Date(anioActual.value, mesActual.value, 1)
     const ultimoDia = new Date(anioActual.value, mesActual.value + 1, 0)
     
-    citasMes.value = await getCitasRango(
+    const todasLasCitas = await getCitasRango(
       formatearFecha(primerDia),
       formatearFecha(ultimoDia)
+    )
+    // Filtrar solo citas activas (no canceladas ni en borrador)
+    citasMes.value = todasLasCitas.filter((cita: any) => 
+      cita.estado !== 'cancelada' && 
+      cita.estado !== 'borrador' &&
+      cita.estado !== null
     )
   } finally {
     cargando.value = false
@@ -604,7 +622,16 @@ async function buscarDisponibilidadRapida() {
   busquedaRealizada.value = false
   
   try {
-    disponibilidades.value = await buscarDisponibilidad(14)
+    // Obtener terapeuta actual
+    const { getTerapeutaActual } = useCitas()
+    const terapeuta = await getTerapeutaActual()
+    
+    if (!terapeuta) {
+      console.error('No se pudo obtener el terapeuta actual')
+      return
+    }
+    
+    disponibilidades.value = await buscarDisponibilidad(terapeuta.id, 14, 60)
     busquedaRealizada.value = true
   } finally {
     cargandoDisponibilidad.value = false
@@ -670,15 +697,15 @@ function onCitaCreada() {
 }
 
 async function marcarComoCompletada(citaId: string) {
-  const resultado = await actualizarEstadoCita(citaId, 'completada')
+  const resultado = await actualizarEstadoCita(citaId, 'realizada')
   
   // Si hay una alerta de bono, mostrarla
-  if (resultado && 'alerta' in resultado && resultado.alerta) {
+  if (resultado && 'alerta' in resultado && resultado.alerta && 'sesiones_restantes' in resultado) {
     const cita = citasDelDia.value.find(c => c.id === citaId)
     if (cita) {
       alertaBono.value = {
         visible: true,
-        sesionesRestantes: resultado.sesiones_restantes || 0,
+        sesionesRestantes: (resultado as any).sesiones_restantes || 0,
         pacienteNombre: cita.paciente_nombre,
         pacienteId: cita.paciente_id
       }
@@ -749,9 +776,9 @@ function verDia(fecha: string) {
 
 function obtenerCitasPorFecha(fecha: string) {
   if (vistaActual.value === 'semana') {
-    return citasSemana.value.filter(c => c.fecha === fecha)
+    return citasSemana.value.filter(c => (c.fecha || c.fecha_cita) === fecha)
   } else {
-    return citasMes.value.filter(c => c.fecha === fecha)
+    return citasMes.value.filter(c => (c.fecha || c.fecha_cita) === fecha)
   }
 }
 
@@ -811,6 +838,16 @@ function obtenerEstiloEstado(estado: string): string {
     completada: 'bg-blue-100 text-blue-700'
   }
   return estilos[estado] || 'bg-gray-100 text-gray-700'
+}
+
+function obtenerEstiloTarjetaCita(estado: string): string {
+  const estilos: Record<string, string> = {
+    confirmada: 'bg-green-50 text-green-800 border border-green-200',
+    pendiente: 'bg-yellow-50 text-yellow-800 border border-yellow-200',
+    cancelada: 'bg-red-50 text-red-800 border border-red-200',
+    realizada: 'bg-blue-50 text-blue-800 border border-blue-200'
+  }
+  return estilos[estado] || 'bg-terracota/10 text-cafe border border-terracota/20'
 }
 
 // Watchers

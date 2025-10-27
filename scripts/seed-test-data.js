@@ -83,6 +83,9 @@ async function seedData() {
       .from('pacientes')
       .insert({
         id: userId,
+        nombre_completo: 'María García López',
+        email: 'paciente@test.com',
+        telefono: '+34 600 123 456',
         area_de_acompanamiento: 'Ansiedad, Desarrollo personal',
         frecuencia: 'semanal',
         activo: true,

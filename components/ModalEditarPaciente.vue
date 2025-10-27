@@ -45,32 +45,18 @@
               />
             </div>
 
-            <!-- Apellido Paterno -->
+            <!-- Apellido -->
             <div>
-              <label for="apellido_paterno" class="block text-sm font-medium text-[#5D4A44] mb-1">
-                Apellido Paterno <span class="text-red-500">*</span>
+              <label for="apellido" class="block text-sm font-medium text-[#5D4A44] mb-1">
+                Apellido <span class="text-red-500">*</span>
               </label>
               <input
-                id="apellido_paterno"
-                v-model="formulario.apellido_paterno"
+                id="apellido"
+                v-model="formulario.apellido"
                 type="text"
                 required
                 class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
-                placeholder="Apellido paterno"
-              />
-            </div>
-
-            <!-- Apellido Materno -->
-            <div>
-              <label for="apellido_materno" class="block text-sm font-medium text-[#5D4A44] mb-1">
-                Apellido Materno
-              </label>
-              <input
-                id="apellido_materno"
-                v-model="formulario.apellido_materno"
-                type="text"
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
-                placeholder="Apellido materno (opcional)"
+                placeholder="Apellido(s) del paciente"
               />
             </div>
 
@@ -148,21 +134,21 @@
               </select>
             </div>
 
-            <!-- Frecuencia -->
+            <!-- Tipo de Bono -->
             <div>
-              <label for="frecuencia" class="block text-sm font-medium text-[#5D4A44] mb-1">
-                Frecuencia de Sesiones <span class="text-red-500">*</span>
+              <label for="tipo_bono" class="block text-sm font-medium text-[#5D4A44] mb-1">
+                Tipo de Bono <span class="text-red-500">*</span>
               </label>
               <select
-                id="frecuencia"
-                v-model="formulario.frecuencia"
+                id="tipo_bono"
+                v-model="formulario.tipo_bono"
                 required
                 class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
               >
-                <option value="">Selecciona frecuencia</option>
-                <option value="semanal">Semanal</option>
-                <option value="quincenal">Quincenal</option>
-                <option value="mensual">Mensual</option>
+                <option value="">Selecciona tipo de bono</option>
+                <option value="a_demanda">A Demanda (1 sesión)</option>
+                <option value="quincenal">Quincenal (2 sesiones/mes)</option>
+                <option value="semanal">Semanal (4 sesiones/mes)</option>
               </select>
             </div>
 
@@ -200,6 +186,102 @@
           </div>
         </div>
 
+        <!-- Gestión de Bonos -->
+        <div class="space-y-4 pt-4 border-t border-[#D8AFA0]/30">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold">
+              Gestión de Bonos
+            </h3>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input
+                v-model="formulario.crear_bono"
+                type="checkbox"
+                class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+              />
+              <span class="text-sm font-medium text-[#5D4A44]">
+                🎫 Crear nuevo bono para este paciente
+              </span>
+            </label>
+          </div>
+
+          <!-- Formulario de Bono (solo si checkbox está marcado) -->
+          <div v-if="formulario.crear_bono" class="border-2 border-purple-400/40 rounded-lg p-4 space-y-4 bg-purple-50/30">
+            <!-- Alerta informativa -->
+            <div class="bg-purple-100 border border-purple-300 rounded-lg p-3 flex items-start gap-2">
+              <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              <div class="text-sm text-purple-800">
+                <p class="font-medium">El bono usará el tipo seleccionado arriba: <strong>{{ nombreTipoBono || 'Selecciona un tipo primero' }}</strong></p>
+                <p class="text-xs text-purple-700 mt-1">
+                  Sesiones incluidas: {{ sesionesAutomaticas === 'Selecciona tipo' ? 'N/A' : sesionesAutomaticas }}
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Monto Total -->
+              <div>
+                <label for="bono_monto" class="block text-sm font-medium text-[#5D4A44] mb-1">
+                  Monto Total <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3 top-2.5 text-[#5D4A44] font-medium">€</span>
+                  <input
+                    id="bono_monto"
+                    v-model.number="formulario.bono_monto"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    :required="formulario.crear_bono"
+                    class="w-full pl-8 pr-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+
+              <!-- Precio por Sesión (calculado) -->
+              <div>
+                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
+                  Precio por Sesión
+                </label>
+                <div class="px-4 py-2 bg-purple-100 border-2 border-purple-300 rounded-lg text-purple-900 font-bold">
+                  €{{ precioPorSesion }}
+                </div>
+              </div>
+
+              <!-- Renovación Automática -->
+              <div class="md:col-span-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    v-model="formulario.bono_renovacion_automatica"
+                    type="checkbox"
+                    class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  />
+                  <span class="text-sm font-medium text-[#5D4A44]">
+                    🔄 Renovación automática al vencer
+                  </span>
+                </label>
+                <p class="text-xs text-cafe/60 mt-1 ml-6">
+                  El sistema creará un nuevo bono idéntico cuando este expire
+                </p>
+              </div>
+            </div>
+
+            <!-- Resumen del Bono -->
+            <div v-if="sesionesAutomaticas && formulario.bono_monto" class="bg-white border border-purple-300 rounded-lg p-4">
+              <p class="text-sm font-medium text-[#5D4A44] mb-2">📋 Resumen del Bono:</p>
+              <div class="text-sm text-cafe/80 space-y-1">
+                <p>• <strong>Tipo:</strong> {{ nombreTipoBono }}</p>
+                <p>• <strong>Sesiones:</strong> {{ sesionesAutomaticas }}</p>
+                <p>• <strong>Total:</strong> €{{ formulario.bono_monto.toFixed(2) }}</p>
+                <p>• <strong>Por sesión:</strong> €{{ precioPorSesion }}</p>
+                <p v-if="formulario.bono_renovacion_automatica" class="text-purple-700">• ✅ Con renovación automática</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Mensaje de Error -->
         <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
           <p class="text-sm text-red-600">{{ error }}</p>
@@ -230,7 +312,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
   mostrar: {
@@ -246,18 +328,54 @@ const props = defineProps({
 const emit = defineEmits(['cerrar', 'paciente-actualizado'])
 
 const { supabase } = useSupabase()
+const { crearBono } = useBonos()
 
 const formulario = ref({
   nombre: '',
-  apellido_paterno: '',
-  apellido_materno: '',
+  apellido: '',
   email: '',
   telefono: '',
   fecha_nacimiento: '',
   area_acompanamiento: '',
-  frecuencia: '',
+  tipo_bono: '',
   activo: true,
-  en_pausa: false
+  en_pausa: false,
+  crear_bono: false,
+  bono_monto: null,
+  bono_renovacion_automatica: false
+})
+
+// Computed: Calcular sesiones según tipo de bono del paciente
+const sesionesAutomaticas = computed(() => {
+  const tipo = formulario.value.tipo_bono
+  if (!tipo) return 'Selecciona tipo'
+  
+  const mapeo = {
+    a_demanda: 1,
+    quincenal: 2,
+    semanal: 4
+  }
+  
+  return mapeo[tipo] || 0
+})
+
+// Computed: Nombre del tipo de bono para mostrar
+const nombreTipoBono = computed(() => {
+  const tipo = formulario.value.tipo_bono
+  const nombres = {
+    a_demanda: 'A Demanda',
+    quincenal: 'Quincenal',
+    semanal: 'Semanal'
+  }
+  return nombres[tipo] || ''
+})
+
+// Computed: Calcular precio por sesión
+const precioPorSesion = computed(() => {
+  const sesiones = sesionesAutomaticas.value
+  const monto = formulario.value.bono_monto
+  if (sesiones === 'Selecciona tipo' || !monto || sesiones <= 0) return '0.00'
+  return (monto / sesiones).toFixed(2)
 })
 
 const guardando = ref(false)
@@ -274,17 +392,26 @@ const cargarDatosPaciente = () => {
   const p = props.paciente
   const metadata = p.metadata || {}
   
+  // Descomponer nombre_completo en nombre y apellido
+  const nombreCompleto = p.nombre_completo || p.nombre || ''
+  const partes = nombreCompleto.split(' ')
+  const nombre = partes[0] || metadata.nombre || ''
+  // Retrocompatibilidad: buscar en metadata.apellido o apellido_paterno (datos antiguos)
+  const apellido = partes.slice(1).join(' ') || metadata.apellido || metadata.apellido_paterno || ''
+  
   formulario.value = {
-    nombre: metadata.nombre || p.nombre?.split(' ')[0] || '',
-    apellido_paterno: metadata.apellido_paterno || '',
-    apellido_materno: metadata.apellido_materno || '',
+    nombre: nombre,
+    apellido: apellido,
     email: p.email || '',
     telefono: p.telefono || '',
     fecha_nacimiento: metadata.fecha_nacimiento || '',
     area_acompanamiento: p.area_de_acompanamiento || p.area_acompanamiento || '',
-    frecuencia: p.frecuencia || '',
+    tipo_bono: p.tipo_bono || '',
     activo: p.activo ?? true,
-    en_pausa: p.en_pausa || metadata.en_pausa || false
+    en_pausa: p.en_pausa || metadata.en_pausa || false,
+    crear_bono: false,
+    bono_monto: null,
+    bono_renovacion_automatica: false
   }
   error.value = ''
 }
@@ -303,7 +430,7 @@ const actualizarPaciente = async () => {
     console.log('Actualizando paciente:', props.paciente.id)
 
     // Construir el nombre completo
-    const nombreCompleto = `${formulario.value.nombre} ${formulario.value.apellido_paterno} ${formulario.value.apellido_materno || ''}`.trim()
+    const nombreCompleto = `${formulario.value.nombre.trim()} ${formulario.value.apellido.trim()}`
     
     // Obtener metadata existente para no sobreescribirla completamente
     const metadataExistente = props.paciente.metadata || {}
@@ -316,13 +443,12 @@ const actualizarPaciente = async () => {
         nombre_completo: nombreCompleto,
         telefono: formulario.value.telefono,
         area_de_acompanamiento: formulario.value.area_acompanamiento,
-        frecuencia: formulario.value.frecuencia,
+        tipo_bono: formulario.value.tipo_bono,
         activo: formulario.value.activo,
         metadata: {
           ...metadataExistente,
           nombre: formulario.value.nombre,
-          apellido_paterno: formulario.value.apellido_paterno,
-          apellido_materno: formulario.value.apellido_materno,
+          apellido: formulario.value.apellido,
           fecha_nacimiento: formulario.value.fecha_nacimiento,
           en_pausa: formulario.value.en_pausa,
           fecha_actualizacion: new Date().toISOString()
@@ -338,6 +464,40 @@ const actualizarPaciente = async () => {
     }
 
     console.log('Paciente actualizado:', pacienteData)
+
+    // Si el checkbox de crear bono está marcado, crear el bono
+    if (formulario.value.crear_bono && formulario.value.tipo_bono && formulario.value.bono_monto) {
+      console.log('Creando bono para el paciente...')
+      
+      const fechaInicio = new Date()
+      const fechaFin = new Date()
+      
+      // Calcular fecha_fin según tipo de bono
+      const tipoBono = formulario.value.tipo_bono
+      if (tipoBono === 'a_demanda') {
+        fechaFin.setMonth(fechaFin.getMonth() + 1)
+      } else if (tipoBono === 'quincenal') {
+        fechaFin.setDate(fechaFin.getDate() + 15)
+      } else if (tipoBono === 'semanal') {
+        fechaFin.setMonth(fechaFin.getMonth() + 1)
+      }
+
+      const sesiones = sesionesAutomaticas.value
+
+      await crearBono({
+        paciente_id: props.paciente.id,
+        tipo: tipoBono,
+        sesiones_totales: sesiones,
+        sesiones_disponibles: sesiones,
+        monto_total: formulario.value.bono_monto,
+        fecha_inicio: fechaInicio.toISOString().split('T')[0],
+        fecha_fin: fechaFin.toISOString().split('T')[0],
+        estado: 'pendiente',
+        renovacion_automatica: formulario.value.bono_renovacion_automatica
+      })
+
+      console.log('Bono creado exitosamente')
+    }
 
     // Emitir evento de éxito
     emit('paciente-actualizado', pacienteData)

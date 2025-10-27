@@ -23,16 +23,24 @@ export const useTerapeuta = () => {
     try {
       const { data, error } = await supabase
         .from('pacientes')
-        .select('id, nombre, apellidos, email, activo, en_pausa, area_de_acompanamiento')
+        .select('id, nombre_completo, email, activo, area_de_acompanamiento, metadata')
         .eq('activo', true)
-        .order('nombre', { ascending: true });
+        .order('nombre_completo', { ascending: true });
 
       if (error) {
         console.error('Error fetching pacientes:', error);
         return [];
       }
 
-      return data;
+      // Transformar datos para compatibilidad con componentes
+      return ((data as any[]) || []).map((p: any) => ({
+        id: p.id,
+        nombre: p.nombre_completo || 'Sin nombre',
+        email: p.email,
+        activo: p.activo,
+        en_pausa: p.metadata?.en_pausa || false,
+        area_de_acompanamiento: p.area_de_acompanamiento
+      }));
     } catch (error) {
       console.error('Error en getPacientes:', error);
       return [];

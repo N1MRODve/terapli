@@ -1,5 +1,5 @@
 <template>
-  <div class="section-padding">
+  <main class="pacientes-container section-padding">
     <!-- Header -->
     <div class="mb-8">
       <h1 class="text-4xl font-serif font-bold text-cafe mb-2">
@@ -84,15 +84,51 @@
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <PacienteCard
+      <div 
         v-for="paciente in pacientesFiltrados"
         :key="paciente.id"
-        :paciente="paciente"
+        class="relative group cursor-pointer"
         @click="irAFichaPaciente(paciente.id)"
-        @editar="abrirModalEditar"
-        @eliminar="abrirModalEliminar"
-      />
+      >
+        <PacienteCard
+          :paciente="paciente"
+          @editar="abrirModalEditar"
+          @eliminar="abrirModalEliminar"
+          @ver-citas="verCitasPaciente"
+          @gestionar-bonos="gestionarBonosPaciente"
+        />
+        
+        <!-- Botón flotante "Asignar Cita" - Visible al hover en desktop -->
+        <button
+          v-if="paciente.activo && !paciente.en_pausa"
+          @click.stop="abrirModalAsignarCita(paciente)"
+          class="hidden md:flex absolute bottom-4 right-4 px-4 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+          title="Asignar nueva cita"
+        >
+          <span>📅</span>
+          <span>Asignar Cita</span>
+        </button>
+        
+        <!-- Versión visible siempre en móvil -->
+        <button
+          v-if="paciente.activo && !paciente.en_pausa"
+          @click.stop="abrirModalAsignarCita(paciente)"
+          class="md:hidden absolute bottom-4 right-4 px-4 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
+          title="Asignar nueva cita"
+        >
+          <span>📅</span>
+          <span>Asignar Cita</span>
+        </button>
+      </div>
     </div>
+
+    <!-- Modal Asignar Cita -->
+    <ModalNuevaCita
+      :mostrar="mostrarModalAsignarCita"
+      :paciente-preseleccionado="pacienteSeleccionadoCita"
+      @cerrar="cerrarModalAsignarCita"
+      @cita-creada="manejarCitaCreada"
+    />
 
     <!-- Paginación (si es necesaria) -->
     <div v-if="pacientesFiltrados.length > 0" class="mt-8 flex items-center justify-between">
@@ -131,7 +167,7 @@
       @paciente-eliminado="manejarPacienteEliminado"
       @paciente-desactivado="manejarPacienteDesactivado"
     />
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -164,7 +200,9 @@ watch(user, (newUser, oldUser) => {
 const mostrarModalNuevo = ref(false)
 const mostrarModalEditar = ref(false)
 const mostrarModalEliminar = ref(false)
+const mostrarModalAsignarCita = ref(false)
 const pacienteSeleccionado = ref(null)
+const pacienteSeleccionadoCita = ref(null)
 
 // Estado
 const pacientes = ref([])
@@ -215,49 +253,61 @@ const cargarPacientes = async () => {
         frecuencia,
         metadata
       `)
-      .eq('psicologa_id', userId)
+      .eq('terapeuta_id', userId)
       .order('created_at', { ascending: false })
     
     if (pacientesError) throw pacientesError
 
-    // Enriquecer datos con información de sesiones y emociones
+    // Enriquecer datos con información de citas y emociones
     const pacientesEnriquecidos = await Promise.all(
       pacientesData.map(async (paciente) => {
-        // Obtener última sesión
-        const { data: ultimaSesion } = await supabase
-          .from('sesiones')
-          .select('fecha')
+        // Obtener última sesión (de tabla 'citas')
+        const { data: ultimaCita } = await supabase
+          .from('citas')
+          .select('fecha_cita')
           .eq('paciente_id', paciente.id)
           .eq('estado', 'realizada')
-          .order('fecha', { ascending: false })
+          .order('fecha_cita', { ascending: false })
           .limit(1)
-          .single()
+          .maybeSingle()
 
-        // Obtener próxima sesión
-        const { data: proximaSesion } = await supabase
-          .from('sesiones')
-          .select('fecha')
+        // Obtener próxima sesión (de tabla 'citas')
+        const { data: proximaCita } = await supabase
+          .from('citas')
+          .select('fecha_cita, hora_inicio')
           .eq('paciente_id', paciente.id)
           .in('estado', ['pendiente', 'confirmada'])
-          .gte('fecha', new Date().toISOString())
-          .order('fecha', { ascending: true })
+          .gte('fecha_cita', new Date().toISOString().split('T')[0])
+          .order('fecha_cita', { ascending: true })
+          .order('hora_inicio', { ascending: true })
           .limit(1)
-          .single()
+          .maybeSingle()
 
-        // Contar total de sesiones
+        // Contar total de sesiones (de tabla 'citas')
         const { count: totalSesiones } = await supabase
-          .from('sesiones')
+          .from('citas')
           .select('*', { count: 'exact', head: true })
           .eq('paciente_id', paciente.id)
           .eq('estado', 'realizada')
 
-        // Obtener bono activo
-        const { data: bonoActivo } = await supabase
-          .from('bonos')
-          .select('id, total_sesiones, sesiones_restantes, created_at')
-          .eq('paciente_id', paciente.id)
-          .eq('estado', 'activo')
-          .single()
+        // Obtener bono activo (con manejo seguro de errores)
+        let bonoActivo = null
+        try {
+          const { data: bonoData, error: bonoError } = await supabase
+            .from('bonos')
+            .select('id, tipo, estado, total_sesiones, sesiones_restantes, fecha_fin, created_at')
+            .eq('paciente_id', paciente.id)
+            .eq('estado', 'activo')
+            .maybeSingle()
+
+          if (bonoError) {
+            console.warn('[Bonos] Error en consulta:', bonoError.message)
+          } else {
+            bonoActivo = bonoData
+          }
+        } catch (error) {
+          console.warn('[Bonos] Error inesperado:', error)
+        }
 
         // Contar sesiones completadas desde la última renovación de bono
         let sesionesCompletadasBono = 0
@@ -293,30 +343,32 @@ const cargarPacientes = async () => {
           }
         }
 
-        // Obtener datos del nombre
-        const nombre = paciente.nombre_completo || 
-                      paciente.metadata?.nombre_completo ||
-                      `${paciente.metadata?.nombre || ''} ${paciente.metadata?.apellido_paterno || ''}`.trim() ||
-                      paciente.email
+        // Obtener el nombre completo del paciente
+        const nombreCompleto = paciente.nombre_completo || 
+                              paciente.metadata?.nombre_completo ||
+                              paciente.email
 
         return {
           id: paciente.id,
-          nombre: nombre,
-          apellidos: '', // No tenemos apellidos separados en la BD
+          nombre: nombreCompleto,
+          apellidos: '', // Deprecado - ya no se usa
           email: paciente.email,
           telefono: paciente.telefono,
           activo: paciente.activo,
           en_pausa: paciente.metadata?.en_pausa || false,
           area_de_acompanamiento: paciente.area_de_acompanamiento,
           frecuencia: paciente.frecuencia,
-          ultima_sesion: ultimaSesion?.fecha || null,
-          proxima_sesion: proximaSesion?.fecha || null,
+          ultima_sesion: ultimaCita?.fecha_cita || null,
+          proxima_sesion: proximaCita ? `${proximaCita.fecha_cita}T${proximaCita.hora_inicio}:00` : null,
           total_sesiones: totalSesiones || 0,
           estado_emocional_promedio: estadoEmocionalPromedio,
           evolucion_porcentaje: evolucionPorcentaje,
           requiere_atencion: requiereAtencion,
           created_at: paciente.created_at,
           bono_activo: bonoActivo ? {
+            tipo: bonoActivo.tipo,
+            estado: bonoActivo.estado,
+            fecha_fin: bonoActivo.fecha_fin,
             sesiones_completadas: sesionesCompletadasBono,
             total_sesiones: totalSesionesBono,
             sesiones_restantes: bonoActivo.sesiones_restantes
@@ -342,8 +394,10 @@ const pacientesFiltrados = computed(() => {
   if (busqueda.value) {
     const busquedaLower = busqueda.value.toLowerCase()
     resultado = resultado.filter(p => {
-      const nombreCompleto = `${p.nombre} ${p.apellidos}`.toLowerCase()
-      return nombreCompleto.includes(busquedaLower)
+      // Buscar en el nombre completo del paciente
+      const nombreCompleto = (p.nombre || '').toLowerCase()
+      return nombreCompleto.includes(busquedaLower) || 
+             (p.email || '').toLowerCase().includes(busquedaLower)
     })
   }
 
@@ -440,6 +494,41 @@ const manejarPacienteDesactivado = async (pacienteId) => {
   
   // Opcional: Mostrar notificación de éxito
   // toast.success('Paciente desactivado exitosamente')
+}
+
+// Gestión del modal de asignar cita
+const abrirModalAsignarCita = (paciente) => {
+  console.log('Abriendo modal de asignación de cita para:', paciente)
+  pacienteSeleccionadoCita.value = paciente
+  mostrarModalAsignarCita.value = true
+}
+
+const cerrarModalAsignarCita = () => {
+  mostrarModalAsignarCita.value = false
+  pacienteSeleccionadoCita.value = null
+}
+
+const manejarCitaCreada = async (nuevaCita) => {
+  console.log('Nueva cita creada:', nuevaCita)
+  
+  // Recargar la lista de pacientes para actualizar próxima sesión y bonos
+  await cargarPacientes()
+  
+  // Cerrar el modal
+  cerrarModalAsignarCita()
+  
+  // Opcional: Mostrar notificación de éxito
+  // toast.success('Cita asignada exitosamente')
+}
+
+// Función para ver las citas de un paciente
+const verCitasPaciente = (paciente) => {
+  router.push(`/terapeuta/agenda?paciente=${paciente.id}`)
+}
+
+// Función para gestionar bonos de un paciente
+const gestionarBonosPaciente = (paciente) => {
+  router.push(`/terapeuta/pacientes/${paciente.id}/bonos`)
 }
 
 // Lifecycle

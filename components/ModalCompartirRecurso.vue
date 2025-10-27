@@ -75,7 +75,7 @@
                     />
                     <div class="flex-1">
                       <p class="font-medium text-[#5D4A44]">
-                        {{ paciente.nombre }} {{ paciente.apellidos || paciente.apellido || '' }}
+                        {{ paciente.nombre }}
                       </p>
                       <p v-if="paciente.email" class="text-sm text-[#5D4A44]/60">
                         {{ paciente.email }}
@@ -186,9 +186,9 @@ const pacientesFiltrados = computed(() => {
   
   const termino = busqueda.value.toLowerCase()
   return pacientes.value.filter(p => 
-    `${p.nombre} ${p.apellidos || p.apellido || ''}`.toLowerCase().includes(termino) ||
-    p.email?.toLowerCase().includes(termino) ||
-    p.area_de_acompanamiento?.toLowerCase().includes(termino)
+    (p.nombre || '').toLowerCase().includes(termino) ||
+    (p.email || '').toLowerCase().includes(termino) ||
+    (p.area_de_acompanamiento || '').toLowerCase().includes(termino)
   )
 })
 

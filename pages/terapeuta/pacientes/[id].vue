@@ -1,21 +1,5 @@
 <template>
-  <div>
-    <!-- Banner de Modo Demo -->
-    <div v-if="MODO_DEMO && !loading" class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
-      <div class="flex items-start gap-3">
-        <span class="text-3xl">🎭</span>
-        <div class="flex-1">
-          <h3 class="font-serif text-lg font-semibold text-purple-900 mb-1">
-            Modo Demostración Activo
-          </h3>
-          <p class="text-sm text-purple-700 leading-relaxed">
-            Estás viendo datos de prueba simulados. Las notas que edites se guardarán solo en memoria.
-            Para usar datos reales, cambia <code class="px-2 py-0.5 bg-purple-100 rounded">MODO_DEMO = false</code>.
-          </p>
-        </div>
-      </div>
-    </div>
-
+  <div class="pb-20">
     <!-- Navegación de regreso -->
     <button
       @click="$router.push('/terapeuta/pacientes')"
@@ -26,7 +10,7 @@
     </button>
 
     <!-- Estado de carga -->
-    <div v-if="loading" class="text-center py-12">
+    <div v-if="cargando" class="text-center py-12">
       <div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mx-auto mb-4"></div>
       <p class="text-cafe/60">Cargando información del paciente...</p>
     </div>
@@ -38,9 +22,7 @@
         <h3 class="text-xl font-serif font-semibold text-cafe mb-2">
           No se pudo cargar la información
         </h3>
-        <p class="text-cafe/60 mb-4">
-          {{ error }}
-        </p>
+        <p class="text-cafe/60 mb-4">{{ error }}</p>
         <button
           @click="$router.push('/terapeuta/pacientes')"
           class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
@@ -51,7 +33,7 @@
     </div>
 
     <!-- Contenido principal -->
-    <div v-else-if="paciente">
+    <div v-else-if="pacienteData">
       <!-- Encabezado del paciente -->
       <DashboardCard class="mb-6">
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
@@ -73,28 +55,48 @@
               <div class="flex flex-wrap items-center gap-3 mb-3">
                 <span 
                   class="px-3 py-1 text-sm font-medium rounded-full"
-                  :class="estadoVinculoClasses"
+                  :class="estadoClasses"
                 >
-                  {{ estadoVinculoTexto }}
+                  {{ estadoTexto }}
                 </span>
-                <span class="text-cafe/60 text-sm">
-                  📧 {{ paciente.email }}
-                </span>
-                <span v-if="paciente.edad" class="text-cafe/60 text-sm">
-                  🎂 {{ paciente.edad }} años
+                <span class="text-cafe/60 text-sm flex items-center gap-1">
+                  <span>📧</span>
+                  <span>{{ pacienteData.email }}</span>
                 </span>
               </div>
-              <div v-if="paciente.area_de_acompanamiento" class="text-sm text-cafe/70">
-                <strong>Área de acompañamiento:</strong> {{ paciente.area_de_acompanamiento }}
-              </div>
-              <div v-if="paciente.frecuencia" class="text-sm text-cafe/70 mt-1">
-                <strong>Frecuencia:</strong> {{ paciente.frecuencia }}
+              <div class="space-y-1 text-sm">
+                <div v-if="pacienteData.telefono" class="text-cafe/70 flex items-center gap-2">
+                  <span>📱</span>
+                  <span>{{ pacienteData.telefono }}</span>
+                </div>
+                <div v-if="pacienteData.area_de_acompanamiento" class="text-cafe/70 flex items-center gap-2">
+                  <span>🎯</span>
+                  <span><strong>Área:</strong> {{ pacienteData.area_de_acompanamiento }}</span>
+                </div>
+                <div v-if="pacienteData.tipo_bono" class="text-cafe/70 flex items-center gap-2">
+                  <span>🎫</span>
+                  <span><strong>Tipo de Bono:</strong> {{ tipoBono }}</span>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Acciones rápidas -->
           <div class="flex flex-wrap gap-2">
+            <button
+              @click="irABonos"
+              class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm flex items-center gap-2"
+            >
+              <span>🎫</span>
+              <span>Gestionar Bonos</span>
+            </button>
+            <button
+              @click="abrirWhatsApp"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm flex items-center gap-2"
+            >
+              <span>💬</span>
+              <span>WhatsApp</span>
+            </button>
             <button
               @click="agendarSesion"
               class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm flex items-center gap-2"
@@ -113,157 +115,487 @@
         </div>
       </DashboardCard>
 
-      <!-- Grid de información -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <!-- Resumen terapéutico -->
+      <!-- Grid principal de información -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- Resumen rápido -->
+        <DashboardCard>
+          <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
+            <span class="text-2xl">📊</span>
+            Resumen
+          </h2>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-base-bg rounded-lg">
+              <span class="text-sm text-cafe/70">Total sesiones</span>
+              <span class="font-bold text-cafe text-lg">{{ estadisticas.total }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <span class="text-sm text-cafe/70">Completadas</span>
+              <span class="font-bold text-green-600 text-lg">{{ estadisticas.completadas }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+              <span class="text-sm text-cafe/70">Pendientes</span>
+              <span class="font-bold text-yellow-600 text-lg">{{ estadisticas.pendientes }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <span class="text-sm text-cafe/70">Próximas</span>
+              <span class="font-bold text-blue-600 text-lg">{{ estadisticas.proximas }}</span>
+            </div>
+          </div>
+        </DashboardCard>
+
+        <!-- Bono activo -->
+        <DashboardCard>
+          <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
+            <span class="text-2xl">🎫</span>
+            Bono Contratado
+          </h2>
+
+          <div v-if="bonoActivo" class="space-y-4">
+            <!-- Tipo de Bono -->
+            <div class="p-3 bg-gradient-to-r from-purple-100 to-purple-50 border border-purple-200 rounded-lg">
+              <div class="text-xs text-purple-700 font-medium mb-1">Tipo de Bono</div>
+              <div class="text-sm font-bold text-purple-900">
+                {{ tipoBono }}
+              </div>
+            </div>
+
+            <!-- Sesiones disponibles -->
+            <div class="text-center p-4 bg-gradient-to-br from-terracota/10 to-rosa/20 rounded-xl">
+              <div class="text-4xl font-bold text-terracota mb-1">
+                {{ bonoActivo.sesiones_disponibles }}
+              </div>
+              <div class="text-sm text-cafe/70">
+                de {{ bonoActivo.sesiones_totales }} sesiones disponibles
+              </div>
+            </div>
+
+            <!-- Progreso -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-cafe/70">Progreso</span>
+                <span class="font-medium text-cafe">{{ bonoActivo.porcentaje_uso }}%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div
+                  class="h-2.5 rounded-full bg-gradient-to-r from-terracota to-rosa transition-all"
+                  :style="{ width: `${bonoActivo.porcentaje_uso}%` }"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Detalles del bono -->
+            <div class="pt-3 border-t space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-cafe/70">Sesiones usadas:</span>
+                <span class="font-medium text-cafe">{{ bonoActivo.sesiones_usadas }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-cafe/70">Monto total:</span>
+                <span class="font-medium text-cafe">{{ formatearPrecio(bonoActivo.monto_total || bonoActivo.precio) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-cafe/70">Precio por sesión:</span>
+                <span class="font-medium text-cafe">{{ formatearPrecio((bonoActivo.monto_total || bonoActivo.precio) / bonoActivo.sesiones_totales) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-cafe/70">Estado:</span>
+                <span class="font-medium capitalize" :class="{
+                  'text-green-600': bonoActivo.estado === 'activo',
+                  'text-yellow-600': bonoActivo.estado === 'pendiente',
+                  'text-gray-600': bonoActivo.estado === 'vencido'
+                }">
+                  {{ bonoActivo.estado }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="text-center py-8">
+            <span class="text-5xl mb-3 block opacity-40">🎫</span>
+            <p class="text-sm text-cafe/50 mb-2">No hay bono activo</p>
+            <p class="text-xs text-cafe/40 mb-4">
+              Tipo de bono del paciente: <strong>{{ tipoBono || 'No definido' }}</strong>
+            </p>
+            <button 
+              @click="irABonos"
+              class="mt-2 text-sm text-terracota hover:text-cafe transition-colors font-medium"
+            >
+              Gestionar bonos →
+            </button>
+          </div>
+        </DashboardCard>
+
+        <!-- Información del acompañamiento -->
         <DashboardCard>
           <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
             <span class="text-2xl">📋</span>
-            Resumen Terapéutico
+            Datos del Proceso
           </h2>
 
-          <div class="space-y-4">
-            <div class="flex items-start gap-3 p-3 bg-base-bg rounded-lg">
-              <span class="text-2xl">📅</span>
-              <div class="flex-1">
-                <div class="text-sm font-medium text-cafe mb-1">Primera sesión</div>
-                <div class="text-sm text-cafe/70">
-                  {{ formatearFecha(paciente.primera_sesion) }}
-                </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-base-bg rounded-lg">
+              <div class="text-xs text-cafe/60 mb-1">Primera sesión</div>
+              <div class="text-sm font-medium text-cafe">
+                {{ formatearFecha(primeraSesion) || 'Sin registro' }}
               </div>
             </div>
 
-            <div class="flex items-start gap-3 p-3 bg-base-bg rounded-lg">
-              <span class="text-2xl">🕐</span>
-              <div class="flex-1">
-                <div class="text-sm font-medium text-cafe mb-1">Última sesión</div>
-                <div class="text-sm text-cafe/70">
-                  {{ formatearFecha(paciente.ultima_sesion) }}
-                </div>
+            <div class="p-3 bg-base-bg rounded-lg">
+              <div class="text-xs text-cafe/60 mb-1">Última sesión</div>
+              <div class="text-sm font-medium text-cafe">
+                {{ formatearFecha(ultimaSesion) || 'Sin registro' }}
               </div>
             </div>
 
-            <div class="flex items-start gap-3 p-3 bg-base-bg rounded-lg">
-              <span class="text-2xl">💬</span>
-              <div class="flex-1">
-                <div class="text-sm font-medium text-cafe mb-1">Sesiones completadas</div>
-                <div class="text-sm text-cafe/70">
-                  {{ paciente.total_sesiones }} sesiones
-                </div>
+            <div v-if="proximaSesion" class="p-4 bg-gradient-to-br from-terracota/20 to-rosa/20 border-2 border-terracota/40 rounded-lg">
+              <div class="text-xs font-medium text-terracota mb-2 flex items-center gap-1">
+                <span>📅</span>
+                <span>Próxima sesión agendada</span>
+              </div>
+              <div class="text-base font-bold text-cafe mb-3">
+                {{ formatearFechaCompleta(proximaSesion.fecha_cita, proximaSesion.hora_inicio) }}
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs px-3 py-1.5 bg-white border border-terracota/30 rounded-full font-medium flex items-center gap-1">
+                  {{ obtenerIconoModalidad(proximaSesion.modalidad) }}
+                  {{ proximaSesion.modalidad }}
+                </span>
+                <span class="text-xs px-3 py-1.5 bg-white border border-terracota/30 rounded-full capitalize font-medium" :class="{
+                  'text-green-600 border-green-300': proximaSesion.estado === 'confirmada',
+                  'text-yellow-600 border-yellow-300': proximaSesion.estado === 'pendiente',
+                  'text-blue-600 border-blue-300': proximaSesion.estado === 'programada'
+                }">
+                  {{ proximaSesion.estado }}
+                </span>
+              </div>
+              <div v-if="proximaSesion.notas" class="mt-3 pt-3 border-t border-terracota/20">
+                <div class="text-xs text-cafe/70 mb-1">Notas:</div>
+                <div class="text-xs text-cafe">{{ proximaSesion.notas }}</div>
               </div>
             </div>
 
-            <div class="flex items-start gap-3 p-3 bg-base-bg rounded-lg">
-              <span class="text-2xl">📦</span>
-              <div class="flex-1">
-                <div class="text-sm font-medium text-cafe mb-1">Bono actual</div>
-                <div class="text-sm text-cafe/70">
-                  {{ paciente.sesiones_bono_restantes || 0 }} sesiones restantes
-                </div>
+            <div v-else class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div class="text-center">
+                <span class="text-3xl mb-2 block">⏰</span>
+                <div class="text-sm font-medium text-yellow-800 mb-1">No hay sesión agendada</div>
+                <div class="text-xs text-yellow-700">Recuerda agendar la próxima sesión</div>
+                <button
+                  @click="agendarSesion"
+                  class="mt-3 px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium"
+                >
+                  Agendar ahora
+                </button>
               </div>
             </div>
 
-            <div v-if="paciente.proxima_sesion" class="flex items-start gap-3 p-3 bg-terracota/10 border border-terracota/30 rounded-lg">
-              <span class="text-2xl">🔔</span>
-              <div class="flex-1">
-                <div class="text-sm font-medium text-cafe mb-1">Próxima sesión programada</div>
-                <div class="text-sm text-cafe/70">
-                  {{ formatearFechaCompleta(paciente.proxima_sesion) }}
-                </div>
+            <div class="p-3 bg-base-bg rounded-lg">
+              <div class="text-xs text-cafe/60 mb-1">En proceso desde</div>
+              <div class="text-sm font-medium text-cafe">
+                {{ calcularTiempoProceso(pacienteData.created_at) }}
               </div>
             </div>
-          </div>
-        </DashboardCard>
-
-        <!-- Historial de sesiones recientes -->
-        <DashboardCard>
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2">
-              <span class="text-2xl">📝</span>
-              Últimas Sesiones
-            </h2>
-            <button
-              @click="$router.push(`/terapeuta/sesiones?paciente=${paciente.id}`)"
-              class="text-sm text-terracota hover:text-cafe transition-colors"
-            >
-              Ver todas →
-            </button>
-          </div>
-
-          <div v-if="sesionesRecientes.length > 0" class="space-y-3">
-            <div
-              v-for="sesion in sesionesRecientes"
-              :key="sesion.id"
-              class="p-3 bg-base-bg rounded-lg hover:bg-rosa/20 transition-colors cursor-pointer"
-            >
-              <div class="flex items-start justify-between gap-2">
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-1">
-                    <span class="text-sm font-medium text-cafe">
-                      {{ formatearFechaCorta(sesion.fecha) }}
-                    </span>
-                    <span
-                      class="px-2 py-0.5 text-xs rounded-full"
-                      :class="sesion.modalidad === 'online' 
-                        ? 'bg-terracota/20 text-terracota' 
-                        : 'bg-green-100 text-green-700'"
-                    >
-                      {{ sesion.modalidad }}
-                    </span>
-                  </div>
-                  <p v-if="sesion.nota_terapeuta" class="text-xs text-cafe/60 line-clamp-2">
-                    {{ sesion.nota_terapeuta }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div v-else class="text-center py-6">
-            <span class="text-4xl mb-2 block opacity-40">📝</span>
-            <p class="text-sm text-cafe/50 italic">
-              Aún no hay sesiones registradas
-            </p>
           </div>
         </DashboardCard>
       </div>
 
-      <!-- Evolución emocional -->
+      <!-- Tabs de navegación -->
       <div class="mb-6">
-        <PacienteEvolucion :paciente-id="paciente.id" />
-      </div>
-
-      <!-- Alerta si requiere atención -->
-      <div v-if="paciente.requiere_atencion" class="mb-6">
-        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-xl p-6">
-          <div class="flex items-start gap-4">
-            <span class="text-4xl">⚠️</span>
-            <div class="flex-1">
-              <h3 class="font-serif text-lg font-semibold text-cafe mb-2">
-                Alerta de seguimiento
-              </h3>
-              <p class="text-cafe/70 leading-relaxed">
-                El sistema ha detectado cambios en el estado emocional del paciente. 
-                Los últimos registros muestran valores que podrían requerir atención especial. 
-                Revisa su evolución y considera ajustar el plan terapéutico si es necesario.
-              </p>
-            </div>
-          </div>
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8 overflow-x-auto">
+            <button
+              v-for="tab in tabs"
+              :key="tab.id"
+              @click="tabActiva = tab.id"
+              class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+              :class="tabActiva === tab.id
+                ? 'border-terracota text-terracota'
+                : 'border-transparent text-cafe/60 hover:text-cafe hover:border-gray-300'"
+            >
+              <span class="mr-2">{{ tab.icono }}</span>
+              <span>{{ tab.nombre }}</span>
+              <span v-if="tab.badge" class="ml-2 px-2 py-0.5 text-xs rounded-full bg-terracota text-white">
+                {{ tab.badge }}
+              </span>
+            </button>
+          </nav>
         </div>
       </div>
 
-      <!-- Notas privadas del terapeuta -->
-      <NotasPrivadas
-        :paciente-id="paciente.id"
-        :contenido="notasClinicas"
-        :ultima-actualizacion="notasActualizacion"
-        @guardar="guardarNotasClinicas"
-      />
+      <!-- Contenido de tabs -->
+      <div class="space-y-6">
+        <!-- Tab: Próximas Sesiones -->
+        <div v-if="tabActiva === 'proximas'">
+          <DashboardCard>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-serif font-semibold text-cafe">Próximas Sesiones Agendadas</h3>
+              <button
+                @click="agendarSesion"
+                class="text-sm text-terracota hover:text-cafe transition-colors"
+              >
+                + Nueva sesión
+              </button>
+            </div>
+
+            <div v-if="sesionesProximas.length > 0" class="space-y-3">
+              <div
+                v-for="sesion in sesionesProximas"
+                :key="sesion.id"
+                class="p-4 bg-base-bg rounded-lg hover:bg-rosa/20 transition-colors"
+              >
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-lg font-semibold text-cafe">
+                        {{ formatearFecha(sesion.fecha_cita) }}
+                      </span>
+                      <span class="text-base font-medium text-terracota">
+                        {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}
+                      </span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                      <span
+                        class="px-2 py-0.5 text-xs rounded-full"
+                        :class="obtenerEstiloModalidad(sesion.modalidad)"
+                      >
+                        {{ obtenerIconoModalidad(sesion.modalidad) }} {{ sesion.modalidad }}
+                      </span>
+                      <span
+                        class="px-2 py-0.5 text-xs rounded-full capitalize"
+                        :class="obtenerEstiloEstado(sesion.estado)"
+                      >
+                        {{ sesion.estado }}
+                      </span>
+                    </div>
+                    <p v-if="sesion.observaciones" class="text-sm text-cafe/60 mt-2">
+                      {{ sesion.observaciones }}
+                    </p>
+                  </div>
+                  <button
+                    @click="verDetallesCita(sesion.id)"
+                    class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors"
+                  >
+                    Ver detalles
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="text-center py-12">
+              <span class="text-6xl mb-3 block opacity-40">📅</span>
+              <p class="text-cafe/60 mb-4">No hay sesiones próximas agendadas</p>
+              <button
+                @click="agendarSesion"
+                class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
+              >
+                Agendar primera sesión
+              </button>
+            </div>
+          </DashboardCard>
+        </div>
+
+        <!-- Tab: Sesiones Completadas -->
+        <div v-if="tabActiva === 'completadas'">
+          <DashboardCard>
+            <h3 class="text-lg font-serif font-semibold text-cafe mb-4">Historial de Sesiones Completadas</h3>
+
+            <div v-if="sesionesCompletadas.length > 0" class="space-y-3">
+              <div
+                v-for="sesion in sesionesCompletadas"
+                :key="sesion.id"
+                class="p-4 bg-base-bg rounded-lg hover:bg-rosa/20 transition-colors"
+              >
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-base font-semibold text-cafe">
+                        {{ formatearFecha(sesion.fecha_cita) }}
+                      </span>
+                      <span class="text-sm text-cafe/60">
+                        {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}
+                      </span>
+                      <span
+                        class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700"
+                      >
+                        ✓ Realizada
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                      <span
+                        class="px-2 py-0.5 text-xs rounded-full"
+                        :class="obtenerEstiloModalidad(sesion.modalidad)"
+                      >
+                        {{ obtenerIconoModalidad(sesion.modalidad) }} {{ sesion.modalidad }}
+                      </span>
+                    </div>
+                    <p v-if="sesion.notas_terapeuta" class="text-sm text-cafe/70 mt-2 bg-white p-3 rounded-lg border border-gray-100">
+                      <strong class="text-cafe">Notas:</strong> {{ sesion.notas_terapeuta }}
+                    </p>
+                    <p v-else-if="sesion.observaciones" class="text-sm text-cafe/60 mt-2">
+                      {{ sesion.observaciones }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="text-center py-12">
+              <span class="text-6xl mb-3 block opacity-40">📝</span>
+              <p class="text-cafe/60">Aún no hay sesiones completadas</p>
+            </div>
+          </DashboardCard>
+        </div>
+
+        <!-- Tab: Pendientes de Confirmar -->
+        <div v-if="tabActiva === 'pendientes'">
+          <DashboardCard>
+            <h3 class="text-lg font-serif font-semibold text-cafe mb-4">Sesiones Pendientes de Confirmación</h3>
+
+            <div v-if="sesionesPendientes.length > 0" class="space-y-3">
+              <div
+                v-for="sesion in sesionesPendientes"
+                :key="sesion.id"
+                class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
+              >
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-lg">⏳</span>
+                      <span class="text-base font-semibold text-cafe">
+                        {{ formatearFecha(sesion.fecha_cita) }}
+                      </span>
+                      <span class="text-base font-medium text-terracota">
+                        {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                      <span
+                        class="px-2 py-0.5 text-xs rounded-full"
+                        :class="obtenerEstiloModalidad(sesion.modalidad)"
+                      >
+                        {{ obtenerIconoModalidad(sesion.modalidad) }} {{ sesion.modalidad }}
+                      </span>
+                      <span class="px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700">
+                        Pendiente de confirmar
+                      </span>
+                    </div>
+                    <p v-if="sesion.observaciones" class="text-sm text-cafe/60 mt-2">
+                      {{ sesion.observaciones }}
+                    </p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button
+                      @click="confirmarCita(sesion.id)"
+                      class="px-3 py-1.5 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                    >
+                      ✓ Confirmar
+                    </button>
+                    <button
+                      @click="verDetallesCita(sesion.id)"
+                      class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors"
+                    >
+                      Ver
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="text-center py-12">
+              <span class="text-6xl mb-3 block opacity-40">✅</span>
+              <p class="text-cafe/60">No hay sesiones pendientes de confirmación</p>
+            </div>
+          </DashboardCard>
+        </div>
+
+        <!-- Tab: Sesiones Anteriores -->
+        <div v-if="tabActiva === 'anteriores'">
+          <DashboardCard>
+            <h3 class="text-lg font-serif font-semibold text-cafe mb-4">
+              Historial Completo de Sesiones
+            </h3>
+
+            <div v-if="todasLasSesiones.length > 0" class="space-y-3">
+              <div
+                v-for="sesion in todasLasSesiones"
+                :key="sesion.id"
+                class="p-4 bg-base-bg rounded-lg hover:bg-rosa/20 transition-colors"
+              >
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-base font-semibold text-cafe">
+                        {{ formatearFecha(sesion.fecha_cita) }}
+                      </span>
+                      <span class="text-sm text-cafe/60">
+                        {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}
+                      </span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span
+                        class="px-2 py-0.5 text-xs rounded-full"
+                        :class="obtenerEstiloModalidad(sesion.modalidad)"
+                      >
+                        {{ obtenerIconoModalidad(sesion.modalidad) }} {{ sesion.modalidad }}
+                      </span>
+                      <span
+                        class="px-2 py-0.5 text-xs rounded-full capitalize"
+                        :class="obtenerEstiloEstado(sesion.estado)"
+                      >
+                        {{ sesion.estado }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="text-center py-12">
+              <span class="text-6xl mb-3 block opacity-40">📚</span>
+              <p class="text-cafe/60">No hay sesiones registradas</p>
+            </div>
+          </DashboardCard>
+        </div>
+      </div>
+
+      <!-- Notas del terapeuta -->
+      <div class="mt-6">
+        <DashboardCard>
+          <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
+            <span class="text-2xl">📝</span>
+            Notas Clínicas Privadas
+          </h2>
+          
+          <NotasPrivadas
+            :paciente-id="pacienteId"
+            :contenido="notasClinicas"
+            :ultima-actualizacion="notasActualizacion || undefined"
+            @guardar="guardarNotas"
+          />
+        </DashboardCard>
+      </div>
     </div>
+
+    <!-- Modal de Nueva Cita -->
+    <ModalNuevaCita
+      :mostrar="modalCitaAbierto"
+      :paciente-preseleccionado="pacienteParaCita"
+      @cerrar="cerrarModalCita"
+      @cita-creada="onCitaCreada"
+    />
+
+    <!-- Modal de Detalles de Cita -->
+    <ModalDetallesCita
+      :is-open="modalDetallesAbierto"
+      :cita-id="citaSeleccionada"
+      @close="cerrarModalDetalles"
+    />
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { useCitas } from '~/composables/useCitas'
+
 definePageMeta({
   layout: 'terapeuta'
 })
@@ -272,423 +604,181 @@ const route = useRoute()
 const router = useRouter()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
-const { getUserId } = useSupabase()
 
-// ============================================================================
-// 🎭 MODO DEMO - Cambiar a false para usar datos reales de Supabase
-// ============================================================================
-const MODO_DEMO = ref(true) // ← Cambiar a false cuando tengas datos reales
+// Composables
+const { getCitas } = useCitas()
+
+// ID del paciente
+const pacienteId = computed(() => route.params.id as string)
 
 // Estado
-const paciente = ref(null)
-const loading = ref(true)
-const error = ref(null)
-const sesionesRecientes = ref([])
+const cargando = ref(true)
+const error = ref<string | null>(null)
+const pacienteData = ref<any>(null)
+const bonoActivo = ref<any>(null)
+const todasLasCitas = ref<any[]>([])
 const notasClinicas = ref('')
-const notasActualizacion = ref(null)
+const notasActualizacion = ref<string | null>(null)
 
-// ID del paciente desde la ruta
-const pacienteId = computed(() => route.params.id)
+// Tab activa
+const tabActiva = ref('proximas')
 
-// Cargar información del paciente
-const cargarPaciente = async () => {
-  loading.value = true
+// Modals
+const modalCitaAbierto = ref(false)
+const pacienteParaCita = ref<any>(null)
+const modalDetallesAbierto = ref(false)
+const citaSeleccionada = ref<string | null>(null)
+
+// Tabs
+const tabs = computed(() => [
+  { 
+    id: 'proximas', 
+    nombre: 'Próximas Sesiones', 
+    icono: '📅',
+    badge: estadisticas.value.proximas || null
+  },
+  { 
+    id: 'completadas', 
+    nombre: 'Completadas', 
+    icono: '✅',
+    badge: estadisticas.value.completadas || null
+  },
+  { 
+    id: 'pendientes', 
+    nombre: 'Pendientes', 
+    icono: '⏳',
+    badge: estadisticas.value.pendientes || null
+  },
+  { 
+    id: 'anteriores', 
+    nombre: 'Historial', 
+    icono: '📚',
+    badge: null
+  }
+])
+
+// Cargar datos del paciente
+const cargarDatosPaciente = async () => {
+  cargando.value = true
   error.value = null
 
   try {
-    // ========================================================================
-    // 🎭 MODO DEMO: Datos mock para demostración
-    // ========================================================================
-    if (MODO_DEMO.value) {
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 600))
-      
-      const pacientesDemo = {
-        'demo-1': {
-          id: 'demo-1',
-          nombre: 'María',
-          apellidos: 'González Pérez',
-          nombreCompleto: 'María González Pérez',
-          email: 'maria.gonzalez@demo.com',
-          activo: true,
-          en_pausa: false,
-          edad: 32,
-          area_de_acompanamiento: 'Ansiedad y autoestima',
-          frecuencia: 'semanal',
-          primera_sesion: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-          ultima_sesion: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 12,
-          sesiones_bono_restantes: 8,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        'demo-2': {
-          id: 'demo-2',
-          nombre: 'Carlos',
-          apellidos: 'Mendoza Silva',
-          nombreCompleto: 'Carlos Mendoza Silva',
-          email: 'carlos.mendoza@demo.com',
-          activo: true,
-          en_pausa: false,
-          edad: 28,
-          area_de_acompanamiento: 'Gestión emocional',
-          frecuencia: 'quincenal',
-          primera_sesion: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-          ultima_sesion: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 8,
-          sesiones_bono_restantes: 3,
-          requiere_atencion: true,
-          created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        'demo-3': {
-          id: 'demo-3',
-          nombre: 'Ana',
-          apellidos: 'Rodríguez López',
-          nombreCompleto: 'Ana Rodríguez López',
-          email: 'ana.rodriguez@demo.com',
-          activo: true,
-          en_pausa: false,
-          edad: 35,
-          area_de_acompanamiento: 'Desarrollo personal',
-          frecuencia: 'semanal',
-          primera_sesion: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-          ultima_sesion: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 4,
-          sesiones_bono_restantes: 7,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        'demo-4': {
-          id: 'demo-4',
-          nombre: 'Laura',
-          apellidos: 'Martínez García',
-          nombreCompleto: 'Laura Martínez García',
-          email: 'laura.martinez@demo.com',
-          activo: true,
-          en_pausa: true,
-          edad: 40,
-          area_de_acompanamiento: 'Estrés laboral',
-          frecuencia: 'mensual',
-          primera_sesion: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(),
-          ultima_sesion: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: null,
-          total_sesiones: 15,
-          sesiones_bono_restantes: 2,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        'demo-5': {
-          id: 'demo-5',
-          nombre: 'Pedro',
-          apellidos: 'Sánchez Ruiz',
-          nombreCompleto: 'Pedro Sánchez Ruiz',
-          email: 'pedro.sanchez@demo.com',
-          activo: false,
-          en_pausa: false,
-          edad: 45,
-          area_de_acompanamiento: 'Duelo',
-          frecuencia: 'semanal',
-          primera_sesion: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString(),
-          ultima_sesion: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: null,
-          total_sesiones: 20,
-          sesiones_bono_restantes: 0,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        'demo-6': {
-          id: 'demo-6',
-          nombre: 'Sofía',
-          apellidos: 'Torres Moreno',
-          nombreCompleto: 'Sofía Torres Moreno',
-          email: 'sofia.torres@demo.com',
-          activo: true,
-          en_pausa: false,
-          edad: 29,
-          area_de_acompanamiento: 'Relaciones interpersonales',
-          frecuencia: 'semanal',
-          primera_sesion: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-          ultima_sesion: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-          proxima_sesion: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-          total_sesiones: 6,
-          sesiones_bono_restantes: 5,
-          requiere_atencion: false,
-          created_at: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString()
-        }
-      }
-      
-      const pacienteDemo = pacientesDemo[pacienteId.value]
-      
-      if (!pacienteDemo) {
-        error.value = 'Paciente no encontrado en datos de demostración'
-        loading.value = false
-        return
-      }
-      
-      // Sesiones recientes demo
-      sesionesRecientes.value = [
-        {
-          id: 'sesion-1',
-          fecha: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          modalidad: 'online',
-          nota_terapeuta: 'Sesión muy productiva. Trabajamos técnicas de respiración y mindfulness.'
-        },
-        {
-          id: 'sesion-2',
-          fecha: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-          modalidad: 'presencial',
-          nota_terapeuta: 'Exploramos patrones de pensamiento negativos. Tarea: diario emocional.'
-        },
-        {
-          id: 'sesion-3',
-          fecha: new Date(Date.now() - 17 * 24 * 60 * 60 * 1000).toISOString(),
-          modalidad: 'online',
-          nota_terapeuta: 'Revisión de progreso. Paciente muestra mejora en autoestima.'
-        },
-        {
-          id: 'sesion-4',
-          fecha: new Date(Date.now() - 24 * 24 * 60 * 60 * 1000).toISOString(),
-          modalidad: 'online',
-          nota_terapeuta: 'Primera sesión del nuevo ciclo. Establecimos objetivos claros.'
-        }
-      ]
-      
-      // Notas demo
-      if (pacienteId.value === 'demo-1') {
-        notasClinicas.value = `Progreso continuo en el manejo de la ansiedad.
-
-• Ha logrado identificar sus disparadores emocionales
-• Practica técnicas de respiración regularmente
-• Mejora notable en autoestima
-• Continuar trabajando en asertividad
-
-Próximos objetivos:
-- Enfrentar situaciones sociales con mayor confianza
-- Reducir autocrítica
-- Fortalecer red de apoyo`
-      } else if (pacienteId.value === 'demo-2') {
-        notasClinicas.value = `Últimas sesiones muestran incremento en estrés.
-
-Observaciones:
-• Dificultad para establecer límites
-• Patrones de pensamiento rumiativos
-• Alteraciones en el sueño
-• Requiere seguimiento cercano
-
-Estrategias aplicadas:
-- Técnicas de mindfulness
-- Reestructuración cognitiva
-- Plan de autocuidado
-
-IMPORTANTE: Considerar evaluar necesidad de apoyo adicional si no hay mejora en 2 semanas.`
-      } else if (pacienteId.value === 'demo-3') {
-        notasClinicas.value = `Excelente evolución en proceso de desarrollo personal.
-
-Logros alcanzados:
-✓ Mayor claridad en objetivos vitales
-✓ Mejora en comunicación asertiva
-✓ Establecimiento de rutinas saludables
-✓ Conexión emocional más profunda
-
-Se muestra motivada y comprometida con el proceso.`
-      }
-      
-      notasActualizacion.value = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-      
-      paciente.value = pacienteDemo
-      loading.value = false
-      return
-    }
-    
-    // ========================================================================
-    // 📊 MODO PRODUCCIÓN: Datos reales de Supabase
-    // ========================================================================
-    
-    const userId = getUserId()
-    if (!userId) {
+    if (!user.value) {
       error.value = 'Usuario no autenticado'
       return
     }
-    
-    // Obtener datos básicos del paciente
-    const { data: pacienteData, error: pacienteError } = await supabase
+
+    // Obtener datos del paciente
+    const { data: paciente, error: errorPaciente } = await supabase
       .from('pacientes')
-      .select(`
-        id,
-        created_at,
-        activo,
-        area_de_acompanamiento,
-        frecuencia,
-        metadata,
-        profiles!inner(
-          nombre_completo,
-          email
-        )
-      `)
-      .eq('id', pacienteId.value)
-      .eq('psicologa_id', userId)
-      .single()
-
-    if (pacienteError) throw pacienteError
-    if (!pacienteData) {
-      error.value = 'Paciente no encontrado o no tienes acceso'
-      return
-    }
-
-    // Obtener primera y última sesión
-    const { data: sesiones } = await supabase
-      .from('sesiones')
-      .select('fecha')
-      .eq('paciente_id', pacienteId.value)
-      .eq('estado', 'realizada')
-      .order('fecha', { ascending: true })
-
-    const primeraSesion = sesiones?.[0]?.fecha || null
-    const ultimaSesion = sesiones?.[sesiones.length - 1]?.fecha || null
-
-    // Obtener próxima sesión
-    const { data: proximaSesion } = await supabase
-      .from('sesiones')
-      .select('fecha')
-      .eq('paciente_id', pacienteId.value)
-      .in('estado', ['pendiente', 'confirmada'])
-      .gte('fecha', new Date().toISOString())
-      .order('fecha', { ascending: true })
-      .limit(1)
-      .single()
-
-    // Contar total de sesiones
-    const { count: totalSesiones } = await supabase
-      .from('sesiones')
-      .select('*', { count: 'exact', head: true })
-      .eq('paciente_id', pacienteId.value)
-      .eq('estado', 'realizada')
-
-    // Obtener sesiones recientes
-    const { data: sesionesRecentesData } = await supabase
-      .from('sesiones')
       .select('*')
-      .eq('paciente_id', pacienteId.value)
-      .eq('estado', 'realizada')
-      .order('fecha', { ascending: false })
-      .limit(5)
-
-    sesionesRecientes.value = sesionesRecentesData || []
-
-    // Obtener bono activo
-    const { data: bonoActivo } = await supabase
-      .from('bonos')
-      .select('sesiones_restantes')
-      .eq('paciente_id', pacienteId.value)
-      .eq('estado', 'activo')
+      .eq('id', pacienteId.value)
       .single()
 
-    // Obtener promedio emocional
-    const hace7Dias = new Date()
-    hace7Dias.setDate(hace7Dias.getDate() - 7)
-    
-    const { data: emocionesRecientes } = await supabase
-      .from('emociones_avanzadas')
-      .select('nivel_animo')
-      .eq('paciente_id', pacienteId.value)
-      .gte('fecha', hace7Dias.toISOString())
+    if (errorPaciente) throw errorPaciente
 
-    let requiereAtencion = false
-    if (emocionesRecientes && emocionesRecientes.length >= 3) {
-      const ultimosTres = emocionesRecientes.slice(-3)
-      requiereAtencion = ultimosTres.every(e => e.nivel_animo <= 2)
+    // Mapear datos
+    const nombreCompleto = (paciente as any).nombre || (paciente as any).email || 'Sin nombre'
+    pacienteData.value = {
+      ...paciente,
+      nombre_completo: nombreCompleto,
+      email: (paciente as any).email || '',
+      telefono: (paciente as any).telefono || ''
     }
 
-    // Obtener notas clínicas
-    const { data: notasData } = await supabase
-      .from('notas_terapeuticas')
-      .select('contenido, updated_at')
-      .eq('paciente_id', pacienteId.value)
-      .eq('psicologa_id', userId)
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .single()
+    // Cargar citas
+    const citas = await getCitas()
+    todasLasCitas.value = citas.filter((c: any) => c.paciente_id === pacienteId.value)
 
-    if (notasData) {
-      notasClinicas.value = notasData.contenido
-      notasActualizacion.value = notasData.updated_at
-    }
+    // Cargar bono activo
+    await cargarBonoActivo()
 
-    // Parsear nombre completo
-    const nombreCompleto = pacienteData.profiles.nombre_completo || ''
-    const partesNombre = nombreCompleto.split(' ')
-    const nombre = partesNombre[0] || ''
-    const apellidos = partesNombre.slice(1).join(' ') || ''
+    // Cargar notas
+    await cargarNotas()
 
-    // Construir objeto paciente
-    paciente.value = {
-      id: pacienteData.id,
-      nombre: nombre,
-      apellidos: apellidos,
-      nombreCompleto: nombreCompleto,
-      email: pacienteData.profiles.email,
-      activo: pacienteData.activo,
-      en_pausa: pacienteData.metadata?.en_pausa || false,
-      edad: pacienteData.metadata?.edad || null,
-      area_de_acompanamiento: pacienteData.area_de_acompanamiento,
-      frecuencia: pacienteData.frecuencia,
-      primera_sesion: primeraSesion,
-      ultima_sesion: ultimaSesion,
-      proxima_sesion: proximaSesion?.fecha || null,
-      total_sesiones: totalSesiones || 0,
-      sesiones_bono_restantes: bonoActivo?.sesiones_restantes || 0,
-      requiere_atencion: requiereAtencion,
-      created_at: pacienteData.created_at
-    }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error al cargar paciente:', err)
     error.value = err.message || 'Error desconocido'
   } finally {
-    loading.value = false
+    cargando.value = false
   }
 }
 
-// Guardar notas clínicas
-const guardarNotasClinicas = async ({ pacienteId, contenido }) => {
+// Cargar bono activo
+const cargarBonoActivo = async () => {
   try {
-    const userId = getUserId()
-    if (!userId) {
-      throw new Error('Usuario no autenticado')
+    const { data: bono, error: bonoError } = await supabase
+      .from('bonos')
+      .select('*')
+      .eq('paciente_id', pacienteId.value)
+      .eq('estado', 'activo')
+      .maybeSingle()
+
+    if (bonoError) {
+      console.warn('[Bonos] Error en consulta:', bonoError.message)
+      return
     }
-    
-    // Verificar si ya existe una nota
-    const { data: notaExistente } = await supabase
+
+    if (bono) {
+      const sesionesUsadas = bono.sesiones_usadas || 0
+      const sesionesTotales = bono.sesiones_totales || 0
+      const sesionesDisponibles = sesionesTotales - sesionesUsadas
+
+      bonoActivo.value = {
+        ...bono,
+        sesiones_disponibles: sesionesDisponibles,
+        porcentaje_uso: sesionesTotales > 0 ? Math.round((sesionesUsadas / sesionesTotales) * 100) : 0
+      }
+    }
+  } catch (err) {
+    console.warn('[Bonos] Error inesperado:', err)
+  }
+}
+
+// Cargar notas
+const cargarNotas = async () => {
+  try {
+    const { data } = await (supabase as any)
+      .from('notas_terapeuticas')
+      .select('contenido, updated_at')
+      .eq('paciente_id', pacienteId.value)
+      .eq('terapeuta_id', user.value?.id)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (data) {
+      notasClinicas.value = data.contenido || ''
+      notasActualizacion.value = data.updated_at
+    }
+  } catch (err) {
+    console.error('Error al cargar notas:', err)
+  }
+}
+
+// Guardar notas
+const guardarNotas = async ({ pacienteId, contenido }: { pacienteId: string, contenido: string }) => {
+  try {
+    const { data: existing } = await (supabase as any)
       .from('notas_terapeuticas')
       .select('id')
       .eq('paciente_id', pacienteId)
-      .eq('psicologa_id', userId)
-      .single()
+      .eq('terapeuta_id', user.value?.id)
+      .maybeSingle()
 
-    if (notaExistente) {
-      // Actualizar
-      const { error: updateError } = await supabase
+    if (existing) {
+      await (supabase as any)
         .from('notas_terapeuticas')
-        .update({ 
-          contenido: contenido,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', notaExistente.id)
-
-      if (updateError) throw updateError
+        .update({ contenido, updated_at: new Date().toISOString() })
+        .eq('id', existing.id)
     } else {
-      // Crear nueva
-      const { error: insertError } = await supabase
+      await (supabase as any)
         .from('notas_terapeuticas')
         .insert({
           paciente_id: pacienteId,
-          psicologa_id: userId,
-          contenido: contenido
+          terapeuta_id: user.value?.id,
+          contenido
         })
-
-      if (insertError) throw insertError
     }
 
     notasClinicas.value = contenido
@@ -699,108 +789,276 @@ const guardarNotasClinicas = async ({ pacienteId, contenido }) => {
   }
 }
 
-// Computados
+// Computed: Sesiones filtradas
+const sesionesProximas = computed(() => {
+  const hoy = new Date()
+  return todasLasCitas.value
+    .filter((c: any) => 
+      ['pendiente', 'confirmada'].includes(c.estado) &&
+      new Date(c.fecha_cita) >= hoy
+    )
+    .sort((a: any, b: any) => new Date(a.fecha_cita).getTime() - new Date(b.fecha_cita).getTime())
+})
+
+const sesionesCompletadas = computed(() => {
+  return todasLasCitas.value
+    .filter((c: any) => c.estado === 'realizada')
+    .sort((a: any, b: any) => new Date(b.fecha_cita).getTime() - new Date(a.fecha_cita).getTime())
+})
+
+const sesionesPendientes = computed(() => {
+  return todasLasCitas.value
+    .filter((c: any) => c.estado === 'pendiente')
+    .sort((a: any, b: any) => new Date(a.fecha_cita).getTime() - new Date(b.fecha_cita).getTime())
+})
+
+const todasLasSesiones = computed(() => {
+  return todasLasCitas.value
+    .sort((a: any, b: any) => new Date(b.fecha_cita).getTime() - new Date(a.fecha_cita).getTime())
+})
+
+const estadisticas = computed(() => ({
+  total: todasLasCitas.value.length,
+  completadas: sesionesCompletadas.value.length,
+  pendientes: sesionesPendientes.value.length,
+  proximas: sesionesProximas.value.length
+}))
+
+const primeraSesion = computed(() => {
+  const completadas = sesionesCompletadas.value
+  return completadas.length > 0 ? completadas[completadas.length - 1].fecha_cita : null
+})
+
+const ultimaSesion = computed(() => {
+  const completadas = sesionesCompletadas.value
+  return completadas.length > 0 ? completadas[0].fecha_cita : null
+})
+
+const proximaSesion = computed(() => {
+  return sesionesProximas.value.length > 0 ? sesionesProximas.value[0] : null
+})
+
+// Computed: Información visual
+const nombreCompleto = computed(() => pacienteData.value?.nombre_completo || 'Sin nombre')
+
 const iniciales = computed(() => {
-  if (!paciente.value) return ''
-  const nombreInicial = paciente.value.nombre.charAt(0).toUpperCase()
-  const apellidoInicial = paciente.value.apellidos ? paciente.value.apellidos.charAt(0).toUpperCase() : ''
-  return `${nombreInicial}${apellidoInicial}`
+  if (!nombreCompleto.value) return '?'
+  const partes = nombreCompleto.value.split(' ')
+  if (partes.length >= 2 && partes[0] && partes[1]) {
+    return `${partes[0][0]}${partes[1][0]}`.toUpperCase()
+  }
+  return nombreCompleto.value.substring(0, 2).toUpperCase()
 })
 
 const avatarColor = computed(() => {
-  if (!paciente.value) return '#D8AFA0'
   const colors = ['#D8AFA0', '#C89B8A', '#B7C6B0', '#A8C5B5', '#D4A5A5', '#C4B5A0']
-  const index = paciente.value.id.charCodeAt(0) % colors.length
+  const index = pacienteId.value.charCodeAt(0) % colors.length
   return colors[index]
 })
 
-const estadoVinculoTexto = computed(() => {
-  if (!paciente.value) return ''
-  if (!paciente.value.activo) return 'Finalizado'
-  if (paciente.value.en_pausa) return 'En pausa'
+const estadoTexto = computed(() => {
+  if (!pacienteData.value) return ''
+  if (!pacienteData.value.activo) return 'Finalizado'
+  if (pacienteData.value.metadata?.en_pausa) return 'En pausa'
   return 'En proceso'
 })
 
-const estadoVinculoClasses = computed(() => {
-  if (!paciente.value) return ''
-  if (!paciente.value.activo) {
-    return 'bg-gray-100 text-gray-600'
-  }
-  if (paciente.value.en_pausa) {
-    return 'bg-yellow-100 text-yellow-700'
-  }
+const estadoClasses = computed(() => {
+  if (!pacienteData.value) return ''
+  if (!pacienteData.value.activo) return 'bg-gray-100 text-gray-600'
+  if (pacienteData.value.metadata?.en_pausa) return 'bg-yellow-100 text-yellow-700'
   return 'bg-green-100 text-green-700'
 })
 
-// Funciones auxiliares
-const formatearFecha = (fecha) => {
-  if (!fecha) return 'No registrada'
-  const date = new Date(fecha)
-  return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+const tipoBono = computed(() => {
+  if (!pacienteData.value?.tipo_bono) return ''
+  
+  const nombres: Record<string, string> = {
+    'a_demanda': 'A Demanda (1 sesión)',
+    'quincenal': 'Quincenal (2 sesiones/mes)',
+    'semanal': 'Semanal (4 sesiones/mes)'
+  }
+  
+  return nombres[pacienteData.value.tipo_bono] || pacienteData.value.tipo_bono
+})
+
+// Funciones de formato
+const formatearFecha = (fecha: string) => {
+  if (!fecha) return ''
+  try {
+    const date = new Date(fecha + 'T00:00:00')
+    return date.toLocaleDateString('es-ES', { 
+      weekday: 'short',
+      day: 'numeric', 
+      month: 'short',
+      year: 'numeric' 
+    })
+  } catch {
+    return fecha
+  }
 }
 
-const formatearFechaCompleta = (fecha) => {
+const formatearFechaCompleta = (fecha: string, hora?: string) => {
   if (!fecha) return ''
-  const date = new Date(fecha)
-  return date.toLocaleString('es-ES', { 
-    weekday: 'long',
-    day: 'numeric', 
-    month: 'long', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  try {
+    const date = new Date(fecha + 'T' + (hora || '00:00:00'))
+    return date.toLocaleString('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch {
+    return fecha
+  }
 }
 
-const formatearFechaCorta = (fecha) => {
-  if (!fecha) return ''
-  const date = new Date(fecha)
-  return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+const formatearPrecio = (precio: number) => {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(precio || 0)
+}
+
+const calcularTiempoProceso = (fechaInicio: string) => {
+  if (!fechaInicio) return ''
+  const inicio = new Date(fechaInicio)
+  const ahora = new Date()
+  const dias = Math.floor((ahora.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24))
+  
+  if (dias < 30) return `${dias} días`
+  if (dias < 365) return `${Math.floor(dias / 30)} meses`
+  return `${Math.floor(dias / 365)} años`
+}
+
+const obtenerIconoModalidad = (modalidad: string) => {
+  const iconos: Record<string, string> = {
+    'presencial': '🏥',
+    'online': '💻',
+    'telefonica': '📞'
+  }
+  return iconos[modalidad] || '📋'
+}
+
+const obtenerEstiloModalidad = (modalidad: string) => {
+  const estilos: Record<string, string> = {
+    'presencial': 'bg-green-100 text-green-700',
+    'online': 'bg-terracota/20 text-terracota',
+    'telefonica': 'bg-blue-100 text-blue-700'
+  }
+  return estilos[modalidad] || 'bg-gray-100 text-gray-700'
+}
+
+const obtenerEstiloEstado = (estado: string) => {
+  const estilos: Record<string, string> = {
+    'pendiente': 'bg-yellow-100 text-yellow-700',
+    'confirmada': 'bg-green-100 text-green-700',
+    'realizada': 'bg-blue-100 text-blue-700',
+    'cancelada': 'bg-red-100 text-red-700'
+  }
+  return estilos[estado] || 'bg-gray-100 text-gray-700'
 }
 
 // Acciones
+const irABonos = () => {
+  router.push(`/terapeuta/pacientes/${pacienteId.value}/bonos`)
+}
+
+const abrirWhatsApp = () => {
+  const telefono = pacienteData.value?.telefono
+  if (!telefono) {
+    alert('Este paciente no tiene teléfono registrado')
+    return
+  }
+
+  // Limpiar el número (quitar espacios, guiones, etc)
+  const numeroLimpio = telefono.replace(/\D/g, '')
+  
+  // Mensaje predeterminado
+  const mensaje = encodeURIComponent(`Hola ${nombreCompleto.value}, ¿cómo estás?`)
+  
+  // Abrir WhatsApp (funciona en móvil y desktop)
+  const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`
+  window.open(url, '_blank')
+}
+
 const agendarSesion = () => {
-  // TODO: Implementar
-  alert('Función de agendar sesión en desarrollo')
+  if (!pacienteData.value) return
+  
+  pacienteParaCita.value = {
+    id: pacienteData.value.id,
+    nombre: nombreCompleto.value,
+    email: pacienteData.value.email,
+    telefono: pacienteData.value.telefono,
+    frecuencia: pacienteData.value.frecuencia || 'semanal',
+    area_acompanamiento: pacienteData.value.area_de_acompanamiento
+  }
+  
+  modalCitaAbierto.value = true
+}
+
+const cerrarModalCita = () => {
+  modalCitaAbierto.value = false
+  pacienteParaCita.value = null
+}
+
+const onCitaCreada = () => {
+  cargarDatosPaciente()
+}
+
+const verDetallesCita = (citaId: string) => {
+  citaSeleccionada.value = citaId
+  modalDetallesAbierto.value = true
+}
+
+const cerrarModalDetalles = () => {
+  modalDetallesAbierto.value = false
+  citaSeleccionada.value = null
+}
+
+const confirmarCita = async (citaId: string) => {
+  try {
+    const { error } = await (supabase as any)
+      .from('citas')
+      .update({ estado: 'confirmada' })
+      .eq('id', citaId)
+
+    if (error) throw error
+
+    // Recargar datos
+    await cargarDatosPaciente()
+  } catch (err) {
+    console.error('Error al confirmar cita:', err)
+    alert('Error al confirmar la cita')
+  }
 }
 
 const editarPaciente = () => {
   // TODO: Implementar
-  alert('Función de editar paciente en desarrollo')
+  alert('Función de editar en desarrollo')
 }
 
 // Lifecycle
 onMounted(() => {
-  cargarPaciente()
+  cargarDatosPaciente()
 })
 
-// Recargar si cambia el ID
 watch(() => route.params.id, () => {
   if (route.params.id) {
-    cargarPaciente()
+    cargarDatosPaciente()
   }
 })
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 .animate-spin {
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>

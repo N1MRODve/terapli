@@ -126,6 +126,12 @@ export const useSupabase = () => {
 
       userProfile.value = data as UserProfile
       console.log('[useSupabase] ✅ Perfil cargado correctamente:', data.email, 'Rol:', data.rol)
+      
+      // Sincronizar con tabla terapeutas si el rol es 'psicologa'
+      if (data.rol === 'psicologa') {
+        await syncTerapeutaProfile(data)
+      }
+      
       return data as UserProfile
     } catch (err) {
       console.error('[useSupabase] Error en loadUserProfile:', err)
@@ -133,6 +139,115 @@ export const useSupabase = () => {
       return null
     } finally {
       isLoadingProfile = false
+    }
+  }
+
+  // Sincronizar perfil con tabla terapeutas (solo para psicólogas)
+  const syncTerapeutaProfile = async (profile: UserProfile) => {
+    try {
+      console.log('[Sync] Verificando sincronización con tabla terapeutas...')
+      
+      if (!profile.email) {
+        console.warn('[Sync] No se puede sincronizar: email faltante')
+        return
+      }
+      
+      // Usar cliente sin tipos para acceder a la tabla terapeutas
+      const supabaseClient = supabase as any
+      
+      // Buscar si ya existe un registro en terapeutas con este email
+      const { data: existingTerapeuta, error: searchError } = await supabaseClient
+        .from('terapeutas')
+        .select('*')
+        .eq('email', profile.email)
+        .maybeSingle()
+
+      if (searchError && searchError.code !== 'PGRST116') {
+        console.warn('[Sync] Error al buscar terapeuta:', searchError)
+        return
+      }
+
+      // Preparar datos del terapeuta
+      const terapeutaData = {
+        id: profile.id,
+        nombre_completo: profile.nombre || profile.email.split('@')[0] || 'Psicóloga',
+        email: profile.email,
+        telefono: null,
+        especialidad: null,
+        num_colegiada: null,
+        disponibilidad: null,
+        activo: true,
+        metadata: {
+          sincronizado_desde_profile: true,
+          ultima_sincronizacion: new Date().toISOString()
+        }
+      }
+
+      if (!existingTerapeuta) {
+        // No existe, crear nuevo registro
+        console.log('[Sync] Creando nuevo registro en tabla terapeutas...')
+        
+        const { error: insertError } = await supabaseClient
+          .from('terapeutas')
+          .insert(terapeutaData)
+
+        if (insertError) {
+          // Si el error es por ID duplicado, intentar actualizar en su lugar
+          if (insertError.code === '23505') {
+            console.log('[Sync] El terapeuta ya existe por ID, actualizando...')
+            const { error: updateError } = await supabaseClient
+              .from('terapeutas')
+              .update({
+                nombre_completo: terapeutaData.nombre_completo,
+                email: terapeutaData.email,
+                activo: true,
+                metadata: terapeutaData.metadata
+              })
+              .eq('id', profile.id)
+
+            if (updateError) {
+              console.warn('[Sync] No se pudo actualizar el terapeuta:', updateError)
+            } else {
+              console.log('[Sync] ✅ Terapeuta actualizado correctamente')
+            }
+          } else {
+            console.warn('[Sync] No se pudo insertar el terapeuta:', insertError)
+          }
+        } else {
+          console.log('[Sync] ✅ Terapeuta creado correctamente en la tabla terapeutas')
+        }
+      } else {
+        // Ya existe, verificar si necesita actualización
+        const needsUpdate = 
+          existingTerapeuta.nombre_completo !== terapeutaData.nombre_completo ||
+          existingTerapeuta.email !== terapeutaData.email ||
+          !existingTerapeuta.activo
+
+        if (needsUpdate) {
+          console.log('[Sync] Actualizando registro existente en tabla terapeutas...')
+          
+          const { error: updateError } = await supabaseClient
+            .from('terapeutas')
+            .update({
+              nombre_completo: terapeutaData.nombre_completo,
+              email: terapeutaData.email,
+              activo: true,
+              metadata: terapeutaData.metadata
+            })
+            .eq('id', profile.id)
+
+          if (updateError) {
+            console.warn('[Sync] No se pudo actualizar el terapeuta:', updateError)
+          } else {
+            console.log('[Sync] ✅ Terapeuta actualizado correctamente')
+          }
+        } else {
+          console.log('[Sync] ✅ Terapeuta ya está sincronizado correctamente')
+        }
+      }
+    } catch (err) {
+      console.warn('[Sync] Error al sincronizar terapeuta:', err)
+      // No romper el flujo de login, solo registrar el error
     }
   }
 

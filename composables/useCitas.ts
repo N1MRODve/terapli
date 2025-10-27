@@ -1,837 +1,1122 @@
 // ~/composables/useCitas.ts
+// Sistema completo de gestión de citas y bonos
+// Fecha: 26 de octubre de 2025
 
 interface Cita {
-  id: string
+  id?: string
   paciente_id: string
-  paciente_nombre: string
   terapeuta_id: string
-  fecha: string
+  bono_id?: string
+  fecha_cita: string | Date
   hora_inicio: string
   hora_fin: string
-  tipo: 'presencial' | 'online' | 'telefonica'
-  estado: 'confirmada' | 'pendiente' | 'cancelada' | 'completada'
-  notas?: string
-  bono_id?: string  // ID del bono asociado (si usa bono)
-  descontar_de_bono?: boolean  // Si debe descontar de bono al completar
-  created_at: string
+  duracion_minutos?: number
+  modalidad: 'presencial' | 'online' | 'telefonica'
+  estado: 'pendiente' | 'confirmada' | 'realizada' | 'cancelada'
+  ubicacion?: string
+  enlace_videollamada?: string
+  observaciones?: string
+  notas_terapeuta?: string
+  descontar_de_bono?: boolean
+  sesion_descontada?: boolean
+  recordatorio_enviado?: boolean
+  metadata?: any
+  created_at?: string
+  updated_at?: string
 }
 
-interface Bloqueo {
-  id: string
-  terapeuta_id: string
+interface CrearCitaParams {
+  paciente_id: string
+  paciente_nombre?: string
+  terapeuta_id?: string
   fecha: string
   hora_inicio: string
   hora_fin: string
-  motivo?: string
-  tipo: 'personal' | 'vacaciones' | 'otro'
-  created_at: string
+  modalidad: 'presencial' | 'online' | 'telefonica'
+  estado: 'confirmada' | 'pendiente' | 'cancelada' | 'realizada'
+  notas?: string
+  descontar_de_bono?: boolean
+  bono_id?: string
+  ubicacion?: string
+  enlace_videollamada?: string
+}
+
+interface Terapeuta {
+  id: string
+  nombre_completo: string
+  email: string
+  telefono?: string
+  especialidad?: string
+  num_colegiada?: string
+  disponibilidad?: any
+  activo: boolean
+  metadata?: any
+  created_at?: string
 }
 
 interface HorarioDisponible {
   fecha: string
   hora: string
   disponible: boolean
+  terapeuta_id?: string
 }
 
-interface Bono {
-  id: string
+interface EstadisticasBono {
+  bono_id: string
   paciente_id: string
   total_sesiones: number
   sesiones_restantes: number
-  precio_total: number
-  estado: 'activo' | 'agotado' | 'expirado'
-  created_at: string
-  fecha_expiracion?: string
+  sesiones_usadas: number
+  porcentaje_usado: number
+  citas_realizadas: number
+  citas_pendientes: number
+  estado: string
 }
 
-// Modo demo para desarrollo
-const MODO_DEMO = true
+interface InfoBono {
+  tiene_bono: boolean
+  sesiones_restantes: number
+  total_sesiones: number
+  tipo_bono: string
+  bono_id?: string
+}
+
+interface ResultadoOperacion {
+  success: boolean
+  error?: string
+  message?: string
+  data?: any
+}
 
 export const useCitas = () => {
-  const supabase = useSupabaseClient()
+  const supabase = useSupabaseClient<any>() // Usar tipo dinámico para evitar errores de tipos
+
+  // ============================================================================
+  // GESTIÓN DE TERAPEUTAS
+  // ============================================================================
+
+  /**
+   * Obtiene todos los terapeutas activos
+   */
+  const getTerapeutas = async () => {
+    if (!process.client) return []
+
+    try {
+      const { data, error } = await supabase
+        .from('terapeutas')
+        .select('*')
+        .eq('activo', true)
+        .order('nombre_completo', { ascending: true })
+
+      if (error) {
+        console.error('❌ Error al obtener terapeutas:', error)
+        return []
+      }
+
+      return (data as any[]) || []
+    } catch (error) {
+      console.error('❌ Error al obtener terapeutas:', error)
+      return []
+    }
+  }
+
+  /**
+   * Obtiene un terapeuta por ID
+   */
+  const getTerapeuta = async (terapeutaId: string) => {
+    if (!process.client) return null
+
+    try {
+      const { data, error } = await supabase
+        .from('terapeutas')
+        .select('*')
+        .eq('id', terapeutaId)
+        .single()
+
+      if (error) {
+        console.error('❌ Error al obtener terapeuta:', error)
+        return null
+      }
+
+      return data
+    } catch (error) {
+      console.error('❌ Error al obtener terapeuta:', error)
+      return null
+    }
+  }
+
+  /**
+   * Obtiene el terapeuta actual (basado en email del usuario)
+   */
+  const getTerapeutaActual = async () => {
+    if (!process.client) return null
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return null
+
+      const { data, error } = await supabase
+        .from('terapeutas')
+        .select('*')
+        .eq('email', user.email)
+        .eq('activo', true)
+        .single()
+
+      if (error) {
+        console.log('ℹ️ Usuario no es terapeuta o no encontrado')
+        return null
+      }
+
+      return data
+    } catch (error) {
+      console.error('❌ Error al obtener terapeuta actual:', error)
+      return null
+    }
+  }
+
+  // ============================================================================
+  // GESTIÓN DE CITAS - LECTURA
+  // ============================================================================
 
   /**
    * Obtiene todas las citas del terapeuta
    */
   const getCitas = async (terapeutaId?: string) => {
-    if (MODO_DEMO) {
-      return getCitasDemo()
-    }
-
     if (!process.client) return []
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
+    try {
+      let idTerapeuta = terapeutaId
+      
+      // Si no se proporciona ID, intentar obtenerlo del usuario actual
+      if (!idTerapeuta) {
+        const terapeuta = await getTerapeutaActual()
+        if (!terapeuta) {
+          console.warn('⚠️ No se pudo identificar el terapeuta actual')
+          return []
+        }
+        idTerapeuta = terapeuta.id
+      }
 
-    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
-    console.warn('La tabla citas aún no existe en Supabase. Usando datos demo.')
-    return getCitasDemo()
+      const { data, error } = await supabase
+        .from('citas')
+        .select(`
+          *,
+          pacientes!inner (
+            id,
+            email,
+            telefono,
+            nombre_completo,
+            metadata
+          ),
+          terapeutas!inner (
+            id,
+            nombre_completo,
+            email
+          ),
+          bonos (
+            id,
+            total_sesiones,
+            sesiones_restantes,
+            tipo_bono,
+            estado
+          )
+        `)
+        .eq('terapeuta_id', idTerapeuta)
+        .order('fecha_cita', { ascending: true })
+        .order('hora_inicio', { ascending: true })
 
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('citas')
-      .select(`
-        *,
-        pacientes (
-          nombre,
-          apellido
-        )
-      `)
-      .eq('terapeuta_id', terapeutaId || user.id)
-      .order('fecha', { ascending: true })
+      if (error) {
+        console.error('❌ Error al obtener citas:', error)
+        return []
+      }
 
-    if (error) {
-      console.error('Error fetching citas:', error)
+      // Mapear datos para incluir nombre del paciente
+      const citasMapeadas = (data || []).map((cita: any) => ({
+        ...cita,
+        paciente_nombre: cita.pacientes?.nombre_completo || 
+                        cita.pacientes?.metadata?.nombre_completo ||
+                        cita.pacientes?.email ||
+                        'Sin nombre'
+      }))
+
+      return citasMapeadas
+    } catch (error) {
+      console.error('❌ Error al obtener citas:', error)
       return []
     }
-
-    return data || []
-    */
   }
 
   /**
    * Obtiene las citas de un día específico
    */
   const getCitasPorDia = async (fecha: string, terapeutaId?: string) => {
-    if (MODO_DEMO) {
-      const todasCitas = getCitasDemo()
-      return todasCitas.filter(c => c.fecha === fecha)
-    }
-
     if (!process.client) return []
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
+    try {
+      let idTerapeuta = terapeutaId
+      
+      if (!idTerapeuta) {
+        const terapeuta = await getTerapeutaActual()
+        if (!terapeuta) return []
+        idTerapeuta = terapeuta.id
+      }
 
-    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
-    console.warn('La tabla citas aún no existe en Supabase. Usando datos demo.')
-    const todasCitas = getCitasDemo()
-    return todasCitas.filter(c => c.fecha === fecha)
+      const { data, error } = await supabase
+        .from('citas')
+        .select(`
+          *,
+          pacientes!inner (
+            id,
+            email,
+            nombre_completo,
+            metadata
+          ),
+          terapeutas!inner (
+            id,
+            nombre_completo
+          ),
+          bonos (
+            id,
+            sesiones_restantes
+          )
+        `)
+        .eq('terapeuta_id', idTerapeuta)
+        .eq('fecha_cita', fecha)
+        .order('hora_inicio', { ascending: true })
 
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('citas')
-      .select(`
-        *,
-        pacientes (
-          nombre,
-          apellido
-        )
-      `)
-      .eq('terapeuta_id', terapeutaId || user.id)
-      .eq('fecha', fecha)
-      .order('hora_inicio', { ascending: true })
+      if (error) {
+        console.error('❌ Error al obtener citas por día:', error)
+        return []
+      }
 
-    if (error) {
-      console.error('Error fetching citas por día:', error)
+      // Mapear datos para incluir nombre del paciente
+      const citasMapeadas = (data || []).map((cita: any) => ({
+        ...cita,
+        paciente_nombre: cita.pacientes?.nombre_completo || 
+                        cita.pacientes?.metadata?.nombre_completo ||
+                        cita.pacientes?.email ||
+                        'Sin nombre'
+      }))
+
+      return citasMapeadas
+    } catch (error) {
+      console.error('❌ Error al obtener citas por día:', error)
       return []
     }
-
-    return data || []
-    */
   }
 
   /**
    * Obtiene las citas de un rango de fechas
    */
   const getCitasRango = async (fechaInicio: string, fechaFin: string, terapeutaId?: string) => {
-    if (MODO_DEMO) {
-      const todasCitas = getCitasDemo()
-      return todasCitas.filter(c => c.fecha >= fechaInicio && c.fecha <= fechaFin)
-    }
-
     if (!process.client) return []
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
+    try {
+      let idTerapeuta = terapeutaId
+      
+      if (!idTerapeuta) {
+        const terapeuta = await getTerapeutaActual()
+        if (!terapeuta) return []
+        idTerapeuta = terapeuta.id
+      }
 
-    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
-    console.warn('La tabla citas aún no existe en Supabase. Usando datos demo.')
-    const todasCitas = getCitasDemo()
-    return todasCitas.filter(c => c.fecha >= fechaInicio && c.fecha <= fechaFin)
+      const { data, error } = await supabase
+        .from('citas')
+        .select(`
+          *,
+          pacientes!inner (
+            id,
+            email,
+            nombre_completo,
+            metadata
+          ),
+          terapeutas!inner (
+            id,
+            nombre_completo
+          ),
+          bonos (
+            id,
+            sesiones_restantes,
+            tipo_bono
+          )
+        `)
+        .eq('terapeuta_id', idTerapeuta)
+        .gte('fecha_cita', fechaInicio)
+        .lte('fecha_cita', fechaFin)
+        .order('fecha_cita', { ascending: true })
+        .order('hora_inicio', { ascending: true })
 
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('citas')
-      .select(`
-        *,
-        pacientes (
-          nombre,
-          apellido
-        )
-      `)
-      .eq('terapeuta_id', terapeutaId || user.id)
-      .gte('fecha', fechaInicio)
-      .lte('fecha', fechaFin)
-      .order('fecha', { ascending: true })
-      .order('hora_inicio', { ascending: true })
+      if (error) {
+        console.error('❌ Error al obtener citas por rango:', error)
+        return []
+      }
 
-    if (error) {
-      console.error('Error fetching citas rango:', error)
+      // Mapear datos para incluir nombre del paciente
+      const citasMapeadas = (data || []).map((cita: any) => ({
+        ...cita,
+        paciente_nombre: cita.pacientes?.nombre_completo || 
+                        cita.pacientes?.metadata?.nombre_completo ||
+                        cita.pacientes?.email ||
+                        'Sin nombre',
+        fecha: cita.fecha_cita // Alias para compatibilidad con componentes
+      }))
+
+      return citasMapeadas
+    } catch (error) {
+      console.error('❌ Error al obtener citas por rango:', error)
       return []
     }
-
-    return data || []
-    */
   }
 
   /**
-   * Busca disponibilidad en los próximos N días
+   * Obtiene las citas de un paciente específico
    */
-  const buscarDisponibilidad = async (dias: number = 14, duracion: number = 60) => {
-    const disponibilidades: HorarioDisponible[] = []
-    const hoy = new Date()
-    
-    // Horarios de trabajo (9:00 - 18:00)
-    const horasDisponibles = [
-      '09:00', '10:00', '11:00', '12:00', 
-      '14:00', '15:00', '16:00', '17:00'
-    ]
+  const getCitasPaciente = async (pacienteId: string) => {
+    if (!process.client) return []
 
-    // Obtener citas existentes
-    const fechaInicio = formatearFecha(hoy)
-    const fechaFin = new Date(hoy)
-    fechaFin.setDate(fechaFin.getDate() + dias)
-    const citas = await getCitasRango(fechaInicio, formatearFecha(fechaFin))
+    try {
+      const { data, error } = await supabase
+        .from('citas')
+        .select(`
+          *,
+          terapeutas!inner (
+            id,
+            nombre_completo
+          ),
+          bonos (
+            id,
+            sesiones_restantes
+          )
+        `)
+        .eq('paciente_id', pacienteId)
+        .order('fecha_cita', { ascending: false })
 
-    // Revisar cada día
-    for (let i = 0; i < dias; i++) {
-      const fecha = new Date(hoy)
-      fecha.setDate(fecha.getDate() + i)
-      const fechaStr = formatearFecha(fecha)
-      
-      // Saltar fines de semana
-      const diaSemana = fecha.getDay()
-      if (diaSemana === 0 || diaSemana === 6) continue
-
-      // Revisar cada hora
-      for (const hora of horasDisponibles) {
-        const citaExiste = (citas as any[]).some((c: any) => 
-          c.fecha === fechaStr && 
-          c.hora_inicio === hora &&
-          c.estado !== 'cancelada'
-        )
-
-        if (!citaExiste) {
-          disponibilidades.push({
-            fecha: fechaStr,
-            hora,
-            disponible: true
-          })
-        }
+      if (error) {
+        console.error('❌ Error al obtener citas del paciente:', error)
+        return []
       }
-    }
 
-    return disponibilidades.slice(0, 20) // Retornar primeras 20 disponibilidades
+      return data || []
+    } catch (error) {
+      console.error('❌ Error al obtener citas del paciente:', error)
+      return []
+    }
   }
+
+  // ============================================================================
+  // GESTIÓN DE CITAS - CREACIÓN Y ACTUALIZACIÓN
+  // ============================================================================
 
   /**
    * Crear una nueva cita
    */
-  const crearCita = async (cita: Partial<Cita>) => {
-    if (MODO_DEMO) {
-      console.log('Demo mode: Cita creada', cita)
-      // Simular creación exitosa
-      await new Promise(resolve => setTimeout(resolve, 500))
-      return { success: true, id: 'demo-' + Date.now() }
-    }
-
+  const crearCita = async (params: CrearCitaParams): Promise<ResultadoOperacion> => {
     if (!process.client) return { success: false, error: 'Not client' }
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { success: false, error: 'No user' }
+    try {
+      // Obtener terapeuta si no se proporciona
+      let terapeutaId = params.terapeuta_id
+      if (!terapeutaId) {
+        const terapeuta = await getTerapeutaActual()
+        if (!terapeuta) {
+          return { success: false, error: 'No se pudo identificar el terapeuta' }
+        }
+        terapeutaId = terapeuta.id
+      }
 
-    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
-    console.warn('La tabla citas aún no existe en Supabase.')
-    
-    // Simular éxito en modo demo hasta que exista la tabla
-    await new Promise(resolve => setTimeout(resolve, 500))
-    return { success: true, id: 'demo-' + Date.now() }
-
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('citas')
-      .insert({
-        ...cita,
-        terapeuta_id: user.id,
-        created_at: new Date().toISOString()
+      console.log('📋 [Crear Cita] Datos a insertar:', {
+        paciente_id: params.paciente_id,
+        terapeuta_id: terapeutaId,
+        fecha_cita: params.fecha,
+        modalidad: params.modalidad,
+        estado: params.estado
       })
-      .select()
-      .single()
 
-    if (error) {
-      console.error('Error creating cita:', error)
-      return { success: false, error: error.message }
+      // Preparar datos de la cita
+      const citaData: any = {
+        paciente_id: params.paciente_id,
+        terapeuta_id: terapeutaId,
+        fecha_cita: params.fecha,
+        hora_inicio: params.hora_inicio,
+        hora_fin: params.hora_fin,
+        modalidad: params.modalidad || 'online',
+        estado: params.estado || 'pendiente',
+        observaciones: params.notas || null,
+        descontar_de_bono: params.descontar_de_bono || false,
+        ubicacion: params.ubicacion || null,
+        enlace_videollamada: params.enlace_videollamada || null,
+        bono_id: params.bono_id || null,
+        sesion_descontada: false,
+        recordatorio_enviado: false
+      }
+
+      // Insertar en la base de datos
+      const { data, error } = await supabase
+        .from('citas')
+        .insert(citaData)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('❌ Error al crear cita:', error)
+        console.error('❌ Error code:', error.code)
+        console.error('❌ Error details:', error.details)
+        console.error('❌ Error hint:', error.hint)
+        
+        // Mensajes de error personalizados
+        if (error.message.includes('disponibilidad')) {
+          return { 
+            success: false, 
+            error: 'El terapeuta ya tiene una cita en ese horario'
+          }
+        }
+        if (error.message.includes('bono')) {
+          return { 
+            success: false, 
+            error: 'El bono no tiene sesiones disponibles o no está activo'
+          }
+        }
+        if (error.message.includes('users') || error.code === '42501') {
+          return { 
+            success: false, 
+            error: 'Error de permisos. Por favor, contacta al administrador.'
+          }
+        }
+        
+        return { success: false, error: error.message }
+      }
+
+      console.log('✅ Cita creada exitosamente:', data.id)
+      
+      return { 
+        success: true, 
+        data,
+        message: 'Cita creada exitosamente'
+      }
+    } catch (error: any) {
+      console.error('❌ Error al crear cita:', error)
+      return { success: false, error: error.message || 'Error desconocido' }
     }
-
-    return { success: true, data }
-    */
   }
 
   /**
-   * Actualizar estado de una cita
+   * Actualizar el estado de una cita
    */
-  const actualizarEstadoCita = async (citaId: string, nuevoEstado: Cita['estado']) => {
-    if (MODO_DEMO) {
-      console.log('Demo mode: Estado actualizado', citaId, nuevoEstado)
-      
-      // Si se marca como completada, intentar descontar del bono
-      if (nuevoEstado === 'completada') {
-        const resultado = await procesarCompletacionCita(citaId)
-        return resultado
-      }
-      
-      return { success: true }
-    }
-
+  const actualizarEstadoCita = async (
+    citaId: string, 
+    nuevoEstado: 'pendiente' | 'confirmada' | 'realizada' | 'cancelada'
+  ): Promise<ResultadoOperacion> => {
     if (!process.client) return { success: false }
 
-    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
-    console.warn('La tabla citas aún no existe en Supabase.')
-    
-    // Simular procesamiento de completación
-    if (nuevoEstado === 'completada') {
-      const resultado = await procesarCompletacionCita(citaId)
-      return resultado
-    }
-    
-    return { success: true }
+    try {
+      const { data, error } = await supabase
+        .from('citas')
+        .update({ estado: nuevoEstado })
+        .eq('id', citaId)
+        .select()
+        .single()
 
-    /* Código para cuando exista la tabla:
-    const { error } = await supabase
-      .from('citas')
-      .update({ estado: nuevoEstado })
-      .eq('id', citaId)
+      if (error) {
+        console.error('❌ Error al actualizar estado de cita:', error)
+        return { success: false, error: error.message }
+      }
 
-    if (error) {
-      console.error('Error updating cita:', error)
+      console.log(`✅ Estado de cita actualizado a: ${nuevoEstado}`)
+
+      // Si se marca como realizada, el trigger automáticamente descontará del bono
+      if (nuevoEstado === 'realizada') {
+        return { 
+          success: true, 
+          data,
+          message: 'Cita completada. Sesión descontada del bono automáticamente (si aplicaba).'
+        }
+      }
+
+      return { success: true, data }
+    } catch (error: any) {
+      console.error('❌ Error al actualizar estado:', error)
       return { success: false, error: error.message }
     }
-    
-    // Procesar completación si es necesario
-    if (nuevoEstado === 'completada') {
-      const resultado = await procesarCompletacionCita(citaId)
-      return resultado
-    }
-
-    return { success: true }
-    */
   }
 
   /**
-   * Procesa la completación de una cita (descontar de bono si corresponde)
+   * Actualizar datos de una cita
    */
-  const procesarCompletacionCita = async (citaId: string) => {
-    // Buscar la cita en los datos demo
-    const todasCitas = getCitasDemo()
-    const cita = todasCitas.find(c => c.id === citaId)
-    
-    if (!cita || !cita.descontar_de_bono || !cita.paciente_id) {
-      return { success: false, message: 'Cita no requiere descuento de bono' }
-    }
-    
-    // Obtener bono activo del paciente
-    const bono = await obtenerBonoActivo(cita.paciente_id)
-    
-    if (!bono) {
-      return { success: false, message: 'Paciente sin bono activo' }
-    }
-    
-    if (bono.sesiones_restantes <= 0) {
-      return { success: false, message: 'Bono agotado' }
-    }
-    
-    // Descontar sesión
-    const resultado = await descontarSesionDeBono(bono.id)
-    
-    if (resultado.success) {
-      // Verificar si quedan pocas sesiones para generar alerta
-      if (resultado.sesiones_restantes !== undefined && resultado.sesiones_restantes <= 1) {
-        return {
-          success: true,
-          alerta: true,
-          mensaje: resultado.sesiones_restantes === 1 
-            ? '⚠️ Al paciente le queda 1 sesión. Considere informarle para renovar su bono.'
-            : '🎉 Última sesión del bono completada. Informar al paciente para renovar.',
-          sesiones_restantes: resultado.sesiones_restantes
+  const actualizarCita = async (citaId: string, updates: Partial<Cita>): Promise<ResultadoOperacion> => {
+    if (!process.client) return { success: false }
+
+    try {
+      const { data, error } = await supabase
+        .from('citas')
+        .update(updates)
+        .eq('id', citaId)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('❌ Error al actualizar cita:', error)
+        
+        if (error.message.includes('disponibilidad')) {
+          return { 
+            success: false, 
+            error: 'Conflicto de horario con otra cita'
+          }
         }
+        
+        return { success: false, error: error.message }
       }
-      
-      return {
-        success: true,
-        sesiones_restantes: resultado.sesiones_restantes
-      }
+
+      console.log('✅ Cita actualizada exitosamente')
+      return { success: true, data }
+    } catch (error: any) {
+      console.error('❌ Error al actualizar cita:', error)
+      return { success: false, error: error.message }
     }
-    
-    return resultado
   }
+
+  /**
+   * Cancelar una cita
+   */
+  const cancelarCita = async (citaId: string, motivo?: string): Promise<ResultadoOperacion> => {
+    if (!process.client) return { success: false }
+
+    try {
+      const updates: any = {
+        estado: 'cancelada'
+      }
+
+      if (motivo) {
+        updates.observaciones = motivo
+      }
+
+      const { data, error } = await supabase
+        .from('citas')
+        .update(updates)
+        .eq('id', citaId)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('❌ Error al cancelar cita:', error)
+        return { success: false, error: error.message }
+      }
+
+      console.log('✅ Cita cancelada exitosamente')
+      return { success: true, data, message: 'Cita cancelada' }
+    } catch (error: any) {
+      console.error('❌ Error al cancelar cita:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Eliminar una cita permanentemente (solo staff)
+   */
+  const eliminarCita = async (citaId: string): Promise<ResultadoOperacion> => {
+    if (!process.client) return { success: false }
+
+    try {
+      const { error } = await supabase
+        .from('citas')
+        .delete()
+        .eq('id', citaId)
+
+      if (error) {
+        console.error('❌ Error al eliminar cita:', error)
+        return { success: false, error: error.message }
+      }
+
+      console.log('✅ Cita eliminada exitosamente')
+      return { success: true, message: 'Cita eliminada permanentemente' }
+    } catch (error: any) {
+      console.error('❌ Error al eliminar cita:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  // ============================================================================
+  // GESTIÓN DE BONOS
+  // ============================================================================
 
   /**
    * Obtiene el bono activo de un paciente
    */
   const obtenerBonoActivo = async (pacienteId: string) => {
-    if (MODO_DEMO) {
-      // Simular datos de bono
-      const bonosDemo = {
-        'pac-1': { id: 'bono-1', paciente_id: 'pac-1', total_sesiones: 10, sesiones_restantes: 2, precio_total: 450, estado: 'activo' as const, created_at: new Date().toISOString() },
-        'pac-2': { id: 'bono-2', paciente_id: 'pac-2', total_sesiones: 8, sesiones_restantes: 1, precio_total: 360, estado: 'activo' as const, created_at: new Date().toISOString() },
-        'pac-3': { id: 'bono-3', paciente_id: 'pac-3', total_sesiones: 10, sesiones_restantes: 5, precio_total: 450, estado: 'activo' as const, created_at: new Date().toISOString() },
+    if (!process.client) return null
+
+    try {
+      const { data, error } = await supabase
+        .from('bonos')
+        .select('*')
+        .eq('paciente_id', pacienteId)
+        .eq('estado', 'activo')
+        .gt('sesiones_restantes', 0)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (error) {
+        console.log('ℹ️ No hay bono activo para el paciente')
+        return null
       }
-      
-      return bonosDemo[pacienteId as keyof typeof bonosDemo] || null
+
+      return data
+    } catch (error) {
+      console.error('❌ Error al obtener bono activo:', error)
+      return null
     }
-    
-    // TODO: Implementar query a Supabase
-    return null
   }
 
   /**
-   * Descuenta una sesión del bono
+   * Verifica si un paciente tiene bono activo con sesiones disponibles
    */
-  const descontarSesionDeBono = async (bonoId: string) => {
-    if (MODO_DEMO) {
-      console.log('Demo: Descontando sesión del bono', bonoId)
-      
-      // Simular descuento (en realidad no persiste en demo)
-      // Retornar sesiones restantes aleatorias para demo
-      const sesionesRestantes = Math.floor(Math.random() * 3) // 0, 1 o 2 para testing
-      
-      return {
-        success: true,
-        sesiones_restantes: sesionesRestantes
-      }
-    }
-    
-    if (!process.client) return { success: false }
-    
-    /* TODO: Implementar cuando exista tabla bonos
-    const supabase = useSupabaseClient()
-    
-    // Obtener bono actual
-    const { data: bono, error: fetchError } = await supabase
-      .from('bonos')
-      .select('sesiones_restantes')
-      .eq('id', bonoId)
-      .single()
-    
-    if (fetchError || !bono) {
-      return { success: false, error: 'Bono no encontrado' }
-    }
-    
-    const nuevasSesiones = Math.max(0, bono.sesiones_restantes - 1)
-    const nuevoEstado = nuevasSesiones === 0 ? 'agotado' : 'activo'
-    
-    // Actualizar bono
-    const { error: updateError } = await supabase
-      .from('bonos')
-      .update({ 
-        sesiones_restantes: nuevasSesiones,
-        estado: nuevoEstado
-      })
-      .eq('id', bonoId)
-    
-    if (updateError) {
-      return { success: false, error: updateError.message }
-    }
-    
-    return {
-      success: true,
-      sesiones_restantes: nuevasSesiones
-    }
-    */
-    
-    return { success: false, error: 'Función no implementada' }
-  }
-
-  /**
-   * Verifica si un paciente tiene bono activo
-   */
-  const verificarBonoActivo = async (pacienteId: string) => {
+  const verificarBonoActivo = async (pacienteId: string): Promise<InfoBono> => {
     const bono = await obtenerBonoActivo(pacienteId)
     
-    return {
-      tiene_bono: !!bono,
-      sesiones_restantes: bono?.sesiones_restantes || 0,
-      bono_id: bono?.id
-    }
-  }
-
-  /**
-   * ============================================
-   * GESTIÓN DE BLOQUEOS DE AGENDA
-   * ============================================
-   */
-
-  /**
-   * Obtener todos los bloqueos del terapeuta
-   */
-  const getBloqueos = async (terapeutaId?: string) => {
-    if (MODO_DEMO) {
-      return getBloqueosDemo()
-    }
-
-    if (!process.client) return []
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
-
-    // TODO: Implementar cuando la tabla 'bloqueos_agenda' exista en Supabase
-    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
-    return []
-    
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('bloqueos_agenda')
-      .select('*')
-      .eq('terapeuta_id', terapeutaId || user.id)
-      .order('fecha', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching bloqueos:', error)
-      return []
-    }
-
-    return data as Bloqueo[]
-    */
-  }
-
-  /**
-   * Obtener bloqueos en un rango de fechas
-   */
-  const getBloqueosRango = async (fechaInicio: string, fechaFin: string) => {
-    if (MODO_DEMO) {
-      const bloqueos = getBloqueosDemo()
-      return bloqueos.filter((b: Bloqueo) => b.fecha >= fechaInicio && b.fecha <= fechaFin)
-    }
-
-    if (!process.client) return []
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
-
-    // TODO: Implementar cuando la tabla exista
-    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
-    return []
-
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('bloqueos_agenda')
-      .select('*')
-      .eq('terapeuta_id', user.id)
-      .gte('fecha', fechaInicio)
-      .lte('fecha', fechaFin)
-      .order('fecha', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching bloqueos:', error)
-      return []
-    }
-
-    return data as Bloqueo[]
-    */
-  }
-
-    /**
-   * Obtener bloqueos de un día específico
-   */
-  const getBloqueosPorDia = async (fecha: string) => {
-    if (MODO_DEMO) {
-      const bloqueos = getBloqueosDemo()
-      return bloqueos.filter((b: Bloqueo) => b.fecha === fecha)
-    }
-
-    if (!process.client) return []
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
-
-    // TODO: Implementar cuando la tabla exista
-    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
-    return []
-
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('bloqueos_agenda')
-      .select('*')
-      .eq('terapeuta_id', user.id)
-      .eq('fecha', fecha)
-      .order('hora_inicio', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching bloqueos:', error)
-      return []
-    }
-
-    return data as Bloqueo[]
-    */
-  }
-
-  /**
-   * Crear un nuevo bloqueo
-   */
-  const crearBloqueo = async (bloqueo: Partial<Bloqueo>) => {
-    if (MODO_DEMO) {
-      console.log('Demo mode: Bloqueo creado', bloqueo)
-      await new Promise(resolve => setTimeout(resolve, 500))
-      return { success: true, id: 'bloqueo-demo-' + Date.now() }
-    }
-
-    if (!process.client) return { success: false, error: 'Not client' }
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { success: false, error: 'No user' }
-
-    // Verificar conflictos con citas existentes
-    const citasDelDia = await getCitasPorDia(bloqueo.fecha!)
-    const hayConflicto = citasDelDia.some(cita => {
-      if (cita.estado === 'cancelada') return false
-      return horariosSeSuperponen(
-        cita.hora_inicio, cita.hora_fin,
-        bloqueo.hora_inicio!, bloqueo.hora_fin!
-      )
-    })
-
-    if (hayConflicto) {
-      return { 
-        success: false, 
-        error: 'Ya existe una cita en ese horario. Cancélala primero para crear el bloqueo.' 
+    if (!bono) {
+      return {
+        tiene_bono: false,
+        sesiones_restantes: 0,
+        total_sesiones: 0,
+        tipo_bono: '',
+        bono_id: undefined
       }
     }
-
-    // TODO: Implementar cuando la tabla exista
-    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
-    await new Promise(resolve => setTimeout(resolve, 500))
-    return { success: true, id: 'bloqueo-demo-' + Date.now() }
-
-    /* Código para cuando exista la tabla:
-    const { data, error } = await supabase
-      .from('bloqueos_agenda')
-      .insert({
-        ...bloqueo,
-        terapeuta_id: user.id,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Error creating bloqueo:', error)
-      return { success: false, error: error.message }
-    }
-
-    return { success: true, id: data.id, data }
-    */
-  }
-
-  /**
-   * Eliminar un bloqueo
-   */
-  const eliminarBloqueo = async (bloqueoId: string) => {
-    if (MODO_DEMO) {
-      console.log('Demo mode: Bloqueo eliminado', bloqueoId)
-      await new Promise(resolve => setTimeout(resolve, 300))
-      return { success: true }
-    }
-
-    if (!process.client) return { success: false }
-
-    // TODO: Implementar cuando la tabla exista
-    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
-    return { success: true }
-
-    /* Código para cuando exista la tabla:
-    const { error } = await supabase
-      .from('bloqueos_agenda')
-      .delete()
-      .eq('id', bloqueoId)
-
-    if (error) {
-      console.error('Error deleting bloqueo:', error)
-      return { success: false, error: error.message }
-    }
-
-    return { success: true }
-    */
-  }
-
-  /**
-   * Verificar si un horario está bloqueado
-   */
-  const verificarHorarioBloqueado = async (fecha: string, horaInicio: string, horaFin: string) => {
-    const bloqueos = await getBloqueosPorDia(fecha)
     
-    return bloqueos.some((bloqueo: Bloqueo) => 
-      horariosSeSuperponen(horaInicio, horaFin, bloqueo.hora_inicio, bloqueo.hora_fin)
-    )
+    try {
+      // Obtener información del paciente para el tipo de bono
+      const { data: paciente } = await supabase
+        .from('pacientes')
+        .select('metadata, area_de_acompanamiento, frecuencia')
+        .eq('id', pacienteId)
+        .single()
+      
+      const tipoBono = (bono as any).tipo_bono || 
+                      (paciente as any)?.frecuencia || 
+                      (paciente as any)?.metadata?.frecuencia || 
+                      'mensual'
+      
+      return {
+        tiene_bono: true,
+        sesiones_restantes: (bono as any).sesiones_restantes || 0,
+        total_sesiones: (bono as any).total_sesiones || 0,
+        tipo_bono: tipoBono,
+        bono_id: (bono as any).id
+      }
+    } catch (error) {
+      console.error('❌ Error al verificar bono:', error)
+      return {
+        tiene_bono: false,
+        sesiones_restantes: 0,
+        total_sesiones: 0,
+        tipo_bono: '',
+        bono_id: undefined
+      }
+    }
   }
 
-  // Función auxiliar para verificar superposición de horarios
-  function horariosSeSuperponen(inicio1: string, fin1: string, inicio2: string, fin2: string): boolean {
+  /**
+   * Obtener estadísticas detalladas de un bono
+   */
+  const obtenerEstadisticasBono = async (bonoId: string): Promise<EstadisticasBono | null> => {
+    if (!process.client) return null
+
+    try {
+      const { data, error } = await supabase
+        .rpc('obtener_estadisticas_bono', { p_bono_id: bonoId })
+        .single()
+
+      if (error) {
+        console.error('❌ Error al obtener estadísticas del bono:', error)
+        return null
+      }
+
+      return data as EstadisticasBono
+    } catch (error) {
+      console.error('❌ Error al obtener estadísticas del bono:', error)
+      return null
+    }
+  }
+
+  /**
+   * Obtener todos los bonos de un paciente (activos e históricos)
+   */
+  const getBonosPaciente = async (pacienteId: string) => {
+    if (!process.client) return []
+
+    try {
+      const { data, error } = await supabase
+        .from('bonos')
+        .select('*')
+        .eq('paciente_id', pacienteId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('❌ Error al obtener bonos del paciente:', error)
+        return []
+      }
+
+      return data || []
+    } catch (error) {
+      console.error('❌ Error al obtener bonos:', error)
+      return []
+    }
+  }
+
+  // ============================================================================
+  // DISPONIBILIDAD Y VALIDACIONES
+  // ============================================================================
+
+  /**
+   * Verificar disponibilidad de terapeuta en un horario
+   */
+  const verificarDisponibilidadTerapeuta = async (
+    terapeutaId: string,
+    fecha: string,
+    horaInicio: string,
+    horaFin: string
+  ): Promise<boolean> => {
+    if (!process.client) return false
+
+    try {
+      const { data, error } = await supabase
+        .rpc('verificar_disponibilidad_terapeuta', {
+          p_terapeuta_id: terapeutaId,
+          p_fecha: fecha,
+          p_hora_inicio: horaInicio,
+          p_hora_fin: horaFin
+        })
+
+      if (error) {
+        console.error('❌ Error al verificar disponibilidad:', error)
+        return false
+      }
+
+      return data === true
+    } catch (error) {
+      console.error('❌ Error al verificar disponibilidad:', error)
+      return false
+    }
+  }
+
+  /**
+   * Buscar horarios disponibles en los próximos N días
+   */
+  const buscarDisponibilidad = async (
+    terapeutaId: string,
+    dias: number = 14,
+    duracion: number = 60
+  ): Promise<HorarioDisponible[]> => {
+    if (!process.client) return []
+
+    try {
+      const disponibilidades: HorarioDisponible[] = []
+      const hoy = new Date()
+      
+      // Horarios de trabajo típicos
+      const horasDisponibles = [
+        '09:00', '10:00', '11:00', '12:00', 
+        '14:00', '15:00', '16:00', '17:00', '18:00'
+      ]
+
+      // Obtener citas existentes en el rango
+      const fechaInicio = formatearFecha(hoy)
+      const fechaFin = new Date(hoy)
+      fechaFin.setDate(fechaFin.getDate() + dias)
+      
+      const citas = await getCitasRango(fechaInicio, formatearFecha(fechaFin), terapeutaId)
+
+      // Revisar cada día
+      for (let i = 0; i < dias; i++) {
+        const fecha = new Date(hoy)
+        fecha.setDate(fecha.getDate() + i)
+        const fechaStr = formatearFecha(fecha)
+        
+        // Saltar fines de semana
+        const diaSemana = fecha.getDay()
+        if (diaSemana === 0 || diaSemana === 6) continue
+
+        // Revisar cada hora
+        for (const hora of horasDisponibles) {
+          const horaFin = calcularHoraFin(hora, duracion)
+          
+          const citaExiste = (citas as any[]).some((c: any) => 
+            c.fecha_cita === fechaStr && 
+            horariosSeSuperponen(hora, horaFin, c.hora_inicio, c.hora_fin) &&
+            c.estado !== 'cancelada'
+          )
+
+          if (!citaExiste) {
+            disponibilidades.push({
+              fecha: fechaStr,
+              hora,
+              disponible: true,
+              terapeuta_id: terapeutaId
+            })
+          }
+        }
+      }
+
+      return disponibilidades.slice(0, 30) // Primeras 30 disponibilidades
+    } catch (error) {
+      console.error('❌ Error al buscar disponibilidad:', error)
+      return []
+    }
+  }
+
+  /**
+   * Sugerir próximo horario disponible basado en última cita y frecuencia
+   */
+  const sugerirProximoHorario = async (
+    pacienteId: string,
+    frecuencia: string,
+    terapeutaId?: string
+  ): Promise<{ fecha: string; hora: string } | null> => {
+    if (!process.client) return null
+
+    try {
+      // Obtener terapeuta
+      let idTerapeuta = terapeutaId
+      if (!idTerapeuta) {
+        const terapeuta = await getTerapeutaActual()
+        if (!terapeuta) return null
+        idTerapeuta = terapeuta.id
+      }
+
+      // Calcular fecha sugerida
+      const fechaSugerida = await calcularProximaFechaSugerida(pacienteId, frecuencia)
+      if (!fechaSugerida) return null
+
+      // Obtener última cita del paciente para sugerir la misma hora
+      const ultimaCita = await getUltimaCitaPaciente(pacienteId)
+      let horaSugerida = ultimaCita?.hora_inicio || '10:00'
+
+      // Verificar si el horario está disponible
+      if (!idTerapeuta) return null
+      const disponibilidades = await buscarDisponibilidad(idTerapeuta, 30, 60)
+      
+      // Buscar disponibilidad en la fecha sugerida con la hora preferida
+      const disponibleEnHoraPreferida = disponibilidades.find(
+        d => d.fecha === fechaSugerida && d.hora === horaSugerida
+      )
+
+      if (disponibleEnHoraPreferida) {
+        return { fecha: fechaSugerida, hora: horaSugerida }
+      }
+
+      // Si no está disponible, buscar el primer horario disponible ese día
+      const disponibleEseDia = disponibilidades.find(d => d.fecha === fechaSugerida)
+      if (disponibleEseDia) {
+        return { fecha: fechaSugerida, hora: disponibleEseDia.hora }
+      }
+
+      // Si no hay disponibilidad ese día, buscar el próximo disponible
+      const proximoDisponible = disponibilidades[0]
+      if (proximoDisponible) {
+        return { fecha: proximoDisponible.fecha, hora: proximoDisponible.hora }
+      }
+
+      return null
+    } catch (error) {
+      console.error('❌ Error al sugerir próximo horario:', error)
+      return null
+    }
+  }
+
+  /**
+   * Obtener próximas citas de un paciente
+   */
+  const getProximasCitasPaciente = async (pacienteId: string, limite: number = 10) => {
+    if (!process.client) return []
+
+    try {
+      const { data, error } = await supabase
+        .rpc('obtener_proximas_citas_paciente', {
+          p_paciente_id: pacienteId,
+          p_limite: limite
+        })
+
+      if (error) {
+        console.error('❌ Error al obtener próximas citas:', error)
+        return []
+      }
+
+      return data || []
+    } catch (error) {
+      console.error('❌ Error al obtener próximas citas:', error)
+      return []
+    }
+  }
+
+  /**
+   * Obtener la última cita realizada de un paciente
+   */
+  const getUltimaCitaPaciente = async (pacienteId: string) => {
+    if (!process.client) return null
+
+    try {
+      const { data, error } = await supabase
+        .from('citas')
+        .select('*')
+        .eq('paciente_id', pacienteId)
+        .in('estado', ['realizada', 'confirmada'])
+        .order('fecha_cita', { ascending: false })
+        .order('hora_inicio', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (error) {
+        console.error('❌ Error al obtener última cita:', error)
+        return null
+      }
+
+      return data
+    } catch (error) {
+      console.error('❌ Error al obtener última cita:', error)
+      return null
+    }
+  }
+
+  /**
+   * Calcular la próxima fecha sugerida basándose en la frecuencia y última cita
+   */
+  const calcularProximaFechaSugerida = async (
+    pacienteId: string, 
+    frecuencia: string
+  ): Promise<string | null> => {
+    if (!process.client) return null
+
+    try {
+      const ultimaCita = await getUltimaCitaPaciente(pacienteId)
+      
+      let diasASumar = 7 // Default: semanal
+      
+      // Determinar días según frecuencia
+      switch (frecuencia?.toLowerCase()) {
+        case 'semanal':
+          diasASumar = 7
+          break
+        case 'quincenal':
+          diasASumar = 14
+          break
+        case 'mensual':
+          diasASumar = 30
+          break
+        default:
+          diasASumar = 7
+      }
+
+      // Si hay una última cita, sumar desde esa fecha
+      let fechaBase: Date
+      if (ultimaCita && ultimaCita.fecha_cita) {
+        fechaBase = new Date(ultimaCita.fecha_cita + 'T00:00:00')
+        fechaBase.setDate(fechaBase.getDate() + diasASumar)
+      } else {
+        // Si no hay cita previa, sugerir desde mañana
+        fechaBase = new Date()
+        fechaBase.setDate(fechaBase.getDate() + 1)
+      }
+
+      // Evitar fines de semana
+      while (fechaBase.getDay() === 0 || fechaBase.getDay() === 6) {
+        fechaBase.setDate(fechaBase.getDate() + 1)
+      }
+
+      return formatearFecha(fechaBase)
+    } catch (error) {
+      console.error('❌ Error al calcular próxima fecha:', error)
+      return null
+    }
+  }
+
+  // ============================================================================
+  // UTILIDADES
+  // ============================================================================
+
+  /**
+   * Formatea una fecha a string YYYY-MM-DD
+   */
+  function formatearFecha(fecha: Date): string {
+    const resultado = fecha.toISOString().split('T')[0]
+    return resultado || ''
+  }
+
+  /**
+   * Calcula la hora de fin basada en la hora de inicio y duración
+   */
+  function calcularHoraFin(horaInicio: string, duracionMinutos: number): string {
+    const [horas = 0, minutos = 0] = horaInicio.split(':').map(Number)
+    const fecha = new Date()
+    fecha.setHours(horas, minutos, 0, 0)
+    fecha.setMinutes(fecha.getMinutes() + duracionMinutos)
+    
+    const horaFin = String(fecha.getHours()).padStart(2, '0')
+    const minutosFin = String(fecha.getMinutes()).padStart(2, '0')
+    
+    return `${horaFin}:${minutosFin}`
+  }
+
+  /**
+   * Verifica si dos horarios se superponen
+   */
+  function horariosSeSuperponen(
+    inicio1: string, 
+    fin1: string, 
+    inicio2: string, 
+    fin2: string
+  ): boolean {
     return inicio1 < fin2 && inicio2 < fin1
   }
 
+  /**
+   * Obtener el nombre del día de la semana
+   */
+  function obtenerNombreDia(fecha: string): string {
+    const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+    const date = new Date(fecha + 'T00:00:00')
+    return dias[date.getDay()] || 'Desconocido'
+  }
+
+  // ============================================================================
+  // RETORNO DEL COMPOSABLE
+  // ============================================================================
+
   return {
+    // Terapeutas
+    getTerapeutas,
+    getTerapeuta,
+    getTerapeutaActual,
+    
+    // Citas - Lectura
     getCitas,
     getCitasPorDia,
     getCitasRango,
-    buscarDisponibilidad,
+    getCitasPaciente,
+    getProximasCitasPaciente,
+    getUltimaCitaPaciente,
+    
+    // Citas - Escritura
     crearCita,
     actualizarEstadoCita,
+    actualizarCita,
+    cancelarCita,
+    eliminarCita,
+    
+    // Bonos
     obtenerBonoActivo,
     verificarBonoActivo,
-    descontarSesionDeBono,
-    // Bloqueos
-    getBloqueos,
-    getBloqueosRango,
-    getBloqueosPorDia,
-    crearBloqueo,
-    eliminarBloqueo,
-    verificarHorarioBloqueado
+    obtenerEstadisticasBono,
+    getBonosPaciente,
+    
+    // Disponibilidad
+    verificarDisponibilidadTerapeuta,
+    buscarDisponibilidad,
+    calcularProximaFechaSugerida,
+    sugerirProximoHorario,
+    
+    // Utilidades
+    formatearFecha,
+    calcularHoraFin,
+    obtenerNombreDia
   }
-}
-
-// Utilidades
-function formatearFecha(fecha: Date): string {
-  const resultado = fecha.toISOString().split('T')[0]
-  return resultado || ''
-}
-
-// Datos demo
-function getCitasDemo(): Cita[] {
-  const hoy = new Date()
-  const manana = new Date(hoy)
-  manana.setDate(manana.getDate() + 1)
-  const pasadoManana = new Date(hoy)
-  pasadoManana.setDate(pasadoManana.getDate() + 2)
-
-  return [
-    {
-      id: 'cita-1',
-      paciente_id: 'pac-1',
-      paciente_nombre: 'María González',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(hoy),
-      hora_inicio: '09:00',
-      hora_fin: '10:00',
-      tipo: 'presencial',
-      estado: 'confirmada',
-      notas: 'Primera sesión del mes',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'cita-2',
-      paciente_id: 'pac-2',
-      paciente_nombre: 'Carlos Ruiz',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(hoy),
-      hora_inicio: '11:00',
-      hora_fin: '12:00',
-      tipo: 'online',
-      estado: 'confirmada',
-      notas: 'Sesión de seguimiento',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'cita-3',
-      paciente_id: 'pac-3',
-      paciente_nombre: 'Ana López',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(hoy),
-      hora_inicio: '15:00',
-      hora_fin: '16:00',
-      tipo: 'presencial',
-      estado: 'confirmada',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'cita-4',
-      paciente_id: 'pac-4',
-      paciente_nombre: 'Roberto Sánchez',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(hoy),
-      hora_inicio: '17:00',
-      hora_fin: '18:00',
-      tipo: 'online',
-      estado: 'confirmada',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'cita-5',
-      paciente_id: 'pac-5',
-      paciente_nombre: 'Laura Martínez',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(manana),
-      hora_inicio: '10:00',
-      hora_fin: '11:00',
-      tipo: 'presencial',
-      estado: 'confirmada',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'cita-6',
-      paciente_id: 'pac-6',
-      paciente_nombre: 'Pedro Gómez',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(manana),
-      hora_inicio: '14:00',
-      hora_fin: '15:00',
-      tipo: 'online',
-      estado: 'pendiente',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'cita-7',
-      paciente_id: 'pac-7',
-      paciente_nombre: 'Isabel Torres',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(pasadoManana),
-      hora_inicio: '09:00',
-      hora_fin: '10:00',
-      tipo: 'presencial',
-      estado: 'confirmada',
-      created_at: new Date().toISOString()
-    }
-  ]
-}
-
-// Datos demo de bloqueos
-function getBloqueosDemo(): Bloqueo[] {
-  const hoy = new Date()
-  const manana = new Date(hoy)
-  manana.setDate(manana.getDate() + 1)
-  const enTresDias = new Date(hoy)
-  enTresDias.setDate(enTresDias.getDate() + 3)
-
-  return [
-    {
-      id: 'bloqueo-1',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(hoy),
-      hora_inicio: '13:00',
-      hora_fin: '14:00',
-      motivo: 'Almuerzo',
-      tipo: 'personal',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'bloqueo-2',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(manana),
-      hora_inicio: '12:00',
-      hora_fin: '13:30',
-      motivo: 'Reunión de equipo',
-      tipo: 'otro',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'bloqueo-3',
-      terapeuta_id: 'terapeuta-1',
-      fecha: formatearFecha(enTresDias),
-      hora_inicio: '09:00',
-      hora_fin: '18:00',
-      motivo: 'Día personal',
-      tipo: 'personal',
-      created_at: new Date().toISOString()
-    }
-  ]
 }

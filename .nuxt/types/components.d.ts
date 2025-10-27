@@ -16,6 +16,7 @@ type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {},
 interface _GlobalComponents {
   'AlertaBono': typeof import("../../components/AlertaBono.vue")['default']
   'AuthDebugPanel': typeof import("../../components/AuthDebugPanel.vue")['default']
+  'BonoCard': typeof import("../../components/BonoCard.vue")['default']
   'BonosPaciente': typeof import("../../components/BonosPaciente.vue")['default']
   'Card': typeof import("../../components/Card.vue")['default']
   'CardRecurso': typeof import("../../components/CardRecurso.vue")['default']
@@ -35,14 +36,18 @@ interface _GlobalComponents {
   'MensajeCard': typeof import("../../components/MensajeCard.vue")['default']
   'MensajeInput': typeof import("../../components/MensajeInput.vue")['default']
   'ModalCompartirRecurso': typeof import("../../components/ModalCompartirRecurso.vue")['default']
+  'ModalDetallesCita': typeof import("../../components/ModalDetallesCita.vue")['default']
   'ModalEditarPaciente': typeof import("../../components/ModalEditarPaciente.vue")['default']
   'ModalEliminarPaciente': typeof import("../../components/ModalEliminarPaciente.vue")['default']
   'ModalEnviarRecurso': typeof import("../../components/ModalEnviarRecurso.vue")['default']
   'ModalNuevaCita': typeof import("../../components/ModalNuevaCita.vue")['default']
   'ModalNuevoBloqueo': typeof import("../../components/ModalNuevoBloqueo.vue")['default']
+  'ModalNuevoBono': typeof import("../../components/ModalNuevoBono.vue")['default']
   'ModalNuevoPaciente': typeof import("../../components/ModalNuevoPaciente.vue")['default']
   'ModalNuevoRecurso': typeof import("../../components/ModalNuevoRecurso.vue")['default']
+  'ModalPagosBono': typeof import("../../components/ModalPagosBono.vue")['default']
   'ModalRecurso': typeof import("../../components/ModalRecurso.vue")['default']
+  'ModalRenovacionBono': typeof import("../../components/ModalRenovacionBono.vue")['default']
   'NotasPrivadas': typeof import("../../components/NotasPrivadas.vue")['default']
   'NotificacionesBell': typeof import("../../components/NotificacionesBell.vue")['default']
   'PWAInstallWrapper': typeof import("../../components/PWAInstallWrapper.vue")['default']
@@ -127,6 +132,7 @@ interface _GlobalComponents {
   'NuxtIsland': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-island")['default']
   'LazyAlertaBono': LazyComponent<typeof import("../../components/AlertaBono.vue")['default']>
   'LazyAuthDebugPanel': LazyComponent<typeof import("../../components/AuthDebugPanel.vue")['default']>
+  'LazyBonoCard': LazyComponent<typeof import("../../components/BonoCard.vue")['default']>
   'LazyBonosPaciente': LazyComponent<typeof import("../../components/BonosPaciente.vue")['default']>
   'LazyCard': LazyComponent<typeof import("../../components/Card.vue")['default']>
   'LazyCardRecurso': LazyComponent<typeof import("../../components/CardRecurso.vue")['default']>
@@ -146,14 +152,18 @@ interface _GlobalComponents {
   'LazyMensajeCard': LazyComponent<typeof import("../../components/MensajeCard.vue")['default']>
   'LazyMensajeInput': LazyComponent<typeof import("../../components/MensajeInput.vue")['default']>
   'LazyModalCompartirRecurso': LazyComponent<typeof import("../../components/ModalCompartirRecurso.vue")['default']>
+  'LazyModalDetallesCita': LazyComponent<typeof import("../../components/ModalDetallesCita.vue")['default']>
   'LazyModalEditarPaciente': LazyComponent<typeof import("../../components/ModalEditarPaciente.vue")['default']>
   'LazyModalEliminarPaciente': LazyComponent<typeof import("../../components/ModalEliminarPaciente.vue")['default']>
   'LazyModalEnviarRecurso': LazyComponent<typeof import("../../components/ModalEnviarRecurso.vue")['default']>
   'LazyModalNuevaCita': LazyComponent<typeof import("../../components/ModalNuevaCita.vue")['default']>
   'LazyModalNuevoBloqueo': LazyComponent<typeof import("../../components/ModalNuevoBloqueo.vue")['default']>
+  'LazyModalNuevoBono': LazyComponent<typeof import("../../components/ModalNuevoBono.vue")['default']>
   'LazyModalNuevoPaciente': LazyComponent<typeof import("../../components/ModalNuevoPaciente.vue")['default']>
   'LazyModalNuevoRecurso': LazyComponent<typeof import("../../components/ModalNuevoRecurso.vue")['default']>
+  'LazyModalPagosBono': LazyComponent<typeof import("../../components/ModalPagosBono.vue")['default']>
   'LazyModalRecurso': LazyComponent<typeof import("../../components/ModalRecurso.vue")['default']>
+  'LazyModalRenovacionBono': LazyComponent<typeof import("../../components/ModalRenovacionBono.vue")['default']>
   'LazyNotasPrivadas': LazyComponent<typeof import("../../components/NotasPrivadas.vue")['default']>
   'LazyNotificacionesBell': LazyComponent<typeof import("../../components/NotificacionesBell.vue")['default']>
   'LazyPWAInstallWrapper': LazyComponent<typeof import("../../components/PWAInstallWrapper.vue")['default']>

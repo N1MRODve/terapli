@@ -680,7 +680,7 @@ const _inlineRuntimeConfig = {
       "clientOptions": {}
     },
     "content": {
-      "wsUrl": "ws://localhost:4001/"
+      "wsUrl": "ws://localhost:4000/"
     },
     "mdc": {
       "components": {

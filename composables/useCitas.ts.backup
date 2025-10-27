@@ -1,0 +1,761 @@
+// ~/composables/useCitas.ts
+
+interface Cita {
+  id?: string
+  paciente_id: string
+  paciente_nombre?: string
+  terapeuta_id: string
+  bono_id?: string
+  fecha_cita: string | Date
+  hora_inicio: string
+  hora_fin: string
+  modalidad: 'presencial' | 'online' | 'telefonica'
+  estado: 'pendiente' | 'confirmada' | 'realizada' | 'cancelada'
+  ubicacion?: string
+  enlace_videollamada?: string
+  observaciones?: string
+  notas_terapeuta?: string
+  descontar_de_bono?: boolean
+  sesion_descontada?: boolean
+  recordatorio_enviado?: boolean
+  metadata?: any
+  created_at?: string
+  updated_at?: string
+}
+
+interface CrearCitaParams {
+  paciente_id: string
+  paciente_nombre: string
+  fecha: string
+  hora_inicio: string
+  hora_fin: string
+  tipo: 'presencial' | 'online' | 'telefonica'
+  estado: 'confirmada' | 'pendiente' | 'cancelada' | 'completada'
+  notas?: string
+  descontar_de_bono?: boolean
+  bono_id?: string
+}
+
+interface Terapeuta {
+  id: string
+  nombre_completo: string
+  email: string
+  telefono?: string
+  especialidad?: string
+  num_colegiada?: string
+  disponibilidad?: any
+  activo: boolean
+  metadata?: any
+  created_at?: string
+}
+
+interface HorarioDisponible {
+  fecha: string
+  hora: string
+  disponible: boolean
+}
+
+interface EstadisticasBono {
+  bono_id: string
+  paciente_id: string
+  total_sesiones: number
+  sesiones_restantes: number
+  sesiones_usadas: number
+  porcentaje_usado: number
+  citas_realizadas: number
+  citas_pendientes: number
+  estado: string
+}
+
+interface InfoBono {
+  tiene_bono: boolean
+  sesiones_restantes: number
+  total_sesiones: number
+  tipo_bono: string
+  bono_id?: string
+}
+
+export const useCitas = () => {
+  const supabase = useSupabaseClient()
+
+  // ============================================================================
+  // GESTIÓN DE TERAPEUTAS
+  // ============================================================================
+
+  /**
+   * Obtiene todos los terapeutas activos
+   */
+  const getTerapeutas = async () => {
+    if (!process.client) return []
+
+    const { data, error } = await supabase
+      .from('terapeutas')
+      .select('*')
+      .eq('activo', true)
+      .order('nombre_completo', { ascending: true })
+
+    if (error) {
+      console.error('❌ Error al obtener terapeutas:', error)
+      return []
+    }
+
+    return (data as Terapeuta[]) || []
+  }
+
+  /**
+   * Obtiene un terapeuta por ID
+   */
+  const getTerapeuta = async (terapeutaId: string) => {
+    if (!process.client) return null
+
+    const { data, error } = await supabase
+      .from('terapeutas')
+      .select('*')
+      .eq('id', terapeutaId)
+      .single()
+
+    if (error) {
+      console.error('❌ Error al obtener terapeuta:', error)
+      return null
+    }
+
+    return data as Terapeuta
+  }
+
+  /**
+   * Crea un nuevo terapeuta
+   */
+  const crearTerapeuta = async (terapeuta: Partial<Terapeuta>) => {
+    if (!process.client) return { success: false, error: 'Not client' }
+
+    const { data, error } = await supabase
+      .from('terapeutas')
+      .insert(terapeuta)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('❌ Error al crear terapeuta:', error)
+      return { success: false, error: error.message }
+    }
+
+    return { success: true, data }
+  }
+
+  // ============================================================================
+  // GESTIÓN DE CITAS
+  // ============================================================================
+
+  /**
+   * Obtiene todas las citas del terapeuta
+   */
+  const getCitas = async (terapeutaId?: string) => {
+    if (!process.client) return []
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    const { data, error } = await supabase
+      .from('citas')
+      .select(`
+        *,
+        pacientes!inner (
+          id,
+          email,
+          metadata
+        ),
+        terapeutas!inner (
+          id,
+          nombre_completo,
+          email
+        ),
+        bonos (
+          id,
+          total_sesiones,
+          sesiones_restantes,
+          tipo_bono
+        )
+      `)
+      .eq('terapeuta_id', terapeutaId || user.id)
+      .order('fecha_cita', { ascending: true })
+      .order('hora_inicio', { ascending: true })
+
+    if (error) {
+      console.error('❌ Error al obtener citas:', error)
+      return []
+    }
+
+    return data || []
+  }
+
+  /**
+   * Obtiene las citas de un día específico
+   */
+  const getCitasPorDia = async (fecha: string, terapeutaId?: string) => {
+    if (!process.client) return []
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
+    console.warn('La tabla citas aún no existe en Supabase.')
+    return []
+
+    /* Código para cuando exista la tabla:
+    const { data, error } = await supabase
+      .from('citas')
+      .select(`
+        *,
+        pacientes (
+          nombre,
+          apellido
+        )
+      `)
+      .eq('terapeuta_id', terapeutaId || user.id)
+      .eq('fecha', fecha)
+      .order('hora_inicio', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching citas por día:', error)
+      return []
+    }
+
+    return data || []
+    */
+  }
+
+  /**
+   * Obtiene las citas de un rango de fechas
+   */
+  const getCitasRango = async (fechaInicio: string, fechaFin: string, terapeutaId?: string) => {
+    if (!process.client) return []
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
+    console.warn('La tabla citas aún no existe en Supabase.')
+    return []
+
+    /* Código para cuando exista la tabla:
+    const { data, error } = await supabase
+      .from('citas')
+      .select(`
+        *,
+        pacientes (
+          nombre,
+          apellido
+        )
+      `)
+      .eq('terapeuta_id', terapeutaId || user.id)
+      .gte('fecha', fechaInicio)
+      .lte('fecha', fechaFin)
+      .order('fecha', { ascending: true })
+      .order('hora_inicio', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching citas rango:', error)
+      return []
+    }
+
+    return data || []
+    */
+  }
+
+  /**
+   * Busca disponibilidad en los próximos N días
+   */
+  const buscarDisponibilidad = async (dias: number = 14, duracion: number = 60) => {
+    const disponibilidades: HorarioDisponible[] = []
+    const hoy = new Date()
+    
+    // Horarios de trabajo (9:00 - 18:00)
+    const horasDisponibles = [
+      '09:00', '10:00', '11:00', '12:00', 
+      '14:00', '15:00', '16:00', '17:00'
+    ]
+
+    // Obtener citas existentes
+    const fechaInicio = formatearFecha(hoy)
+    const fechaFin = new Date(hoy)
+    fechaFin.setDate(fechaFin.getDate() + dias)
+    const citas = await getCitasRango(fechaInicio, formatearFecha(fechaFin))
+
+    // Revisar cada día
+    for (let i = 0; i < dias; i++) {
+      const fecha = new Date(hoy)
+      fecha.setDate(fecha.getDate() + i)
+      const fechaStr = formatearFecha(fecha)
+      
+      // Saltar fines de semana
+      const diaSemana = fecha.getDay()
+      if (diaSemana === 0 || diaSemana === 6) continue
+
+      // Revisar cada hora
+      for (const hora of horasDisponibles) {
+        const citaExiste = (citas as any[]).some((c: any) => 
+          c.fecha === fechaStr && 
+          c.hora_inicio === hora &&
+          c.estado !== 'cancelada'
+        )
+
+        if (!citaExiste) {
+          disponibilidades.push({
+            fecha: fechaStr,
+            hora,
+            disponible: true
+          })
+        }
+      }
+    }
+
+    return disponibilidades.slice(0, 20) // Retornar primeras 20 disponibilidades
+  }
+
+  /**
+   * Crear una nueva cita
+   */
+  const crearCita = async (cita: Partial<Cita>) => {
+    if (!process.client) return { success: false, error: 'Not client' }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { success: false, error: 'No user' }
+
+    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
+    console.warn('La tabla citas aún no existe en Supabase.')
+    return { success: false, error: 'Tabla citas no disponible' }
+
+    /* Código para cuando exista la tabla:
+    const { data, error } = await supabase
+      .from('citas')
+      .insert({
+        ...cita,
+        terapeuta_id: user.id,
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating cita:', error)
+      return { success: false, error: error.message }
+    }
+
+    return { success: true, data }
+    */
+  }
+
+  /**
+   * Actualizar estado de una cita
+   */
+  const actualizarEstadoCita = async (citaId: string, nuevoEstado: Cita['estado']) => {
+    if (!process.client) return { success: false }
+
+    // TODO: Implementar cuando la tabla 'citas' exista en Supabase
+    console.warn('La tabla citas aún no existe en Supabase.')
+    return { success: false }
+
+    /* Código para cuando exista la tabla:
+    const { error } = await supabase
+      .from('citas')
+      .update({ estado: nuevoEstado })
+      .eq('id', citaId)
+
+    if (error) {
+      console.error('Error updating cita:', error)
+      return { success: false, error: error.message }
+    }
+    
+    // Procesar completación si es necesario
+    if (nuevoEstado === 'completada') {
+      const resultado = await procesarCompletacionCita(citaId)
+      return resultado
+    }
+
+    return { success: true }
+    */
+  }
+
+  /**
+   * Procesa la completación de una cita (descontar de bono si corresponde)
+   */
+  const procesarCompletacionCita = async (citaId: string) => {
+    // TODO: Implementar cuando la tabla 'citas' y 'bonos' exista en Supabase
+    return { success: false, message: 'Función no implementada' }
+    
+    /* Código para cuando exista la tabla:
+    // Buscar la cita
+    const { data: cita } = await supabase
+      .from('citas')
+      .select('*')
+      .eq('id', citaId)
+      .single()
+    
+    if (!cita || !cita.descontar_de_bono || !cita.paciente_id) {
+      return { success: false, message: 'Cita no requiere descuento de bono' }
+    }
+    
+    // Obtener bono activo del paciente
+    const bono = await obtenerBonoActivo(cita.paciente_id)
+    
+    if (!bono) {
+      return { success: false, message: 'Paciente sin bono activo' }
+    }
+    
+    if (bono.sesiones_restantes <= 0) {
+      return { success: false, message: 'Bono agotado' }
+    }
+    
+    // Descontar sesión
+    const resultado = await descontarSesionDeBono(bono.id)
+    
+    if (resultado.success) {
+      // Verificar si quedan pocas sesiones para generar alerta
+      if (resultado.sesiones_restantes !== undefined && resultado.sesiones_restantes <= 1) {
+        return {
+          success: true,
+          alerta: true,
+          mensaje: resultado.sesiones_restantes === 1 
+            ? '⚠️ Al paciente le queda 1 sesión. Considere informarle para renovar su bono.'
+            : '🎉 Última sesión del bono completada. Informar al paciente para renovar.',
+          sesiones_restantes: resultado.sesiones_restantes
+        }
+      }
+      
+      return {
+        success: true,
+        sesiones_restantes: resultado.sesiones_restantes
+      }
+    }
+    
+    return resultado
+    */
+  }
+
+  /**
+   * Obtiene el bono activo de un paciente
+   */
+  const obtenerBonoActivo = async (pacienteId: string) => {
+    if (!process.client) return null
+
+    try {
+      const { data, error } = await supabase
+        .from('bonos')
+        .select('*')
+        .eq('paciente_id', pacienteId)
+        .eq('estado', 'activo')
+        .gt('sesiones_restantes', 0)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (error) {
+        console.log('No hay bono activo para el paciente:', error.message)
+        return null
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error al obtener bono activo:', error)
+      return null
+    }
+  }
+
+  /**
+   * Descuenta una sesión del bono
+   */
+  const descontarSesionDeBono = async (bonoId: string) => {
+    if (!process.client) return { success: false }
+    
+    // TODO: Implementar cuando exista tabla bonos
+    return { success: false, error: 'Función no implementada' }
+    
+    /* Código para cuando exista la tabla:
+    const supabase = useSupabaseClient()
+    
+    // Obtener bono actual
+    const { data: bono, error: fetchError } = await supabase
+      .from('bonos')
+      .select('sesiones_restantes')
+      .eq('id', bonoId)
+      .single()
+    
+    if (fetchError || !bono) {
+      return { success: false, error: 'Bono no encontrado' }
+    }
+    
+    const nuevasSesiones = Math.max(0, bono.sesiones_restantes - 1)
+    const nuevoEstado = nuevasSesiones === 0 ? 'agotado' : 'activo'
+    
+    // Actualizar bono
+    const { error: updateError } = await supabase
+      .from('bonos')
+      .update({ 
+        sesiones_restantes: nuevasSesiones,
+        estado: nuevoEstado
+      })
+      .eq('id', bonoId)
+    
+    if (updateError) {
+      return { success: false, error: updateError.message }
+    }
+    
+    return {
+      success: true,
+      sesiones_restantes: nuevasSesiones
+    }
+    */
+  }
+
+  /**
+   * Verifica si un paciente tiene bono activo
+   */
+  const verificarBonoActivo = async (pacienteId: string) => {
+    const bono = await obtenerBonoActivo(pacienteId)
+    
+    if (!bono) {
+      return {
+        tiene_bono: false,
+        sesiones_restantes: 0,
+        total_sesiones: 0,
+        tipo_bono: '',
+        bono_id: undefined
+      }
+    }
+    
+    // Obtener frecuencia del paciente para determinar tipo de bono
+    const { data: paciente } = await supabase
+      .from('pacientes')
+      .select('metadata, area_de_acompanamiento, frecuencia')
+      .eq('id', pacienteId)
+      .single()
+    
+    const frecuencia = (paciente as any)?.frecuencia || (paciente as any)?.metadata?.frecuencia || ''
+    
+    // Calcular sesiones restantes
+    const bonoData = bono as any
+    const sesionesRestantes = (bonoData.sesiones_restantes ?? bonoData.total_sesiones - bonoData.sesiones_usadas) || 0
+    
+    return {
+      tiene_bono: true,
+      sesiones_restantes: sesionesRestantes,
+      total_sesiones: bonoData.total_sesiones || bonoData.sesiones_totales || 0,
+      tipo_bono: frecuencia,
+      bono_id: bonoData.id
+    }
+  }
+
+  /**
+   * ============================================
+   * GESTIÓN DE BLOQUEOS DE AGENDA
+   * ============================================
+   */
+
+  /**
+   * Obtener todos los bloqueos del terapeuta
+   */
+  const getBloqueos = async (terapeutaId?: string) => {
+    if (!process.client) return []
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    // TODO: Implementar cuando la tabla 'bloqueos_agenda' exista en Supabase
+    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
+    return []
+    
+    /* Código para cuando exista la tabla:
+    const { data, error } = await supabase
+      .from('bloqueos_agenda')
+      .select('*')
+      .eq('terapeuta_id', terapeutaId || user.id)
+      .order('fecha', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching bloqueos:', error)
+      return []
+    }
+
+    return data as Bloqueo[]
+    */
+  }
+
+  /**
+   * Obtener bloqueos en un rango de fechas
+   */
+  const getBloqueosRango = async (fechaInicio: string, fechaFin: string) => {
+    if (!process.client) return []
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    // TODO: Implementar cuando la tabla exista
+    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
+    return []
+
+    /* Código para cuando exista la tabla:
+    const { data, error } = await supabase
+      .from('bloqueos_agenda')
+      .select('*')
+      .eq('terapeuta_id', user.id)
+      .gte('fecha', fechaInicio)
+      .lte('fecha', fechaFin)
+      .order('fecha', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching bloqueos:', error)
+      return []
+    }
+
+    return data as Bloqueo[]
+    */
+  }
+
+  /**
+   * Obtener bloqueos de un día específico
+   */
+  const getBloqueosPorDia = async (fecha: string) => {
+    if (!process.client) return []
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    // TODO: Implementar cuando la tabla exista
+    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
+    return []
+
+    /* Código para cuando exista la tabla:
+    const { data, error } = await supabase
+      .from('bloqueos_agenda')
+      .select('*')
+      .eq('terapeuta_id', user.id)
+      .eq('fecha', fecha)
+      .order('hora_inicio', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching bloqueos:', error)
+      return []
+    }
+
+    return data as Bloqueo[]
+    */
+  }
+
+  /**
+   * Crear un nuevo bloqueo
+   */
+  const crearBloqueo = async (bloqueo: Partial<Bloqueo>) => {
+    if (!process.client) return { success: false, error: 'Not client' }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { success: false, error: 'No user' }
+
+    // Verificar conflictos con citas existentes
+    const citasDelDia = await getCitasPorDia(bloqueo.fecha!)
+    const hayConflicto = citasDelDia.some((cita: any) => {
+      if (cita.estado === 'cancelada') return false
+      return horariosSeSuperponen(
+        cita.hora_inicio, cita.hora_fin,
+        bloqueo.hora_inicio!, bloqueo.hora_fin!
+      )
+    })
+
+    if (hayConflicto) {
+      return { 
+        success: false, 
+        error: 'Ya existe una cita en ese horario. Cancélala primero para crear el bloqueo.' 
+      }
+    }
+
+    // TODO: Implementar cuando la tabla exista
+    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
+    return { success: false, error: 'Tabla bloqueos_agenda no disponible' }
+
+    /* Código para cuando exista la tabla:
+    const { data, error } = await supabase
+      .from('bloqueos_agenda')
+      .insert({
+        ...bloqueo,
+        terapeuta_id: user.id,
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating bloqueo:', error)
+      return { success: false, error: error.message }
+    }
+
+    return { success: true, id: data.id, data }
+    */
+  }
+
+  /**
+   * Eliminar un bloqueo
+   */
+  const eliminarBloqueo = async (bloqueoId: string) => {
+    if (!process.client) return { success: false }
+
+    // TODO: Implementar cuando la tabla exista
+    console.warn('La tabla bloqueos_agenda aún no existe en Supabase.')
+    return { success: false }
+
+    /* Código para cuando exista la tabla:
+    const { error } = await supabase
+      .from('bloqueos_agenda')
+      .delete()
+      .eq('id', bloqueoId)
+
+    if (error) {
+      console.error('Error deleting bloqueo:', error)
+      return { success: false, error: error.message }
+    }
+
+    return { success: true }
+    */
+  }
+
+  /**
+   * Verificar si un horario está bloqueado
+   */
+  const verificarHorarioBloqueado = async (fecha: string, horaInicio: string, horaFin: string) => {
+    const bloqueos = await getBloqueosPorDia(fecha)
+    
+    return bloqueos.some((bloqueo: Bloqueo) => 
+      horariosSeSuperponen(horaInicio, horaFin, bloqueo.hora_inicio, bloqueo.hora_fin)
+    )
+  }
+
+  // Función auxiliar para verificar superposición de horarios
+  function horariosSeSuperponen(inicio1: string, fin1: string, inicio2: string, fin2: string): boolean {
+    return inicio1 < fin2 && inicio2 < fin1
+  }
+
+  return {
+    getCitas,
+    getCitasPorDia,
+    getCitasRango,
+    buscarDisponibilidad,
+    crearCita,
+    actualizarEstadoCita,
+    obtenerBonoActivo,
+    verificarBonoActivo,
+    descontarSesionDeBono,
+    // Bloqueos
+    getBloqueos,
+    getBloqueosRango,
+    getBloqueosPorDia,
+    crearBloqueo,
+    eliminarBloqueo,
+    verificarHorarioBloqueado
+  }
+}
+
+// Utilidades
+function formatearFecha(fecha: Date): string {
+  const resultado = fecha.toISOString().split('T')[0]
+  return resultado || ''
+}
+
+// Funciones auxiliares de datos demo eliminadas - listas para implementación real

@@ -16,6 +16,7 @@ type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {},
 
 export const AlertaBono: typeof import("../components/AlertaBono.vue")['default']
 export const AuthDebugPanel: typeof import("../components/AuthDebugPanel.vue")['default']
+export const BonoCard: typeof import("../components/BonoCard.vue")['default']
 export const BonosPaciente: typeof import("../components/BonosPaciente.vue")['default']
 export const Card: typeof import("../components/Card.vue")['default']
 export const CardRecurso: typeof import("../components/CardRecurso.vue")['default']
@@ -35,14 +36,18 @@ export const LoadingSpinner: typeof import("../components/LoadingSpinner.vue")['
 export const MensajeCard: typeof import("../components/MensajeCard.vue")['default']
 export const MensajeInput: typeof import("../components/MensajeInput.vue")['default']
 export const ModalCompartirRecurso: typeof import("../components/ModalCompartirRecurso.vue")['default']
+export const ModalDetallesCita: typeof import("../components/ModalDetallesCita.vue")['default']
 export const ModalEditarPaciente: typeof import("../components/ModalEditarPaciente.vue")['default']
 export const ModalEliminarPaciente: typeof import("../components/ModalEliminarPaciente.vue")['default']
 export const ModalEnviarRecurso: typeof import("../components/ModalEnviarRecurso.vue")['default']
 export const ModalNuevaCita: typeof import("../components/ModalNuevaCita.vue")['default']
 export const ModalNuevoBloqueo: typeof import("../components/ModalNuevoBloqueo.vue")['default']
+export const ModalNuevoBono: typeof import("../components/ModalNuevoBono.vue")['default']
 export const ModalNuevoPaciente: typeof import("../components/ModalNuevoPaciente.vue")['default']
 export const ModalNuevoRecurso: typeof import("../components/ModalNuevoRecurso.vue")['default']
+export const ModalPagosBono: typeof import("../components/ModalPagosBono.vue")['default']
 export const ModalRecurso: typeof import("../components/ModalRecurso.vue")['default']
+export const ModalRenovacionBono: typeof import("../components/ModalRenovacionBono.vue")['default']
 export const NotasPrivadas: typeof import("../components/NotasPrivadas.vue")['default']
 export const NotificacionesBell: typeof import("../components/NotificacionesBell.vue")['default']
 export const PWAInstallWrapper: typeof import("../components/PWAInstallWrapper.vue")['default']
@@ -127,6 +132,7 @@ export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const LazyAlertaBono: LazyComponent<typeof import("../components/AlertaBono.vue")['default']>
 export const LazyAuthDebugPanel: LazyComponent<typeof import("../components/AuthDebugPanel.vue")['default']>
+export const LazyBonoCard: LazyComponent<typeof import("../components/BonoCard.vue")['default']>
 export const LazyBonosPaciente: LazyComponent<typeof import("../components/BonosPaciente.vue")['default']>
 export const LazyCard: LazyComponent<typeof import("../components/Card.vue")['default']>
 export const LazyCardRecurso: LazyComponent<typeof import("../components/CardRecurso.vue")['default']>
@@ -146,14 +152,18 @@ export const LazyLoadingSpinner: LazyComponent<typeof import("../components/Load
 export const LazyMensajeCard: LazyComponent<typeof import("../components/MensajeCard.vue")['default']>
 export const LazyMensajeInput: LazyComponent<typeof import("../components/MensajeInput.vue")['default']>
 export const LazyModalCompartirRecurso: LazyComponent<typeof import("../components/ModalCompartirRecurso.vue")['default']>
+export const LazyModalDetallesCita: LazyComponent<typeof import("../components/ModalDetallesCita.vue")['default']>
 export const LazyModalEditarPaciente: LazyComponent<typeof import("../components/ModalEditarPaciente.vue")['default']>
 export const LazyModalEliminarPaciente: LazyComponent<typeof import("../components/ModalEliminarPaciente.vue")['default']>
 export const LazyModalEnviarRecurso: LazyComponent<typeof import("../components/ModalEnviarRecurso.vue")['default']>
 export const LazyModalNuevaCita: LazyComponent<typeof import("../components/ModalNuevaCita.vue")['default']>
 export const LazyModalNuevoBloqueo: LazyComponent<typeof import("../components/ModalNuevoBloqueo.vue")['default']>
+export const LazyModalNuevoBono: LazyComponent<typeof import("../components/ModalNuevoBono.vue")['default']>
 export const LazyModalNuevoPaciente: LazyComponent<typeof import("../components/ModalNuevoPaciente.vue")['default']>
 export const LazyModalNuevoRecurso: LazyComponent<typeof import("../components/ModalNuevoRecurso.vue")['default']>
+export const LazyModalPagosBono: LazyComponent<typeof import("../components/ModalPagosBono.vue")['default']>
 export const LazyModalRecurso: LazyComponent<typeof import("../components/ModalRecurso.vue")['default']>
+export const LazyModalRenovacionBono: LazyComponent<typeof import("../components/ModalRenovacionBono.vue")['default']>
 export const LazyNotasPrivadas: LazyComponent<typeof import("../components/NotasPrivadas.vue")['default']>
 export const LazyNotificacionesBell: LazyComponent<typeof import("../components/NotificacionesBell.vue")['default']>
 export const LazyPWAInstallWrapper: LazyComponent<typeof import("../components/PWAInstallWrapper.vue")['default']>

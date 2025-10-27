@@ -1,5 +1,6 @@
 export const AlertaBono = () => import('./../../components/AlertaBono.vue')
 export const AuthDebugPanel = () => import('./../../components/AuthDebugPanel.vue')
+export const BonoCard = () => import('./../../components/BonoCard.vue')
 export const BonosPaciente = () => import('./../../components/BonosPaciente.vue')
 export const Card = () => import('./../../components/Card.vue')
 export const CardRecurso = () => import('./../../components/CardRecurso.vue')
@@ -19,14 +20,18 @@ export const LoadingSpinner = () => import('./../../components/LoadingSpinner.vu
 export const MensajeCard = () => import('./../../components/MensajeCard.vue')
 export const MensajeInput = () => import('./../../components/MensajeInput.vue')
 export const ModalCompartirRecurso = () => import('./../../components/ModalCompartirRecurso.vue')
+export const ModalDetallesCita = () => import('./../../components/ModalDetallesCita.vue')
 export const ModalEditarPaciente = () => import('./../../components/ModalEditarPaciente.vue')
 export const ModalEliminarPaciente = () => import('./../../components/ModalEliminarPaciente.vue')
 export const ModalEnviarRecurso = () => import('./../../components/ModalEnviarRecurso.vue')
 export const ModalNuevaCita = () => import('./../../components/ModalNuevaCita.vue')
 export const ModalNuevoBloqueo = () => import('./../../components/ModalNuevoBloqueo.vue')
+export const ModalNuevoBono = () => import('./../../components/ModalNuevoBono.vue')
 export const ModalNuevoPaciente = () => import('./../../components/ModalNuevoPaciente.vue')
 export const ModalNuevoRecurso = () => import('./../../components/ModalNuevoRecurso.vue')
+export const ModalPagosBono = () => import('./../../components/ModalPagosBono.vue')
 export const ModalRecurso = () => import('./../../components/ModalRecurso.vue')
+export const ModalRenovacionBono = () => import('./../../components/ModalRenovacionBono.vue')
 export const NotasPrivadas = () => import('./../../components/NotasPrivadas.vue')
 export const NotificacionesBell = () => import('./../../components/NotificacionesBell.vue')
 export const PWAInstallWrapper = () => import('./../../components/PWAInstallWrapper.vue')
@@ -85,4 +90,4 @@ export const Html = () => import('./../../node_modules/nuxt/dist/head/runtime/co
 export const Body = () => import('./../../node_modules/nuxt/dist/head/runtime/components')
 export const NuxtIsland = () => import('./../../node_modules/nuxt/dist/app/components/nuxt-island')
 export const globalComponents: string[] = ["ProseA","ProseBlockquote","ProseCode","ProseEm","ProseH1","ProseH2","ProseH3","ProseH4","ProseH5","ProseH6","ProseHr","ProseImg","ProseLi","ProseOl","ProseP","ProsePre","ProseScript","ProseStrong","ProseTable","ProseTbody","ProseTd","ProseTh","ProseThead","ProseTr","ProseUl"]
-export const localComponents: string[] = ["AlertaBono","AuthDebugPanel","BonosPaciente","Card","CardRecurso","CookieConsent","EmotionalTransition","EmptyState","EvolucionEmocional","Footer","GreetingModal","Header","HistorialSesiones","InactivityModal","InstallPWAButton","InstallPWAModal","InversionSection","LoadingSpinner","MensajeCard","MensajeInput","ModalCompartirRecurso","ModalEditarPaciente","ModalEliminarPaciente","ModalEnviarRecurso","ModalNuevaCita","ModalNuevoBloqueo","ModalNuevoPaciente","ModalNuevoRecurso","ModalRecurso","NotasPrivadas","NotificacionesBell","PWAInstallWrapper","PacienteCard","PacienteEvolucion","PanelEmocionalAvanzado","ProgressBar","RecursoCard","ResumenCard","SesionCard","TablaSesiones","VisualizacionEmocional","CoordinacionDashboardCard","DashboardDailyQuote","DashboardCard","DashboardEmotionChart","DashboardEmotionTracker","DashboardEmotionalInsight","DashboardHeaderGreeting","DashboardNextSessionCard","DashboardResourceGrid","NuxtWelcome","NuxtLayout","NuxtErrorBoundary","ClientOnly","DevOnly","ServerPlaceholder","NuxtLink","NuxtLoadingIndicator","NuxtTime","NuxtRouteAnnouncer","NuxtImg","NuxtPicture","ContentRenderer","MDC","MDCCached","MDCRenderer","MDCSlot","VitePwaManifest","NuxtPwaManifest","NuxtPwaAssets","PwaAppleImage","PwaAppleSplashScreenImage","PwaFaviconImage","PwaMaskableImage","PwaTransparentImage","NuxtPage","NoScript","Link","Base","Title","Meta","Style","Head","Html","Body","NuxtIsland"]
+export const localComponents: string[] = ["AlertaBono","AuthDebugPanel","BonoCard","BonosPaciente","Card","CardRecurso","CookieConsent","EmotionalTransition","EmptyState","EvolucionEmocional","Footer","GreetingModal","Header","HistorialSesiones","InactivityModal","InstallPWAButton","InstallPWAModal","InversionSection","LoadingSpinner","MensajeCard","MensajeInput","ModalCompartirRecurso","ModalDetallesCita","ModalEditarPaciente","ModalEliminarPaciente","ModalEnviarRecurso","ModalNuevaCita","ModalNuevoBloqueo","ModalNuevoBono","ModalNuevoPaciente","ModalNuevoRecurso","ModalPagosBono","ModalRecurso","ModalRenovacionBono","NotasPrivadas","NotificacionesBell","PWAInstallWrapper","PacienteCard","PacienteEvolucion","PanelEmocionalAvanzado","ProgressBar","RecursoCard","ResumenCard","SesionCard","TablaSesiones","VisualizacionEmocional","CoordinacionDashboardCard","DashboardDailyQuote","DashboardCard","DashboardEmotionChart","DashboardEmotionTracker","DashboardEmotionalInsight","DashboardHeaderGreeting","DashboardNextSessionCard","DashboardResourceGrid","NuxtWelcome","NuxtLayout","NuxtErrorBoundary","ClientOnly","DevOnly","ServerPlaceholder","NuxtLink","NuxtLoadingIndicator","NuxtTime","NuxtRouteAnnouncer","NuxtImg","NuxtPicture","ContentRenderer","MDC","MDCCached","MDCRenderer","MDCSlot","VitePwaManifest","NuxtPwaManifest","NuxtPwaAssets","PwaAppleImage","PwaAppleSplashScreenImage","PwaFaviconImage","PwaMaskableImage","PwaTransparentImage","NuxtPage","NoScript","Link","Base","Title","Meta","Style","Head","Html","Body","NuxtIsland"]

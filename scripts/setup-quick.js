@@ -48,6 +48,9 @@ async function setup() {
   console.log('\n📝 Creando paciente...')
   await supabase.from('pacientes').upsert({
     id: userId,
+    nombre_completo: 'María García López',
+    email: 'paciente@test.com',
+    telefono: '+34 600 123 456',
     area_de_acompanamiento: 'Ansiedad',
     frecuencia: 'semanal',
     activo: true
