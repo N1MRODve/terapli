@@ -54,6 +54,7 @@
                 v-model="formulario.hora_inicio"
                 type="time"
                 required
+                step="1800"
                 class="w-full px-4 py-3 border-2 border-[#EAD5D3] rounded-lg focus:border-[#D8AFA0] focus:ring-2 focus:ring-[#D8AFA0]/20 outline-none transition-all"
               />
             </div>
@@ -66,6 +67,7 @@
                 v-model="formulario.hora_fin"
                 type="time"
                 required
+                step="1800"
                 class="w-full px-4 py-3 border-2 border-[#EAD5D3] rounded-lg focus:border-[#D8AFA0] focus:ring-2 focus:ring-[#D8AFA0]/20 outline-none transition-all"
               />
             </div>

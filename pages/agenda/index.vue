@@ -248,6 +248,15 @@ onMounted(async () => {
   if (route.query.fecha) {
     fechaActual.value = new Date(route.query.fecha as string)
   }
+  
+  // 📌 FILTRAR POR PACIENTE SI VIENE EN QUERY PARAMS
+  if (route.query.paciente) {
+    filtros.value = {
+      ...filtros.value,
+      pacienteId: route.query.paciente as string
+    }
+    console.log('✅ [Agenda] Filtro de paciente aplicado:', route.query.paciente)
+  }
 })
 
 // Limpiar listener al desmontar
@@ -323,6 +332,36 @@ const abrirModalNuevaCita = () => {
 }
 
 const crearCitaEnSlot = (slot: TimeSlot) => {
+  // Verificar si el slot está ocupado
+  const slotOcupado = eventosFiltrados.value.some(evento => 
+    evento.fecha === slot.date && 
+    evento.horaInicio === slot.horaInicio
+  )
+  
+  if (slotOcupado) {
+    // Mostrar mensaje de que el horario está ocupado
+    if (process.client) {
+      const toast = document.createElement('div')
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9999] animate-slide-in'
+      toast.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">⚠️</span>
+          <div>
+            <div class="font-semibold">Horario ocupado</div>
+            <div class="text-sm opacity-90">Ya existe una cita en este horario</div>
+          </div>
+        </div>
+      `
+      document.body.appendChild(toast)
+      setTimeout(() => {
+        toast.classList.add('animate-fade-out')
+        setTimeout(() => toast.remove(), 300)
+      }, 3000)
+    }
+    return
+  }
+  
+  // Si está libre, abrir modal con slot preseleccionado
   slotSeleccionado.value = slot
   mostrarModalNueva.value = true
 }
@@ -407,7 +446,7 @@ if (process.client) {
     <AgendaTerapeuta v-if="legacyFallback" />
 
     <!-- Nueva vista de agenda -->
-    <div v-else class="h-screen flex flex-col overflow-hidden" :class="{ 'dark': darkMode }">
+    <div v-else class="h-screen flex flex-col overflow-hidden bg-[#FFF9F6] dark:bg-gray-950" :class="{ 'dark': darkMode }">
     
     <!-- Header con navegación -->
     <AgendaHeader
@@ -426,7 +465,7 @@ if (process.client) {
     />
 
     <!-- Leyenda -->
-    <div class="px-4 py-2 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
+    <div class="px-4 py-2 bg-white/60 dark:bg-gray-950/60 backdrop-blur-sm border-b border-cafe/5 dark:border-gray-800">
       <AgendaLegend />
     </div>
 
@@ -514,5 +553,32 @@ kbd {
   transition-property: color, background-color, border-color;
   transition-duration: 150ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animaciones para toast */
+@keyframes slide-in {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.3s ease-in;
 }
 </style>

@@ -1,0 +1,479 @@
+/* ============================================================================
+   🧩 COMPONENTES BASE - SISTEMA DE DISEÑO PSICÓLOGA KAREM
+   ============================================================================
+   Componentes reutilizables construidos sobre los design tokens.
+   Usa @apply de Tailwind para consistencia con la configuración extendida.
+   ============================================================================ */
+
+@layer components {
+  
+  /* ==========================================================================
+     📦 TARJETAS Y CONTENEDORES
+     ========================================================================== */
+  
+  /* Tarjeta base - Contenedor principal para secciones */
+  .card {
+    @apply bg-white rounded-xl border border-cafe/5 shadow-sm p-6 transition-all duration-200;
+  }
+  
+  .card:hover {
+    @apply shadow-md border-cafe/8;
+  }
+  
+  /* Variantes de tarjetas */
+  .card-flat {
+    @apply bg-white rounded-xl border border-cafe/5 p-6;
+  }
+  
+  .card-elevated {
+    @apply bg-white rounded-2xl shadow-lg p-6 border border-cafe/5;
+  }
+  
+  .card-soft {
+    @apply bg-white/80 backdrop-blur-sm rounded-xl border border-cafe/8 p-6;
+  }
+  
+  .card-interactive {
+    @apply bg-white rounded-xl border border-cafe/5 shadow-sm p-6 
+           transition-all duration-200 cursor-pointer
+           hover:shadow-md hover:border-terracota/30 hover:scale-[1.01];
+  }
+  
+  /* Panel con título */
+  .panel {
+    @apply bg-white rounded-xl border border-cafe/5 overflow-hidden;
+  }
+  
+  .panel-header {
+    @apply px-6 py-4 border-b border-cafe/5 bg-base-bg;
+  }
+  
+  .panel-body {
+    @apply p-6;
+  }
+  
+  .panel-footer {
+    @apply px-6 py-4 border-t border-cafe/5 bg-base-bg;
+  }
+
+  /* ==========================================================================
+     🔘 BOTONES
+     ========================================================================== */
+  
+  /* Botón primario */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 
+           px-4 py-2.5 rounded-xl font-medium
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply btn bg-terracota text-white 
+           hover:bg-terracota/90 hover:shadow-md
+           focus:ring-terracota/50
+           active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-white text-cafe border border-cafe/20
+           hover:bg-cafe/5 hover:border-cafe/30
+           focus:ring-cafe/30;
+  }
+  
+  .btn-outline {
+    @apply btn border border-cafe/20 text-cafe bg-transparent
+           hover:bg-cafe/5 hover:border-cafe/30
+           focus:ring-cafe/30;
+  }
+  
+  .btn-ghost {
+    @apply btn text-cafe bg-transparent
+           hover:bg-cafe/5
+           focus:ring-cafe/20;
+  }
+  
+  .btn-terracota-light {
+    @apply btn bg-terracota/10 text-terracota
+           hover:bg-terracota/20
+           focus:ring-terracota/30;
+  }
+  
+  .btn-success {
+    @apply btn bg-green-500 text-white
+           hover:bg-green-600
+           focus:ring-green-400;
+  }
+  
+  .btn-danger {
+    @apply btn bg-red-500 text-white
+           hover:bg-red-600
+           focus:ring-red-400;
+  }
+  
+  /* Tamaños de botones */
+  .btn-sm {
+    @apply text-sm px-3 py-1.5 rounded-lg;
+  }
+  
+  .btn-lg {
+    @apply text-lg px-6 py-3.5 rounded-xl;
+  }
+  
+  /* Botón con icono */
+  .btn-icon {
+    @apply p-2 rounded-lg;
+  }
+
+  /* ==========================================================================
+     📝 INPUTS Y FORMULARIOS
+     ========================================================================== */
+  
+  .input {
+    @apply w-full px-4 py-2.5 rounded-lg 
+           border border-cafe/10 bg-white
+           text-cafe placeholder:text-cafe/40
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-terracota/30 focus:border-terracota/50
+           disabled:bg-cafe/5 disabled:cursor-not-allowed;
+  }
+  
+  .input-error {
+    @apply border-red-300 focus:border-red-400 focus:ring-red-200;
+  }
+  
+  .textarea {
+    @apply input min-h-[100px] resize-y;
+  }
+  
+  .select {
+    @apply input appearance-none bg-no-repeat bg-right pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B5B55' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-size: 1.25rem 1.25rem;
+  }
+  
+  .checkbox {
+    @apply w-4 h-4 rounded border-cafe/30 
+           text-terracota focus:ring-terracota/30 focus:ring-offset-0
+           transition-colors;
+  }
+  
+  .radio {
+    @apply w-4 h-4 border-cafe/30
+           text-terracota focus:ring-terracota/30 focus:ring-offset-0
+           transition-colors;
+  }
+  
+  .label {
+    @apply block text-sm font-medium text-cafe/80 mb-1.5;
+  }
+  
+  .form-group {
+    @apply space-y-1.5;
+  }
+  
+  .form-error {
+    @apply text-xs text-red-500 mt-1;
+  }
+  
+  .form-hint {
+    @apply text-xs text-cafe/60 mt-1;
+  }
+
+  /* ==========================================================================
+     🏷️ BADGES Y ETIQUETAS
+     ========================================================================== */
+  
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 
+           text-xs font-medium rounded-full;
+  }
+  
+  .badge-primary {
+    @apply badge bg-terracota/10 text-terracota;
+  }
+  
+  .badge-secondary {
+    @apply badge bg-cafe/10 text-cafe;
+  }
+  
+  .badge-success {
+    @apply badge bg-green-50 text-green-700;
+  }
+  
+  .badge-warning {
+    @apply badge bg-yellow-50 text-yellow-700;
+  }
+  
+  .badge-error {
+    @apply badge bg-red-50 text-red-700;
+  }
+  
+  .badge-info {
+    @apply badge bg-blue-50 text-blue-700;
+  }
+  
+  /* Estados de citas */
+  .badge-pendiente {
+    @apply badge bg-yellow-50 text-yellow-700 border border-yellow-200;
+  }
+  
+  .badge-confirmada {
+    @apply badge bg-green-50 text-green-700 border border-green-200;
+  }
+  
+  .badge-realizada {
+    @apply badge bg-blue-50 text-blue-700 border border-blue-200;
+  }
+  
+  .badge-cancelada {
+    @apply badge bg-cafe/10 text-cafe/70 border border-cafe/20;
+  }
+
+  /* ==========================================================================
+     📊 ELEMENTOS DE ESTADO
+     ========================================================================== */
+  
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  
+  .status-dot-success {
+    @apply status-dot bg-green-500;
+  }
+  
+  .status-dot-warning {
+    @apply status-dot bg-yellow-500;
+  }
+  
+  .status-dot-error {
+    @apply status-dot bg-red-500;
+  }
+  
+  .status-dot-info {
+    @apply status-dot bg-blue-500;
+  }
+
+  /* ==========================================================================
+     💬 TOOLTIPS Y POPOVERS
+     ========================================================================== */
+  
+  .tooltip {
+    @apply absolute z-50 px-3 py-2 text-xs font-medium text-white 
+           bg-cafe/90 rounded-lg shadow-lg backdrop-blur-sm
+           pointer-events-none opacity-0 transition-opacity duration-200;
+  }
+  
+  .tooltip.show {
+    @apply opacity-100;
+  }
+
+  /* ==========================================================================
+     🔔 NOTIFICACIONES Y ALERTAS
+     ========================================================================== */
+  
+  .alert {
+    @apply flex items-start gap-3 p-4 rounded-xl border;
+  }
+  
+  .alert-success {
+    @apply alert bg-green-50 border-green-200 text-green-800;
+  }
+  
+  .alert-warning {
+    @apply alert bg-yellow-50 border-yellow-200 text-yellow-800;
+  }
+  
+  .alert-error {
+    @apply alert bg-red-50 border-red-200 text-red-800;
+  }
+  
+  .alert-info {
+    @apply alert bg-blue-50 border-blue-200 text-blue-800;
+  }
+
+  /* ==========================================================================
+     📋 LISTAS
+     ========================================================================== */
+  
+  .list-item {
+    @apply flex items-center gap-3 p-3 rounded-lg
+           transition-colors duration-150
+           hover:bg-cafe/5 cursor-pointer;
+  }
+  
+  .list-item-active {
+    @apply list-item bg-terracota/10 text-terracota;
+  }
+  
+  .divider {
+    @apply border-t border-cafe/10;
+  }
+
+  /* ==========================================================================
+     🖼️ AVATARES
+     ========================================================================== */
+  
+  .avatar {
+    @apply inline-flex items-center justify-center 
+           rounded-full bg-terracota/10 text-terracota 
+           font-medium overflow-hidden;
+  }
+  
+  .avatar-sm {
+    @apply avatar w-8 h-8 text-sm;
+  }
+  
+  .avatar-base {
+    @apply avatar w-10 h-10 text-base;
+  }
+  
+  .avatar-lg {
+    @apply avatar w-12 h-12 text-lg;
+  }
+  
+  .avatar-xl {
+    @apply avatar w-16 h-16 text-xl;
+  }
+
+  /* ==========================================================================
+     📱 MODAL Y OVERLAY
+     ========================================================================== */
+  
+  .modal-overlay {
+    @apply fixed inset-0 bg-cafe/50 backdrop-blur-sm z-40
+           transition-opacity duration-300;
+  }
+  
+  .modal {
+    @apply fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4;
+  }
+  
+  .modal-content {
+    @apply bg-white rounded-2xl shadow-2xl max-w-lg w-full
+           transform transition-all duration-300;
+  }
+  
+  .modal-header {
+    @apply px-6 py-4 border-b border-cafe/5;
+  }
+  
+  .modal-body {
+    @apply p-6;
+  }
+  
+  .modal-footer {
+    @apply px-6 py-4 border-t border-cafe/5 flex items-center justify-end gap-3;
+  }
+
+  /* ==========================================================================
+     🔗 ENLACES
+     ========================================================================== */
+  
+  .link {
+    @apply text-terracota hover:text-terracota/80 
+           transition-colors duration-150
+           underline-offset-2 hover:underline;
+  }
+  
+  .link-muted {
+    @apply text-cafe/70 hover:text-cafe
+           transition-colors duration-150;
+  }
+
+  /* ==========================================================================
+     📊 TABLAS
+     ========================================================================== */
+  
+  .table {
+    @apply w-full text-left;
+  }
+  
+  .table-header {
+    @apply text-xs font-semibold text-cafe/70 uppercase tracking-wider
+           bg-cafe/5 border-b border-cafe/10;
+  }
+  
+  .table-header th {
+    @apply px-4 py-3;
+  }
+  
+  .table-row {
+    @apply border-b border-cafe/5 hover:bg-cafe/5 transition-colors;
+  }
+  
+  .table-cell {
+    @apply px-4 py-3 text-sm;
+  }
+
+  /* ==========================================================================
+     ⚡ SKELETON LOADERS
+     ========================================================================== */
+  
+  .skeleton {
+    @apply animate-pulse bg-cafe/10 rounded;
+  }
+  
+  .skeleton-text {
+    @apply skeleton h-4 w-full;
+  }
+  
+  .skeleton-title {
+    @apply skeleton h-6 w-2/3;
+  }
+  
+  .skeleton-avatar {
+    @apply skeleton w-10 h-10 rounded-full;
+  }
+
+  /* ==========================================================================
+     🎯 ELEMENTOS INTERACTIVOS
+     ========================================================================== */
+  
+  .clickable {
+    @apply cursor-pointer transition-all duration-200
+           hover:scale-[1.01] active:scale-[0.99];
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-terracota/30 focus:ring-offset-2;
+  }
+
+  /* ==========================================================================
+     📐 LAYOUT HELPERS
+     ========================================================================== */
+  
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-4;
+  }
+  
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4;
+  }
+  
+  .section-spacing {
+    @apply py-12 md:py-16;
+  }
+  
+  .content-spacing {
+    @apply space-y-6;
+  }
+
+  /* ==========================================================================
+     🌊 EFECTOS HOVER SUTILES
+     ========================================================================== */
+  
+  .hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-1;
+  }
+  
+  .hover-glow {
+    @apply transition-shadow duration-200 hover:shadow-lg;
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+}

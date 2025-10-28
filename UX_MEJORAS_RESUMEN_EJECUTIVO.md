@@ -46,7 +46,7 @@
 ```vue
 🎟️ Tipo de Bono: Quincenal
 📊 2 sesiones
-💰 Precio sugerido: €110
+💰 Precio sugerido: €100
 ```
 
 ### 3️⃣ Auto-relleno de Precios ✅
@@ -54,13 +54,13 @@
 **Después**: Precios automáticos con posibilidad de ajuste
 
 **Precios base definidos**:
-- A Demanda: €60 (1 sesión)
-- Quincenal: €110 (2 sesiones)
-- Semanal: €200 (4 sesiones)
+- A Demanda: €60 (1 sesión) - Sin compromiso, no permite bono
+- Quincenal: €100 (2 sesiones)
+- Semanal: €160 (4 sesiones)
 
 **Watchers reactivos**:
 ```typescript
-watch(tipo_bono) → Auto-rellena monto
+watch(tipo_bono) → Auto-rellena monto (deshabilita bono si A Demanda)
 watch(crear_bono) → Auto-rellena monto
 ```
 
@@ -171,12 +171,13 @@ watch(crear_bono) → Auto-rellena monto
 - [x] Botón "Crear" deshabilitado si falta info → ✅
 
 ### Funcionalidades de Bono
-- [x] Seleccionar "A Demanda" → Muestra €60, 1 sesión
-- [x] Seleccionar "Quincenal" → Muestra €110, 2 sesiones
-- [x] Seleccionar "Semanal" → Muestra €200, 4 sesiones
+- [x] Seleccionar "A Demanda" → Muestra €60, 1 sesión (sin compromiso, no permite bono)
+- [x] Seleccionar "Quincenal" → Muestra €100, 2 sesiones
+- [x] Seleccionar "Semanal" → Muestra €160, 4 sesiones
 - [x] Precio por sesión calculado correctamente → ✅
 - [x] Resumen del bono visible → ✅
 - [x] Renovación automática con tooltip → ✅
+- [x] Checkbox de bono deshabilitado para "A Demanda" → ✅
 
 ### UX de Fechas
 - [x] Click en ícono de calendario → Abre selector
@@ -279,9 +280,10 @@ watch(crear_bono) → Auto-rellena monto
 ### 1. Sistema de Precios Base
 ```typescript
 const PRECIOS_BASE = {
-  a_demanda: 60,
-  quincenal: 110,
-  semanal: 200
+  otro: 60,         // A Demanda - sin compromiso
+  quincenal: 100,   // 2 sesiones/mes
+  semanal: 160,     // 4 sesiones/mes
+  mensual: 180      // 4 sesiones mensuales
 }
 ```
 **Beneficio**: Estandarización y consistencia de precios
@@ -294,6 +296,10 @@ const formularioValido = computed(() => {
   if (crear_bono) return base && bono_monto > 0
   return base
 })
+
+const esADemanda = computed(() => {
+  return tipo_bono === 'otro'
+})
 ```
 **Beneficio**: Usuario sabe en todo momento si puede guardar
 
@@ -301,7 +307,11 @@ const formularioValido = computed(() => {
 ```typescript
 // Auto-rellena cuando cambia el tipo
 watch(tipo_bono, (nuevo) => {
-  if (nuevo && crear_bono && monto === 0) {
+  // Si es A Demanda, deshabilitar bono
+  if (nuevo === 'otro') {
+    crear_bono = false
+    bono_monto = 0
+  } else if (crear_bono && monto === 0) {
     monto = PRECIOS_BASE[nuevo]
   }
 })

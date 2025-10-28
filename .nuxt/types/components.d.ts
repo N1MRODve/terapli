@@ -41,6 +41,7 @@ interface _GlobalComponents {
   'MensajeInput': typeof import("../../components/MensajeInput.vue")['default']
   'ModalCompartirRecurso': typeof import("../../components/ModalCompartirRecurso.vue")['default']
   'ModalDetallesCita': typeof import("../../components/ModalDetallesCita.vue")['default']
+  'ModalEditarCita': typeof import("../../components/ModalEditarCita.vue")['default']
   'ModalEditarPaciente': typeof import("../../components/ModalEditarPaciente.vue")['default']
   'ModalEliminarPaciente': typeof import("../../components/ModalEliminarPaciente.vue")['default']
   'ModalEnviarRecurso': typeof import("../../components/ModalEnviarRecurso.vue")['default']
@@ -169,6 +170,7 @@ interface _GlobalComponents {
   'LazyMensajeInput': LazyComponent<typeof import("../../components/MensajeInput.vue")['default']>
   'LazyModalCompartirRecurso': LazyComponent<typeof import("../../components/ModalCompartirRecurso.vue")['default']>
   'LazyModalDetallesCita': LazyComponent<typeof import("../../components/ModalDetallesCita.vue")['default']>
+  'LazyModalEditarCita': LazyComponent<typeof import("../../components/ModalEditarCita.vue")['default']>
   'LazyModalEditarPaciente': LazyComponent<typeof import("../../components/ModalEditarPaciente.vue")['default']>
   'LazyModalEliminarPaciente': LazyComponent<typeof import("../../components/ModalEliminarPaciente.vue")['default']>
   'LazyModalEnviarRecurso': LazyComponent<typeof import("../../components/ModalEnviarRecurso.vue")['default']>

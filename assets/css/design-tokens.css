@@ -1,0 +1,251 @@
+/* ============================================================================
+   🎨 DESIGN TOKENS - SISTEMA DE DISEÑO PSICÓLOGA KAREM
+   ============================================================================
+   Sistema centralizado de variables CSS que define todos los valores de diseño
+   de la plataforma. Estos tokens son consumidos por Tailwind y componentes.
+   ============================================================================ */
+
+:root {
+  /* ========================================================================
+     🌈 PALETA DE COLORES - Cálida, Serena y Premium
+     ======================================================================== */
+  
+  /* Fondos principales */
+  --color-bg-primary: #FDFBF9;        /* Fondo principal cálido */
+  --color-bg-secondary: #F9F7F3;      /* Fondo alternativo */
+  --color-bg-tertiary: #F5F2EE;       /* Fondo terciario */
+  
+  /* Superficies (tarjetas, paneles) */
+  --color-surface: #FFFFFF;           /* Tarjetas y paneles */
+  --color-surface-hover: #FFFDFB;     /* Hover en superficies */
+  --color-surface-elevated: #FFFFFF;  /* Superficies elevadas (modales) */
+  
+  /* Textos */
+  --color-text-primary: #4A3B35;      /* Texto principal */
+  --color-text-secondary: #6B5B55;    /* Texto secundario */
+  --color-text-tertiary: #8E7F79;     /* Texto terciario */
+  --color-text-muted: #A59082;        /* Texto deshabilitado */
+  --color-text-inverse: #FFFFFF;      /* Texto sobre fondos oscuros */
+  
+  /* Colores de marca (terracota) */
+  --color-brand-primary: #C97C5D;     /* Terracota principal */
+  --color-brand-light: #E8BAAA;       /* Terracota claro */
+  --color-brand-lighter: #F2DCD3;     /* Terracota muy claro */
+  --color-brand-dark: #B66A4E;        /* Terracota oscuro */
+  
+  /* Rosa cálido (complementario) */
+  --color-accent-rose: #EAD5D3;       /* Rosa suave */
+  --color-accent-rose-light: #F5E8E6; /* Rosa muy claro */
+  
+  /* Café (estructura y bordes) */
+  --color-cafe: #5D4A44;              /* Café principal */
+  --color-cafe-light: #8B7A74;        /* Café claro */
+  --color-cafe-lighter: #C4B8B3;      /* Café muy claro */
+  
+  /* Bordes y separadores */
+  --color-border-default: rgba(93, 74, 68, 0.08);    /* Borde sutil */
+  --color-border-medium: rgba(93, 74, 68, 0.12);     /* Borde medio */
+  --color-border-strong: rgba(93, 74, 68, 0.20);     /* Borde fuerte */
+  --color-divider: #EADBD3;                          /* Línea divisoria */
+  
+  /* Estados (semánticos) */
+  --color-success: #54BF83;           /* Verde éxito */
+  --color-success-light: #D4F0E0;     /* Verde claro */
+  --color-warning: #F2C94C;           /* Amarillo advertencia */
+  --color-warning-light: #FDF7E0;     /* Amarillo claro */
+  --color-error: #E85D4A;             /* Rojo error */
+  --color-error-light: #FDEAE7;       /* Rojo claro */
+  --color-info: #5B9BD5;              /* Azul información */
+  --color-info-light: #E7F1F9;        /* Azul claro */
+  
+  /* Estados de citas */
+  --color-status-pending: #F2C94C;    /* Pendiente (amarillo) */
+  --color-status-confirmed: #54BF83;  /* Confirmada (verde) */
+  --color-status-completed: #5B9BD5;  /* Realizada (azul) */
+  --color-status-cancelled: #A59082;  /* Cancelada (gris) */
+
+  /* ========================================================================
+     📏 ESPACIADO - Sistema coherente basado en 4px
+     ======================================================================== */
+  
+  --spacing-xs: 0.25rem;     /* 4px */
+  --spacing-sm: 0.5rem;      /* 8px */
+  --spacing-md: 0.75rem;     /* 12px */
+  --spacing-base: 1rem;      /* 16px */
+  --spacing-lg: 1.25rem;     /* 20px */
+  --spacing-xl: 1.5rem;      /* 24px */
+  --spacing-2xl: 2rem;       /* 32px */
+  --spacing-3xl: 2.5rem;     /* 40px */
+  --spacing-4xl: 3rem;       /* 48px */
+  --spacing-5xl: 4rem;       /* 64px */
+  --spacing-6xl: 5rem;       /* 80px */
+
+  /* ========================================================================
+     🔤 TIPOGRAFÍA - Sistema jerárquico y legible
+     ======================================================================== */
+  
+  /* Familias tipográficas */
+  --font-serif: 'Lora', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  
+  /* Tamaños de fuente */
+  --font-size-xs: 0.75rem;      /* 12px - Etiquetas pequeñas */
+  --font-size-sm: 0.875rem;     /* 14px - Texto secundario */
+  --font-size-base: 0.9375rem;  /* 15px - Cuerpo de texto */
+  --font-size-md: 1rem;         /* 16px - Texto destacado */
+  --font-size-lg: 1.125rem;     /* 18px - Subtítulos */
+  --font-size-xl: 1.25rem;      /* 20px - Títulos nivel 3 */
+  --font-size-2xl: 1.5rem;      /* 24px - Títulos nivel 2 */
+  --font-size-3xl: 1.875rem;    /* 30px - Títulos nivel 1 */
+  --font-size-4xl: 2.25rem;     /* 36px - Títulos hero */
+  --font-size-5xl: 3rem;        /* 48px - Display grande */
+  
+  /* Peso de fuente */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Altura de línea */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 1.75;
+  
+  /* Espaciado de letras */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+
+  /* ========================================================================
+     📐 RADIOS - Esquinas suaves y coherentes
+     ======================================================================== */
+  
+  --radius-sm: 0.375rem;    /* 6px - Pequeños elementos */
+  --radius-base: 0.5rem;    /* 8px - Inputs, pequeñas tarjetas */
+  --radius-md: 0.75rem;     /* 12px - Tarjetas estándar */
+  --radius-lg: 1rem;        /* 16px - Tarjetas grandes */
+  --radius-xl: 1.25rem;     /* 20px - Paneles destacados */
+  --radius-2xl: 1.5rem;     /* 24px - Modales */
+  --radius-full: 9999px;    /* Circular */
+
+  /* ========================================================================
+     🌑 SOMBRAS - Sutiles y profesionales
+     ======================================================================== */
+  
+  --shadow-xs: 0 1px 2px rgba(74, 59, 53, 0.04);
+  --shadow-sm: 0 2px 4px rgba(74, 59, 53, 0.04), 
+               0 1px 2px rgba(74, 59, 53, 0.02);
+  --shadow-base: 0 4px 8px rgba(74, 59, 53, 0.06), 
+                 0 2px 4px rgba(74, 59, 53, 0.03);
+  --shadow-md: 0 6px 12px rgba(74, 59, 53, 0.08), 
+               0 3px 6px rgba(74, 59, 53, 0.04);
+  --shadow-lg: 0 10px 20px rgba(74, 59, 53, 0.10), 
+               0 4px 8px rgba(74, 59, 53, 0.05);
+  --shadow-xl: 0 16px 32px rgba(74, 59, 53, 0.12), 
+               0 6px 12px rgba(74, 59, 53, 0.06);
+  --shadow-2xl: 0 24px 48px rgba(74, 59, 53, 0.14), 
+                0 8px 16px rgba(74, 59, 53, 0.07);
+  
+  /* Sombras especiales */
+  --shadow-inner: inset 0 2px 4px rgba(74, 59, 53, 0.06);
+  --shadow-glow: 0 0 20px rgba(201, 124, 93, 0.15);
+  --shadow-focus: 0 0 0 3px rgba(201, 124, 93, 0.20);
+
+  /* ========================================================================
+     🎭 OPACIDADES
+     ======================================================================== */
+  
+  --opacity-disabled: 0.38;
+  --opacity-hover: 0.08;
+  --opacity-pressed: 0.12;
+  --opacity-dragged: 0.38;
+  --opacity-overlay: 0.50;
+
+  /* ========================================================================
+     ⏱️ TRANSICIONES - Timing coherente
+     ======================================================================== */
+  
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slower: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Easing personalizado */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ========================================================================
+     📱 Z-INDEX - Capas organizadas
+     ======================================================================== */
+  
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+
+  /* ========================================================================
+     🖼️ DIMENSIONES - Tamaños comunes
+     ======================================================================== */
+  
+  /* Header y navegación */
+  --header-height: 4rem;        /* 64px */
+  --header-height-mobile: 3.5rem; /* 56px */
+  --sidebar-width: 16rem;       /* 256px */
+  --sidebar-width-collapsed: 4.5rem; /* 72px */
+  
+  /* Contenedores */
+  --container-xs: 28rem;        /* 448px */
+  --container-sm: 36rem;        /* 576px */
+  --container-md: 48rem;        /* 768px */
+  --container-lg: 64rem;        /* 1024px */
+  --container-xl: 80rem;        /* 1280px */
+  --container-2xl: 96rem;       /* 1536px */
+  
+  /* Elementos interactivos */
+  --button-height-sm: 2rem;     /* 32px */
+  --button-height-base: 2.5rem; /* 40px */
+  --button-height-lg: 3rem;     /* 48px */
+  --input-height: 2.75rem;      /* 44px */
+  --avatar-sm: 2rem;            /* 32px */
+  --avatar-base: 2.5rem;        /* 40px */
+  --avatar-lg: 3rem;            /* 48px */
+  --avatar-xl: 4rem;            /* 64px */
+
+  /* ========================================================================
+     🌫️ BACKDROP BLUR
+     ======================================================================== */
+  
+  --backdrop-blur-sm: 4px;
+  --backdrop-blur-base: 8px;
+  --backdrop-blur-md: 12px;
+  --backdrop-blur-lg: 16px;
+}
+
+/* ============================================================================
+   🌙 DARK MODE (Preparado para futuro)
+   ============================================================================
+   Espacio reservado para variaciones de tema oscuro
+   ============================================================================ */
+
+/* ============================================================================
+   📱 RESPONSIVE BREAKPOINTS (Para referencia)
+   ============================================================================ */
+
+/*
+  sm:  640px  - Móvil grande / Tablet pequeña
+  md:  768px  - Tablet
+  lg:  1024px - Desktop pequeño
+  xl:  1280px - Desktop
+  2xl: 1536px - Desktop grande
+*/

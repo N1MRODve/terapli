@@ -41,6 +41,7 @@ export const MensajeCard: typeof import("../components/MensajeCard.vue")['defaul
 export const MensajeInput: typeof import("../components/MensajeInput.vue")['default']
 export const ModalCompartirRecurso: typeof import("../components/ModalCompartirRecurso.vue")['default']
 export const ModalDetallesCita: typeof import("../components/ModalDetallesCita.vue")['default']
+export const ModalEditarCita: typeof import("../components/ModalEditarCita.vue")['default']
 export const ModalEditarPaciente: typeof import("../components/ModalEditarPaciente.vue")['default']
 export const ModalEliminarPaciente: typeof import("../components/ModalEliminarPaciente.vue")['default']
 export const ModalEnviarRecurso: typeof import("../components/ModalEnviarRecurso.vue")['default']
@@ -169,6 +170,7 @@ export const LazyMensajeCard: LazyComponent<typeof import("../components/Mensaje
 export const LazyMensajeInput: LazyComponent<typeof import("../components/MensajeInput.vue")['default']>
 export const LazyModalCompartirRecurso: LazyComponent<typeof import("../components/ModalCompartirRecurso.vue")['default']>
 export const LazyModalDetallesCita: LazyComponent<typeof import("../components/ModalDetallesCita.vue")['default']>
+export const LazyModalEditarCita: LazyComponent<typeof import("../components/ModalEditarCita.vue")['default']>
 export const LazyModalEditarPaciente: LazyComponent<typeof import("../components/ModalEditarPaciente.vue")['default']>
 export const LazyModalEliminarPaciente: LazyComponent<typeof import("../components/ModalEliminarPaciente.vue")['default']>
 export const LazyModalEnviarRecurso: LazyComponent<typeof import("../components/ModalEnviarRecurso.vue")['default']>

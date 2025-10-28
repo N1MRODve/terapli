@@ -1,26 +1,28 @@
 <template>
-  <!-- Botón flotante para abrir/cerrar -->
-  <button
-    v-if="!panelAbierto"
-    @click="panelAbierto = true"
-    class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-xl z-50 hover:bg-gray-800 transition-all"
-    title="Abrir panel de debug (Cmd/Ctrl+Shift+D)"
-  >
-    🔍
-  </button>
+  <!-- 🚧 PANEL DE DEBUG: Solo visible en desarrollo -->
+  <div v-if="isDevelopment">
+    <!-- Botón flotante para abrir/cerrar -->
+    <button
+      v-if="!panelAbierto"
+      @click="panelAbierto = true"
+      class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-xl z-50 hover:bg-gray-800 transition-all"
+      title="Abrir panel de debug (Cmd/Ctrl+Shift+D)"
+    >
+      🔍
+    </button>
 
-  <!-- Panel de debug -->
-  <div 
-    v-if="mostrar && panelAbierto" 
-    class="fixed bottom-4 right-4 bg-gray-900 text-white p-4 rounded-lg shadow-xl max-w-md z-50 font-mono text-xs"
-  >
-    <div class="flex justify-between items-center mb-2">
-      <h3 class="font-bold text-sm">🔍 Debug: Autenticación</h3>
-      <div class="flex gap-2">
-        <button @click="panelAbierto = false" class="text-gray-400 hover:text-white" title="Minimizar">−</button>
-        <button @click="cerrar" class="text-gray-400 hover:text-white" title="Cerrar">✕</button>
+    <!-- Panel de debug -->
+    <div 
+      v-if="mostrar && panelAbierto" 
+      class="fixed bottom-4 right-4 bg-gray-900 text-white p-4 rounded-lg shadow-xl max-w-md z-50 font-mono text-xs"
+    >
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-bold text-sm">🔍 Debug: Autenticación</h3>
+        <div class="flex gap-2">
+          <button @click="panelAbierto = false" class="text-gray-400 hover:text-white" title="Minimizar">−</button>
+          <button @click="cerrar" class="text-gray-400 hover:text-white" title="Cerrar">✕</button>
+        </div>
       </div>
-    </div>
     
     <div class="space-y-2">
       <!-- Estado del usuario -->
@@ -93,6 +95,7 @@
           🚨 Diagnosticar Problema
         </button>
       </div>
+      </div>
     </div>
   </div>
 </template>
@@ -110,6 +113,11 @@ const props = defineProps({
 const emit = defineEmits(['cerrar'])
 
 const { user, session, userProfile, loadUserProfile, supabase } = useSupabase()
+
+// 🚧 Detectar si estamos en desarrollo
+const isDevelopment = computed(() => {
+  return process.dev || import.meta.dev || process.env.NODE_ENV === 'development'
+})
 
 const tiempoInicio = ref(Date.now())
 const tiempoActual = ref(Date.now())

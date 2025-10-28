@@ -46,8 +46,8 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      'Lora': [400, 500, 600, 700],
-      'Lato': [300, 400, 500, 600, 700]
+      'Lora': [400, 500, 600, 700],      // Serif para títulos
+      'Inter': [300, 400, 500, 600, 700] // Sans para cuerpo (mejor legibilidad)
     },
     display: 'swap',
     prefetch: true,

@@ -1,514 +1,272 @@
-<template>
-  <Teleport to="body">
-    <Transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
-      <div
-        v-if="isOpen"
-        class="fixed inset-0 z-50 overflow-y-auto"
-        @click.self="cerrarModal"
-      >
-        <!-- Backdrop -->
-        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm"></div>
-
-        <!-- Modal Container -->
-        <div class="flex min-h-full items-center justify-center p-4">
-          <Transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-            leave-active-class="transition duration-200 ease-in"
-            leave-from-class="opacity-100 scale-100"
-            leave-to-class="opacity-0 scale-95"
-          >
-            <div
-              v-if="isOpen"
-              class="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all"
-              @click.stop
-            >
-              <!-- Header -->
-              <div class="flex items-start justify-between mb-6">
-                <div>
-                  <h3 class="text-2xl font-serif font-bold text-cafe mb-1">
-                    Detalles de la Sesión
-                  </h3>
-                  <p class="text-sm text-cafe/60">
-                    Información completa de la cita
-                  </p>
-                </div>
-                <button
-                  @click="cerrarModal"
-                  class="text-cafe/50 hover:text-cafe transition-colors"
-                >
-                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <!-- Contenido -->
-              <div v-if="cargando" class="py-12 text-center">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-terracota border-t-transparent"></div>
-                <p class="mt-4 text-cafe/60">Cargando detalles...</p>
-              </div>
-
-              <div v-else-if="citaDetalle" class="space-y-6">
-                <!-- Información Principal -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Fecha y Hora -->
-                  <div class="p-4 bg-terracota/5 rounded-xl">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="text-xl">📅</span>
-                      <span class="text-sm font-medium text-cafe/70">Fecha y Hora</span>
-                    </div>
-                    <p class="text-lg font-semibold text-cafe">
-                      {{ formatearFecha(citaDetalle.fecha_cita) }}
-                    </p>
-                    <p class="text-2xl font-bold text-terracota mt-1">
-                      {{ citaDetalle.hora_inicio }} - {{ citaDetalle.hora_fin }}
-                    </p>
-                  </div>
-
-                  <!-- Estado -->
-                  <div class="p-4 bg-terracota/5 rounded-xl">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="text-xl">{{ obtenerIconoEstado(citaDetalle.estado) }}</span>
-                      <span class="text-sm font-medium text-cafe/70">Estado</span>
-                    </div>
-                    <span
-                      class="inline-block px-4 py-2 rounded-full text-sm font-semibold mt-2"
-                      :class="obtenerEstiloEstado(citaDetalle.estado)"
-                    >
-                      {{ citaDetalle.estado?.toUpperCase() || 'PENDIENTE' }}
-                    </span>
-                    <p class="text-sm text-cafe/60 mt-2">
-                      {{ obtenerDescripcionEstado(citaDetalle.estado) }}
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Información del Paciente -->
-                <div class="p-5 bg-gradient-to-br from-rosa/20 to-rosa/10 rounded-xl">
-                  <div class="flex items-start justify-between flex-wrap gap-4">
-                    <div class="flex items-center gap-4">
-                      <div
-                        class="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
-                        :style="{ backgroundColor: '#D8AFA0' }"
-                      >
-                        {{ obtenerIniciales(citaDetalle.paciente_nombre) }}
-                      </div>
-                      <div>
-                        <p class="text-xs text-cafe/60 mb-1">Paciente</p>
-                        <p class="text-xl font-bold text-cafe">
-                          {{ citaDetalle.paciente_nombre || 'Sin nombre' }}
-                        </p>
-                        <p v-if="citaDetalle.paciente_email" class="text-sm text-cafe/60 mt-1">
-                          {{ citaDetalle.paciente_email }}
-                        </p>
-                      </div>
-                    </div>
-                    <NuxtLink
-                      v-if="citaDetalle.paciente_id"
-                      :to="`/terapeuta/pacientes/${citaDetalle.paciente_id}`"
-                      class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors"
-                    >
-                      Ver perfil
-                    </NuxtLink>
-                  </div>
-                </div>
-
-                <!-- Modalidad y Tipo -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="p-4 bg-base-bg rounded-xl">
-                    <p class="text-sm text-cafe/60 mb-2">Modalidad</p>
-                    <div class="flex items-center gap-2">
-                      <span class="text-2xl">{{ obtenerIconoModalidad(citaDetalle.modalidad) }}</span>
-                      <span class="text-lg font-semibold text-cafe capitalize">
-                        {{ citaDetalle.modalidad || 'No especificada' }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="p-4 bg-base-bg rounded-xl">
-                    <p class="text-sm text-cafe/60 mb-2">Tipo de Sesión</p>
-                    <div class="flex items-center gap-2">
-                      <span class="text-2xl">{{ obtenerIconoTipo(citaDetalle.tipo) }}</span>
-                      <span class="text-lg font-semibold text-cafe capitalize">
-                        {{ citaDetalle.tipo || 'Primera sesión' }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Información del Bono -->
-                <div v-if="infoBono" class="p-5 bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl">
-                  <div class="flex items-center gap-2 mb-4">
-                    <span class="text-2xl">🎫</span>
-                    <h4 class="font-semibold text-cafe">Información del Bono</h4>
-                  </div>
-                  
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <p class="text-sm text-cafe/60 mb-1">Tipo de Bono</p>
-                      <p class="text-lg font-semibold text-cafe">
-                        {{ infoBono.tipo }}
-                      </p>
-                    </div>
-                    <div>
-                      <p class="text-sm text-cafe/60 mb-1">Sesiones Disponibles</p>
-                      <p class="text-lg font-semibold text-green-600">
-                        {{ infoBono.sesiones_disponibles }} de {{ infoBono.sesiones_totales }}
-                      </p>
-                    </div>
-                    <div>
-                      <p class="text-sm text-cafe/60 mb-1">Frecuencia</p>
-                      <p class="text-lg font-semibold text-cafe">
-                        {{ infoBono.frecuencia || 'Semanal' }}
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Barra de progreso -->
-                  <div class="mt-4">
-                    <div class="flex justify-between text-xs text-cafe/60 mb-2">
-                      <span>Progreso del bono</span>
-                      <span>{{ Math.round((infoBono.sesiones_usadas / infoBono.sesiones_totales) * 100) }}%</span>
-                    </div>
-                    <div class="w-full bg-white rounded-full h-2.5">
-                      <div
-                        class="h-2.5 rounded-full bg-gradient-to-r from-green-400 to-green-600 transition-all"
-                        :style="{ width: `${(infoBono.sesiones_usadas / infoBono.sesiones_totales) * 100}%` }"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Próximas Sesiones del Paciente -->
-                <div v-if="proximasSesiones.length > 0" class="p-5 bg-terracota/5 rounded-xl">
-                  <div class="flex items-center gap-2 mb-4">
-                    <span class="text-2xl">📋</span>
-                    <h4 class="font-semibold text-cafe">Próximas Sesiones Agendadas</h4>
-                  </div>
-                  
-                  <div class="space-y-3">
-                    <div
-                      v-for="sesion in proximasSesiones"
-                      :key="sesion.id"
-                      class="flex items-center justify-between p-3 bg-white rounded-lg"
-                    >
-                      <div class="flex items-center gap-3">
-                        <span class="text-lg">📅</span>
-                        <div>
-                          <p class="font-medium text-cafe">
-                            {{ formatearFecha(sesion.fecha_cita) }}
-                          </p>
-                          <p class="text-sm text-cafe/60">
-                            {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        class="px-3 py-1 rounded-full text-xs font-medium"
-                        :class="obtenerEstiloEstadoMini(sesion.estado)"
-                      >
-                        {{ sesion.estado }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="p-5 bg-terracota/5 rounded-xl">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="text-2xl">📋</span>
-                    <h4 class="font-semibold text-cafe">Próximas Sesiones Agendadas</h4>
-                  </div>
-                  <p class="text-sm text-cafe/60 text-center py-4">
-                    No hay próximas sesiones agendadas
-                  </p>
-                </div>
-
-                <!-- Observaciones -->
-                <div v-if="citaDetalle.observaciones" class="p-4 bg-base-bg rounded-xl">
-                  <p class="text-sm text-cafe/60 mb-2">Observaciones</p>
-                  <p class="text-cafe">{{ citaDetalle.observaciones }}</p>
-                </div>
-              </div>
-
-              <!-- Footer Actions -->
-              <div class="mt-6 pt-6 border-t flex justify-end gap-3">
-                <button
-                  @click="cerrarModal"
-                  class="px-4 py-2 border border-cafe/20 text-cafe rounded-lg hover:bg-cafe/5 transition-colors"
-                >
-                  Cerrar
-                </button>
-                <NuxtLink
-                  v-if="citaDetalle"
-                  :to="`/terapeuta/agenda?fecha=${citaDetalle.fecha_cita}`"
-                  class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
-                  @click="cerrarModal"
-                >
-                  Ver en Agenda
-                </NuxtLink>
-              </div>
-            </div>
-          </Transition>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
-</template>
-
 <script setup lang="ts">
+import { ref, watch, computed } from 'vue'
 import { useCitas } from '~/composables/useCitas'
 
-interface Props {
+const props = defineProps<{
   isOpen: boolean
-  citaId: string | number | null
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  (e: 'close'): void
-  (e: 'actualizado'): void
-  (e: 'eliminado'): void
+  citaId: string | null
 }>()
 
+const emit = defineEmits(['close', 'actualizado', 'eliminado'])
+
 // Composables
-const { getCitas } = useCitas()
 const supabase = useSupabaseClient()
 
 // Estado
+const cita = ref<any>(null)
 const cargando = ref(false)
-const citaDetalle = ref<any>(null)
-const infoBono = ref<any>(null)
-const proximasSesiones = ref<any[]>([])
+const mostrarModalEdicion = ref(false)
 
-// Funciones
-const cerrarModal = () => {
-  emit('close')
-}
-
-const cargarDetalles = async () => {
-  if (!props.citaId) {
-    console.warn('[ModalDetalles] No hay citaId para cargar')
-    return
-  }
-
-  cargando.value = true
+// Cargar datos de la cita
+const cargarCita = async () => {
+  if (!props.citaId) return
+  
   try {
-    // 1️⃣ Buscar primero en cache/memoria
-    const todasLasCitas = await getCitas()
-    let cita = todasLasCitas.find((c: any) => c.id === props.citaId)
-
-    // 2️⃣ Si no la encuentra, buscar directamente en Supabase
-    if (!cita) {
-      console.warn('[ModalDetalles] No encontrada en cache, consultando Supabase...')
-      const { data, error } = await supabase
-        .from('citas')
-        .select(`
-          *,
-          pacientes (id, nombre_completo, email, metadata)
-        `)
-        .eq('id', props.citaId)
-        .maybeSingle()
-
-      if (error) {
-        console.error('[ModalDetalles] Error al obtener cita desde Supabase:', error.message)
-        return
-      }
-      if (!data) {
-        console.warn('[ModalDetalles] Cita no encontrada ni en Supabase')
-        return
-      }
-
-      cita = data
-    }
-
-    // 3️⃣ Normalizar campos de paciente y cita
-    citaDetalle.value = {
-      ...cita,
-      paciente_nombre:
-        cita.paciente_nombre ||
-        cita.pacientes?.nombre_completo ||
-        cita.pacientes?.metadata?.nombre_completo ||
-        'Sin nombre',
-      paciente_email:
-        cita.pacientes?.email ||
-        cita.email ||
-        ''
-    }
-
-    // 4️⃣ Cargar información adicional
-    if (cita.paciente_id) {
-      await cargarInfoBono(cita.paciente_id)
-      await cargarProximasSesiones(cita.paciente_id, cita.id)
-    }
+    cargando.value = true
+    
+    const { data, error } = await supabase
+      .from('citas')
+      .select(`
+        *,
+        paciente:pacientes!citas_paciente_id_fkey (
+          id,
+          nombre_completo,
+          email,
+          telefono,
+          frecuencia
+        ),
+        bono:bonos!citas_bono_id_fkey (
+          id,
+          tipo,
+          sesiones_totales,
+          sesiones_restantes
+        )
+      `)
+      .eq('id', props.citaId)
+      .single()
+    
+    if (error) throw error
+    cita.value = data
   } catch (error) {
-    console.error('[ModalDetalles] Error al cargar detalles de la cita:', error)
+    console.error('Error al cargar cita:', error)
   } finally {
     cargando.value = false
   }
 }
 
-const cargarInfoBono = async (pacienteId: string) => {
-  try {
-    const { data: bonos, error } = await supabase
-      .from('bonos')
-      .select('*')
-      .eq('paciente_id', pacienteId)
-      .eq('estado', 'activo')
-      .maybeSingle()
-
-    if (error) {
-      console.warn('[Bonos] Error en consulta:', error.message)
-      infoBono.value = null
-      return
-    }
-
-    if (!bonos) {
-      infoBono.value = null
-      return
-    }
-
-    // Calcular sesiones disponibles
-    const { data: sesionesRealizadas } = await supabase
-      .from('sesiones')
-      .select('id')
-      .eq('paciente_id', pacienteId)
-      .eq('estado', 'completada')
-
-    const sesionesUsadas = sesionesRealizadas?.length || bonos.sesiones_usadas || 0
-    const sesionesDisponibles = bonos.sesiones_totales - sesionesUsadas
-
-    infoBono.value = {
-      tipo: `${bonos.sesiones_totales} sesiones`,
-      sesiones_totales: bonos.sesiones_totales,
-      sesiones_usadas: sesionesUsadas,
-      sesiones_disponibles: sesionesDisponibles,
-      frecuencia: 'Semanal'
-    }
-  } catch (error) {
-    console.error('Error al cargar información del bono:', error)
-    infoBono.value = null
-  }
-}
-
-const cargarProximasSesiones = async (pacienteId: string, citaActualId: string) => {
-  try {
-    const todasLasCitas = await getCitas()
-    
-    const hoy = new Date()
-    proximasSesiones.value = todasLasCitas
-      .filter((c: any) => 
-        c.paciente_id === pacienteId &&
-        c.id !== citaActualId &&
-        ['pendiente', 'confirmada'].includes(c.estado) &&
-        new Date(c.fecha_cita) >= hoy
-      )
-      .sort((a: any, b: any) => {
-        const fechaA = new Date(`${a.fecha_cita}T${a.hora_inicio}`)
-        const fechaB = new Date(`${b.fecha_cita}T${b.hora_inicio}`)
-        return fechaA.getTime() - fechaB.getTime()
-      })
-      .slice(0, 5)
-  } catch (error) {
-    console.error('Error al cargar próximas sesiones:', error)
-    proximasSesiones.value = []
-  }
-}
-
-// Helpers
-const formatearFecha = (fecha: string) => {
-  try {
-    const date = new Date(fecha + 'T00:00:00')
-    return date.toLocaleDateString('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  } catch {
-    return fecha
-  }
-}
-
-const obtenerIniciales = (nombre: string) => {
-  if (!nombre) return '?'
-  const partes = nombre.split(' ')
-  if (partes.length >= 2 && partes[0] && partes[1]) {
-    return `${partes[0][0]}${partes[1][0]}`.toUpperCase()
-  }
-  return nombre.substring(0, 2).toUpperCase()
-}
-
-const obtenerIconoEstado = (estado: string) => {
-  const iconos: Record<string, string> = {
-    'pendiente': '⏳',
-    'confirmada': '✅',
-    'realizada': '✔️',
-    'cancelada': '❌'
-  }
-  return iconos[estado] || '📌'
-}
-
-const obtenerEstiloEstado = (estado: string) => {
-  const estilos: Record<string, string> = {
-    'pendiente': 'bg-yellow-100 text-yellow-700',
-    'confirmada': 'bg-green-100 text-green-700',
-    'realizada': 'bg-blue-100 text-blue-700',
-    'cancelada': 'bg-red-100 text-red-700'
-  }
-  return estilos[estado] || 'bg-gray-100 text-gray-700'
-}
-
-const obtenerEstiloEstadoMini = (estado: string) => {
-  const estilos: Record<string, string> = {
-    'pendiente': 'bg-yellow-50 text-yellow-700',
-    'confirmada': 'bg-green-50 text-green-700',
-    'realizada': 'bg-blue-50 text-blue-700',
-    'cancelada': 'bg-red-50 text-red-700'
-  }
-  return estilos[estado] || 'bg-gray-50 text-gray-700'
-}
-
-const obtenerDescripcionEstado = (estado: string) => {
-  const descripciones: Record<string, string> = {
-    'pendiente': 'Esta sesión está pendiente de confirmación',
-    'confirmada': 'El paciente ha confirmado asistencia',
-    'realizada': 'La sesión ya fue completada',
-    'cancelada': 'Esta sesión fue cancelada'
-  }
-  return descripciones[estado] || 'Sin descripción'
-}
-
-const obtenerIconoModalidad = (modalidad: string) => {
-  const iconos: Record<string, string> = {
-    'presencial': '🏥',
-    'online': '💻',
-    'telefonica': '📞'
-  }
-  return iconos[modalidad] || '📋'
-}
-
-const obtenerIconoTipo = (tipo: string) => {
-  const iconos: Record<string, string> = {
-    'primera-sesion': '🌟',
-    'seguimiento': '🔄',
-    'evaluacion': '📊'
-  }
-  return iconos[tipo] || '💬'
-}
-
-// Watchers
-watch(() => props.isOpen, (newVal) => {
-  if (newVal && props.citaId) {
-    cargarDetalles()
+// Watch para cargar cuando se abre el modal
+watch(() => props.isOpen, (isOpen) => {
+  if (isOpen && props.citaId) {
+    cargarCita()
+  } else {
+    cita.value = null
   }
 })
+
+// Formatear fecha
+const fechaFormateada = computed(() => {
+  if (!cita.value?.fecha_cita) return ''
+  const fecha = new Date(cita.value.fecha_cita + 'T00:00:00')
+  return fecha.toLocaleDateString('es-ES', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
+})
+
+// Clase CSS según estado
+const claseEstado = computed(() => {
+  const estado = cita.value?.estado
+  const clases = {
+    pendiente: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    confirmada: 'bg-blue-100 text-blue-800 border-blue-300',
+    completada: 'bg-green-100 text-green-800 border-green-300',
+    realizada: 'bg-green-100 text-green-800 border-green-300',
+    cancelada: 'bg-red-100 text-red-800 border-red-300'
+  }
+  return clases[estado as keyof typeof clases] || 'bg-gray-100 text-gray-800'
+})
+
+// Acciones
+const cerrar = () => {
+  emit('close')
+}
+
+const abrirEdicion = () => {
+  mostrarModalEdicion.value = true
+}
+
+const handleActualizado = () => {
+  emit('actualizado')
+  cargarCita() // Recargar datos
+  mostrarModalEdicion.value = false
+}
+
+const handleEliminado = () => {
+  emit('eliminado')
+  cerrar()
+}
 </script>
+
+<template>
+  <Teleport to="body">
+    <div
+      v-if="isOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="cerrar"
+    >
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Detalles de la Cita</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Información completa de la sesión</p>
+          </div>
+          <button
+            @click="cerrar"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            aria-label="Cerrar"
+          >
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div v-if="cargando" class="p-12 flex flex-col items-center justify-center">
+          <div class="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4"></div>
+          <p class="text-gray-600 dark:text-gray-400">Cargando detalles...</p>
+        </div>
+
+        <!-- Contenido -->
+        <div v-else-if="cita" class="px-6 py-4 overflow-y-auto max-h-[calc(90vh-140px)]">
+          <!-- Paciente -->
+          <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Paciente
+              </h3>
+              <span :class="['px-3 py-1 text-xs font-medium rounded-full border', claseEstado]">
+                {{ cita.estado?.toUpperCase() }}
+              </span>
+            </div>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">{{ cita.paciente?.nombre_completo || cita.paciente_nombre || 'Sin nombre' }}</p>
+            <p v-if="cita.paciente?.email" class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ cita.paciente.email }}</p>
+            <p v-if="cita.paciente?.telefono" class="text-sm text-gray-600 dark:text-gray-400">{{ cita.paciente.telefono }}</p>
+          </div>
+
+          <!-- Fecha y Hora -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">📅 Fecha</p>
+              <p class="font-semibold text-gray-900 dark:text-white capitalize">{{ fechaFormateada }}</p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">🕐 Horario</p>
+              <p class="font-semibold text-gray-900 dark:text-white">{{ cita.hora_inicio?.substring(0, 5) }} - {{ cita.hora_fin?.substring(0, 5) }}</p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">💻 Modalidad</p>
+              <p class="font-semibold text-gray-900 dark:text-white capitalize">{{ cita.modalidad || 'No especificada' }}</p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">⏱️ Duración</p>
+              <p class="font-semibold text-gray-900 dark:text-white">{{ cita.duracion || 60 }} minutos</p>
+            </div>
+          </div>
+
+          <!-- Bono (si existe) -->
+          <div v-if="cita.bono" class="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+              <span class="text-xl">🎫</span>
+              Bono Activo
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-xs text-green-600 dark:text-green-400 mb-1">Tipo</p>
+                <p class="font-semibold text-gray-900 dark:text-white capitalize">{{ cita.bono.tipo || 'N/A' }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-green-600 dark:text-green-400 mb-1">Sesiones</p>
+                <p class="font-semibold text-gray-900 dark:text-white">
+                  {{ cita.bono.sesiones_restantes }} / {{ cita.bono.sesiones_totales }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Observaciones -->
+          <div v-if="cita.observaciones" class="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Observaciones
+            </h3>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ cita.observaciones }}</p>
+          </div>
+
+          <!-- Metadatos -->
+          <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+            <p>Creada: {{ new Date(cita.created_at).toLocaleString('es-ES') }}</p>
+            <p v-if="cita.updated_at">Actualizada: {{ new Date(cita.updated_at).toLocaleString('es-ES') }}</p>
+          </div>
+        </div>
+
+        <!-- Sin datos -->
+        <div v-else class="p-12 text-center">
+          <p class="text-gray-500 dark:text-gray-400">No se encontraron datos de la cita</p>
+        </div>
+
+        <!-- Footer con acciones -->
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-800 flex gap-3 bg-gray-50 dark:bg-gray-800">
+          <button
+            @click="cerrar"
+            class="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+          >
+            Cerrar
+          </button>
+          <button
+            @click="abrirEdicion"
+            class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+          >
+            ✏️ Editar Cita
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de edición -->
+    <ModalEditarCita
+      :isOpen="mostrarModalEdicion"
+      :citaId="citaId"
+      @close="mostrarModalEdicion = false"
+      @actualizado="handleActualizado"
+    />
+  </Teleport>
+</template>
+
+<style scoped>
+/* Animación de spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>

@@ -96,6 +96,7 @@
           @eliminar="abrirModalEliminar"
           @ver-citas="verCitasPaciente"
           @gestionar-bonos="gestionarBonosPaciente"
+          @editar-cita="abrirModalEditarCita"
         />
         
         <!-- Botón flotante "Asignar Cita" - Visible al hover en desktop -->
@@ -167,6 +168,14 @@
       @paciente-eliminado="manejarPacienteEliminado"
       @paciente-desactivado="manejarPacienteDesactivado"
     />
+
+    <!-- Modal Editar Cita -->
+    <ModalEditarCita
+      :isOpen="mostrarModalEditarCita"
+      :citaId="citaIdSeleccionada"
+      @close="cerrarModalEditarCita"
+      @actualizado="handleCitaActualizada"
+    />
   </main>
 </template>
 
@@ -201,6 +210,8 @@ const mostrarModalNuevo = ref(false)
 const mostrarModalEditar = ref(false)
 const mostrarModalEliminar = ref(false)
 const mostrarModalAsignarCita = ref(false)
+const mostrarModalEditarCita = ref(false)
+const citaIdSeleccionada = ref(null)
 const pacienteSeleccionado = ref(null)
 const pacienteSeleccionadoCita = ref(null)
 
@@ -274,7 +285,7 @@ const cargarPacientes = async () => {
         // Obtener próxima sesión (de tabla 'citas')
         const { data: proximaCita } = await supabase
           .from('citas')
-          .select('fecha_cita, hora_inicio')
+          .select('id, fecha_cita, hora_inicio')
           .eq('paciente_id', paciente.id)
           .in('estado', ['pendiente', 'confirmada'])
           .gte('fecha_cita', new Date().toISOString().split('T')[0])
@@ -293,6 +304,15 @@ const cargarPacientes = async () => {
         // Obtener bono activo o pendiente (con manejo seguro de errores)
         let bonoActivo = null
         try {
+          // Primero buscar todos los bonos del paciente para debug
+          const { data: todosLosBonos } = await supabase
+            .from('bonos')
+            .select('id, tipo, estado, sesiones_totales, sesiones_restantes, fecha_fin, created_at')
+            .eq('paciente_id', paciente.id)
+            .order('created_at', { ascending: false })
+
+          console.log(`📋 [Bonos] Paciente ${paciente.nombre_completo}:`, todosLosBonos)
+
           const { data: bonoData, error: bonoError } = await supabase
             .from('bonos')
             .select('id, tipo, estado, sesiones_totales, sesiones_restantes, fecha_fin, created_at')
@@ -306,6 +326,7 @@ const cargarPacientes = async () => {
             console.warn('[Bonos] Error en consulta:', bonoError.message)
           } else {
             bonoActivo = bonoData
+            console.log(`✅ [Bonos] Bono activo encontrado:`, bonoActivo)
           }
         } catch (error) {
           console.warn('[Bonos] Error inesperado:', error)
@@ -361,7 +382,8 @@ const cargarPacientes = async () => {
           area_de_acompanamiento: paciente.area_de_acompanamiento,
           frecuencia: paciente.frecuencia,
           ultima_sesion: ultimaCita?.fecha_cita || null,
-          proxima_sesion: proximaCita ? `${proximaCita.fecha_cita}T${proximaCita.hora_inicio}:00` : null,
+          proxima_sesion: proximaCita ? `${proximaCita.fecha_cita}T${proximaCita.hora_inicio}` : null,
+          proxima_cita_id: proximaCita?.id || null, // ID de la próxima cita para edición
           total_sesiones: totalSesiones || 0,
           estado_emocional_promedio: estadoEmocionalPromedio,
           evolucion_porcentaje: evolucionPorcentaje,
@@ -525,12 +547,35 @@ const manejarCitaCreada = async (nuevaCita) => {
 
 // Función para ver las citas de un paciente
 const verCitasPaciente = (paciente) => {
-  router.push(`/terapeuta/agenda?paciente=${paciente.id}`)
+  // 📌 Redirigir a la nueva agenda con filtro de paciente
+  router.push(`/agenda?paciente=${paciente.id}`)
 }
 
 // Función para gestionar bonos de un paciente
 const gestionarBonosPaciente = (paciente) => {
   router.push(`/terapeuta/pacientes/${paciente.id}/bonos`)
+}
+
+// Gestión del modal de editar cita
+const abrirModalEditarCita = (citaId) => {
+  console.log('Abriendo modal de edición de cita:', citaId)
+  citaIdSeleccionada.value = citaId
+  mostrarModalEditarCita.value = true
+}
+
+const cerrarModalEditarCita = () => {
+  mostrarModalEditarCita.value = false
+  citaIdSeleccionada.value = null
+}
+
+const handleCitaActualizada = async () => {
+  console.log('Cita actualizada, recargando pacientes...')
+  
+  // Recargar la lista de pacientes para actualizar próxima sesión
+  await cargarPacientes()
+  
+  // Cerrar el modal
+  cerrarModalEditarCita()
 }
 
 // Lifecycle

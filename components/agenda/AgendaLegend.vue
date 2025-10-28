@@ -7,43 +7,29 @@
 import { COLORES_ESTADO } from './types'
 
 const leyenda = [
-  { key: 'pendiente', label: 'Pendiente', dotClass: COLORES_ESTADO.pendiente.dot },
-  { key: 'confirmada', label: 'Confirmada', dotClass: COLORES_ESTADO.confirmada.dot },
-  { key: 'realizada', label: 'Realizada', dotClass: COLORES_ESTADO.realizada.dot },
-  { key: 'cancelada', label: 'Cancelada', dotClass: COLORES_ESTADO.cancelada.dot }
+  { key: 'pendiente', label: 'Pendiente', emoji: '🟡', bgClass: 'bg-yellow-100', textClass: 'text-yellow-800' },
+  { key: 'confirmada', label: 'Confirmada', emoji: '🟢', bgClass: 'bg-green-100', textClass: 'text-green-700' },
+  { key: 'realizada', label: 'Realizada', emoji: '🔵', bgClass: 'bg-blue-100', textClass: 'text-blue-700' },
+  { key: 'cancelada', label: 'Cancelada', emoji: '🔴', bgClass: 'bg-red-100', textClass: 'text-red-700' }
 ]
 </script>
 
 <template>
-  <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4">
-    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
-      Leyenda de Estados
-    </h3>
-    <ul class="flex flex-wrap items-center gap-4 text-sm">
-      <li 
-        v-for="item in leyenda" 
-        :key="item.key" 
-        class="flex items-center gap-2"
-      >
-        <span 
-          :class="['inline-block h-3 w-3 rounded-full border', item.dotClass]" 
-          :aria-label="`Estado: ${item.label}`"
-        />
-        <span class="text-gray-700 dark:text-gray-300">
-          {{ item.label }}
-        </span>
-      </li>
-    </ul>
+  <div class="flex flex-wrap gap-2 items-center py-1.5">
+    <div 
+      v-for="item in leyenda" 
+      :key="item.key" 
+      :class="['flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200 hover:scale-105', item.bgClass, item.textClass]"
+    >
+      <span class="text-base">{{ item.emoji }}</span>
+      <span>{{ item.label }}</span>
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* Animación suave para transiciones dark mode */
-li {
-  transition: opacity 0.2s ease-in-out;
-}
-
-li:hover {
-  opacity: 0.8;
+/* Animación suave para hover */
+div:hover {
+  transform: scale(1.05);
 }
 </style>

@@ -64,16 +64,21 @@ export const useSupabase = () => {
 
   // Cargar el perfil del usuario desde la tabla profiles
   const loadUserProfile = async () => {
+    // Si ya tenemos el perfil cargado, retornarlo sin hacer nueva petición
+    if (userProfile.value) {
+      return userProfile.value
+    }
+
     // Evitar llamadas múltiples simultáneas
     if (isLoadingProfile) {
-      console.log('[useSupabase] Ya hay una carga de perfil en progreso, esperando...')
-      // Esperar a que termine la carga actual
-      while (isLoadingProfile) {
+      // Esperar a que termine la carga actual (máximo 5 segundos)
+      let attempts = 0
+      while (isLoadingProfile && attempts < 50) {
         await new Promise(resolve => setTimeout(resolve, 100))
+        attempts++
       }
       // Si ya se cargó el perfil mientras esperábamos, retornarlo
       if (userProfile.value) {
-        console.log('[useSupabase] Perfil ya cargado por otra instancia')
         return userProfile.value
       }
     }

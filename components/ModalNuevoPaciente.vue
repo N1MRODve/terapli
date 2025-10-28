@@ -162,9 +162,9 @@
                 class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
               >
                 <option value="">Selecciona tipo de bono</option>
-                <option value="otro">A Demanda (1 sesión)</option>
-                <option value="quincenal">Quincenal (2 sesiones/mes)</option>
-                <option value="semanal">Semanal (4 sesiones/mes)</option>
+                <option value="otro">A Demanda (1 sesión - 60€ - sin compromiso)</option>
+                <option value="quincenal">Quincenal (2 sesiones/mes - 100€)</option>
+                <option value="semanal">Semanal (4 sesiones/mes - 160€)</option>
                 <option value="mensual">Mensual</option>
               </select>
               <p class="text-xs text-cafe/60 mt-1">
@@ -183,6 +183,7 @@
                   v-model="formulario.primera_sesion"
                   type="datetime-local"
                   required
+                  step="1800"
                   class="w-full px-4 py-2 pr-12 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white cursor-pointer"
                   @focus="abrirSelectorFecha($event)"
                 />
@@ -197,8 +198,27 @@
                   </svg>
                 </button>
               </div>
+              
+              <!-- Accesos rápidos de fecha/hora -->
+              <div class="flex gap-2 flex-wrap mt-2">
+                <button
+                  v-for="(opcion, index) in opcionesHorarioRapido"
+                  :key="index"
+                  type="button"
+                  @click="formulario.primera_sesion = opcion.datetime"
+                  :class="[
+                    'text-xs px-3 py-1.5 rounded-lg border transition-all',
+                    formulario.primera_sesion === opcion.datetime
+                      ? 'bg-[#D8AFA0] text-white border-[#D8AFA0] font-semibold'
+                      : 'bg-white text-[#5D4A44] border-[#D8AFA0]/30 hover:border-[#D8AFA0] hover:bg-[#D8AFA0]/10'
+                  ]"
+                >
+                  {{ opcion.label }}
+                </button>
+              </div>
+              
               <p class="text-xs text-cafe/60 mt-1">
-                � Puedes escribir la fecha/hora o usar el selector
+                💡 Puedes escribir la fecha/hora o usar el selector
               </p>
             </div>
           </div>
@@ -206,20 +226,46 @@
 
         <!-- Creación de Bono Inicial (Opcional) -->
         <div class="space-y-4 pt-4 border-t border-[#D8AFA0]/30">
-          <div>
+                    <!-- Sección Bono Inicial -->
+          <div class="border-t pt-6">
             <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold mb-2">
               💳 Bono Inicial (Opcional)
             </h3>
-            <p class="text-sm text-cafe/70 mb-3">
+            
+            <!-- Mensaje especial para "A Demanda" -->
+            <div v-if="esADemanda" class="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 mb-3">
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">ℹ️</span>
+                <div>
+                  <p class="text-sm font-semibold text-amber-900 mb-1">
+                    Sesión "A Demanda" seleccionada
+                  </p>
+                  <p class="text-sm text-amber-800">
+                    Las sesiones a demanda son <strong>sin compromiso</strong> y se pagan individualmente (60€ por sesión). 
+                    No es necesario crear un bono prepagado.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Mensaje normal para otros tipos -->
+            <p v-else class="text-sm text-cafe/70 mb-3">
               Crea un bono prepagado para que el paciente empiece su tratamiento. Podrás confirmar el pago después.
             </p>
-            <label class="flex items-center gap-3 p-3 bg-purple-50 border-2 border-purple-200 rounded-lg cursor-pointer hover:bg-purple-100 transition-colors">
+            
+            <label 
+              class="flex items-center gap-3 p-3 rounded-lg transition-colors"
+              :class="esADemanda 
+                ? 'bg-gray-100 border-2 border-gray-200 cursor-not-allowed opacity-60' 
+                : 'bg-purple-50 border-2 border-purple-200 cursor-pointer hover:bg-purple-100'"
+            >
               <input
                 v-model="formulario.crear_bono"
                 type="checkbox"
-                class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                :disabled="esADemanda"
+                class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               />
-              <span class="text-sm font-semibold text-purple-700">
+              <span class="text-sm font-semibold" :class="esADemanda ? 'text-gray-500' : 'text-purple-700'">
                 ✅ Sí, crear bono prepagado para este paciente
               </span>
             </label>
@@ -409,6 +455,7 @@ const emit = defineEmits(['cerrar', 'paciente-creado'])
 
 const { supabase, waitForUser, getUserId } = useSupabase()
 const { crearBono } = useBonos()
+const { crearCita } = useCitas()
 const user = useSupabaseUser()
 
 const formulario = ref({
@@ -434,9 +481,9 @@ const error = ref('')
 // PRECIOS BASE POR TIPO DE BONO
 // ============================================================================
 const PRECIOS_BASE = {
-  otro: 60,         // €60 por 1 sesión (A Demanda)
-  quincenal: 110,   // €110 por 2 sesiones (€55/sesión)
-  semanal: 200,     // €200 por 4 sesiones (€50/sesión)
+  otro: 60,         // €60 por 1 sesión (A Demanda) - Sin compromiso
+  quincenal: 100,   // €100 por 2 sesiones (€50/sesión)
+  semanal: 160,     // €160 por 4 sesiones (€40/sesión)
   mensual: 180      // €180 por 4 sesiones mensuales
 }
 
@@ -486,6 +533,51 @@ const precioSugeridoBono = computed(() => {
   return PRECIOS_BASE[tipo] || 0
 })
 
+// Computed: Verificar si es sesión "A Demanda" (sin compromiso, no permite bono)
+const esADemanda = computed(() => {
+  return formulario.value.tipo_bono === 'otro'
+})
+
+// Opciones rápidas de fecha/hora para primera sesión
+const opcionesHorarioRapido = computed(() => {
+  const hoy = new Date()
+  const opciones = []
+  
+  const formatearDateTime = (fecha, hora) => {
+    const year = fecha.getFullYear()
+    const month = String(fecha.getMonth() + 1).padStart(2, '0')
+    const day = String(fecha.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hora}`
+  }
+  
+  // Mañana a las 10:00
+  const manana = new Date(hoy)
+  manana.setDate(manana.getDate() + 1)
+  opciones.push({
+    label: '🌅 Mañana 10:00',
+    datetime: formatearDateTime(manana, '10:00')
+  })
+  
+  // Próximo lunes a las 09:00
+  const proximoLunes = new Date(hoy)
+  const diasHastaLunes = (8 - proximoLunes.getDay()) % 7
+  proximoLunes.setDate(proximoLunes.getDate() + (diasHastaLunes || 7))
+  opciones.push({
+    label: '📅 Próximo Lun 09:00',
+    datetime: formatearDateTime(proximoLunes, '09:00')
+  })
+  
+  // En una semana a las 16:00
+  const unaSemana = new Date(hoy)
+  unaSemana.setDate(unaSemana.getDate() + 7)
+  opciones.push({
+    label: '🗓️ En 7 días 16:00',
+    datetime: formatearDateTime(unaSemana, '16:00')
+  })
+  
+  return opciones
+})
+
 // Computed: Validación del formulario
 const formularioValido = computed(() => {
   const base = formulario.value.nombre && 
@@ -509,7 +601,12 @@ const formularioValido = computed(() => {
 
 // Auto-rellenar monto del bono cuando se selecciona el tipo
 watch(() => formulario.value.tipo_bono, (nuevoTipo) => {
-  if (nuevoTipo && formulario.value.crear_bono && formulario.value.bono_monto === 0) {
+  // Si se selecciona "A Demanda", desactivar la creación de bono
+  if (nuevoTipo === 'otro') {
+    formulario.value.crear_bono = false
+    formulario.value.bono_monto = 0
+  } else if (formulario.value.crear_bono && formulario.value.bono_monto === 0) {
+    // Para otros tipos, auto-rellenar el precio
     formulario.value.bono_monto = PRECIOS_BASE[nuevoTipo] || 0
   }
 })
@@ -628,20 +725,117 @@ const guardarPaciente = async () => {
     const pacienteId = rpcResult.id
     const profileId = null // La RPC ya no crea profiles
 
-    // 2. Crear registro de primera sesión programada si existe
-    if (formulario.value.primera_sesion) {
-      await supabase
-        .from('sesiones')
-        .insert({
+    // 2. Crear bono PRIMERO (si está marcado) para que el trigger pueda asignarlo
+    if (formulario.value.crear_bono && formulario.value.tipo_bono && formulario.value.bono_monto) {
+      try {
+        console.log('💳 Creando bono inicial ANTES de la cita...')
+        
+        const fechaInicio = new Date().toISOString().split('T')[0]
+        let fechaFin = null
+        
+        // Calcular fecha de fin según el tipo de bono
+        const tipoBono = formulario.value.tipo_bono
+        if (tipoBono === 'otro') {
+          // A demanda: 1 mes de validez
+          const fecha = new Date()
+          fecha.setMonth(fecha.getMonth() + 1)
+          fechaFin = fecha.toISOString().split('T')[0]
+        } else if (tipoBono === 'quincenal') {
+          const fecha = new Date()
+          fecha.setDate(fecha.getDate() + 15)
+          fechaFin = fecha.toISOString().split('T')[0]
+        } else if (tipoBono === 'semanal') {
+          const fecha = new Date()
+          fecha.setMonth(fecha.getMonth() + 1)
+          fechaFin = fecha.toISOString().split('T')[0]
+        } else if (tipoBono === 'mensual') {
+          const fecha = new Date()
+          fecha.setMonth(fecha.getMonth() + 1)
+          fechaFin = fecha.toISOString().split('T')[0]
+        }
+
+        const sesiones = sesionesSegunTipo.value
+
+        const bonoData = {
           paciente_id: pacienteId,
-          terapeuta_id: user.value.id,
-          fecha: formulario.value.primera_sesion,
-          estado: 'pendiente',
-          notas: 'Primera sesión programada'
-        })
+          terapeuta_id: userId,
+          tipo: tipoBono,
+          sesiones_totales: sesiones,
+          sesiones_restantes: sesiones,
+          fecha_inicio: fechaInicio,
+          fecha_fin: fechaFin,
+          estado: 'pendiente', // Pendiente hasta que se confirme el pago
+          monto_total: formulario.value.bono_monto,
+          precio_por_sesion: (formulario.value.bono_monto / sesiones),
+          pagado: false,
+          renovacion_automatica: formulario.value.bono_renovacion_automatica,
+          notas: `Bono creado al registrar paciente. ${nombreCompleto}`,
+          metadata: {
+            creado_con_paciente: true,
+            fecha_creacion: new Date().toISOString()
+          }
+        }
+
+        console.log('📦 Datos del bono a crear:', bonoData)
+
+        const bonoCreado = await crearBono(bonoData)
+        
+        if (bonoCreado) {
+          console.log('✅ Bono creado exitosamente:', bonoCreado)
+        }
+
+      } catch (bonoError) {
+        console.error('⚠️ Error al crear bono:', bonoError)
+        // Mostrar el error al usuario pero no fallar la creación del paciente
+        error.value = `Paciente creado, pero hubo un error al crear el bono: ${bonoError.message}`
+      }
     }
 
-    // 3. Si hay notas iniciales, crear registro en notas_terapeuticas
+    // 3. AHORA crear cita para la primera sesión (el trigger asignará el bono automáticamente)
+    if (formulario.value.primera_sesion) {
+      try {
+        console.log('📅 Creando cita para primera sesión...')
+        console.log('📋 Datos del paciente:', { pacienteId, nombreCompleto, userId })
+        console.log('📋 Primera sesión:', formulario.value.primera_sesion)
+        
+        // Parsear fecha y hora de datetime-local (formato: 2025-10-29T14:30)
+        const [fecha, hora] = formulario.value.primera_sesion.split('T')
+        console.log('📋 Fecha parseada:', fecha, 'Hora parseada:', hora)
+        
+        // Calcular hora de fin (asumiendo sesión de 1 hora)
+        const [horas, minutos] = hora.split(':').map(Number)
+        const horaFin = `${String(horas + 1).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`
+        console.log('📋 Hora inicio:', hora, 'Hora fin:', horaFin)
+        
+        // Usar el composable declarado al inicio (no redeclarar)
+        const resultado = await crearCita({
+          paciente_id: pacienteId,
+          paciente_nombre: nombreCompleto,
+          terapeuta_id: userId, // Pasar explícitamente
+          fecha: fecha,
+          hora_inicio: hora,
+          hora_fin: horaFin,
+          modalidad: 'online', // Por defecto online, se puede cambiar después
+          estado: 'pendiente',
+          notas: `Primera sesión programada al registrar paciente: ${nombreCompleto}`,
+          descontar_de_bono: false // La primera sesión no descuenta de bono
+        })
+        
+        console.log('📋 Resultado completo de crearCita:', resultado)
+        
+        if (resultado.success) {
+          console.log('✅ Cita de primera sesión creada exitosamente:', resultado.data)
+        } else {
+          console.error('❌ ERROR al crear la cita de primera sesión:', resultado.error)
+          error.value = `Paciente creado, pero hubo un error al crear la cita: ${resultado.error}`
+        }
+      } catch (errorCita) {
+        console.error('❌ EXCEPCIÓN al crear cita de primera sesión:', errorCita)
+        error.value = `Paciente creado, pero hubo un error al crear la cita: ${errorCita.message}`
+      }
+    }
+
+        // 4. Si hay notas iniciales, crear registro en notas_terapeuticas
     if (formulario.value.notas_iniciales) {
       await supabase
         .from('notas_terapeuticas')
@@ -653,7 +847,7 @@ const guardarPaciente = async () => {
         })
     }
 
-    // 4. Crear bono si está marcado
+    // 5. TODO: Enviar email de invitación al paciente para que cree su cuenta
     if (formulario.value.crear_bono && formulario.value.tipo_bono && formulario.value.bono_monto) {
       try {
         console.log('💳 Creando bono inicial...')

@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="mostrar"
+    v-if="modelValue || mostrar"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     @click.self="cerrarModal"
   >
@@ -65,48 +65,20 @@
             </h3>
           </div>
 
-          <!-- Pestañas: Paciente Existente / Nuevo Paciente -->
-          <div v-if="!pacienteSeleccionado" class="border-b border-[#D8AFA0]/30">
-            <div class="flex gap-1">
-              <button
-                type="button"
-                @click="modoSeleccion = 'existente'"
-                :class="[
-                  'px-4 py-2 font-medium transition-all rounded-t-lg',
-                  modoSeleccion === 'existente'
-                    ? 'bg-[#D8AFA0] text-white'
-                    : 'text-[#5D4A44] hover:bg-[#D8AFA0]/10'
-                ]"
-              >
-                <span class="mr-2">👤</span>
-                Paciente Existente
-              </button>
-              <button
-                type="button"
-                @click="modoSeleccion = 'nuevo'"
-                :class="[
-                  'px-4 py-2 font-medium transition-all rounded-t-lg',
-                  modoSeleccion === 'nuevo'
-                    ? 'bg-purple-500 text-white'
-                    : 'text-[#5D4A44] hover:bg-purple-50'
-                ]"
-              >
-                <span class="mr-2">✨</span>
-                Nuevo Paciente
-              </button>
-            </div>
-            <div class="pt-3 pb-2 text-sm text-[#5D4A44]/60">
-              <p v-if="modoSeleccion === 'existente'">
-                💡 Busca y selecciona un paciente ya registrado en el sistema
-              </p>
-              <p v-else>
-                💡 Crea un nuevo registro de paciente antes de agendar la cita
-              </p>
-            </div>
+          <!-- Info: Solo pacientes existentes -->
+          <div v-if="!pacienteSeleccionado" class="pt-2 pb-3 text-sm text-[#5D4A44]/60">
+            <p class="flex items-center gap-2">
+              <span>�</span>
+              <span>Busca y selecciona un paciente ya registrado en el sistema</span>
+            </p>
+            <p class="text-xs text-[#5D4A44]/50 mt-2 flex items-center gap-2">
+              <span>ℹ️</span>
+              <span>Para crear un paciente nuevo, ve a la sección <strong>Pacientes</strong> en el menú principal</span>
+            </p>
           </div>
 
           <!-- Selector de Paciente Existente -->
-          <div v-if="modoSeleccion === 'existente' && !pacienteSeleccionado" class="space-y-3">
+          <div v-if="!pacienteSeleccionado" class="space-y-3">
             <!-- Buscador de pacientes -->
             <div class="relative" @click.stop>
               <input
@@ -271,6 +243,7 @@
                       </div>
                     </div>
                   </div>
+                  </div>
                 </div>
                 <button
                   type="button"
@@ -282,155 +255,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Formulario de Paciente Nuevo -->
-          <div v-if="(modoSeleccion as string) === 'nuevo' && !pacienteSeleccionado" class="space-y-4 p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-2xl">✨</span>
-              <span class="font-semibold text-purple-900">Crear Nuevo Paciente</span>
-            </div>
-            
-            <p class="text-sm text-purple-700 mb-4">
-              Completa los datos del paciente para registrarlo en el sistema.
-            </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- Nombre -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Nombre <span class="text-red-500">*</span>
-                </label>
-                <input
-                  v-model="pacienteNuevo.nombre"
-                  type="text"
-                  required
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                  placeholder="Nombre"
-                />
-              </div>
-
-              <!-- Apellido -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Apellido <span class="text-red-500">*</span>
-                </label>
-                <input
-                  v-model="pacienteNuevo.apellido"
-                  type="text"
-                  required
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                  placeholder="Apellido"
-                />
-              </div>
-
-              <!-- Email -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Email <span class="text-red-500">*</span>
-                </label>
-                <input
-                  v-model="pacienteNuevo.email"
-                  type="email"
-                  required
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                  placeholder="correo@ejemplo.com"
-                />
-              </div>
-
-              <!-- Teléfono -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Teléfono
-                </label>
-                <input
-                  v-model="pacienteNuevo.telefono"
-                  type="tel"
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                  placeholder="+52 123 456 7890"
-                />
-              </div>
-
-              <!-- Fecha de Nacimiento -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Fecha de Nacimiento
-                </label>
-                <input
-                  v-model="pacienteNuevo.fecha_nacimiento"
-                  type="date"
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                />
-              </div>
-
-              <!-- Área de Acompañamiento -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Área de Acompañamiento <span class="text-red-500">*</span>
-                </label>
-                <select
-                  v-model="pacienteNuevo.area_acompanamiento"
-                  required
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                >
-                  <option value="">Selecciona un área</option>
-                  <option value="Ansiedad">Ansiedad</option>
-                  <option value="Depresión">Depresión</option>
-                  <option value="Autoestima">Autoestima</option>
-                  <option value="Relaciones">Relaciones</option>
-                  <option value="Duelo">Duelo</option>
-                  <option value="Estrés Laboral">Estrés Laboral</option>
-                  <option value="Crecimiento Personal">Crecimiento Personal</option>
-                  <option value="Otro">Otro</option>
-                </select>
-              </div>
-
-              <!-- Frecuencia -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Frecuencia de Sesiones <span class="text-red-500">*</span>
-                </label>
-                <select
-                  v-model="pacienteNuevo.frecuencia"
-                  required
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                >
-                  <option value="">Selecciona frecuencia</option>
-                  <option value="semanal">Semanal</option>
-                  <option value="quincenal">Quincenal</option>
-                  <option value="mensual">Mensual</option>
-                </select>
-              </div>
-
-              <!-- Estado -->
-              <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Estado
-                </label>
-                <select
-                  v-model="pacienteNuevo.activo"
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white"
-                >
-                  <option :value="true">Activo</option>
-                  <option :value="false">Inactivo</option>
-                </select>
-              </div>
-
-              <!-- Notas Iniciales -->
-              <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                  Notas Iniciales (Opcional)
-                </label>
-                <textarea
-                  v-model="pacienteNuevo.notas_iniciales"
-                  rows="3"
-                  class="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white resize-none"
-                  placeholder="Observaciones iniciales, motivo de consulta, etc."
-                ></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Cierre del div condicional v-if="!props.pacientePreseleccionado" (línea 59) -->
         </div>
 
         <!-- Paso 2: Detalles de la Cita -->
@@ -461,8 +285,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Fecha -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                Fecha <span class="text-red-500">*</span>
+              <label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2">
+                <span>📅 Fecha</span>
+                <span class="text-red-500">*</span>
               </label>
               <div class="space-y-2">
                 <input
@@ -472,11 +297,31 @@
                   :min="fechaMinima"
                   @keydown.enter.prevent
                   :class="[
-                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white text-base',
+                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white text-base cursor-pointer',
                     camposInvalidos.includes('fecha') ? 'border-red-500 border-2' : 'border-[#D8AFA0]/30'
                   ]"
                   style="min-height: 44px;"
+                  placeholder="dd/mm/aaaa"
                 />
+                
+                <!-- Accesos rápidos de fecha -->
+                <div class="flex gap-2 flex-wrap">
+                  <button
+                    v-for="(opcion, index) in opcionesFechaRapida"
+                    :key="index"
+                    type="button"
+                    @click="formulario.fecha = opcion.fecha"
+                    :class="[
+                      'text-xs px-3 py-1.5 rounded-lg border transition-all',
+                      formulario.fecha === opcion.fecha
+                        ? 'bg-[#D8AFA0] text-white border-[#D8AFA0] font-semibold'
+                        : 'bg-white text-[#5D4A44] border-[#D8AFA0]/30 hover:border-[#D8AFA0] hover:bg-[#D8AFA0]/10'
+                    ]"
+                  >
+                    {{ opcion.label }}
+                  </button>
+                </div>
+                
                 <!-- Fecha sugerida -->
                 <div v-if="fechaSugerida && fechaSugerida !== formulario.fecha" class="flex items-center gap-2">
                   <button
@@ -492,25 +337,49 @@
 
             <!-- Hora de Inicio -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-1">
-                Hora de Inicio <span class="text-red-500">*</span>
+              <label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2">
+                <span>🕐 Hora de Inicio</span>
+                <span class="text-red-500">*</span>
               </label>
-              <div class="space-y-2">
-                <input
-                  v-model="formulario.hora_inicio"
-                  type="time"
-                  required
-                  step="900"
-                  list="horas-sugeridas"
-                  @change="calcularHoraFin"
-                  @keydown.enter.prevent
-                  :class="[
-                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white text-base',
-                    camposInvalidos.includes('hora_inicio') ? 'border-red-500 border-2' : 'border-[#D8AFA0]/30'
-                  ]"
-                  placeholder="HH:MM"
-                  style="min-height: 44px;"
-                />
+              <div class="space-y-3">
+                <!-- Grid de horas disponibles -->
+                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto p-3 bg-gray-50 rounded-lg border border-[#D8AFA0]/20">
+                  <button
+                    v-for="hora in horasDisponibles"
+                    :key="hora"
+                    type="button"
+                    @click="formulario.hora_inicio = hora; calcularHoraFin()"
+                    :class="[
+                      'px-3 py-2.5 text-sm font-medium rounded-lg transition-all border-2',
+                      formulario.hora_inicio === hora
+                        ? 'bg-[#D8AFA0] text-white border-[#D8AFA0] shadow-md transform scale-105'
+                        : 'bg-white text-[#5D4A44] border-gray-200 hover:border-[#D8AFA0] hover:bg-[#D8AFA0]/10 hover:shadow'
+                    ]"
+                  >
+                    {{ hora }}
+                  </button>
+                </div>
+                
+                <!-- Input manual alternativo -->
+                <details class="text-xs">
+                  <summary class="cursor-pointer text-[#5D4A44]/60 hover:text-[#5D4A44] select-none flex items-center gap-1">
+                    <span>⌨️</span>
+                    <span>Ingresar hora manualmente</span>
+                  </summary>
+                  <div class="mt-2">
+                    <input
+                      v-model="formulario.hora_inicio"
+                      type="time"
+                      step="1800"
+                      @change="calcularHoraFin"
+                      :class="[
+                        'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white',
+                        camposInvalidos.includes('hora_inicio') ? 'border-red-500 border-2' : 'border-[#D8AFA0]/30'
+                      ]"
+                    />
+                  </div>
+                </details>
+                
                 <datalist id="horas-sugeridas">
                   <option v-for="hora in horasDisponibles" :key="hora" :value="hora">
                     {{ hora }}
@@ -812,6 +681,11 @@ import { type PropType } from 'vue'
 import { useCitas } from '~/composables/useCitas'
 
 const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
+  // Mantener 'mostrar' por compatibilidad pero usar modelValue como primario
   mostrar: {
     type: Boolean,
     default: false
@@ -838,21 +712,28 @@ const props = defineProps({
       area_acompanamiento?: string
     }>,
     default: null
+  },
+  // ID de la cita en edición (para excluirla de verificación de conflictos)
+  citaId: {
+    type: String,
+    default: null
   }
 })
 
-const emit = defineEmits(['cerrar', 'citaCreada', 'actualizado'])
+const emit = defineEmits(['cerrar', 'citaCreada', 'actualizado', 'update:modelValue'])
 
 // Composables
-const { crearCita, getCitasPorDia, verificarBonoActivo, calcularProximaFechaSugerida, sugerirProximoHorario } = useCitas()
+const { crearCita, actualizarCita, getCitasPorDia, verificarBonoActivo, calcularProximaFechaSugerida, sugerirProximoHorario } = useCitas()
 const supabase = useSupabaseClient()
 const router = useRouter()
+
+// Modo edición
+const modoEdicion = computed(() => !!props.citaId)
+const cargandoCita = ref(false)
 
 // Estado
 const busquedaPaciente = ref('')
 const mostrarListaPacientes = ref(false)
-const mostrarFormularioPacienteNuevo = ref(false)
-const modoSeleccion = ref('existente')
 const pacienteSeleccionado = ref<any>(null)
 const guardando = ref(false)
 const conflictoHorario = ref(false)
@@ -902,34 +783,22 @@ const fechaSugerida = ref<string | null>(null)
 const mostrarResumen = ref(false)
 const camposInvalidos = ref<string[]>([])
 
-const pacienteNuevo = ref({
-  nombre: '',
-  apellido: '',
-  email: '',
-  telefono: '',
-  fecha_nacimiento: '',
-  area_acompanamiento: '',
-  frecuencia: '',
-  activo: true,
-  notas_iniciales: ''
-})
-
 // Configuración
 const horasDisponibles = [
-  '08:00', '08:15', '08:30', '08:45', 
-  '09:00', '09:15', '09:30', '09:45', 
-  '10:00', '10:15', '10:30', '10:45',
-  '11:00', '11:15', '11:30', '11:45', 
-  '12:00', '12:15', '12:30', '12:45', 
-  '13:00', '13:15', '13:30', '13:45',
-  '14:00', '14:15', '14:30', '14:45', 
-  '15:00', '15:15', '15:30', '15:45', 
-  '16:00', '16:15', '16:30', '16:45',
-  '17:00', '17:15', '17:30', '17:45', 
-  '18:00', '18:15', '18:30', '18:45', 
-  '19:00', '19:15', '19:30', '19:45',
-  '20:00', '20:15', '20:30', '20:45',
-  '21:00', '21:15', '21:30', '21:45',
+  '08:00', '08:30', 
+  '09:00', '09:30', 
+  '10:00', '10:30',
+  '11:00', '11:30', 
+  '12:00', '12:30', 
+  '13:00', '13:30',
+  '14:00', '14:30', 
+  '15:00', '15:30', 
+  '16:00', '16:30',
+  '17:00', '17:30', 
+  '18:00', '18:30', 
+  '19:00', '19:30',
+  '20:00', '20:30',
+  '21:00', '21:30',
   '22:00'
 ]
 
@@ -951,6 +820,47 @@ const fechaMinima = computed(() => {
   return formatearFecha(new Date())
 })
 
+// Opciones de fecha rápida
+const opcionesFechaRapida = computed(() => {
+  const hoy = new Date()
+  const opciones = []
+  
+  // Hoy
+  opciones.push({
+    label: 'Hoy',
+    fecha: formatearFecha(hoy)
+  })
+  
+  // Mañana
+  const manana = new Date(hoy)
+  manana.setDate(manana.getDate() + 1)
+  opciones.push({
+    label: 'Mañana',
+    fecha: formatearFecha(manana)
+  })
+  
+  // Próximos 5 días laborables
+  const diasLaborables = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie']
+  let fecha = new Date(hoy)
+  let contadorDias = 0
+  
+  while (contadorDias < 5) {
+    fecha.setDate(fecha.getDate() + 1)
+    const diaSemana = fecha.getDay()
+    
+    // Solo días laborables (1-5 = Lun-Vie)
+    if (diaSemana >= 1 && diaSemana <= 5) {
+      opciones.push({
+        label: `${diasLaborables[diaSemana - 1]} ${fecha.getDate()}`,
+        fecha: formatearFecha(fecha)
+      })
+      contadorDias++
+    }
+  }
+  
+  return opciones
+})
+
 const pacientesFiltrados = computed(() => {
   if (!busquedaPaciente.value) return []
   
@@ -966,13 +876,8 @@ const pacientesFiltrados = computed(() => {
 })
 
 const formularioValido = computed(() => {
-  const validoPaciente = mostrarFormularioPacienteNuevo.value
-    ? pacienteNuevo.value.nombre && 
-      pacienteNuevo.value.apellido && 
-      pacienteNuevo.value.email &&
-      pacienteNuevo.value.area_acompanamiento &&
-      pacienteNuevo.value.frecuencia
-    : formulario.value.paciente_id
+  // Solo validar que el paciente esté seleccionado
+  const validoPaciente = formulario.value.paciente_id
 
   return validoPaciente &&
     formulario.value.fecha &&
@@ -1113,13 +1018,6 @@ function mostrarToastError(titulo: string, mensaje: string) {
   setTimeout(() => { mostrarToast.value = false }, 4000)
 }
 
-function toggleFormularioPacienteNuevo() {
-  mostrarFormularioPacienteNuevo.value = !mostrarFormularioPacienteNuevo.value
-  if (mostrarFormularioPacienteNuevo.value) {
-    deseleccionarPaciente()
-  }
-}
-
 function calcularHoraFin() {
   if (!formulario.value.hora_inicio || !formulario.value.duracion) return
 
@@ -1150,10 +1048,13 @@ async function verificarConflicto() {
     const citas = await getCitasPorDia(formulario.value.fecha)
     
     // Filtrar solo citas confirmadas o pendientes (no canceladas, no en estado borrador)
+    // Y excluir la cita actual si estamos editando
     const citasActivas = citas.filter((cita: any) => 
       cita.estado !== 'cancelada' && 
       cita.estado !== 'borrador' &&
-      cita.estado !== null
+      cita.estado !== null &&
+      // Excluir la cita actual si existe citaId (estamos editando)
+      cita.id !== props.citaId
     )
     
     const inicioNueva = formulario.value.hora_inicio
@@ -1210,59 +1111,6 @@ function horaAMinutos(hora: string): number {
   return (horas || 0) * 60 + (minutos || 0)
 }
 
-async function crearPacienteNuevo(): Promise<any> {
-  try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      throw new Error('No hay usuario autenticado')
-    }
-
-    const nombreCompleto = `${pacienteNuevo.value.nombre} ${pacienteNuevo.value.apellido}`.trim()
-    
-    const { data, error } = await supabase
-      .from('pacientes')
-      .insert({
-        terapeuta_id: user.id,
-        email: pacienteNuevo.value.email,
-        telefono: pacienteNuevo.value.telefono || null,
-        area_de_acompanamiento: pacienteNuevo.value.area_acompanamiento,
-        frecuencia: pacienteNuevo.value.frecuencia,
-        activo: pacienteNuevo.value.activo,
-        metadata: {
-          nombre: pacienteNuevo.value.nombre,
-          apellido: pacienteNuevo.value.apellido,
-          nombre_completo: nombreCompleto,
-          fecha_nacimiento: pacienteNuevo.value.fecha_nacimiento || null,
-          notas_iniciales: pacienteNuevo.value.notas_iniciales || null,
-          fecha_registro: new Date().toISOString(),
-          estado_registro: 'pendiente'
-        }
-      } as any)
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Error al crear paciente:', error)
-      throw error
-    }
-
-    // Transformar el paciente para que coincida con la estructura esperada
-    const pacienteTransformado = {
-      id: data.id,
-      nombre: nombreCompleto,
-      email: data.email
-    }
-
-    // Agregar a la lista local
-    pacientesReales.value.push(pacienteTransformado)
-    
-    return pacienteTransformado
-  } catch (error) {
-    console.error('Error al crear paciente:', error)
-    throw error
-  }
-}
-
 async function guardarCita() {
   guardando.value = true
   
@@ -1289,107 +1137,202 @@ async function guardarCita() {
       return
     }
     
-    // Si es paciente nuevo, crearlo primero
-    if (mostrarFormularioPacienteNuevo.value) {
-      try {
-        const paciente = await crearPacienteNuevo()
-        formulario.value.paciente_id = paciente.id
-        formulario.value.paciente_nombre = paciente.nombre
-      } catch (error) {
-        mostrarToastError('Error al crear paciente', 'No se pudo crear el registro del paciente. Inténtalo de nuevo.')
-        guardando.value = false
-        return
-      }
-    }
-    
-    console.log('🚀 [ModalNuevaCita] Creando cita con datos:', {
-      paciente_id: formulario.value.paciente_id,
-      paciente_nombre: formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre,
-      fecha: formulario.value.fecha,
-      hora_inicio: formulario.value.hora_inicio,
-      hora_fin: formulario.value.hora_fin,
-      modalidad: formulario.value.tipo,
-      estado: formulario.value.estado,
-      descontar_de_bono: formulario.value.descontar_de_bono,
-      bono_id: formulario.value.bono_id
-    })
-    
-    // 🎯 Crear la cita usando la función mejorada del composable
-    const resultado = await crearCita({
+    // Preparar datos de la cita
+    const datosCita = {
       paciente_id: formulario.value.paciente_id,
       paciente_nombre: formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre || 'Sin nombre',
-      fecha: formulario.value.fecha,
+      fecha_cita: formulario.value.fecha,
       hora_inicio: formulario.value.hora_inicio,
       hora_fin: formulario.value.hora_fin,
+      duracion: parseInt(formulario.value.duracion),
       modalidad: formulario.value.tipo as 'presencial' | 'online' | 'telefonica',
       estado: (formulario.value.estado === 'completada' ? 'realizada' : formulario.value.estado) as 'confirmada' | 'pendiente' | 'cancelada' | 'realizada',
-      notas: formulario.value.notas,
-      descontar_de_bono: formulario.value.descontar_de_bono,
+      observaciones: formulario.value.notas,
       bono_id: formulario.value.bono_id
-    })
+    }
     
-    if (resultado.success) {
-      // Limpiar localStorage
-      localStorage.removeItem('nueva_cita_temp')
+    let resultado
+    
+    // MODO EDICIÓN: Actualizar cita existente
+    if (modoEdicion.value && props.citaId) {
+      console.log('📝 [ModalNuevaCita] Actualizando cita con ID:', props.citaId, datosCita)
       
-      // Construir mensaje descriptivo
-      const fechaLegible = formatearFechaLegible(formulario.value.fecha)
-      const modalidadIcono = formulario.value.tipo === 'presencial' ? '🏥' : formulario.value.tipo === 'online' ? '💻' : '📞'
-      const nombrePaciente = formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre || 'Paciente'
+      resultado = await actualizarCita(props.citaId, datosCita)
       
-      const mensajeExito = `${nombrePaciente} – ${fechaLegible}, ${formulario.value.hora_inicio} (${modalidadIcono} ${formulario.value.tipo})`
+      if (resultado.success) {
+        // Limpiar localStorage
+        localStorage.removeItem('nueva_cita_temp')
+        
+        const fechaLegible = formatearFechaLegible(formulario.value.fecha)
+        const modalidadIcono = formulario.value.tipo === 'presencial' ? '🏥' : formulario.value.tipo === 'online' ? '💻' : '📞'
+        const nombrePaciente = formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre || 'Paciente'
+        
+        mostrarToastExito(
+          '✅ Cita actualizada con éxito',
+          `${nombrePaciente} – ${fechaLegible}, ${formulario.value.hora_inicio} (${modalidadIcono} ${formulario.value.tipo})`,
+          []
+        )
+        
+        // Emitir eventos
+        emit('actualizado')
+        emit('citaCreada', resultado.data) // Mantener compatibilidad
+        
+        console.log('✅ [ModalNuevaCita] Cita actualizada exitosamente')
+        
+        // Cerrar el modal
+        setTimeout(() => {
+          cerrarModal()
+        }, 1000)
+      } else {
+        mostrarToastError('Error al actualizar', resultado.error || 'No se pudo actualizar la cita. Intenta de nuevo.')
+      }
+    } 
+    // MODO CREACIÓN: Crear nueva cita
+    else {
+      console.log('🚀 [ModalNuevaCita] Creando nueva cita:', datosCita)
       
-      // Si hay bono vinculado, añadir info
-      let mensajeFinal = mensajeExito
-      if (resultado.data?.bono_id && infoBono.value.tiene_bono) {
-        const sesionesRestantes = infoBono.value.sesiones_restantes - 1 // Se descontará al completar
-        mensajeFinal += `\n🎫 Bono activo: ${sesionesRestantes} sesiones restantes después de esta`
+      // Agregar campo de descuento de bono solo al crear
+      const datosConBono = {
+        paciente_id: formulario.value.paciente_id,
+        paciente_nombre: formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre || 'Sin nombre',
+        fecha: formulario.value.fecha, // crearCita espera 'fecha' no 'fecha_cita'
+        hora_inicio: formulario.value.hora_inicio,
+        hora_fin: formulario.value.hora_fin,
+        modalidad: formulario.value.tipo as 'presencial' | 'online' | 'telefonica',
+        estado: (formulario.value.estado === 'completada' ? 'realizada' : formulario.value.estado) as 'confirmada' | 'pendiente' | 'cancelada' | 'realizada',
+        notas: formulario.value.notas,
+        descontar_de_bono: formulario.value.descontar_de_bono,
+        bono_id: formulario.value.bono_id
       }
       
-      // Mostrar toast con opciones
-      mostrarToastExito(
-        '✅ Cita creada con éxito',
-        mensajeFinal,
-        [
-          {
-            texto: '📅 Ver en Agenda',
-            accion: () => {
-              router.push('/agenda')
-              mostrarToast.value = false
+      resultado = await crearCita(datosConBono)
+      
+      if (resultado.success) {
+        // Limpiar localStorage
+        localStorage.removeItem('nueva_cita_temp')
+        
+        const fechaLegible = formatearFechaLegible(formulario.value.fecha)
+        const modalidadIcono = formulario.value.tipo === 'presencial' ? '🏥' : formulario.value.tipo === 'online' ? '💻' : '📞'
+        const nombrePaciente = formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre || 'Paciente'
+        
+        const mensajeExito = `${nombrePaciente} – ${fechaLegible}, ${formulario.value.hora_inicio} (${modalidadIcono} ${formulario.value.tipo})`
+        
+        let mensajeFinal = mensajeExito
+        if (resultado.data?.bono_id && infoBono.value.tiene_bono) {
+          const sesionesRestantes = infoBono.value.sesiones_restantes - 1
+          mensajeFinal += `\n🎫 Bono activo: ${sesionesRestantes} sesiones restantes después de esta`
+        }
+        
+        mostrarToastExito(
+          '✅ Cita creada con éxito',
+          mensajeFinal,
+          [
+            {
+              texto: '📅 Ver en Agenda',
+              accion: () => {
+                router.push('/agenda')
+                mostrarToast.value = false
+              }
+            },
+            {
+              texto: '➕ Nueva Cita',
+              accion: () => {
+                mostrarToast.value = false
+                resetFormulario()
+              }
             }
-          },
-          {
-            texto: '➕ Nueva Cita',
-            accion: () => {
-              mostrarToast.value = false
-              resetFormulario()
-              // No cerrar el modal, mantenerlo abierto
-            }
-          }
-        ]
-      )
-      
-      // Emitir eventos para actualización
-      emit('citaCreada', resultado.data)
-      emit('actualizado')
-      
-      console.log('✅ [ModalNuevaCita] Cita creada exitosamente:', resultado.data)
-      
-      // Cerrar el modal después de 1 segundo (da tiempo para ver el toast)
-      setTimeout(() => {
-        cerrarModal()
-      }, 1000)
-    } else {
-      // Mostrar error específico
-      const mensajeError = resultado.error || 'No se pudo crear la cita. Por favor, intenta de nuevo.'
-      mostrarToastError('Error al guardar', mensajeError)
-      console.error('❌ [ModalNuevaCita] Error:', resultado.error)
+          ]
+        )
+        
+        emit('citaCreada', resultado.data)
+        emit('actualizado')
+        
+        console.log('✅ [ModalNuevaCita] Cita creada exitosamente:', resultado.data)
+        
+        setTimeout(() => {
+          cerrarModal()
+        }, 1000)
+      } else {
+        mostrarToastError('Error al crear', resultado.error || 'No se pudo crear la cita. Intenta de nuevo.')
+      }
     }
   } catch (error: any) {
     console.error('❌ Error al guardar cita:', error)
     mostrarToastError('Error inesperado', error.message || 'Ocurrió un error al guardar la cita')
   } finally {
     guardando.value = false
+  }
+}
+
+// Cargar datos de cita existente para edición
+async function cargarCitaExistente() {
+  if (!props.citaId) return
+  
+  try {
+    cargandoCita.value = true
+    
+    const { data, error } = await supabase
+      .from('citas')
+      .select(`
+        *,
+        paciente:pacientes!citas_paciente_id_fkey (
+          id,
+          nombre_completo,
+          email,
+          telefono,
+          frecuencia,
+          area_acompanamiento
+        ),
+        bono:bonos!citas_bono_id_fkey (
+          id,
+          tipo,
+          sesiones_totales,
+          sesiones_restantes
+        )
+      `)
+      .eq('id', props.citaId)
+      .single()
+    
+    if (error) throw error
+    
+    if (data) {
+      // Cargar datos en el formulario
+      formulario.value = {
+        paciente_id: data.paciente_id,
+        paciente_nombre: data.paciente?.nombre_completo || data.paciente_nombre || '',
+        fecha: data.fecha_cita,
+        fecha_manual: '',
+        hora_inicio: data.hora_inicio?.substring(0, 5) || '',
+        hora_fin: data.hora_fin?.substring(0, 5) || '',
+        duracion: String(data.duracion || 60),
+        tipo: data.modalidad || 'presencial',
+        estado: data.estado || 'pendiente',
+        notas: data.observaciones || '',
+        descontar_de_bono: false,
+        bono_id: data.bono_id || undefined
+      }
+      
+      // Seleccionar paciente
+      if (data.paciente) {
+        pacienteSeleccionado.value = {
+          id: data.paciente.id,
+          nombre: data.paciente.nombre_completo,
+          email: data.paciente.email,
+          telefono: data.paciente.telefono,
+          frecuencia: data.paciente.frecuencia,
+          area_acompanamiento: data.paciente.area_acompanamiento
+        }
+        
+        // Cargar info del bono
+        const resultadoBono = await verificarBonoActivo(data.paciente.id)
+        infoBono.value = resultadoBono
+      }
+    }
+  } catch (error) {
+    console.error('Error al cargar cita:', error)
+    mostrarToastError('Error', 'No se pudo cargar la cita para editar')
+  } finally {
+    cargandoCita.value = false
   }
 }
 
@@ -1403,6 +1346,7 @@ function cerrarModal() {
   }
   
   emit('cerrar')
+  emit('update:modelValue', false) // Para compatibilidad con v-model
   resetFormulario()
 }
 
@@ -1422,21 +1366,7 @@ function resetFormulario() {
     bono_id: undefined
   }
   
-  pacienteNuevo.value = {
-    nombre: '',
-    apellido: '',
-    email: '',
-    telefono: '',
-    fecha_nacimiento: '',
-    area_acompanamiento: '',
-    frecuencia: '',
-    activo: true,
-    notas_iniciales: ''
-  }
-  
   busquedaPaciente.value = ''
-  mostrarFormularioPacienteNuevo.value = false
-  modoSeleccion.value = 'existente'
   pacienteSeleccionado.value = null
   conflictoHorario.value = false
   fechaSugerida.value = null

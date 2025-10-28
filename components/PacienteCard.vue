@@ -85,8 +85,17 @@
       </div>
       
       <div class="flex items-center gap-2 text-sm text-cafe/70">
-        <span class="text-terracota">�</span>
-        <span>Próxima: {{ proximaSesion }}</span>
+        <span class="text-terracota">⏰</span>
+        <span>Próxima: </span>
+        <button
+          v-if="proximaSesion"
+          @click.stop="$emit('editar-cita', paciente.proxima_cita_id)"
+          class="text-terracota hover:text-cafe font-medium hover:underline transition-colors"
+          :title="`Editar cita del ${proximaSesion}`"
+        >
+          {{ proximaSesion }}
+        </button>
+        <span v-else class="text-cafe/50">No programada</span>
         <button
           @click.stop="$emit('ver-citas', paciente)"
           class="ml-auto text-xs text-terracota hover:text-cafe hover:underline"
@@ -250,7 +259,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['editar', 'eliminar', 'ver-citas', 'gestionar-bonos'])
+defineEmits(['editar', 'eliminar', 'ver-citas', 'gestionar-bonos', 'editar-cita'])
 
 // Computar nombre para mostrar
 const nombreMostrar = computed(() => {

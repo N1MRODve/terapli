@@ -1,48 +1,117 @@
-/* Importar sistema tipográfico global */
+/* ============================================================================
+   🎨 SISTEMA DE DISEÑO PSICÓLOGA KAREM - MAIN CSS
+   ============================================================================
+   Orden de importación:
+   1. Design Tokens (variables CSS)
+   2. Tailwind Base
+   3. Componentes reutilizables
+   4. Tipografía
+   5. Tailwind Components
+   6. Tailwind Utilities
+   7. Personalizaciones globales
+   ============================================================================ */
+
+/* 1️⃣ Design Tokens - Variables CSS globales */
+@import './design-tokens.css';
+
+/* 2️⃣ Tailwind Base */
+@tailwind base;
+
+/* 3️⃣ Componentes reutilizables */
+@import './components.css';
+
+/* 4️⃣ Tipografía */
 @import './typography.css';
 
-@tailwind base;
+/* 5️⃣ Tailwind Components y Utilities */
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   🌐 ESTILOS BASE GLOBALES
+   ============================================================================ */
+
 @layer base {
+  /* Reset y fundamentos */
   html, body {
     margin: 0;
     padding: 0;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
-    @apply font-sans text-[#5D4A44] bg-[#F9F7F3] antialiased;
+    @apply font-sans text-cafe bg-base-bg antialiased;
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    line-height: 1.6;
   }
 
-  /* Padding solo para páginas públicas con navbar flotante (h-20 = 5rem) */
-  body:not(.layout-paciente) {
-    padding-top: 5rem;
-  }
-
+  /* ⚠️ IMPORTANTE: Eliminar padding-top del body para eliminar el gap superior */
+  /* El padding solo se aplicará cuando sea necesario por layout específico */
+  
+  /* Jerarquía tipográfica */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-semibold;
-    letter-spacing: -0.02em;
+    @apply font-serif font-semibold text-cafe;
+    letter-spacing: var(--letter-spacing-tight);
   }
 
   h1 {
     @apply font-bold;
   }
 
-  /* Añadimos una transición suave a los enlaces para una mejor UX */
+  /* Enlaces con transición suave */
   a {
-    @apply transition-colors duration-300;
+    @apply transition-colors duration-200;
+  }
+
+  /* Mejora de accesibilidad */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-terracota/50 ring-offset-2;
+  }
+
+  /* Selección de texto personalizada */
+  ::selection {
+    background-color: rgba(201, 124, 93, 0.2);
+    color: var(--color-text-primary);
+  }
+
+  ::-moz-selection {
+    background-color: rgba(201, 124, 93, 0.2);
+    color: var(--color-text-primary);
   }
 }
 
+/* ============================================================================
+   🎯 UTILITIES PERSONALIZADAS
+   ============================================================================ */
+
 @layer utilities {
-  /* Hacemos el padding un poco más generoso para un look más "aireado" y premium */
+  
+  /* ========================================================================
+     📐 LAYOUT Y ESPACIADO
+     ======================================================================== */
+  
   .section-padding {
     @apply px-6 py-20 md:py-28;
   }
 
-  /* Animación sutil de fade-in para las secciones */
+  .content-padding {
+    @apply px-4 py-6 md:px-6;
+  }
+
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ========================================================================
+     🎬 ANIMACIONES
+     ======================================================================== */
+  
+  /* Fade in básico */
   .fade-in {
     animation: fadeIn 0.8s ease-in-out;
   }
@@ -58,7 +127,7 @@
     }
   }
 
-  /* Therapeutic fade-in-up animation for emotional content */
+  /* Therapeutic fade-in-up para contenido emocional */
   @keyframes fade-in-up {
     0% {
       opacity: 0;
@@ -74,7 +143,7 @@
     animation: fade-in-up 1s ease-out forwards;
   }
 
-  /* Hero sequential animations */
+  /* Hero animations */
   .animate-fade-up {
     animation: fadeUp 0.8s ease-out forwards;
   }
@@ -105,33 +174,14 @@
     }
   }
 
-  /* Staggered animation delays for scroll reveals */
-  .delay-100 {
-    animation-delay: 0.1s;
-  }
-  
-  .delay-200 {
-    animation-delay: 0.2s;
-  }
-  
-  .delay-300 {
-    animation-delay: 0.3s;
-  }
+  /* Delays para animaciones escalonadas */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
 
-  .delay-400 {
-    animation-delay: 0.4s;
-  }
-
-  .delay-500 {
-    animation-delay: 0.5s;
-  }
-
-  /* Smooth scroll behavior */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Calm breathing animation for CTAs - mimics deep breathing (4s inhale + 4s exhale) */
+  /* Calm breathing animation - Imita respiración profunda (8s) */
   @keyframes calm-pulse {
     0%, 100% { 
       transform: scale(1); 
@@ -139,7 +189,7 @@
     }
     50% { 
       transform: scale(1.02); 
-      box-shadow: 0 0 20px rgba(232, 186, 170, 0.25), 0 0 30px rgba(239, 160, 139, 0.15);
+      box-shadow: 0 0 25px rgba(232, 186, 170, 0.3), 0 10px 30px -5px rgba(216, 175, 160, 0.2);
     }
   }
 
@@ -148,13 +198,74 @@
   }
 
   /* Pausar animación al hacer hover para mejor UX */
-  .calm-button:hover {
+  .calm-button:hover,
+  .calm-button:focus {
     animation-play-state: paused;
+  }
+
+  /* ========================================================================
+     🎨 EFECTOS VISUALES
+     ======================================================================== */
+
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-cafe/5;
+  }
+
+  .glass-strong {
+    @apply bg-white/90 backdrop-blur-lg border border-cafe/10;
+  }
+
+  /* Gradientes suaves */
+  .gradient-warm {
+    background: linear-gradient(135deg, #FDFBF9 0%, #F9F7F3 100%);
+  }
+
+  .gradient-terracota {
+    background: linear-gradient(135deg, #C97C5D 0%, #E8BAAA 100%);
+  }
+
+  .gradient-soft {
+    background: linear-gradient(to bottom, transparent, rgba(93, 74, 68, 0.02));
+  }
+
+  /* Text gradient */
+  .text-gradient-terracota {
+    @apply bg-gradient-to-r from-terracota to-terracota-light bg-clip-text text-transparent;
+  }
+
+  /* ========================================================================
+     🎭 SCROLLBAR PERSONALIZADA
+     ======================================================================== */
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-cafe-lighter);
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-cafe-light);
   }
 }
 
-/* Floating background blobs for hero section */
+/* ============================================================================
+   🎨 COMPONENTES ESPECIALES
+   ============================================================================ */
+
 @layer components {
+  
+  /* Floating background blobs para hero section */
   .blob {
     position: absolute;
     border-radius: 50%;
@@ -196,29 +307,60 @@
     }
   }
 
-  /* ===================================
-     CALM BUTTON BREATHING ANIMATION
-     =================================== */
-
-  @keyframes calm-pulse {
-    0%, 100% { 
-      transform: scale(1); 
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    50% { 
-      transform: scale(1.02); 
-      box-shadow: 0 0 25px rgba(232, 186, 170, 0.3), 0 10px 30px -5px rgba(216, 175, 160, 0.2);
-    }
+  /* Loading spinner */
+  .spinner {
+    @apply inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin;
   }
 
-  .calm-button {
-    animation: calm-pulse 8s ease-in-out infinite;
+  /* Progress bar */
+  .progress-bar {
+    @apply w-full h-2 bg-cafe/10 rounded-full overflow-hidden;
   }
 
-  /* Pausar la animación cuando el usuario hace hover o focus 
-     para evitar confusión durante la interacción */
-  .calm-button:hover,
-  .calm-button:focus {
-    animation-play-state: paused;
+  .progress-fill {
+    @apply h-full bg-terracota rounded-full transition-all duration-300;
   }
 }
+
+/* ============================================================================
+   📱 RESPONSIVE UTILITIES
+   ============================================================================ */
+
+@layer utilities {
+  /* Ocultar/mostrar elementos según viewport */
+  .mobile-only {
+    @apply block sm:hidden;
+  }
+
+  .desktop-only {
+    @apply hidden sm:block;
+  }
+
+  /* Texto responsivo */
+  .text-responsive {
+    @apply text-sm sm:text-base md:text-lg;
+  }
+
+  .heading-responsive {
+    @apply text-2xl sm:text-3xl md:text-4xl;
+  }
+}
+
+/* ============================================================================
+   🎯 PRINT STYLES
+   ============================================================================ */
+
+@media print {
+  body {
+    @apply bg-white text-black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+}
+
