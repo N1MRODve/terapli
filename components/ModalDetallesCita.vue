@@ -275,6 +275,8 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'close'): void
+  (e: 'actualizado'): void
+  (e: 'eliminado'): void
 }>()
 
 // Composables
@@ -293,32 +295,62 @@ const cerrarModal = () => {
 }
 
 const cargarDetalles = async () => {
-  if (!props.citaId) return
+  if (!props.citaId) {
+    console.warn('[ModalDetalles] No hay citaId para cargar')
+    return
+  }
 
   cargando.value = true
   try {
-    // Obtener todas las citas y encontrar la específica
+    // 1️⃣ Buscar primero en cache/memoria
     const todasLasCitas = await getCitas()
-    const cita = todasLasCitas.find((c: any) => c.id === props.citaId)
-    
+    let cita = todasLasCitas.find((c: any) => c.id === props.citaId)
+
+    // 2️⃣ Si no la encuentra, buscar directamente en Supabase
     if (!cita) {
-      console.error('Cita no encontrada')
-      return
+      console.warn('[ModalDetalles] No encontrada en cache, consultando Supabase...')
+      const { data, error } = await supabase
+        .from('citas')
+        .select(`
+          *,
+          pacientes (id, nombre_completo, email, metadata)
+        `)
+        .eq('id', props.citaId)
+        .maybeSingle()
+
+      if (error) {
+        console.error('[ModalDetalles] Error al obtener cita desde Supabase:', error.message)
+        return
+      }
+      if (!data) {
+        console.warn('[ModalDetalles] Cita no encontrada ni en Supabase')
+        return
+      }
+
+      cita = data
     }
 
+    // 3️⃣ Normalizar campos de paciente y cita
     citaDetalle.value = {
       ...cita,
-      paciente_nombre: cita.paciente_nombre || cita.pacientes?.metadata?.nombre_completo || 'Sin nombre',
-      paciente_email: cita.pacientes?.email || ''
+      paciente_nombre:
+        cita.paciente_nombre ||
+        cita.pacientes?.nombre_completo ||
+        cita.pacientes?.metadata?.nombre_completo ||
+        'Sin nombre',
+      paciente_email:
+        cita.pacientes?.email ||
+        cita.email ||
+        ''
     }
 
-    // Cargar información del bono y próximas sesiones
+    // 4️⃣ Cargar información adicional
     if (cita.paciente_id) {
       await cargarInfoBono(cita.paciente_id)
       await cargarProximasSesiones(cita.paciente_id, cita.id)
     }
   } catch (error) {
-    console.error('Error al cargar detalles de la cita:', error)
+    console.error('[ModalDetalles] Error al cargar detalles de la cita:', error)
   } finally {
     cargando.value = false
   }

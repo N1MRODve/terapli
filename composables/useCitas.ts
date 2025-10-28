@@ -64,7 +64,7 @@ interface HorarioDisponible {
 interface EstadisticasBono {
   bono_id: string
   paciente_id: string
-  total_sesiones: number
+  sesiones_totales: number
   sesiones_restantes: number
   sesiones_usadas: number
   porcentaje_usado: number
@@ -76,7 +76,7 @@ interface EstadisticasBono {
 interface InfoBono {
   tiene_bono: boolean
   sesiones_restantes: number
-  total_sesiones: number
+  sesiones_totales: number
   tipo_bono: string
   bono_id?: string
 }
@@ -179,7 +179,7 @@ export const useCitas = () => {
   // ============================================================================
 
   /**
-   * Obtiene todas las citas del terapeuta
+   * Obtiene todas las citas del terapeuta usando la vista consolidada
    */
   const getCitas = async (terapeutaId?: string) => {
     if (!process.client) return []
@@ -197,49 +197,20 @@ export const useCitas = () => {
         idTerapeuta = terapeuta.id
       }
 
+      // Usar la vista consolidada para mejor performance
       const { data, error } = await supabase
-        .from('citas')
-        .select(`
-          *,
-          pacientes!inner (
-            id,
-            email,
-            telefono,
-            nombre_completo,
-            metadata
-          ),
-          terapeutas!inner (
-            id,
-            nombre_completo,
-            email
-          ),
-          bonos (
-            id,
-            total_sesiones,
-            sesiones_restantes,
-            tipo_bono,
-            estado
-          )
-        `)
+        .from('vista_agenda_terapeutas')
+        .select('*')
         .eq('terapeuta_id', idTerapeuta)
         .order('fecha_cita', { ascending: true })
         .order('hora_inicio', { ascending: true })
 
       if (error) {
-        console.error('❌ Error al obtener citas:', error)
+        console.error('❌ Error al obtener citas desde vista:', error)
         return []
       }
 
-      // Mapear datos para incluir nombre del paciente
-      const citasMapeadas = (data || []).map((cita: any) => ({
-        ...cita,
-        paciente_nombre: cita.pacientes?.nombre_completo || 
-                        cita.pacientes?.metadata?.nombre_completo ||
-                        cita.pacientes?.email ||
-                        'Sin nombre'
-      }))
-
-      return citasMapeadas
+      return data || []
     } catch (error) {
       console.error('❌ Error al obtener citas:', error)
       return []
@@ -247,7 +218,7 @@ export const useCitas = () => {
   }
 
   /**
-   * Obtiene las citas de un día específico
+   * Obtiene las citas de un día específico usando la vista consolidada
    */
   const getCitasPorDia = async (fecha: string, terapeutaId?: string) => {
     if (!process.client) return []
@@ -261,25 +232,10 @@ export const useCitas = () => {
         idTerapeuta = terapeuta.id
       }
 
+      // Usar la vista consolidada
       const { data, error } = await supabase
-        .from('citas')
-        .select(`
-          *,
-          pacientes!inner (
-            id,
-            email,
-            nombre_completo,
-            metadata
-          ),
-          terapeutas!inner (
-            id,
-            nombre_completo
-          ),
-          bonos (
-            id,
-            sesiones_restantes
-          )
-        `)
+        .from('vista_agenda_terapeutas')
+        .select('*')
         .eq('terapeuta_id', idTerapeuta)
         .eq('fecha_cita', fecha)
         .order('hora_inicio', { ascending: true })
@@ -289,16 +245,7 @@ export const useCitas = () => {
         return []
       }
 
-      // Mapear datos para incluir nombre del paciente
-      const citasMapeadas = (data || []).map((cita: any) => ({
-        ...cita,
-        paciente_nombre: cita.pacientes?.nombre_completo || 
-                        cita.pacientes?.metadata?.nombre_completo ||
-                        cita.pacientes?.email ||
-                        'Sin nombre'
-      }))
-
-      return citasMapeadas
+      return data || []
     } catch (error) {
       console.error('❌ Error al obtener citas por día:', error)
       return []
@@ -306,7 +253,7 @@ export const useCitas = () => {
   }
 
   /**
-   * Obtiene las citas de un rango de fechas
+   * Obtiene las citas de un rango de fechas usando la vista consolidada
    */
   const getCitasRango = async (fechaInicio: string, fechaFin: string, terapeutaId?: string) => {
     if (!process.client) return []
@@ -320,26 +267,10 @@ export const useCitas = () => {
         idTerapeuta = terapeuta.id
       }
 
+      // Usar la vista consolidada
       const { data, error } = await supabase
-        .from('citas')
-        .select(`
-          *,
-          pacientes!inner (
-            id,
-            email,
-            nombre_completo,
-            metadata
-          ),
-          terapeutas!inner (
-            id,
-            nombre_completo
-          ),
-          bonos (
-            id,
-            sesiones_restantes,
-            tipo_bono
-          )
-        `)
+        .from('vista_agenda_terapeutas')
+        .select('*')
         .eq('terapeuta_id', idTerapeuta)
         .gte('fecha_cita', fechaInicio)
         .lte('fecha_cita', fechaFin)
@@ -351,14 +282,10 @@ export const useCitas = () => {
         return []
       }
 
-      // Mapear datos para incluir nombre del paciente
+      // Mapear datos para compatibilidad con código existente
       const citasMapeadas = (data || []).map((cita: any) => ({
         ...cita,
-        paciente_nombre: cita.pacientes?.nombre_completo || 
-                        cita.pacientes?.metadata?.nombre_completo ||
-                        cita.pacientes?.email ||
-                        'Sin nombre',
-        fecha: cita.fecha_cita // Alias para compatibilidad con componentes
+        fecha: cita.fecha_cita // Alias para compatibilidad
       }))
 
       return citasMapeadas
@@ -408,31 +335,66 @@ export const useCitas = () => {
   // ============================================================================
 
   /**
-   * Crear una nueva cita
+   * 🎯 FUNCIÓN PRINCIPAL: Crear una nueva cita con sincronización completa
+   * 
+   * Esta función:
+   * 1. Busca automáticamente un bono activo del paciente
+   * 2. Vincula el bono si existe y tiene sesiones disponibles
+   * 3. Crea la cita con valores por defecto seguros
+   * 4. Emite evento global para actualización en tiempo real
+   * 5. Retorna resultado estructurado con éxito/error
    */
   const crearCita = async (params: CrearCitaParams): Promise<ResultadoOperacion> => {
     if (!process.client) return { success: false, error: 'Not client' }
 
     try {
-      // Obtener terapeuta si no se proporciona
+      // 1️⃣ Obtener terapeuta si no se proporciona
       let terapeutaId = params.terapeuta_id
       if (!terapeutaId) {
         const terapeuta = await getTerapeutaActual()
         if (!terapeuta) {
-          return { success: false, error: 'No se pudo identificar el terapeuta' }
+          return { 
+            success: false, 
+            error: 'No se pudo identificar el terapeuta. Por favor, vuelve a iniciar sesión.' 
+          }
         }
         terapeutaId = terapeuta.id
       }
 
-      console.log('📋 [Crear Cita] Datos a insertar:', {
+      // 2️⃣ Buscar bono activo automáticamente (LÓGICA MEJORADA)
+      let bonoId = params.bono_id
+      let descontarDeBono = params.descontar_de_bono || false
+
+      // Si no se especificó bono pero sí se quiere descontar, buscar automáticamente
+      if (!bonoId && descontarDeBono) {
+        const bonoActivoId = await obtenerBonoActivoId(params.paciente_id)
+        if (bonoActivoId) {
+          bonoId = bonoActivoId
+          console.log('✅ Bono activo encontrado automáticamente:', bonoActivoId)
+        } else {
+          console.log('⚠️ No se encontró bono activo, creando cita sin bono')
+          descontarDeBono = false
+        }
+      }
+
+      // Si se proporcionó un bono_id explícito, usarlo
+      if (params.bono_id) {
+        bonoId = params.bono_id
+        descontarDeBono = true
+      }
+
+      console.log('📋 [Crear Cita] Parámetros:', {
         paciente_id: params.paciente_id,
+        paciente_nombre: params.paciente_nombre,
         terapeuta_id: terapeutaId,
         fecha_cita: params.fecha,
         modalidad: params.modalidad,
-        estado: params.estado
+        estado: params.estado,
+        bono_id: bonoId,
+        descontar_de_bono: descontarDeBono
       })
 
-      // Preparar datos de la cita
+      // 3️⃣ Preparar datos de la cita con valores por defecto seguros
       const citaData: any = {
         paciente_id: params.paciente_id,
         terapeuta_id: terapeutaId,
@@ -442,15 +404,15 @@ export const useCitas = () => {
         modalidad: params.modalidad || 'online',
         estado: params.estado || 'pendiente',
         observaciones: params.notas || null,
-        descontar_de_bono: params.descontar_de_bono || false,
-        ubicacion: params.ubicacion || null,
-        enlace_videollamada: params.enlace_videollamada || null,
-        bono_id: params.bono_id || null,
+        descontar_de_bono: descontarDeBono,
+        bono_id: bonoId || null,
         sesion_descontada: false,
-        recordatorio_enviado: false
+        recordatorio_enviado: false,
+        ubicacion: params.ubicacion || null,
+        enlace_videollamada: params.enlace_videollamada || null
       }
 
-      // Insertar en la base de datos
+      // 4️⃣ Insertar en la base de datos
       const { data, error } = await supabase
         .from('citas')
         .insert(citaData)
@@ -463,17 +425,17 @@ export const useCitas = () => {
         console.error('❌ Error details:', error.details)
         console.error('❌ Error hint:', error.hint)
         
-        // Mensajes de error personalizados
+        // 5️⃣ Mensajes de error personalizados y útiles
         if (error.message.includes('disponibilidad')) {
           return { 
             success: false, 
-            error: 'El terapeuta ya tiene una cita en ese horario'
+            error: 'El terapeuta ya tiene una cita en ese horario. Por favor, selecciona otro.'
           }
         }
         if (error.message.includes('bono')) {
           return { 
             success: false, 
-            error: 'El bono no tiene sesiones disponibles o no está activo'
+            error: 'El bono no tiene sesiones disponibles o no está activo.'
           }
         }
         if (error.message.includes('users') || error.code === '42501') {
@@ -482,20 +444,47 @@ export const useCitas = () => {
             error: 'Error de permisos. Por favor, contacta al administrador.'
           }
         }
+        if (error.code === '23503') {
+          return { 
+            success: false, 
+            error: 'Paciente o terapeuta no encontrado. Verifica los datos.'
+          }
+        }
         
-        return { success: false, error: error.message }
+        return { 
+          success: false, 
+          error: error.message || 'Error al crear la cita' 
+        }
       }
 
       console.log('✅ Cita creada exitosamente:', data.id)
       
+      // 6️⃣ Emitir evento global para sincronización en tiempo real
+      if (typeof window !== 'undefined') {
+        const event = new CustomEvent('citas:actualizadas', { 
+          detail: { 
+            tipo: 'INSERT', 
+            cita: data,
+            paciente_nombre: params.paciente_nombre 
+          } 
+        })
+        window.dispatchEvent(event)
+        console.log('📡 Evento "citas:actualizadas" emitido')
+      }
+      
       return { 
         success: true, 
         data,
-        message: 'Cita creada exitosamente'
+        message: bonoId 
+          ? `Cita creada exitosamente y vinculada al bono activo` 
+          : 'Cita creada exitosamente'
       }
     } catch (error: any) {
       console.error('❌ Error al crear cita:', error)
-      return { success: false, error: error.message || 'Error desconocido' }
+      return { 
+        success: false, 
+        error: error.message || 'Error desconocido al crear la cita' 
+      }
     }
   }
 
@@ -639,7 +628,36 @@ export const useCitas = () => {
   // ============================================================================
 
   /**
-   * Obtiene el bono activo de un paciente
+   * Obtiene el bono activo de un paciente (solo ID optimizado)
+   */
+  const obtenerBonoActivoId = async (pacienteId: string): Promise<string | null> => {
+    if (!process.client) return null
+
+    try {
+      const { data, error } = await supabase
+        .from('bonos')
+        .select('id')
+        .eq('paciente_id', pacienteId)
+        .eq('estado', 'activo')
+        .gt('sesiones_restantes', 0)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (error) {
+        console.log('ℹ️ No hay bono activo para el paciente')
+        return null
+      }
+
+      return data?.id || null
+    } catch (error) {
+      console.error('❌ Error al obtener bono activo:', error)
+      return null
+    }
+  }
+
+  /**
+   * Obtiene el bono activo de un paciente (completo)
    */
   const obtenerBonoActivo = async (pacienteId: string) => {
     if (!process.client) return null
@@ -677,7 +695,7 @@ export const useCitas = () => {
       return {
         tiene_bono: false,
         sesiones_restantes: 0,
-        total_sesiones: 0,
+        sesiones_totales: 0,
         tipo_bono: '',
         bono_id: undefined
       }
@@ -699,7 +717,7 @@ export const useCitas = () => {
       return {
         tiene_bono: true,
         sesiones_restantes: (bono as any).sesiones_restantes || 0,
-        total_sesiones: (bono as any).total_sesiones || 0,
+        sesiones_totales: (bono as any).sesiones_totales || 0,
         tipo_bono: tipoBono,
         bono_id: (bono as any).id
       }
@@ -708,7 +726,7 @@ export const useCitas = () => {
       return {
         tiene_bono: false,
         sesiones_restantes: 0,
-        total_sesiones: 0,
+        sesiones_totales: 0,
         tipo_bono: '',
         bono_id: undefined
       }
@@ -1078,6 +1096,92 @@ export const useCitas = () => {
   }
 
   // ============================================================================
+  // REALTIME - SUSCRIPCIONES
+  // ============================================================================
+
+  /**
+   * Suscribirse a cambios en tiempo real de citas
+   */
+  const listenRealtimeCitas = (
+    terapeutaId: string,
+    callback: (evento: 'INSERT' | 'UPDATE' | 'DELETE', cita: any) => void
+  ) => {
+    if (!process.client) return null
+
+    const channel = supabase
+      .channel(`citas:terapeuta:${terapeutaId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'citas',
+          filter: `terapeuta_id=eq.${terapeutaId}`
+        },
+        (payload: any) => {
+          console.log('📡 Cambio en citas detectado:', payload.eventType, payload.new || payload.old)
+          
+          if (payload.eventType === 'INSERT') {
+            callback('INSERT', payload.new)
+          } else if (payload.eventType === 'UPDATE') {
+            callback('UPDATE', payload.new)
+          } else if (payload.eventType === 'DELETE') {
+            callback('DELETE', payload.old)
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Suscrito a cambios de citas en tiempo real')
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Error al suscribirse a cambios de citas')
+        }
+      })
+
+    return channel
+  }
+
+  /**
+   * Suscribirse a cambios en tiempo real de todas las citas (para coordinación)
+   */
+  const listenRealtimeCitasGlobal = (
+    callback: (evento: 'INSERT' | 'UPDATE' | 'DELETE', cita: any) => void
+  ) => {
+    if (!process.client) return null
+
+    const channel = supabase
+      .channel('citas:global')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'citas'
+        },
+        (payload: any) => {
+          console.log('📡 Cambio global en citas detectado:', payload.eventType)
+          
+          if (payload.eventType === 'INSERT') {
+            callback('INSERT', payload.new)
+          } else if (payload.eventType === 'UPDATE') {
+            callback('UPDATE', payload.new)
+          } else if (payload.eventType === 'DELETE') {
+            callback('DELETE', payload.old)
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Suscrito a cambios globales de citas en tiempo real')
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Error al suscribirse a cambios globales de citas')
+        }
+      })
+
+    return channel
+  }
+
+  // ============================================================================
   // RETORNO DEL COMPOSABLE
   // ============================================================================
 
@@ -1103,6 +1207,7 @@ export const useCitas = () => {
     eliminarCita,
     
     // Bonos
+    obtenerBonoActivoId,
     obtenerBonoActivo,
     verificarBonoActivo,
     obtenerEstadisticasBono,
@@ -1113,6 +1218,10 @@ export const useCitas = () => {
     buscarDisponibilidad,
     calcularProximaFechaSugerida,
     sugerirProximoHorario,
+    
+    // Realtime
+    listenRealtimeCitas,
+    listenRealtimeCitasGlobal,
     
     // Utilidades
     formatearFecha,

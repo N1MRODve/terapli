@@ -39,7 +39,7 @@
           </li>
           <li>
             <NuxtLink
-              to="/terapeuta/agenda"
+              to="/agenda"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
             >
@@ -159,7 +159,7 @@
           </li>
           <li>
             <NuxtLink
-              to="/terapeuta/agenda"
+              to="/agenda"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
               @click="mobileMenuOpen = false"

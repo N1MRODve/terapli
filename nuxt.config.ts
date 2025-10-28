@@ -6,6 +6,24 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Suprimir warnings de Vue
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => false
+    }
+  },
+
+  vite: {
+    vue: {
+      template: {
+        compilerOptions: {
+          // Suprimir warning de Suspense experimental
+          isCustomElement: () => false
+        }
+      }
+    }
+  },
+
   supabase: {
     redirect: false,
     url: process.env.NUXT_PUBLIC_SUPABASE_URL,

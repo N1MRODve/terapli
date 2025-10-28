@@ -290,14 +290,16 @@ const cargarPacientes = async () => {
           .eq('paciente_id', paciente.id)
           .eq('estado', 'realizada')
 
-        // Obtener bono activo (con manejo seguro de errores)
+        // Obtener bono activo o pendiente (con manejo seguro de errores)
         let bonoActivo = null
         try {
           const { data: bonoData, error: bonoError } = await supabase
             .from('bonos')
-            .select('id, tipo, estado, total_sesiones, sesiones_restantes, fecha_fin, created_at')
+            .select('id, tipo, estado, sesiones_totales, sesiones_restantes, fecha_fin, created_at')
             .eq('paciente_id', paciente.id)
-            .eq('estado', 'activo')
+            .in('estado', ['activo', 'pendiente'])
+            .order('created_at', { ascending: false })
+            .limit(1)
             .maybeSingle()
 
           if (bonoError) {
@@ -313,7 +315,7 @@ const cargarPacientes = async () => {
         let sesionesCompletadasBono = 0
         let totalSesionesBono = 0
         if (bonoActivo) {
-          totalSesionesBono = bonoActivo.total_sesiones
+          totalSesionesBono = bonoActivo.sesiones_totales
           sesionesCompletadasBono = totalSesionesBono - bonoActivo.sesiones_restantes
         }
 
@@ -370,7 +372,7 @@ const cargarPacientes = async () => {
             estado: bonoActivo.estado,
             fecha_fin: bonoActivo.fecha_fin,
             sesiones_completadas: sesionesCompletadasBono,
-            total_sesiones: totalSesionesBono,
+            sesiones_totales: totalSesionesBono,
             sesiones_restantes: bonoActivo.sesiones_restantes
           } : null
         }

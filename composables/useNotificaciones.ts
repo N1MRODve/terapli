@@ -1,8 +1,7 @@
 /**
  * useNotificaciones.ts
- * Composable para gestionar notificaciones internas del sistema
- * NOTA: La tabla 'notificaciones' aún no existe en la base de datos.
- * Este composable maneja los errores 404 gracefully.
+ * Composable para gestionar notificaciones del sistema
+ * Incluye notificaciones automáticas para bonos (última sesión, bono agotado)
  */
 
 import type { RealtimeChannel } from '@supabase/supabase-js'
@@ -10,12 +9,22 @@ import type { RealtimeChannel } from '@supabase/supabase-js'
 export interface Notificacion {
   id: string
   usuario_id: string
+  tipo: 'bono' | 'cita' | 'pago' | 'sistema' | 'alerta'
   titulo: string
-  mensaje: string | null
-  tipo: string
-  visto: boolean
-  referencia_id?: string
+  mensaje: string
+  leido: boolean
+  leido_at: string | null
+  metadata: {
+    paciente_id?: string
+    bono_id?: string
+    cita_id?: string
+    sesiones_restantes?: number
+    sesiones_totales?: number
+    urgencia?: 'baja' | 'media' | 'alta'
+    [key: string]: any
+  }
   created_at: string
+  updated_at: string
 }
 
 export const useNotificaciones = () => {
@@ -28,6 +37,16 @@ export const useNotificaciones = () => {
   const error = ref<string | null>(null)
   const canal = ref<RealtimeChannel | null>(null)
   const totalNoVistas = ref(0)
+
+  // Computadas
+  const noLeidas = computed(() => notificaciones.value.filter(n => !n.leido))
+  const urgentes = computed(() => 
+    noLeidas.value.filter(n => 
+      n.tipo === 'bono' && 
+      (n.metadata?.urgencia === 'alta' || n.metadata?.sesiones_restantes === 0)
+    )
+  )
+  const tieneUrgentes = computed(() => urgentes.value.length > 0)
 
   /**
    * Listar notificaciones del usuario actual
@@ -66,8 +85,8 @@ export const useNotificaciones = () => {
 
       notificaciones.value = (data || []) as Notificacion[]
       
-      // Actualizar contador de no vistas
-      totalNoVistas.value = ((data || []) as Notificacion[]).filter(n => !n.visto).length
+      // Actualizar contador de no leídas (compatibilidad con ambos campos)
+      totalNoVistas.value = ((data || []) as Notificacion[]).filter(n => !(n as any).visto && !n.leido).length
 
       return (data || []) as Notificacion[]
     } catch (e: any) {
@@ -128,80 +147,89 @@ export const useNotificaciones = () => {
   }
 
   /**
-   * Marcar una notificación como vista
+   * Marcar una notificación como leída (usando RPC)
    */
   const marcarVista = async (notificacionId: string) => {
     if (!user.value) return
 
     try {
-      // @ts-ignore - La tabla notificaciones no existe aún en el schema
-      const { error: updateError } = await supabase
-        .from('notificaciones')
-        .update({ visto: true })
-        .eq('id', notificacionId)
-        .eq('usuario_id', user.value.id)
+      const { data, error: rpcError } = await supabase.rpc('marcar_notificacion_leida', {
+        p_notificacion_id: notificacionId
+      })
 
-      if (updateError) throw updateError
+      if (rpcError) throw rpcError
 
       // Actualizar localmente
       notificaciones.value = notificaciones.value.map(n =>
-        n.id === notificacionId ? { ...n, visto: true } : n
+        n.id === notificacionId ? { ...n, leido: true, leido_at: new Date().toISOString() } : n
       )
 
       // Actualizar contador
       totalNoVistas.value = Math.max(0, totalNoVistas.value - 1)
     } catch (e: any) {
-      console.error('Error al marcar notificación como vista:', e)
+      console.error('Error al marcar notificación como leída:', e)
     }
   }
 
   /**
-   * Marcar todas las notificaciones como vistas
+   * Alias para compatibilidad
+   */
+  const marcarComoLeida = marcarVista
+
+  /**
+   * Marcar todas las notificaciones como leídas (usando RPC)
    */
   const marcarTodasVistas = async () => {
     if (!user.value) return
 
     try {
-      // @ts-ignore - La tabla notificaciones no existe aún en el schema
-      const { error: updateError } = await supabase
-        .from('notificaciones')
-        .update({ visto: true })
-        .eq('usuario_id', user.value.id)
-        .eq('visto', false)
+      const { data, error: rpcError } = await supabase.rpc('marcar_todas_notificaciones_leidas')
 
-      if (updateError) throw updateError
+      if (rpcError) throw rpcError
 
       // Actualizar localmente
-      notificaciones.value = notificaciones.value.map(n => ({ ...n, visto: true }))
+      notificaciones.value = notificaciones.value.map(n => ({ 
+        ...n, 
+        leido: true, 
+        leido_at: n.leido_at || new Date().toISOString() 
+      }))
       totalNoVistas.value = 0
+
+      return { success: true, marcadas: data?.marcadas || 0 }
     } catch (e: any) {
-      console.error('Error al marcar todas las notificaciones como vistas:', e)
+      console.error('Error al marcar todas las notificaciones como leídas:', e)
+      return { success: false, error: e.message }
     }
   }
 
   /**
-   * Contar notificaciones no vistas
+   * Alias para compatibilidad
+   */
+  const marcarTodasComoLeidas = marcarTodasVistas
+
+  /**
+   * Contar notificaciones no leídas (usando RPC)
    */
   const contarNoVistas = async () => {
     if (!user.value) return 0
 
     try {
-      // @ts-ignore - La tabla notificaciones no existe aún en el schema
-      const { count, error: countError } = await supabase
-        .from('notificaciones')
-        .select('*', { count: 'exact', head: true })
-        .eq('usuario_id', user.value.id)
-        .eq('visto', false)
+      const { data, error: rpcError } = await supabase.rpc('contar_notificaciones_no_leidas')
 
-      if (countError) throw countError
+      if (rpcError) throw rpcError
 
-      totalNoVistas.value = count || 0
-      return count || 0
+      totalNoVistas.value = data || 0
+      return data || 0
     } catch (e: any) {
-      console.error('Error al contar notificaciones no vistas:', e)
+      console.error('Error al contar notificaciones no leídas:', e)
       return 0
     }
   }
+
+  /**
+   * Alias para compatibilidad
+   */
+  const obtenerContador = contarNoVistas
 
   /**
    * Eliminar una notificación
@@ -221,7 +249,7 @@ export const useNotificaciones = () => {
 
       // Actualizar localmente
       const notificacionEliminada = notificaciones.value.find(n => n.id === notificacionId)
-      if (notificacionEliminada && !notificacionEliminada.visto) {
+      if (notificacionEliminada && !notificacionEliminada.leido && !(notificacionEliminada as any).visto) {
         totalNoVistas.value = Math.max(0, totalNoVistas.value - 1)
       }
 
@@ -243,12 +271,12 @@ export const useNotificaciones = () => {
         .from('notificaciones')
         .delete()
         .eq('usuario_id', user.value.id)
-        .eq('visto', true)
+        .eq('leido', true)
 
       if (deleteError) throw deleteError
 
       // Actualizar localmente
-      notificaciones.value = notificaciones.value.filter(n => !n.visto)
+      notificaciones.value = notificaciones.value.filter(n => !n.leido)
     } catch (e: any) {
       console.error('Error al eliminar notificaciones vistas:', e)
     }
@@ -274,6 +302,16 @@ export const useNotificaciones = () => {
           const nuevaNotificacion = payload.new as Notificacion
           notificaciones.value.unshift(nuevaNotificacion)
           totalNoVistas.value++
+          
+          // Notificación del navegador si tiene permisos
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(nuevaNotificacion.titulo, { 
+              body: nuevaNotificacion.mensaje,
+              icon: '/icon-notification.png',
+              badge: nuevaNotificacion.tipo === 'bono' && nuevaNotificacion.metadata?.urgencia === 'alta' 
+                ? '🔴' : '🔔'
+            })
+          }
         }
       )
       .on(
@@ -311,19 +349,40 @@ export const useNotificaciones = () => {
     desuscribirse()
   })
 
+  /**
+   * Solicitar permisos de notificaciones del navegador
+   */
+  const solicitarPermisosNotificaciones = async () => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      await Notification.requestPermission()
+    }
+  }
+
   return {
+    // Estado
     notificaciones,
     totalNoVistas,
     loading,
     error,
+
+    // Computadas
+    noLeidas,
+    urgentes,
+    tieneUrgentes,
+
+    // Métodos principales
     listar,
     crear,
     marcarVista,
+    marcarComoLeida,  // Alias
     marcarTodasVistas,
+    marcarTodasComoLeidas,  // Alias
     contarNoVistas,
+    obtenerContador,  // Alias
     eliminar,
     eliminarVistas,
     suscribirse,
-    desuscribirse
+    desuscribirse,
+    solicitarPermisosNotificaciones
   }
 }

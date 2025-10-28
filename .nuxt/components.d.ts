@@ -14,6 +14,8 @@ type HydrationStrategies = {
 type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }> & T
 
 
+export const AgendaFiltros: typeof import("../components/AgendaFiltros.vue")['default']
+export const AgendaTerapeuta: typeof import("../components/AgendaTerapeuta.vue")['default']
 export const AlertaBono: typeof import("../components/AlertaBono.vue")['default']
 export const AuthDebugPanel: typeof import("../components/AuthDebugPanel.vue")['default']
 export const BonoCard: typeof import("../components/BonoCard.vue")['default']
@@ -23,12 +25,14 @@ export const CardRecurso: typeof import("../components/CardRecurso.vue")['defaul
 export const CookieConsent: typeof import("../components/CookieConsent.vue")['default']
 export const EmotionalTransition: typeof import("../components/EmotionalTransition.vue")['default']
 export const EmptyState: typeof import("../components/EmptyState.vue")['default']
+export const EstadisticasBonos: typeof import("../components/EstadisticasBonos.vue")['default']
 export const EvolucionEmocional: typeof import("../components/EvolucionEmocional.vue")['default']
 export const Footer: typeof import("../components/Footer.vue")['default']
 export const GreetingModal: typeof import("../components/GreetingModal.vue")['default']
 export const Header: typeof import("../components/Header.vue")['default']
 export const HistorialSesiones: typeof import("../components/HistorialSesiones.vue")['default']
 export const InactivityModal: typeof import("../components/InactivityModal.vue")['default']
+export const InconsistenciasBonos: typeof import("../components/InconsistenciasBonos.vue")['default']
 export const InstallPWAButton: typeof import("../components/InstallPWAButton.vue")['default']
 export const InstallPWAModal: typeof import("../components/InstallPWAModal.vue")['default']
 export const InversionSection: typeof import("../components/InversionSection.vue")['default']
@@ -49,6 +53,7 @@ export const ModalPagosBono: typeof import("../components/ModalPagosBono.vue")['
 export const ModalRecurso: typeof import("../components/ModalRecurso.vue")['default']
 export const ModalRenovacionBono: typeof import("../components/ModalRenovacionBono.vue")['default']
 export const NotasPrivadas: typeof import("../components/NotasPrivadas.vue")['default']
+export const NotificacionesBadge: typeof import("../components/NotificacionesBadge.vue")['default']
 export const NotificacionesBell: typeof import("../components/NotificacionesBell.vue")['default']
 export const PWAInstallWrapper: typeof import("../components/PWAInstallWrapper.vue")['default']
 export const PacienteCard: typeof import("../components/PacienteCard.vue")['default']
@@ -59,7 +64,14 @@ export const RecursoCard: typeof import("../components/RecursoCard.vue")['defaul
 export const ResumenCard: typeof import("../components/ResumenCard.vue")['default']
 export const SesionCard: typeof import("../components/SesionCard.vue")['default']
 export const TablaSesiones: typeof import("../components/TablaSesiones.vue")['default']
+export const TarjetaCita: typeof import("../components/TarjetaCita.vue")['default']
 export const VisualizacionEmocional: typeof import("../components/VisualizacionEmocional.vue")['default']
+export const AgendaEventCard: typeof import("../components/agenda/AgendaEventCard.vue")['default']
+export const AgendaFilters: typeof import("../components/agenda/AgendaFilters.vue")['default']
+export const AgendaGrid: typeof import("../components/agenda/AgendaGrid.vue")['default']
+export const AgendaHeader: typeof import("../components/agenda/AgendaHeader.vue")['default']
+export const AgendaLegend: typeof import("../components/agenda/AgendaLegend.vue")['default']
+export const AgendaTypes: typeof import("../components/agenda/types")['default']
 export const CoordinacionDashboardCard: typeof import("../components/coordinacion/DashboardCard.vue")['default']
 export const DashboardDailyQuote: typeof import("../components/dashboard/DailyQuote.vue")['default']
 export const DashboardCard: typeof import("../components/dashboard/DashboardCard.vue")['default']
@@ -130,6 +142,8 @@ export const Head: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
+export const LazyAgendaFiltros: LazyComponent<typeof import("../components/AgendaFiltros.vue")['default']>
+export const LazyAgendaTerapeuta: LazyComponent<typeof import("../components/AgendaTerapeuta.vue")['default']>
 export const LazyAlertaBono: LazyComponent<typeof import("../components/AlertaBono.vue")['default']>
 export const LazyAuthDebugPanel: LazyComponent<typeof import("../components/AuthDebugPanel.vue")['default']>
 export const LazyBonoCard: LazyComponent<typeof import("../components/BonoCard.vue")['default']>
@@ -139,12 +153,14 @@ export const LazyCardRecurso: LazyComponent<typeof import("../components/CardRec
 export const LazyCookieConsent: LazyComponent<typeof import("../components/CookieConsent.vue")['default']>
 export const LazyEmotionalTransition: LazyComponent<typeof import("../components/EmotionalTransition.vue")['default']>
 export const LazyEmptyState: LazyComponent<typeof import("../components/EmptyState.vue")['default']>
+export const LazyEstadisticasBonos: LazyComponent<typeof import("../components/EstadisticasBonos.vue")['default']>
 export const LazyEvolucionEmocional: LazyComponent<typeof import("../components/EvolucionEmocional.vue")['default']>
 export const LazyFooter: LazyComponent<typeof import("../components/Footer.vue")['default']>
 export const LazyGreetingModal: LazyComponent<typeof import("../components/GreetingModal.vue")['default']>
 export const LazyHeader: LazyComponent<typeof import("../components/Header.vue")['default']>
 export const LazyHistorialSesiones: LazyComponent<typeof import("../components/HistorialSesiones.vue")['default']>
 export const LazyInactivityModal: LazyComponent<typeof import("../components/InactivityModal.vue")['default']>
+export const LazyInconsistenciasBonos: LazyComponent<typeof import("../components/InconsistenciasBonos.vue")['default']>
 export const LazyInstallPWAButton: LazyComponent<typeof import("../components/InstallPWAButton.vue")['default']>
 export const LazyInstallPWAModal: LazyComponent<typeof import("../components/InstallPWAModal.vue")['default']>
 export const LazyInversionSection: LazyComponent<typeof import("../components/InversionSection.vue")['default']>
@@ -165,6 +181,7 @@ export const LazyModalPagosBono: LazyComponent<typeof import("../components/Moda
 export const LazyModalRecurso: LazyComponent<typeof import("../components/ModalRecurso.vue")['default']>
 export const LazyModalRenovacionBono: LazyComponent<typeof import("../components/ModalRenovacionBono.vue")['default']>
 export const LazyNotasPrivadas: LazyComponent<typeof import("../components/NotasPrivadas.vue")['default']>
+export const LazyNotificacionesBadge: LazyComponent<typeof import("../components/NotificacionesBadge.vue")['default']>
 export const LazyNotificacionesBell: LazyComponent<typeof import("../components/NotificacionesBell.vue")['default']>
 export const LazyPWAInstallWrapper: LazyComponent<typeof import("../components/PWAInstallWrapper.vue")['default']>
 export const LazyPacienteCard: LazyComponent<typeof import("../components/PacienteCard.vue")['default']>
@@ -175,7 +192,14 @@ export const LazyRecursoCard: LazyComponent<typeof import("../components/Recurso
 export const LazyResumenCard: LazyComponent<typeof import("../components/ResumenCard.vue")['default']>
 export const LazySesionCard: LazyComponent<typeof import("../components/SesionCard.vue")['default']>
 export const LazyTablaSesiones: LazyComponent<typeof import("../components/TablaSesiones.vue")['default']>
+export const LazyTarjetaCita: LazyComponent<typeof import("../components/TarjetaCita.vue")['default']>
 export const LazyVisualizacionEmocional: LazyComponent<typeof import("../components/VisualizacionEmocional.vue")['default']>
+export const LazyAgendaEventCard: LazyComponent<typeof import("../components/agenda/AgendaEventCard.vue")['default']>
+export const LazyAgendaFilters: LazyComponent<typeof import("../components/agenda/AgendaFilters.vue")['default']>
+export const LazyAgendaGrid: LazyComponent<typeof import("../components/agenda/AgendaGrid.vue")['default']>
+export const LazyAgendaHeader: LazyComponent<typeof import("../components/agenda/AgendaHeader.vue")['default']>
+export const LazyAgendaLegend: LazyComponent<typeof import("../components/agenda/AgendaLegend.vue")['default']>
+export const LazyAgendaTypes: LazyComponent<typeof import("../components/agenda/types")['default']>
 export const LazyCoordinacionDashboardCard: LazyComponent<typeof import("../components/coordinacion/DashboardCard.vue")['default']>
 export const LazyDashboardDailyQuote: LazyComponent<typeof import("../components/dashboard/DailyQuote.vue")['default']>
 export const LazyDashboardCard: LazyComponent<typeof import("../components/dashboard/DashboardCard.vue")['default']>

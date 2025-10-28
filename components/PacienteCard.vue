@@ -430,9 +430,11 @@ const tipoBonoTexto = computed(() => {
   if (!bonoActivo.value?.tipo) return 'Sin tipo'
   
   const tipoMap = {
-    'a_demanda': 'A demanda',
+    'otro': 'A demanda',
     'quincenal': 'Quincenal',
-    'semanal': 'Semanal'
+    'semanal': 'Semanal',
+    'mensual': 'Mensual',
+    'personalizado': 'Personalizado'
   }
   
   return tipoMap[bonoActivo.value.tipo] || bonoActivo.value.tipo
@@ -442,9 +444,11 @@ const tipoBonoClasses = computed(() => {
   if (!bonoActivo.value?.tipo) return 'bg-gray-100 text-gray-600'
   
   const classMap = {
-    'a_demanda': 'bg-blue-100 text-blue-700',
+    'otro': 'bg-blue-100 text-blue-700',
     'quincenal': 'bg-purple-100 text-purple-700',
-    'semanal': 'bg-indigo-100 text-indigo-700'
+    'semanal': 'bg-indigo-100 text-indigo-700',
+    'mensual': 'bg-teal-100 text-teal-700',
+    'personalizado': 'bg-pink-100 text-pink-700'
   }
   
   return classMap[bonoActivo.value.tipo] || 'bg-gray-100 text-gray-600'
@@ -509,11 +513,11 @@ const fechaFinClasses = computed(() => {
 // Sesiones - contadores y estilos
 const sesionesUsadas = computed(() => {
   if (!bonoActivo.value) return 0
-  return bonoActivo.value.total_sesiones - bonoActivo.value.sesiones_restantes
+  return bonoActivo.value.sesiones_totales - bonoActivo.value.sesiones_restantes
 })
 
 const sesionesTotales = computed(() => {
-  return bonoActivo.value?.total_sesiones || 0
+  return bonoActivo.value?.sesiones_totales || 0
 })
 
 const sesionesColorClass = computed(() => {
@@ -530,7 +534,7 @@ const sesionesColorClass = computed(() => {
 const progresoBono = computed(() => {
   if (!bonoActivo.value) return 0
   
-  const total = bonoActivo.value.total_sesiones
+  const total = bonoActivo.value.sesiones_totales
   const restantes = bonoActivo.value.sesiones_restantes
   
   if (total === 0) return 0

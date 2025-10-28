@@ -48,7 +48,7 @@
             <div class="text-right">
               <div v-if="infoBono.tiene_bono" class="text-xs text-green-600 mb-1">🎫 BONO ACTIVO</div>
               <div v-if="infoBono.tiene_bono" class="text-2xl font-bold text-green-900">
-                {{ infoBono.sesiones_restantes }}/{{ infoBono.total_sesiones }}
+                {{ infoBono.sesiones_restantes }}/{{ infoBono.sesiones_totales }}
               </div>
               <div v-if="infoBono.tiene_bono" class="text-xs text-green-600">sesiones</div>
             </div>
@@ -230,7 +230,7 @@
                           infoBono.sesiones_restantes <= 1 ? 'text-red-600' : 
                           infoBono.sesiones_restantes <= 2 ? 'text-amber-600' : 'text-green-700'
                         ]">
-                          {{ infoBono.sesiones_restantes }} / {{ infoBono.total_sesiones || '?' }}
+                          {{ infoBono.sesiones_restantes }} / {{ infoBono.sesiones_totales || '?' }}
                         </div>
                       </div>
                     </div>
@@ -841,7 +841,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['cerrar', 'citaCreada'])
+const emit = defineEmits(['cerrar', 'citaCreada', 'actualizado'])
 
 // Composables
 const { crearCita, getCitasPorDia, verificarBonoActivo, calcularProximaFechaSugerida, sugerirProximoHorario } = useCitas()
@@ -871,13 +871,13 @@ const toastAcciones = ref<Array<{ texto: string; accion: () => void }>>([])
 const infoBono = ref<{
   tiene_bono: boolean
   sesiones_restantes: number
-  total_sesiones: number
+  sesiones_totales: number
   tipo_bono: string
   bono_id?: string
 }>({
   tiene_bono: false,
   sesiones_restantes: 0,
-  total_sesiones: 0,
+  sesiones_totales: 0,
   tipo_bono: '',
   bono_id: undefined
 })
@@ -1088,7 +1088,7 @@ function deseleccionarPaciente() {
   infoBono.value = {
     tiene_bono: false,
     sesiones_restantes: 0,
-    total_sesiones: 0,
+    sesiones_totales: 0,
     tipo_bono: '',
     bono_id: undefined
   }
@@ -1267,6 +1267,19 @@ async function guardarCita() {
   guardando.value = true
   
   try {
+    // Validar campos requeridos
+    if (!formulario.value.paciente_id) {
+      mostrarToastError('Paciente requerido', 'Por favor, selecciona un paciente antes de continuar.')
+      guardando.value = false
+      return
+    }
+
+    if (!formulario.value.fecha || !formulario.value.hora_inicio || !formulario.value.hora_fin) {
+      mostrarToastError('Datos incompletos', 'Por favor, completa la fecha y hora de la cita.')
+      guardando.value = false
+      return
+    }
+    
     // Verificar conflictos de horario
     await verificarConflicto()
     
@@ -1289,10 +1302,22 @@ async function guardarCita() {
       }
     }
     
-    // Crear la cita
+    console.log('🚀 [ModalNuevaCita] Creando cita con datos:', {
+      paciente_id: formulario.value.paciente_id,
+      paciente_nombre: formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre,
+      fecha: formulario.value.fecha,
+      hora_inicio: formulario.value.hora_inicio,
+      hora_fin: formulario.value.hora_fin,
+      modalidad: formulario.value.tipo,
+      estado: formulario.value.estado,
+      descontar_de_bono: formulario.value.descontar_de_bono,
+      bono_id: formulario.value.bono_id
+    })
+    
+    // 🎯 Crear la cita usando la función mejorada del composable
     const resultado = await crearCita({
       paciente_id: formulario.value.paciente_id,
-      paciente_nombre: formulario.value.paciente_nombre,
+      paciente_nombre: formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre || 'Sin nombre',
       fecha: formulario.value.fecha,
       hora_inicio: formulario.value.hora_inicio,
       hora_fin: formulario.value.hora_fin,
@@ -1304,21 +1329,32 @@ async function guardarCita() {
     })
     
     if (resultado.success) {
-      // Guardar última cita en localStorage para recuperación
+      // Limpiar localStorage
       localStorage.removeItem('nueva_cita_temp')
       
-      // Mostrar toast con opciones
+      // Construir mensaje descriptivo
       const fechaLegible = formatearFechaLegible(formulario.value.fecha)
       const modalidadIcono = formulario.value.tipo === 'presencial' ? '🏥' : formulario.value.tipo === 'online' ? '💻' : '📞'
+      const nombrePaciente = formulario.value.paciente_nombre || pacienteSeleccionado.value?.nombre || 'Paciente'
       
+      const mensajeExito = `${nombrePaciente} – ${fechaLegible}, ${formulario.value.hora_inicio} (${modalidadIcono} ${formulario.value.tipo})`
+      
+      // Si hay bono vinculado, añadir info
+      let mensajeFinal = mensajeExito
+      if (resultado.data?.bono_id && infoBono.value.tiene_bono) {
+        const sesionesRestantes = infoBono.value.sesiones_restantes - 1 // Se descontará al completar
+        mensajeFinal += `\n🎫 Bono activo: ${sesionesRestantes} sesiones restantes después de esta`
+      }
+      
+      // Mostrar toast con opciones
       mostrarToastExito(
         '✅ Cita creada con éxito',
-        `${formulario.value.paciente_nombre} – ${fechaLegible}, ${formulario.value.hora_inicio} (${modalidadIcono} ${formulario.value.tipo})`,
+        mensajeFinal,
         [
           {
             texto: '📅 Ver en Agenda',
             accion: () => {
-              router.push('/terapeuta/agenda')
+              router.push('/agenda')
               mostrarToast.value = false
             }
           },
@@ -1333,17 +1369,24 @@ async function guardarCita() {
         ]
       )
       
+      // Emitir eventos para actualización
       emit('citaCreada', resultado.data)
+      emit('actualizado')
+      
+      console.log('✅ [ModalNuevaCita] Cita creada exitosamente:', resultado.data)
       
       // Cerrar el modal después de 1 segundo (da tiempo para ver el toast)
       setTimeout(() => {
         cerrarModal()
       }, 1000)
     } else {
-      mostrarToastError('Error al guardar', resultado.error || 'No se pudo crear la cita')
+      // Mostrar error específico
+      const mensajeError = resultado.error || 'No se pudo crear la cita. Por favor, intenta de nuevo.'
+      mostrarToastError('Error al guardar', mensajeError)
+      console.error('❌ [ModalNuevaCita] Error:', resultado.error)
     }
   } catch (error: any) {
-    console.error('Error al guardar cita:', error)
+    console.error('❌ Error al guardar cita:', error)
     mostrarToastError('Error inesperado', error.message || 'Ocurrió un error al guardar la cita')
   } finally {
     guardando.value = false
@@ -1402,7 +1445,7 @@ function resetFormulario() {
   infoBono.value = {
     tiene_bono: false,
     sesiones_restantes: 0,
-    total_sesiones: 0,
+    sesiones_totales: 0,
     tipo_bono: '',
     bono_id: undefined
   }

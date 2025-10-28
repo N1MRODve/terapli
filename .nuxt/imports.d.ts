@@ -30,6 +30,7 @@ export { requestIdleCallback, cancelIdleCallback } from '#app/compat/idle-callba
 export { setInterval } from '#app/compat/interval';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
+export { COLORES_ESTADO, useAgenda, Cita, FiltrosAgenda, DisponibilidadTerapeuta, ResultadoCompletar } from '../composables/useAgenda';
 export { useBonos } from '../composables/useBonos';
 export { useCitas } from '../composables/useCitas';
 export { useInactivityDetector } from '../composables/useInactivityDetector';

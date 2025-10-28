@@ -19,12 +19,21 @@
             <span class="text-2xl">📅</span>
             Próximas Sesiones
           </h2>
-          <NuxtLink
-            to="/terapeuta/agenda"
-            class="text-sm text-terracota hover:text-cafe transition-colors"
-          >
-            Ver todas →
-          </NuxtLink>
+          <div class="flex items-center gap-2">
+            <NuxtLink
+              to="/agenda"
+              class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-full transition-colors"
+              title="Probar la nueva interfaz de agenda con dark mode y drag & drop"
+            >
+              🆕 Nueva Agenda
+            </NuxtLink>
+            <NuxtLink
+              to="/agenda"
+              class="text-sm text-terracota hover:text-cafe transition-colors"
+            >
+              Ver todas →
+            </NuxtLink>
+          </div>
         </div>
 
         <div class="space-y-4">
@@ -341,7 +350,35 @@ onMounted(async () => {
   if (user.value) {
     await cargarProximasCitas()
   }
+
+  // 📡 ESCUCHAR EVENTOS GLOBALES DE ACTUALIZACIÓN DE CITAS
+  if (process.client) {
+    window.addEventListener('citas:actualizadas', handleCitasActualizadas)
+    console.log('✅ [Dashboard] Listener de eventos globales registrado')
+  }
 })
+
+// Limpiar listener al desmontar
+onUnmounted(() => {
+  if (process.client) {
+    window.removeEventListener('citas:actualizadas', handleCitasActualizadas)
+    console.log('🧹 [Dashboard] Listener de eventos globales removido')
+  }
+})
+
+// Handler para actualización en tiempo real
+function handleCitasActualizadas(event: Event) {
+  const customEvent = event as CustomEvent
+  console.log('📡 [Dashboard] Evento recibido:', customEvent.detail)
+  
+  // Recargar citas automáticamente
+  cargarProximasCitas()
+  
+  // Mostrar notificación opcional
+  if (customEvent.detail?.paciente_nombre) {
+    console.log(`✅ Cita actualizada en dashboard: ${customEvent.detail.paciente_nombre}`)
+  }
+}
 
 // Datos simulados - Pacientes Activos
 const pacientesActivos = ref([

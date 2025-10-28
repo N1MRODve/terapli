@@ -162,9 +162,10 @@
                 class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
               >
                 <option value="">Selecciona tipo de bono</option>
-                <option value="a_demanda">A Demanda (1 sesión)</option>
+                <option value="otro">A Demanda (1 sesión)</option>
                 <option value="quincenal">Quincenal (2 sesiones/mes)</option>
                 <option value="semanal">Semanal (4 sesiones/mes)</option>
+                <option value="mensual">Mensual</option>
               </select>
               <p class="text-xs text-cafe/60 mt-1">
                 🎫 Define el tipo de bono del paciente
@@ -433,9 +434,10 @@ const error = ref('')
 // PRECIOS BASE POR TIPO DE BONO
 // ============================================================================
 const PRECIOS_BASE = {
-  a_demanda: 60,    // €60 por 1 sesión
+  otro: 60,         // €60 por 1 sesión (A Demanda)
   quincenal: 110,   // €110 por 2 sesiones (€55/sesión)
-  semanal: 200      // €200 por 4 sesiones (€50/sesión)
+  semanal: 200,     // €200 por 4 sesiones (€50/sesión)
+  mensual: 180      // €180 por 4 sesiones mensuales
 }
 
 // ============================================================================
@@ -448,9 +450,10 @@ const sesionesSegunTipo = computed(() => {
   if (!tipo) return 0
   
   const mapeo = {
-    a_demanda: 1,
+    otro: 1,        // A Demanda
     quincenal: 2,
-    semanal: 4
+    semanal: 4,
+    mensual: 4
   }
   
   return mapeo[tipo] || 0
@@ -460,9 +463,10 @@ const sesionesSegunTipo = computed(() => {
 const nombreTipoBono = computed(() => {
   const tipo = formulario.value.tipo_bono
   const nombres = {
-    a_demanda: 'A Demanda',
+    otro: 'A Demanda',
     quincenal: 'Quincenal',
-    semanal: 'Semanal'
+    semanal: 'Semanal',
+    mensual: 'Mensual'
   }
   return nombres[tipo] || 'No seleccionado'
 })
@@ -614,15 +618,15 @@ const guardarPaciente = async () => {
       throw new Error(`Error al crear paciente: ${rpcError.message}`)
     }
 
-    if (!rpcResult || !rpcResult.success) {
-      const errorMsg = rpcResult?.error || 'Error desconocido al crear paciente'
-      console.error('❌ RPC devolvió error:', rpcResult)
+    if (!rpcResult || !rpcResult.id) {
+      const errorMsg = 'Error desconocido al crear paciente'
+      console.error('❌ RPC devolvió resultado inválido:', rpcResult)
       throw new Error(errorMsg)
     }
 
     console.log('✅ Paciente creado exitosamente:', rpcResult)
-    const pacienteId = rpcResult.paciente_id
-    const profileId = rpcResult.profile_id
+    const pacienteId = rpcResult.id
+    const profileId = null // La RPC ya no crea profiles
 
     // 2. Crear registro de primera sesión programada si existe
     if (formulario.value.primera_sesion) {
@@ -659,7 +663,7 @@ const guardarPaciente = async () => {
         
         // Calcular fecha de fin según el tipo de bono
         const tipoBono = formulario.value.tipo_bono
-        if (tipoBono === 'a_demanda') {
+        if (tipoBono === 'otro') {
           // A demanda: 1 mes de validez
           const fecha = new Date()
           fecha.setMonth(fecha.getMonth() + 1)
@@ -669,6 +673,10 @@ const guardarPaciente = async () => {
           fecha.setDate(fecha.getDate() + 15)
           fechaFin = fecha.toISOString().split('T')[0]
         } else if (tipoBono === 'semanal') {
+          const fecha = new Date()
+          fecha.setMonth(fecha.getMonth() + 1)
+          fechaFin = fecha.toISOString().split('T')[0]
+        } else if (tipoBono === 'mensual') {
           const fecha = new Date()
           fecha.setMonth(fecha.getMonth() + 1)
           fechaFin = fecha.toISOString().split('T')[0]
@@ -686,14 +694,13 @@ const guardarPaciente = async () => {
           fecha_fin: fechaFin,
           estado: 'pendiente', // Pendiente hasta que se confirme el pago
           monto_total: formulario.value.bono_monto,
-          monto: formulario.value.bono_monto, // Mantener compatibilidad con ambas columnas
+          precio_por_sesion: (formulario.value.bono_monto / sesiones),
           pagado: false,
           renovacion_automatica: formulario.value.bono_renovacion_automatica,
           notas: `Bono creado al registrar paciente. ${nombreCompleto}`,
           metadata: {
             creado_con_paciente: true,
-            fecha_creacion: new Date().toISOString(),
-            precio_por_sesion: (formulario.value.bono_monto / sesiones).toFixed(2)
+            fecha_creacion: new Date().toISOString()
           }
         }
 
@@ -715,8 +722,8 @@ const guardarPaciente = async () => {
     // 5. TODO: Enviar email de invitación al paciente para que cree su cuenta
     // Esto se implementará más adelante con una función edge
 
-    // Emitir evento de éxito
-    emit('paciente-creado', pacienteData)
+    // Emitir evento de éxito con los datos del paciente
+    emit('paciente-creado', rpcResult)
     emit('cerrar')
     
     // Resetear formulario
