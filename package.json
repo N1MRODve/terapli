@@ -12,6 +12,7 @@
     "pwa:icons": "node scripts/generate-icons.cjs"
   },
   "dependencies": {
+    "@heroicons/vue": "^2.2.0",
     "@nuxtjs/supabase": "^2.0.1",
     "@vite-pwa/nuxt": "^1.0.7",
     "better-sqlite3": "^12.4.1",

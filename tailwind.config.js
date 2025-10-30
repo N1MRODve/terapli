@@ -20,10 +20,24 @@ module.exports = {
         
         // Terracota (marca principal)
         terracota: {
-          DEFAULT: '#C97C5D',
+          DEFAULT: '#B46E4B',
           light: '#E8BAAA',
           lighter: '#F2DCD3',
-          dark: '#B66A4E',
+          dark: '#9A5E3E',
+        },
+        
+        // Arena (fondo cálido)
+        arena: {
+          DEFAULT: '#F9F7F5',
+          light: '#FDFCFB',
+          dark: '#F5F2EE',
+        },
+        
+        // Verde suave
+        verde: {
+          DEFAULT: '#6BAE75',
+          light: '#A8D5AE',
+          dark: '#5A9463',
         },
         
         // Rosa complementario

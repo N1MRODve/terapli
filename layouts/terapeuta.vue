@@ -23,7 +23,7 @@
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
             >
-              <span class="text-xl">🏠</span>
+              <HomeIcon class="w-5 h-5" />
               <span class="font-medium">Inicio</span>
             </NuxtLink>
           </li>
@@ -33,7 +33,7 @@
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
             >
-              <span class="text-xl">👥</span>
+              <UserGroupIcon class="w-5 h-5" />
               <span class="font-medium">Pacientes</span>
             </NuxtLink>
           </li>
@@ -43,7 +43,7 @@
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
             >
-              <span class="text-xl">📅</span>
+              <CalendarIcon class="w-5 h-5" />
               <span class="font-medium">Agenda</span>
             </NuxtLink>
           </li>
@@ -53,7 +53,7 @@
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
             >
-              <span class="text-xl">💬</span>
+              <ChatBubbleLeftRightIcon class="w-5 h-5" />
               <span class="font-medium">Sesiones</span>
             </NuxtLink>
           </li>
@@ -63,7 +63,7 @@
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
             >
-              <span class="text-xl">💌</span>
+              <EnvelopeIcon class="w-5 h-5" />
               <span class="font-medium">Mensajería</span>
             </NuxtLink>
           </li>
@@ -73,7 +73,7 @@
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-terracota text-white hover:bg-terracota"
             >
-              <span class="text-xl">📚</span>
+              <BookOpenIcon class="w-5 h-5" />
               <span class="font-medium">Recursos</span>
             </NuxtLink>
           </li>
@@ -87,7 +87,7 @@
           class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
           active-class="bg-terracota text-white hover:bg-terracota"
         >
-          <span class="text-xl">⚙️</span>
+          <Cog6ToothIcon class="w-5 h-5" />
           <span class="font-medium">Configuración</span>
         </NuxtLink>
         
@@ -96,7 +96,7 @@
           @click="handleLogout"
           class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200"
         >
-          <span class="text-xl">🚪</span>
+          <ArrowRightOnRectangleIcon class="w-5 h-5" />
           <span class="font-medium">Cerrar sesión</span>
         </button>
       </div>
@@ -128,7 +128,7 @@
           @click="mobileMenuOpen = false"
           class="text-cafe hover:text-terracota transition-colors"
         >
-          <span class="text-2xl">✕</span>
+          <XMarkIcon class="w-6 h-6" />
         </button>
       </div>
 
@@ -142,7 +142,7 @@
               active-class="bg-terracota text-white hover:bg-terracota"
               @click="mobileMenuOpen = false"
             >
-              <span class="text-xl">🏠</span>
+              <HomeIcon class="w-5 h-5" />
               <span class="font-medium">Inicio</span>
             </NuxtLink>
           </li>
@@ -153,7 +153,7 @@
               active-class="bg-terracota text-white hover:bg-terracota"
               @click="mobileMenuOpen = false"
             >
-              <span class="text-xl">👥</span>
+              <UserGroupIcon class="w-5 h-5" />
               <span class="font-medium">Pacientes</span>
             </NuxtLink>
           </li>
@@ -164,7 +164,7 @@
               active-class="bg-terracota text-white hover:bg-terracota"
               @click="mobileMenuOpen = false"
             >
-              <span class="text-xl">📅</span>
+              <CalendarIcon class="w-5 h-5" />
               <span class="font-medium">Agenda</span>
             </NuxtLink>
           </li>
@@ -175,7 +175,7 @@
               active-class="bg-terracota text-white hover:bg-terracota"
               @click="mobileMenuOpen = false"
             >
-              <span class="text-xl">💬</span>
+              <ChatBubbleLeftRightIcon class="w-5 h-5" />
               <span class="font-medium">Sesiones</span>
             </NuxtLink>
           </li>
@@ -186,7 +186,7 @@
               active-class="bg-terracota text-white hover:bg-terracota"
               @click="mobileMenuOpen = false"
             >
-              <span class="text-xl">💌</span>
+              <EnvelopeIcon class="w-5 h-5" />
               <span class="font-medium">Mensajería</span>
             </NuxtLink>
           </li>
@@ -197,7 +197,7 @@
               active-class="bg-terracota text-white hover:bg-terracota"
               @click="mobileMenuOpen = false"
             >
-              <span class="text-xl">📚</span>
+              <BookOpenIcon class="w-5 h-5" />
               <span class="font-medium">Recursos</span>
             </NuxtLink>
           </li>
@@ -212,7 +212,7 @@
           active-class="bg-terracota text-white hover:bg-terracota"
           @click="mobileMenuOpen = false"
         >
-          <span class="text-xl">⚙️</span>
+          <Cog6ToothIcon class="w-5 h-5" />
           <span class="font-medium">Configuración</span>
         </NuxtLink>
         
@@ -221,7 +221,7 @@
           @click="handleLogout"
           class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200"
         >
-          <span class="text-xl">🚪</span>
+          <ArrowRightOnRectangleIcon class="w-5 h-5" />
           <span class="font-medium">Cerrar sesión</span>
         </button>
       </div>
@@ -238,7 +238,7 @@
               @click="mobileMenuOpen = !mobileMenuOpen"
               class="lg:hidden text-cafe hover:text-terracota transition-colors"
             >
-              <span class="text-2xl">☰</span>
+              <Bars3Icon class="w-6 h-6" />
             </button>
 
             <!-- Therapist Info -->
@@ -293,6 +293,19 @@
 </template>
 
 <script setup>
+import {
+  HomeIcon,
+  UserGroupIcon,
+  CalendarIcon,
+  ChatBubbleLeftRightIcon,
+  EnvelopeIcon,
+  BookOpenIcon,
+  Cog6ToothIcon,
+  ArrowRightOnRectangleIcon,
+  XMarkIcon,
+  Bars3Icon
+} from '@heroicons/vue/24/outline'
+
 const mobileMenuOpen = ref(false)
 const supabase = useSupabaseClient()
 const router = useRouter()
