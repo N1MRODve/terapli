@@ -37,7 +37,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Determinar la ruta base según el rol
   const roleBasePath: Record<string, string> = {
     psicologa: '/terapeuta',
-    coordinadora: '/coordinacion',
+    coordinadora: '/coordinadora',
     paciente: '/paciente'
   }
 

@@ -88,7 +88,7 @@
         <header class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-cafe">📊 Analítica del Profesional</h2>
         </header>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div class="p-4 bg-terracota/5 rounded-xl">
             <p class="text-2xl font-bold text-cafe">{{ totalPacientes }}</p>
             <p class="text-sm text-cafe/60">Pacientes activos</p>
@@ -101,6 +101,18 @@
             <p class="text-2xl font-bold text-cafe">{{ porcentajeAsistencia }}%</p>
             <p class="text-sm text-cafe/60">Asistencia promedio</p>
           </div>
+          <!-- Nueva tarjeta de Pagos Confirmados -->
+          <NuxtLink
+            to="/terapeuta/sesiones"
+            class="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all hover:shadow-md group"
+          >
+            <div class="flex items-center justify-center gap-2 mb-1">
+              <span class="text-2xl group-hover:scale-110 transition-transform">💶</span>
+              <p class="text-2xl font-bold text-green-700">{{ formatearPrecio(totalConfirmado) }}€</p>
+            </div>
+            <p class="text-sm text-cafe/60">Pagos confirmados</p>
+            <p class="text-xs text-green-700 font-medium mt-1">{{ totalBonosPagados }} {{ totalBonosPagados === 1 ? 'bono' : 'bonos' }}</p>
+          </NuxtLink>
         </div>
       </section>
 
@@ -169,6 +181,10 @@ const totalSesionesMes = ref(0)
 const porcentajeAsistencia = ref(0)
 const modalDetallesAbierto = ref(false)
 const citaSeleccionada = ref<string | null>(null)
+
+// Estado de pagos confirmados
+const totalConfirmado = ref(0)
+const totalBonosPagados = ref(0)
 
 // Recordatorios dinámicos basados en datos reales
 const recordatorios = ref<string[]>([])
@@ -456,6 +472,68 @@ async function generarRecordatorios() {
 }
 
 // ============================================================================
+// CARGAR PAGOS CONFIRMADOS
+// ============================================================================
+
+async function cargarPagosConfirmados() {
+  try {
+    if (!user.value?.email) return
+
+    // Obtener el terapeuta
+    const { data: terapeutaData } = await supabase
+      .from('terapeutas')
+      .select('id')
+      .eq('email', user.value.email)
+      .single()
+
+    if (!terapeutaData) return
+
+    // Obtener pacientes del terapeuta
+    const { data: pacientes } = await supabase
+      .from('pacientes')
+      .select('id')
+      .eq('terapeuta_id', terapeutaData.id)
+
+    if (!pacientes || pacientes.length === 0) {
+      totalConfirmado.value = 0
+      totalBonosPagados.value = 0
+      return
+    }
+
+    const pacienteIds = pacientes.map((p: any) => p.id)
+
+    // Cargar bonos pagados
+    const { data: bonos } = await supabase
+      .from('bonos')
+      .select('id, monto_total')
+      .eq('pagado', true)
+      .in('paciente_id', pacienteIds)
+
+    if (bonos && bonos.length > 0) {
+      totalBonosPagados.value = bonos.length
+      // Calcular el 70% del total (parte del terapeuta)
+      const montoTotal = bonos.reduce((sum: number, bono: any) => sum + (bono.monto_total || 0), 0)
+      totalConfirmado.value = montoTotal * 0.7
+    } else {
+      totalConfirmado.value = 0
+      totalBonosPagados.value = 0
+    }
+  } catch (error) {
+    console.error('Error al cargar pagos confirmados:', error)
+    totalConfirmado.value = 0
+    totalBonosPagados.value = 0
+  }
+}
+
+// ============================================================================
+// UTILIDADES
+// ============================================================================
+
+const formatearPrecio = (precio: number) => {
+  return precio.toFixed(2)
+}
+
+// ============================================================================
 // LIFECYCLE HOOKS
 // ============================================================================
 
@@ -464,6 +542,7 @@ onMounted(async () => {
   await cargarSesiones()
   await cargarPacientes()
   await cargarMetricas()
+  await cargarPagosConfirmados()
   await generarRecordatorios()
   
   // Escuchar eventos de actualización de citas

@@ -57,7 +57,7 @@ export const useRoles = () => {
     
     const paths: Record<UserRole, string> = {
       psicologa: '/terapeuta/dashboard',
-      coordinadora: '/coordinacion/dashboard',
+      coordinadora: '/coordinadora/dashboard',
       paciente: '/paciente/dashboard'
     }
     

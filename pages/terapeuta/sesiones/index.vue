@@ -93,6 +93,211 @@
       </div>
     </div>
 
+    <!-- Sección de Pagos Confirmados - Rediseño Profesional -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+      <!-- Header con resumen financiero integrado -->
+      <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 px-6 py-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center">
+              <span class="text-2xl">�</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-cafe">Pagos Confirmados</h2>
+              <p class="text-sm text-cafe/60 mt-0.5">Bonos procesados por coordinación</p>
+            </div>
+          </div>
+          
+          <!-- Resumen financiero compacto -->
+          <div class="flex items-center gap-6">
+            <div class="text-right">
+              <p class="text-xs text-cafe/50 uppercase font-semibold tracking-wide">Total Confirmado</p>
+              <p class="text-3xl font-bold text-green-700">{{ formatearPrecio(totalConfirmadoTerapeuta) }}€</p>
+              <p class="text-xs text-cafe/60 mt-0.5">{{ bonosPagados.length }} {{ bonosPagados.length === 1 ? 'bono' : 'bonos' }}</p>
+            </div>
+            <button
+              @click="mostrarPagosConfirmados = !mostrarPagosConfirmados"
+              class="w-10 h-10 rounded-lg bg-white/80 hover:bg-white border border-green-200 flex items-center justify-center text-green-700 hover:text-green-800 transition-all duration-200"
+              :class="{ 'rotate-180': mostrarPagosConfirmados }"
+            >
+              <span class="text-lg">▼</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de bonos expandible -->
+      <transition
+        enter-active-class="transition-all duration-300 ease-out"
+        leave-active-class="transition-all duration-200 ease-in"
+        enter-from-class="opacity-0 max-h-0"
+        enter-to-class="opacity-100 max-h-[2000px]"
+        leave-from-class="opacity-100 max-h-[2000px]"
+        leave-to-class="opacity-0 max-h-0"
+      >
+        <div v-show="mostrarPagosConfirmados">
+          <!-- Estado vacío -->
+          <div v-if="bonosPagados.length === 0" class="text-center py-12 px-6">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-cafe/5 flex items-center justify-center">
+              <span class="text-4xl">📭</span>
+            </div>
+            <p class="text-cafe/60 font-medium">No hay pagos confirmados aún</p>
+            <p class="text-sm text-cafe/40 mt-1">Los bonos pagados aparecerán aquí</p>
+          </div>
+
+          <!-- Listado de pagos -->
+          <div v-else class="divide-y divide-gray-100">
+            <div
+              v-for="(pago, index) in bonosPagados"
+              :key="pago.bono_id"
+              class="group hover:bg-green-50/30 transition-colors duration-150"
+            >
+              <!-- Fila compacta (siempre visible) -->
+              <div
+                @click="toggleDetallePago(pago.bono_id)"
+                class="px-6 py-4 cursor-pointer flex items-center gap-4"
+              >
+                <!-- Indicador visual de estado -->
+                <div class="flex-shrink-0 w-1 h-12 rounded-full bg-green-500"></div>
+
+                <!-- Avatar y nombre del paciente -->
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                  {{ obtenerIniciales(pago.paciente_nombre) }}
+                </div>
+
+                <div class="flex-1 min-w-0 grid grid-cols-5 gap-4 items-center">
+                  <!-- Nombre del paciente -->
+                  <div class="col-span-2">
+                    <p class="font-semibold text-cafe truncate">{{ pago.paciente_nombre }}</p>
+                    <p class="text-xs text-cafe/50 truncate">{{ pago.tipo_bono || 'Bono Estándar' }}</p>
+                  </div>
+
+                  <!-- Sesiones -->
+                  <div class="text-center">
+                    <p class="text-sm font-semibold text-cafe">{{ pago.sesiones_usadas }}/{{ pago.bono_sesiones_totales }}</p>
+                    <p class="text-xs text-cafe/50">sesiones</p>
+                  </div>
+
+                  <!-- Tu parte -->
+                  <div class="text-right">
+                    <p class="text-lg font-bold text-green-700">{{ formatearPrecio(pago.monto_total_terapeuta) }}€</p>
+                    <p class="text-xs text-cafe/50">tu parte (70%)</p>
+                  </div>
+
+                  <!-- Fecha y método -->
+                  <div class="text-right">
+                    <p class="text-sm font-medium text-cafe flex items-center justify-end gap-1.5">
+                      <span class="text-cafe/40">📅</span>
+                      {{ formatearFecha(pago.bono_fecha_pago) }}
+                    </p>
+                    <p class="text-xs text-cafe/50 capitalize flex items-center justify-end gap-1.5 mt-0.5">
+                      <span>💳</span>
+                      {{ pago.bono_metodo_pago || 'No especificado' }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Icono expandir -->
+                <div class="flex-shrink-0 ml-2">
+                  <span
+                    class="block w-6 h-6 rounded-full bg-cafe/5 group-hover:bg-cafe/10 flex items-center justify-center text-cafe/40 text-xs transition-all duration-200"
+                    :class="{ 'rotate-180': pagoExpandido === pago.bono_id }"
+                  >
+                    ▼
+                  </span>
+                </div>
+              </div>
+
+              <!-- Panel de detalles expandible -->
+              <transition
+                enter-active-class="transition-all duration-300 ease-out"
+                leave-active-class="transition-all duration-200 ease-in"
+                enter-from-class="opacity-0 max-h-0"
+                enter-to-class="opacity-100 max-h-96"
+                leave-from-class="opacity-100 max-h-96"
+                leave-to-class="opacity-0 max-h-0"
+              >
+                <div v-show="pagoExpandido === pago.bono_id" class="bg-gradient-to-b from-green-50/50 to-transparent">
+                  <div class="px-6 pb-6 pt-2 ml-16">
+                    <div class="bg-white rounded-xl border border-green-100 p-5 shadow-sm">
+                      <div class="grid grid-cols-3 gap-6">
+                        <!-- Columna 1: Información del paciente -->
+                        <div class="space-y-3">
+                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">📋 Paciente</p>
+                          <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Nombre:</span>
+                              <span class="font-medium text-cafe">{{ pago.paciente_nombre }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Email:</span>
+                              <span class="font-medium text-cafe text-xs truncate max-w-[150px]" :title="pago.paciente_email">{{ pago.paciente_email }}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Columna 2: Detalles del bono -->
+                        <div class="space-y-3">
+                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">🧾 Detalles del Bono</p>
+                          <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Tipo:</span>
+                              <span class="font-medium text-cafe">{{ pago.tipo_bono || 'Estándar' }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Sesiones totales:</span>
+                              <span class="font-medium text-cafe">{{ pago.bono_sesiones_totales }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Sesiones usadas:</span>
+                              <span class="font-medium text-cafe">{{ pago.sesiones_usadas }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Sesiones restantes:</span>
+                              <span class="font-semibold text-green-700">{{ pago.bono_sesiones_restantes }}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Columna 3: Información financiera -->
+                        <div class="space-y-3">
+                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">💰 Financiero</p>
+                          <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Monto total:</span>
+                              <span class="font-bold text-cafe">{{ formatearPrecio(pago.bono_monto_total) }}€</span>
+                            </div>
+                            <div class="flex justify-between text-sm bg-green-50 px-2 py-1.5 rounded-lg">
+                              <span class="text-cafe/60 font-medium">Tu parte (70%):</span>
+                              <span class="font-bold text-green-700">{{ formatearPrecio(pago.monto_total_terapeuta) }}€</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                              <span class="text-cafe/60">Por sesión:</span>
+                              <span class="font-medium text-cafe/80">{{ formatearPrecio(pago.precio_por_sesion) }}€</span>
+                            </div>
+                            <div class="pt-2 border-t border-green-100 mt-3">
+                              <div class="flex justify-between text-xs text-cafe/50 mb-1">
+                                <span>Método de pago:</span>
+                                <span class="font-medium capitalize">{{ pago.bono_metodo_pago || 'No especificado' }}</span>
+                              </div>
+                              <div class="flex justify-between text-xs text-cafe/50">
+                                <span>Fecha de pago:</span>
+                                <span class="font-medium">{{ formatearFecha(pago.bono_fecha_pago) }}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+
     <!-- Filtros y Búsqueda -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -299,13 +504,22 @@
 
               <!-- Bono -->
               <td class="px-6 py-4 whitespace-nowrap">
-                <div v-if="sesion.bono" class="text-xs">
+                <div v-if="sesion.bono" class="text-xs space-y-1">
                   <div class="flex items-center gap-1 text-green-600">
                     <span>✓</span>
                     <span>Con bono</span>
                   </div>
-                  <div class="text-cafe/50 mt-0.5">
+                  <div class="text-cafe/50">
                     {{ sesion.bono.sesiones_restantes || 0 }}/{{ sesion.bono.sesiones_totales || 0 }} restantes
+                  </div>
+                  <!-- Estado de pago del bono -->
+                  <div v-if="sesion.bono.pagado" class="flex items-center gap-1 text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
+                    <span>💳</span>
+                    <span class="font-semibold">Pagado</span>
+                  </div>
+                  <div v-else class="flex items-center gap-1 text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full animate-pulse">
+                    <span>⏳</span>
+                    <span class="font-semibold">Pend. pago</span>
                   </div>
                 </div>
                 <div v-else class="text-xs text-cafe/50">
@@ -370,6 +584,7 @@ const user = useSupabaseUser()
 const cargando = ref(true)
 const error = ref<string | null>(null)
 const sesiones = ref<any[]>([])
+const bonosPagadosDirectos = ref<any[]>([]) // Bonos pagados cargados directamente
 const filtros = ref({
   busqueda: '',
   estado: '',
@@ -377,6 +592,8 @@ const filtros = ref({
 })
 const mostrarModalDetalles = ref(false)
 const citaSeleccionada = ref<string | null>(null)
+const mostrarPagosConfirmados = ref(true) // Mostrar por defecto la sección de pagos
+const pagoExpandido = ref<string | null>(null) // ID del pago que está expandido
 
 // Computed - Filtrar sesiones
 const sesionesFiltradas = computed(() => {
@@ -444,31 +661,86 @@ const resumenFinanciero = computed(() => {
   }
 
   sesionesFiltradas.value.forEach(sesion => {
-    const monto = sesion.precio_estimado || PRECIO_SESION_DEFAULT
-    const monteTerapeuta = monto * 0.7
+    // Usar el monto calculado para la terapeuta desde la vista
+    const montoTerapeuta = sesion.monto_terapeuta || (sesion.precio_estimado || PRECIO_SESION_DEFAULT) * 0.7
 
     switch (sesion.estado) {
       case 'pendiente':
         resultado.pendientes++
-        resultado.montoPendiente += monteTerapeuta
+        // Si tiene bono pagado, suma a confirmado, si no a pendiente
+        if (sesion.esta_pagado || sesion.bono?.pagado) {
+          resultado.montoConfirmado += montoTerapeuta
+        } else {
+          resultado.montoPendiente += montoTerapeuta
+        }
         break
       case 'confirmada':
         resultado.confirmadas++
-        resultado.montoConfirmado += monteTerapeuta
+        // Si tiene bono pagado, es ingreso confirmado
+        if (sesion.esta_pagado || sesion.bono?.pagado) {
+          resultado.montoConfirmado += montoTerapeuta
+        } else {
+          resultado.montoPendiente += montoTerapeuta
+        }
         break
       case 'realizada':
       case 'completada':
         resultado.completadas++
-        resultado.montoCompletado += monteTerapeuta
+        // Las completadas con bono pagado van a confirmado, si no a por cobrar
+        if (sesion.esta_pagado || sesion.bono?.pagado) {
+          resultado.montoConfirmado += montoTerapeuta
+        } else {
+          resultado.montoCompletado += montoTerapeuta
+        }
         break
       case 'cancelada':
         resultado.canceladas++
-        resultado.montoCancelado += monteTerapeuta
+        resultado.montoCancelado += montoTerapeuta
         break
     }
   })
 
   return resultado
+})
+
+// Computed - Bonos pagados (usa datos cargados directamente de la tabla bonos)
+const bonosPagados = computed(() => {
+  return bonosPagadosDirectos.value.map(bono => {
+    // Calcular sesiones usadas
+    const sesionesUsadas = (bono.sesiones_totales || 0) - (bono.sesiones_restantes || 0)
+    
+    // Calcular precio por sesión y monto para terapeuta
+    const precioSesion = bono.sesiones_totales > 0 ? bono.monto_total / bono.sesiones_totales : 0
+    const montoTerapeuta = bono.monto_total * 0.7
+    
+    return {
+      bono_id: bono.id,
+      paciente_id: bono.paciente_id,
+      paciente_nombre: bono.paciente_nombre,
+      paciente_email: bono.paciente_email,
+      bono_sesiones_totales: bono.sesiones_totales,
+      bono_sesiones_restantes: bono.sesiones_restantes,
+      bono_monto_total: bono.monto_total,
+      bono_fecha_pago: bono.fecha_pago,
+      bono_metodo_pago: bono.metodo_pago,
+      tipo_bono: bono.tipo_bono || 'Estándar',
+      sesiones_usadas: sesionesUsadas,
+      precio_por_sesion: precioSesion,
+      monto_total_terapeuta: montoTerapeuta
+    }
+  }).sort((a, b) => {
+    // Ordenar por fecha de pago (más reciente primero)
+    const fechaA = new Date(a.bono_fecha_pago || 0)
+    const fechaB = new Date(b.bono_fecha_pago || 0)
+    return fechaB.getTime() - fechaA.getTime()
+  })
+})
+
+// Computed - Total confirmado para la terapeuta
+const totalConfirmadoTerapeuta = computed(() => {
+  return bonosPagados.value.reduce((total, bono) => {
+    return total + (bono.monto_total_terapeuta || 0)
+  }, 0)
 })
 
 // Cargar sesiones
@@ -508,44 +780,52 @@ const cargarSesiones = async () => {
     
     console.log('🔍 Terapeuta encontrado:', terapeuta)
 
-    // Cargar todas las citas del terapeuta con información del paciente y bono
-    const { data, error: errorCitas } = await supabase
-      .from('citas')
-      .select(`
-        *,
-        paciente:pacientes!citas_paciente_id_fkey (
-          id,
-          nombre_completo,
-          email,
-          telefono
-        ),
-        bono:bonos!citas_bono_id_fkey (
-          id,
-          sesiones_totales,
-          sesiones_restantes
-        )
-      `)
+    // Cargar todas las sesiones usando la vista con información de pago
+    const { data, error: errorSesiones } = await supabase
+      .from('vista_sesiones_psicologa')
+      .select('*')
       .eq('terapeuta_id', terapeuta.id)
-      .order('fecha_cita', { ascending: false })
+      .order('fecha', { ascending: false })
 
-    if (errorCitas) {
-      console.error('❌ Error al cargar citas:', errorCitas)
-      throw errorCitas
+    if (errorSesiones) {
+      console.error('❌ Error al cargar sesiones:', errorSesiones)
+      throw errorSesiones
     }
     
-    console.log('📅 Citas cargadas:', data?.length || 0, data)
+    console.log('📅 Sesiones cargadas:', data?.length || 0, data)
 
-    // Asignar precio estimado (50€ por defecto o calcular según tipo)
+    // Mapear las sesiones con la información de pago
     sesiones.value = (data || []).map(sesion => {
       console.log('🔍 Sesión individual:', {
         id: sesion.id,
         bono_id: sesion.bono_id,
-        bono: sesion.bono,
-        paciente: sesion.paciente?.nombre_completo
+        bono_pagado: sesion.bono_pagado,
+        esta_pagado: sesion.esta_pagado,
+        categoria_financiera: sesion.categoria_financiera,
+        precio_sesion: sesion.precio_sesion,
+        monto_terapeuta: sesion.monto_terapeuta,
+        paciente: sesion.paciente_nombre
       })
+      
       return {
         ...sesion,
-        precio_estimado: PRECIO_SESION_DEFAULT
+        // Mantener compatibilidad con código existente
+        precio_estimado: sesion.precio_sesion || PRECIO_SESION_DEFAULT,
+        paciente: {
+          id: sesion.paciente_id,
+          nombre_completo: sesion.paciente_nombre,
+          email: sesion.paciente_email,
+          telefono: sesion.paciente_telefono
+        },
+        bono: sesion.bono_id ? {
+          id: sesion.bono_id,
+          sesiones_totales: sesion.bono_sesiones_totales,
+          sesiones_restantes: sesion.bono_sesiones_restantes,
+          monto_total: sesion.bono_monto_total,
+          pagado: sesion.bono_pagado,
+          fecha_pago: sesion.bono_fecha_pago,
+          metodo_pago: sesion.bono_metodo_pago
+        } : null
       }
     })
     
@@ -556,6 +836,89 @@ const cargarSesiones = async () => {
     error.value = err.message || 'Error desconocido al cargar las sesiones'
   } finally {
     cargando.value = false
+  }
+}
+
+// Cargar bonos pagados directamente
+const cargarBonosPagados = async () => {
+  try {
+    // Esperar a que el usuario esté disponible
+    if (!user.value) {
+      console.log('Usuario no disponible aún para cargar bonos')
+      return
+    }
+
+    console.log('🔍 Cargando bonos pagados...')
+
+    // Obtener el terapeuta usando el email del usuario
+    const { data: terapeuta, error: errorTerapeuta } = await supabase
+      .from('terapeutas')
+      .select('id')
+      .eq('email', user.value.email)
+      .single()
+
+    if (errorTerapeuta || !terapeuta) {
+      console.error('❌ Error al buscar terapeuta:', errorTerapeuta)
+      return
+    }
+
+    console.log('👩‍⚕️ Terapeuta encontrado:', terapeuta.id)
+
+    // Primero obtener los IDs de los pacientes de este terapeuta
+    const { data: pacientes, error: errorPacientes } = await supabase
+      .from('pacientes')
+      .select('id')
+      .eq('terapeuta_id', terapeuta.id)
+
+    if (errorPacientes || !pacientes || pacientes.length === 0) {
+      console.log('No hay pacientes asignados a este terapeuta')
+      bonosPagadosDirectos.value = []
+      return
+    }
+
+    const pacienteIds = pacientes.map(p => p.id)
+    console.log('📋 Pacientes encontrados:', pacienteIds.length)
+
+    // Cargar bonos pagados de estos pacientes
+    const { data: bonos, error: errorBonos } = await supabase
+      .from('bonos')
+      .select(`
+        id,
+        paciente_id,
+        sesiones_totales,
+        sesiones_restantes,
+        monto_total,
+        tipo_bono,
+        fecha_pago,
+        metodo_pago,
+        pagado,
+        paciente:pacientes!bonos_paciente_id_fkey (
+          nombre_completo,
+          email
+        )
+      `)
+      .eq('pagado', true)
+      .in('paciente_id', pacienteIds)
+      .order('fecha_pago', { ascending: false })
+
+    if (errorBonos) {
+      console.error('❌ Error al cargar bonos pagados:', errorBonos)
+      return
+    }
+
+    console.log('💳 Bonos pagados encontrados:', bonos?.length || 0)
+
+    // Transformar los datos
+    bonosPagadosDirectos.value = (bonos || []).map(bono => ({
+      ...bono,
+      paciente_nombre: bono.paciente?.nombre_completo,
+      paciente_email: bono.paciente?.email
+    }))
+
+    console.log('✅ Bonos pagados cargados:', bonosPagadosDirectos.value.length)
+
+  } catch (err: any) {
+    console.error('Error al cargar bonos pagados:', err)
   }
 }
 
@@ -571,6 +934,15 @@ const cerrarModalDetalles = () => {
   citaSeleccionada.value = null
 }
 
+// Toggle detalles de pago
+const toggleDetallePago = (bonoId: string) => {
+  if (pagoExpandido.value === bonoId) {
+    pagoExpandido.value = null
+  } else {
+    pagoExpandido.value = bonoId
+  }
+}
+
 // Formatear precio
 const formatearPrecio = (precio: number) => {
   return precio.toFixed(2)
@@ -578,11 +950,27 @@ const formatearPrecio = (precio: number) => {
 
 // Formatear fecha
 const formatearFecha = (fecha: string) => {
-  const date = new Date(fecha + 'T00:00:00')
+  if (!fecha) return '-'
+  const date = new Date(fecha)
+  if (isNaN(date.getTime())) return '-'
   return date.toLocaleDateString('es-ES', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
+  })
+}
+
+// Formatear fecha con hora
+const formatearFechaHora = (fecha: string) => {
+  if (!fecha) return '-'
+  const date = new Date(fecha)
+  if (isNaN(date.getTime())) return '-'
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   })
 }
 
@@ -649,5 +1037,6 @@ const obtenerTextoEstado = (estado: string) => {
 // Lifecycle
 onMounted(() => {
   cargarSesiones()
+  cargarBonosPagados()
 })
 </script>

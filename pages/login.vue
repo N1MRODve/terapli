@@ -187,7 +187,7 @@ const redirectBasedOnRole = async (userId?: string) => {
     // Mapeo de roles a rutas
     const roleRoutes: Record<string, string> = {
       psicologa: '/terapeuta/dashboard',
-      coordinadora: '/coordinacion/dashboard',
+      coordinadora: '/coordinadora/dashboard',
       paciente: '/paciente/dashboard'
     }
 
