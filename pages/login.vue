@@ -189,11 +189,19 @@ const redirectBasedOnRole = async (userId?: string) => {
       psicologa: '/terapeuta/dashboard',
       terapeuta: '/terapeuta/dashboard',
       coordinadora: '/coordinadora/dashboard',
-      admin: '/admin',
-      paciente: '/paciente/dashboard'
+      admin: '/admin'
     }
 
-    const redirectTo = roleRoutes[userRole] || '/paciente/dashboard'
+    const redirectTo = roleRoutes[userRole]
+    
+    if (!redirectTo) {
+      console.error(`[Login] Rol no reconocido: '${userRole}'`)
+      errorMessage.value = `Acceso no autorizado. Tu rol '${userRole}' no tiene permisos para acceder al sistema.`
+      // Cerrar sesión si el rol no es válido
+      const supabase = useSupabaseClient()
+      await supabase.auth.signOut()
+      return
+    }
     
     console.log(`[Login] Redirigiendo usuario con rol '${userRole}' a ${redirectTo}`)
     await navigateTo(redirectTo, { replace: true })
