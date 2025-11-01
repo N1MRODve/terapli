@@ -41,7 +41,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     // 3. Verificar que el usuario tenga rol de terapeuta, psicóloga, admin o coordinadora
     const userRole = (profileData as any)?.rol
-    const rolesPermitidos = ['psicologa', 'admin', 'coordinadora']
+    const rolesPermitidos = ['terapeuta', 'psicologa', 'admin', 'coordinadora']
     
     if (!userRole || !rolesPermitidos.includes(userRole)) {
       console.log(`[Middleware] Usuario con rol '${userRole}' sin acceso, redirigiendo a home`)

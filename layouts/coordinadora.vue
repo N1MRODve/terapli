@@ -39,6 +39,18 @@
           </li>
           <li>
             <NuxtLink
+              to="/coordinadora/confirmaciones"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-cafe/5 transition-colors duration-200"
+              active-class="bg-cafe/10 text-cafe font-semibold"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+              </svg>
+              <span class="font-medium">Confirmaciones</span>
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink
               to="/coordinadora/pacientes"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-cafe/5 transition-colors duration-200"
               active-class="bg-cafe/10 text-cafe font-semibold"
@@ -145,6 +157,19 @@
             >
               <CalendarIcon class="w-5 h-5" />
               <span class="font-medium">Agenda</span>
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink
+              to="/coordinadora/confirmaciones"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-cafe/5 transition-colors duration-200"
+              active-class="bg-cafe/10 text-cafe font-semibold"
+              @click="mobileMenuOpen = false"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+              </svg>
+              <span class="font-medium">Confirmaciones</span>
             </NuxtLink>
           </li>
           <li>
@@ -294,6 +319,7 @@ const pageTitle = computed(() => {
   const path = route.path
   if (path.includes('/dashboard')) return 'Dashboard'
   if (path.includes('/agenda')) return 'Agenda'
+  if (path.includes('/confirmaciones')) return 'Confirmaciones'
   if (path.includes('/pacientes')) return 'Pacientes'
   if (path.includes('/recordatorios')) return 'Recordatorios'
   if (path.includes('/mensajes')) return 'Mensajes'

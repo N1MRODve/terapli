@@ -599,6 +599,53 @@ export const useCitas = () => {
   }
 
   /**
+   * Cancelar cita con opción de reintegrar sesión al bono
+   */
+  const cancelarCitaConReintegro = async (
+    citaId: string, 
+    bonoId: string | null, 
+    reintegrar: boolean = false
+  ): Promise<ResultadoOperacion> => {
+    if (!process.client) return { success: false }
+
+    try {
+      // Si no hay bono, usar el método de cancelación simple
+      if (!bonoId) {
+        return await cancelarCita(citaId)
+      }
+
+      // Llamar a la función RPC para cancelar con opción de reintegro
+      const { data, error } = await supabase.rpc('fn_reintegrar_sesion_bono', {
+        p_cita_id: citaId,
+        p_bono_id: bonoId,
+        p_reintegrar: reintegrar
+      })
+
+      if (error) {
+        console.error('❌ Error al cancelar cita con reintegro:', error)
+        return { success: false, error: error.message }
+      }
+
+      if (!data || !data.success) {
+        return { 
+          success: false, 
+          error: data?.error || 'Error al cancelar cita' 
+        }
+      }
+
+      console.log('✅ Cita cancelada:', data)
+      return { 
+        success: true, 
+        data: data,
+        message: data.message
+      }
+    } catch (error: any) {
+      console.error('❌ Error al cancelar cita con reintegro:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
    * Eliminar una cita permanentemente (solo staff)
    */
   const eliminarCita = async (citaId: string): Promise<ResultadoOperacion> => {
@@ -1204,6 +1251,7 @@ export const useCitas = () => {
     actualizarEstadoCita,
     actualizarCita,
     cancelarCita,
+    cancelarCitaConReintegro,
     eliminarCita,
     
     // Bonos

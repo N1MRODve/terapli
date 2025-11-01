@@ -80,12 +80,12 @@
     <!-- Información de sesiones -->
     <div class="space-y-2 mb-4">
       <div class="flex items-center gap-2 text-sm text-cafe/70">
-        <span class="text-terracota">📅</span>
+        <CalendarIcon class="w-4 h-4 text-terracota" />
         <span>Última sesión: {{ ultimaSesion }}</span>
       </div>
       
       <div class="flex items-center gap-2 text-sm text-cafe/70">
-        <span class="text-terracota">⏰</span>
+        <ClockIcon class="w-4 h-4 text-terracota" />
         <span>Próxima: </span>
         <button
           v-if="proximaSesion"
@@ -106,7 +106,7 @@
       </div>
 
       <div class="flex items-center gap-2 text-sm text-cafe/70">
-        <span class="text-terracota">�</span>
+        <CheckCircleIcon class="w-4 h-4 text-terracota" />
         <span>{{ totalSesiones }} sesiones completadas</span>
       </div>
     </div>
@@ -117,7 +117,7 @@
         <!-- Tipo de Bono -->
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2 text-sm">
-            <span class="text-terracota">🎟️</span>
+            <TicketIcon class="w-4 h-4 text-terracota" />
             <span class="font-medium text-cafe">Bono:</span>
             <span 
               class="px-2 py-0.5 rounded-md text-xs font-semibold"
@@ -132,21 +132,21 @@
             class="px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
             :class="estadoBonoClasses"
           >
-            <span>💰</span>
+            <CurrencyDollarIcon class="w-3 h-3" />
             <span>{{ estadoBonoTexto }}</span>
           </span>
         </div>
 
         <!-- Fecha fin -->
         <div class="flex items-center gap-2 text-sm text-cafe/80">
-          <span class="text-terracota">�</span>
+          <CalendarIcon class="w-4 h-4 text-terracota" />
           <span class="font-medium">Fin:</span>
           <span :class="fechaFinClasses">{{ fechaFinTexto }}</span>
         </div>
 
         <!-- Sesiones X/Y -->
         <div class="flex items-center gap-2 text-sm">
-          <span class="text-terracota">🧭</span>
+          <ChartBarIcon class="w-4 h-4 text-terracota" />
           <span class="font-medium text-cafe">
             Sesiones: 
             <span :class="sesionesColorClass">
@@ -194,7 +194,7 @@
         v-if="tieneAlertaBonoCritica"
         class="flex items-start gap-2 p-3 bg-red-50 border border-red-300 rounded-lg animate-pulse-subtle"
       >
-        <span class="text-red-600 text-sm">🎫</span>
+        <ExclamationTriangleIcon class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
         <div class="flex-1">
           <p class="text-xs font-semibold text-red-800 mb-0.5">
             Bono casi agotado
@@ -210,7 +210,7 @@
         v-else-if="tieneAlertaBonoAdvertencia"
         class="flex items-start gap-2 p-3 bg-amber-50 border border-amber-300 rounded-lg"
       >
-        <span class="text-amber-600 text-sm">🎫</span>
+        <ExclamationCircleIcon class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
         <div class="flex-1">
           <p class="text-xs font-semibold text-amber-800 mb-0.5">
             Bono próximo a agotar
@@ -226,7 +226,7 @@
         v-if="tieneAlertaInactividad"
         class="flex items-start gap-2 p-3 bg-red-50 border border-red-300 rounded-lg animate-pulse-subtle"
       >
-        <span class="text-red-600 text-sm">🚨</span>
+        <BellAlertIcon class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
         <div class="flex-1">
           <p class="text-xs font-semibold text-red-800 mb-0.5">
             Riesgo de abandono
@@ -242,7 +242,7 @@
         v-if="tieneAlertaEmocional"
         class="flex items-start gap-2 p-3 bg-orange-50 border border-orange-200 rounded-lg"
       >
-        <span class="text-orange-500 text-sm">⚠️</span>
+        <ExclamationCircleIcon class="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
         <p class="text-xs text-orange-800">
           Requiere seguimiento especial por estado emocional
         </p>
@@ -252,6 +252,18 @@
 </template>
 
 <script setup>
+import { 
+  CalendarIcon, 
+  ClockIcon, 
+  CheckCircleIcon, 
+  TicketIcon, 
+  CurrencyDollarIcon, 
+  ChartBarIcon,
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
+  BellAlertIcon
+} from '@heroicons/vue/24/outline'
+
 const props = defineProps({
   paciente: {
     type: Object,
@@ -300,9 +312,9 @@ const avatarColor = computed(() => {
 // Estado emocional (basado en últimos registros)
 const estadoEmocional = computed(() => {
   const promedio = props.paciente.estado_emocional_promedio || 3
-  if (promedio >= 4) return '😊'
+  if (promedio >= 4) return '�'
   if (promedio >= 3) return '😐'
-  return '😔'
+  return '�'
 })
 
 const estadoEmocionalTexto = computed(() => {

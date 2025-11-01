@@ -22,9 +22,7 @@
               placeholder="Buscar paciente por nombre..."
               class="w-full px-4 py-2.5 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all text-cafe placeholder-cafe/50"
             />
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-cafe/50">
-              🔍
-            </span>
+            <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-cafe/50" />
           </div>
         </div>
 
@@ -39,7 +37,7 @@
               ? 'bg-terracota text-white' 
               : 'bg-base-bg text-cafe hover:bg-rosa/30'"
           >
-            {{ filtro.emoji }} {{ filtro.label }}
+            {{ filtro.label }}
           </button>
         </div>
 
@@ -62,7 +60,7 @@
 
     <div v-else-if="pacientesFiltrados.length === 0" class="text-center py-12">
       <DashboardCard>
-        <span class="text-6xl mb-4 block opacity-40">👥</span>
+        <UserGroupIcon class="w-24 h-24 mx-auto mb-4 text-cafe/40" />
         <h3 class="text-xl font-serif font-semibold text-cafe mb-2">
           {{ busqueda || estadoSeleccionado !== 'todos' 
             ? 'No se encontraron pacientes' 
@@ -106,7 +104,7 @@
           class="hidden md:flex absolute bottom-4 right-4 px-4 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
           title="Asignar nueva cita"
         >
-          <span>📅</span>
+          <CalendarDaysIcon class="w-4 h-4" />
           <span>Asignar Cita</span>
         </button>
         
@@ -117,7 +115,7 @@
           class="md:hidden absolute bottom-4 right-4 px-4 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
           title="Asignar nueva cita"
         >
-          <span>📅</span>
+          <CalendarDaysIcon class="w-4 h-4" />
           <span>Asignar Cita</span>
         </button>
       </div>
@@ -180,6 +178,8 @@
 </template>
 
 <script setup>
+import { MagnifyingGlassIcon, UserGroupIcon, CalendarDaysIcon } from '@heroicons/vue/24/outline'
+
 definePageMeta({
   layout: 'terapeuta'
 })
@@ -190,7 +190,7 @@ const { getUserId, waitForUser } = useSupabase()
 const user = useSupabaseUser()
 
 // Log inicial del estado del usuario
-console.log('👤 [Pacientes] Estado inicial del usuario:', {
+console.log('[Pacientes] Estado inicial del usuario:', {
   existe: !!user.value,
   id: getUserId(),
   email: user.value?.email
@@ -198,7 +198,7 @@ console.log('👤 [Pacientes] Estado inicial del usuario:', {
 
 // Watch para detectar cambios en el usuario
 watch(user, (newUser, oldUser) => {
-  console.log('🔄 [Pacientes] Usuario cambió:', {
+  console.log('[Pacientes] Usuario cambió:', {
     antes: oldUser?.email || 'null',
     ahora: newUser?.email || 'null',
     id: getUserId()
@@ -223,10 +223,10 @@ const estadoSeleccionado = ref('todos')
 
 // Filtros disponibles
 const filtrosEstado = [
-  { valor: 'todos', label: 'Todos', emoji: '📋' },
-  { valor: 'activo', label: 'Activos', emoji: '✅' },
-  { valor: 'pausa', label: 'En pausa', emoji: '⏸️' },
-  { valor: 'finalizado', label: 'Finalizados', emoji: '🏁' }
+  { valor: 'todos', label: 'Todos' },
+  { valor: 'activo', label: 'Activos' },
+  { valor: 'pausa', label: 'En pausa' },
+  { valor: 'finalizado', label: 'Finalizados' }
 ]
 
 // Cargar pacientes desde Supabase
@@ -234,8 +234,8 @@ const cargarPacientes = async () => {
   loading.value = true
   try {
     const userId = getUserId()
-    console.log('📥 [Pacientes] Iniciando carga de pacientes...')
-    console.log('📥 [Pacientes] Usuario actual:', {
+    console.log('[Pacientes] Iniciando carga de pacientes...')
+    console.log('[Pacientes] Usuario actual:', {
       existe: !!user.value,
       id: userId,
       email: user.value?.email
@@ -243,7 +243,7 @@ const cargarPacientes = async () => {
     
     // Verificar que el usuario esté autenticado
     if (!userId) {
-      console.error('❌ [Pacientes] Usuario no autenticado')
+      console.error('[Pacientes] Usuario no autenticado')
       loading.value = false
       return
     }
@@ -311,7 +311,7 @@ const cargarPacientes = async () => {
             .eq('paciente_id', paciente.id)
             .order('created_at', { ascending: false })
 
-          console.log(`📋 [Bonos] Paciente ${paciente.nombre_completo}:`, todosLosBonos)
+          console.log(`[Bonos] Paciente ${paciente.nombre_completo}:`, todosLosBonos)
 
           const { data: bonoData, error: bonoError } = await supabase
             .from('bonos')
@@ -547,7 +547,7 @@ const manejarCitaCreada = async (nuevaCita) => {
 
 // Función para ver las citas de un paciente
 const verCitasPaciente = (paciente) => {
-  // 📌 Redirigir a la nueva agenda con filtro de paciente
+  // Redirigir a la nueva agenda con filtro de paciente
   router.push(`/agenda?paciente=${paciente.id}`)
 }
 
@@ -580,15 +580,15 @@ const handleCitaActualizada = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  console.log('🚀 [Pacientes] Componente montado')
+  console.log('[Pacientes] Componente montado')
   
   try {
     // Esperar a que el usuario y el perfil estén completamente cargados
-    console.log('⏳ [Pacientes] Esperando a que el usuario esté disponible...')
+    console.log('[Pacientes] Esperando a que el usuario esté disponible...')
     await waitForUser()
     
     const userId = getUserId()
-    console.log('👤 [Pacientes] Usuario después de waitForUser:', {
+    console.log('[Pacientes] Usuario después de waitForUser:', {
       existe: !!user.value,
       id: userId,
       email: user.value?.email
@@ -609,12 +609,12 @@ onMounted(async () => {
 
 // Watch para recargar si el usuario cambia
 watch(() => getUserId(), (newUserId, oldUserId) => {
-  console.log('🔄 [Pacientes] ID de usuario cambió:', {
+  console.log('[Pacientes] ID de usuario cambió:', {
     antes: oldUserId,
     ahora: newUserId
   })
   if (newUserId && pacientes.value.length === 0) {
-    console.log('📥 [Pacientes] Recargando pacientes por cambio de usuario...')
+    console.log('[Pacientes] Recargando pacientes por cambio de usuario...')
     cargarPacientes()
   }
 })

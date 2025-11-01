@@ -39,6 +39,7 @@ interface _GlobalComponents {
   'LoadingSpinner': typeof import("../../components/LoadingSpinner.vue")['default']
   'MensajeCard': typeof import("../../components/MensajeCard.vue")['default']
   'MensajeInput': typeof import("../../components/MensajeInput.vue")['default']
+  'ModalCancelarCita': typeof import("../../components/ModalCancelarCita.vue")['default']
   'ModalCompartirRecurso': typeof import("../../components/ModalCompartirRecurso.vue")['default']
   'ModalDetallesCita': typeof import("../../components/ModalDetallesCita.vue")['default']
   'ModalEditarCita': typeof import("../../components/ModalEditarCita.vue")['default']
@@ -168,6 +169,7 @@ interface _GlobalComponents {
   'LazyLoadingSpinner': LazyComponent<typeof import("../../components/LoadingSpinner.vue")['default']>
   'LazyMensajeCard': LazyComponent<typeof import("../../components/MensajeCard.vue")['default']>
   'LazyMensajeInput': LazyComponent<typeof import("../../components/MensajeInput.vue")['default']>
+  'LazyModalCancelarCita': LazyComponent<typeof import("../../components/ModalCancelarCita.vue")['default']>
   'LazyModalCompartirRecurso': LazyComponent<typeof import("../../components/ModalCompartirRecurso.vue")['default']>
   'LazyModalDetallesCita': LazyComponent<typeof import("../../components/ModalDetallesCita.vue")['default']>
   'LazyModalEditarCita': LazyComponent<typeof import("../../components/ModalEditarCita.vue")['default']>

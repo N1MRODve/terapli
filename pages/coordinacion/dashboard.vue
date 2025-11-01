@@ -171,7 +171,7 @@
                 <p class="text-xs text-[#8B7470]">{{ formatearFechaCorta(pago.created_at) }}</p>
               </div>
               <div class="text-right">
-                <p class="font-semibold text-[#5D4A44]">${{ pago.monto }}</p>
+                <p class="font-semibold text-[#5D4A44]">{{ formatNumber(parseFloat(pago.monto)) }}</p>
                 <span
                   class="text-xs px-2 py-1 rounded-full"
                   :class="getPagoEstadoClass(pago.estado)"
@@ -286,6 +286,15 @@ const obtenerIniciales = (nombre: string) => {
     .join('')
     .toUpperCase()
     .substring(0, 2)
+}
+
+const formatNumber = (num: number) => {
+  return num.toLocaleString('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
 }
 
 const getEstadoClass = (estado: string) => {

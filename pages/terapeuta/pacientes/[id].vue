@@ -1020,18 +1020,41 @@ const cerrarModalDetalles = () => {
 
 const confirmarCita = async (citaId: string) => {
   try {
-    const { error } = await (supabase as any)
-      .from('citas')
-      .update({ estado: 'confirmada' })
-      .eq('id', citaId)
+    // Llamar a la función RPC que confirma la cita y descuenta del bono
+    const { data, error } = await (supabase as any)
+      .rpc('confirmar_cita_y_descontar_bono', {
+        p_cita_id: citaId
+      })
 
     if (error) throw error
+
+    // Verificar el resultado
+    if (!data.success) {
+      console.error('Error en la confirmación:', data.error)
+      alert(data.error || 'Error al confirmar la cita')
+      return
+    }
+
+    // Mostrar mensaje informativo
+    let mensaje = `Cita confirmada con ${data.paciente_nombre || 'paciente'}`
+    
+    if (data.bono_id) {
+      mensaje += `\nSesiones restantes en bono: ${data.sesiones_restantes}`
+      
+      if (data.bono_agotado) {
+        mensaje += '\n⚠️ BONO AGOTADO'
+      } else if (data.sesiones_restantes <= 2) {
+        mensaje += '\n⚠️ Pocas sesiones restantes'
+      }
+    }
+    
+    alert(mensaje)
 
     // Recargar datos
     await cargarDatosPaciente()
   } catch (err) {
     console.error('Error al confirmar cita:', err)
-    alert('Error al confirmar la cita')
+    alert('Error al confirmar la cita: ' + (err as Error).message)
   }
 }
 

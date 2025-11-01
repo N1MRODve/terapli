@@ -16,7 +16,7 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <span class="text-2xl">⏳</span>
+            <ClockIcon class="w-6 h-6 text-yellow-600" />
           </div>
           <span class="text-sm font-medium text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">
             Pendientes
@@ -36,7 +36,7 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-            <span class="text-2xl">✓</span>
+            <CheckCircleIcon class="w-6 h-6 text-green-600" />
           </div>
           <span class="text-sm font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
             Confirmadas
@@ -56,7 +56,7 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-            <span class="text-2xl">✔️</span>
+            <CheckCircleIcon class="w-6 h-6 text-blue-600" />
           </div>
           <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
             Completadas
@@ -100,7 +100,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center">
-              <span class="text-2xl">�</span>
+              <CheckCircleIcon class="w-6 h-6 text-white" />
             </div>
             <div>
               <h2 class="text-xl font-bold text-cafe">Pagos Confirmados</h2>
@@ -187,11 +187,9 @@
                   <!-- Fecha y método -->
                   <div class="text-right">
                     <p class="text-sm font-medium text-cafe flex items-center justify-end gap-1.5">
-                      <span class="text-cafe/40">📅</span>
                       {{ formatearFecha(pago.bono_fecha_pago) }}
                     </p>
                     <p class="text-xs text-cafe/50 capitalize flex items-center justify-end gap-1.5 mt-0.5">
-                      <span>💳</span>
                       {{ pago.bono_metodo_pago || 'No especificado' }}
                     </p>
                   </div>
@@ -261,7 +259,7 @@
 
                         <!-- Columna 3: Información financiera -->
                         <div class="space-y-3">
-                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">💰 Financiero</p>
+                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">Financiero</p>
                           <div class="space-y-2">
                             <div class="flex justify-between text-sm">
                               <span class="text-cafe/60">Monto total:</span>
@@ -313,9 +311,7 @@
               placeholder="Nombre del paciente..."
               class="w-full px-4 py-2 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20"
             />
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-cafe/50">
-              🔍
-            </span>
+            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-cafe/50" />
           </div>
         </div>
 
@@ -365,7 +361,7 @@
     <!-- Error State -->
     <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-xl p-6">
       <div class="flex items-start gap-3">
-        <span class="text-2xl">⚠️</span>
+        <ExclamationTriangleIcon class="w-6 h-6 text-red-600" />
         <div>
           <h3 class="font-semibold text-red-800 mb-1">Error al cargar sesiones</h3>
           <p class="text-sm text-red-600">{{ error }}</p>
@@ -387,7 +383,9 @@
 
       <!-- Empty State -->
       <div v-if="sesionesFiltradas.length === 0" class="p-12 text-center">
-        <span class="text-6xl mb-4 block">📅</span>
+        <div class="w-16 h-16 bg-cafe-claro/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <CalendarDaysIcon class="w-8 h-8 text-cafe/40" />
+        </div>
         <h3 class="text-lg font-semibold text-cafe mb-2">
           No hay sesiones para mostrar
         </h3>
@@ -506,7 +504,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div v-if="sesion.bono" class="text-xs space-y-1">
                   <div class="flex items-center gap-1 text-green-600">
-                    <span>✓</span>
+                    <CheckCircleIcon class="w-4 h-4" />
                     <span>Con bono</span>
                   </div>
                   <div class="text-cafe/50">
@@ -514,11 +512,11 @@
                   </div>
                   <!-- Estado de pago del bono -->
                   <div v-if="sesion.bono.pagado" class="flex items-center gap-1 text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
-                    <span>💳</span>
+                    <CheckCircleIcon class="w-4 h-4" />
                     <span class="font-semibold">Pagado</span>
                   </div>
                   <div v-else class="flex items-center gap-1 text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full animate-pulse">
-                    <span>⏳</span>
+                    <ClockIcon class="w-4 h-4" />
                     <span class="font-semibold">Pend. pago</span>
                   </div>
                 </div>
@@ -543,7 +541,7 @@
                   @click="verDetalles(sesion)"
                   class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-terracota hover:bg-terracota/10 rounded-lg transition-colors duration-200"
                 >
-                  <span>👁️</span>
+                  <EyeIcon class="w-4 h-4" />
                   Ver detalles
                 </button>
               </td>
@@ -566,6 +564,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { 
+  CalendarDaysIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  EyeIcon,
+  ExclamationTriangleIcon,
+  MagnifyingGlassIcon
+} from '@heroicons/vue/24/outline'
 import ModalDetallesCita from '~/components/ModalDetallesCita.vue'
 
 definePageMeta({
@@ -770,7 +776,7 @@ const cargarSesiones = async () => {
       .single()
 
     if (errorTerapeuta) {
-      console.error('❌ Error al buscar terapeuta:', errorTerapeuta)
+      console.error('Error al buscar terapeuta:', errorTerapeuta)
       throw errorTerapeuta
     }
     
@@ -778,7 +784,7 @@ const cargarSesiones = async () => {
       throw new Error('No se encontró el terapeuta asociado a este usuario')
     }
     
-    console.log('🔍 Terapeuta encontrado:', terapeuta)
+    console.log('Terapeuta encontrado:', terapeuta)
 
     // Cargar todas las sesiones usando la vista con información de pago
     const { data, error: errorSesiones } = await supabase
@@ -788,15 +794,15 @@ const cargarSesiones = async () => {
       .order('fecha', { ascending: false })
 
     if (errorSesiones) {
-      console.error('❌ Error al cargar sesiones:', errorSesiones)
+      console.error('Error al cargar sesiones:', errorSesiones)
       throw errorSesiones
     }
     
-    console.log('📅 Sesiones cargadas:', data?.length || 0, data)
+    console.log('Sesiones cargadas:', data?.length || 0, data)
 
     // Mapear las sesiones con la información de pago
     sesiones.value = (data || []).map(sesion => {
-      console.log('🔍 Sesión individual:', {
+      console.log('Sesión individual:', {
         id: sesion.id,
         bono_id: sesion.bono_id,
         bono_pagado: sesion.bono_pagado,
@@ -829,7 +835,7 @@ const cargarSesiones = async () => {
       }
     })
     
-    console.log('✅ Sesiones procesadas:', sesiones.value.length)
+    console.log('Sesiones procesadas:', sesiones.value.length)
 
   } catch (err: any) {
     console.error('Error al cargar sesiones:', err)
@@ -848,7 +854,7 @@ const cargarBonosPagados = async () => {
       return
     }
 
-    console.log('🔍 Cargando bonos pagados...')
+    console.log('Cargando bonos pagados...')
 
     // Obtener el terapeuta usando el email del usuario
     const { data: terapeuta, error: errorTerapeuta } = await supabase
@@ -858,11 +864,11 @@ const cargarBonosPagados = async () => {
       .single()
 
     if (errorTerapeuta || !terapeuta) {
-      console.error('❌ Error al buscar terapeuta:', errorTerapeuta)
+      console.error('Error al buscar terapeuta:', errorTerapeuta)
       return
     }
 
-    console.log('👩‍⚕️ Terapeuta encontrado:', terapeuta.id)
+    console.log('Terapeuta encontrado:', terapeuta.id)
 
     // Primero obtener los IDs de los pacientes de este terapeuta
     const { data: pacientes, error: errorPacientes } = await supabase
@@ -902,11 +908,11 @@ const cargarBonosPagados = async () => {
       .order('fecha_pago', { ascending: false })
 
     if (errorBonos) {
-      console.error('❌ Error al cargar bonos pagados:', errorBonos)
+      console.error('Error al cargar bonos pagados:', errorBonos)
       return
     }
 
-    console.log('💳 Bonos pagados encontrados:', bonos?.length || 0)
+    console.log('Bonos pagados encontrados:', bonos?.length || 0)
 
     // Transformar los datos
     bonosPagadosDirectos.value = (bonos || []).map(bono => ({
@@ -915,7 +921,7 @@ const cargarBonosPagados = async () => {
       paciente_email: bono.paciente?.email
     }))
 
-    console.log('✅ Bonos pagados cargados:', bonosPagadosDirectos.value.length)
+    console.log('Bonos pagados cargados:', bonosPagadosDirectos.value.length)
 
   } catch (err: any) {
     console.error('Error al cargar bonos pagados:', err)

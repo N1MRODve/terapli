@@ -122,7 +122,7 @@
                   {{ pago.terapeuta_nombre }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#5D4A44]">
-                  ${{ parseFloat(pago.monto).toFixed(2) }}
+                  {{ formatNumber(parseFloat(pago.monto)) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
@@ -179,21 +179,21 @@
         <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
           <p class="text-sm text-blue-700 mb-1">Total pendiente</p>
           <p class="text-3xl font-bold font-lora text-blue-900">
-            ${{ totalPorEstado('pendiente').toFixed(2) }}
+            {{ formatNumber(totalPorEstado('pendiente')) }}
           </p>
         </div>
 
         <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
           <p class="text-sm text-green-700 mb-1">Confirmados hoy</p>
           <p class="text-3xl font-bold font-lora text-green-900">
-            ${{ totalConfirmadosHoy.toFixed(2) }}
+            {{ formatNumber(totalConfirmadosHoy) }}
           </p>
         </div>
 
         <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
           <p class="text-sm text-purple-700 mb-1">Total del mes</p>
           <p class="text-3xl font-bold font-lora text-purple-900">
-            ${{ totalDelMes.toFixed(2) }}
+            {{ formatNumber(totalDelMes) }}
           </p>
         </div>
       </div>
@@ -308,6 +308,15 @@ const obtenerIniciales = (nombre: string) => {
     .substring(0, 2)
 }
 
+const formatNumber = (num: number) => {
+  return num.toLocaleString('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+}
+
 const getEstadoClass = (estado: string) => {
   const classes: Record<string, string> = {
     'pendiente': 'bg-yellow-100 text-yellow-700',
@@ -366,7 +375,7 @@ const enviarAAdministracion = async (pago: any) => {
 }
 
 const verDetalles = (pago: any) => {
-  alert(`Detalles del pago:\n\nPaciente: ${pago.paciente_nombre}\nMonto: $${pago.monto}\nEstado: ${pago.estado}\n\n(Modal de detalles en desarrollo)`)
+  alert(`Detalles del pago:\n\nPaciente: ${pago.paciente_nombre}\nMonto: ${formatNumber(parseFloat(pago.monto))}\nEstado: ${pago.estado}\n\n(Modal de detalles en desarrollo)`)
 }
 
 const cargarPagos = async () => {

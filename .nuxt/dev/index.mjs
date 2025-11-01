@@ -1,10 +1,12 @@
 import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, getRouterParam, setHeader, getResponseStatus, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatusText } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, getRouterParam, setHeader, getResponseStatus, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, setCookie, getHeader, getResponseStatusText } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/h3/dist/index.mjs';
 import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
 import { escapeHtml } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/@vue/shared/dist/shared.cjs.js';
+import { createClient } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/@supabase/supabase-js/dist/main/index.js';
+import { createServerClient, parseCookieHeader } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/@supabase/ssr/dist/main/index.js';
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/vue-bundle-renderer/dist/runtime.mjs';
 import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, joinRelativeURL } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/ufo/dist/index.mjs';
 import destr, { destr as destr$1 } from 'file:///Users/dieterlorenzo/psicologakarem/psicokarem/node_modules/destr/dist/index.mjs';
@@ -680,7 +682,7 @@ const _inlineRuntimeConfig = {
       "clientOptions": {}
     },
     "content": {
-      "wsUrl": "ws://localhost:4001/"
+      "wsUrl": "ws://localhost:4000/"
     },
     "mdc": {
       "components": {
@@ -2016,10 +2018,12 @@ const _tQ54Tt = eventHandler(async (event) => {
   return loadDatabaseAdapter(conf).all(sql);
 });
 
+const _lazy_rpo0ua = () => Promise.resolve().then(function () { return crearTerapeuta_post$1; });
 const _lazy_Fl63Jt = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
   { route: '', handler: _yKz9Sd, lazy: false, middleware: true, method: undefined },
+  { route: '/api/admin/crear-terapeuta', handler: _lazy_rpo0ua, lazy: true, middleware: false, method: "post" },
   { route: '/__nuxt_error', handler: _lazy_Fl63Jt, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: _SxA8c9, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_content/:collection/sql_dump.txt', handler: _yIWOAR, lazy: false, middleware: false, method: undefined },
@@ -2277,6 +2281,194 @@ const styles = {};
 const styles$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: styles
+}, Symbol.toStringTag, { value: 'Module' }));
+
+async function fetchWithRetry(req, init) {
+  const retries = 3;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await fetch(req, init);
+    } catch (error) {
+      if (init?.signal?.aborted) {
+        throw error;
+      }
+      if (attempt === retries) {
+        console.error(`Error fetching request ${req}`, error, init);
+        throw error;
+      }
+      console.warn(`Retrying fetch attempt ${attempt + 1} for request: ${req}`);
+      await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+    }
+  }
+  throw new Error("Unreachable code");
+}
+
+function setCookies(event, cookies) {
+  const response = event.node.res;
+  const headersWritable = () => !response.headersSent && !response.writableEnded;
+  if (!headersWritable()) {
+    return;
+  }
+  for (const { name, value, options } of cookies) {
+    if (!headersWritable()) {
+      break;
+    }
+    setCookie(event, name, value, options);
+  }
+}
+
+const serverSupabaseClient = async (event) => {
+  if (!event.context._supabaseClient) {
+    const { url, key, cookiePrefix, cookieOptions, clientOptions: { auth = {}, global = {} } } = useRuntimeConfig(event).public.supabase;
+    event.context._supabaseClient = createServerClient(url, key, {
+      auth,
+      cookies: {
+        getAll: () => parseCookieHeader(getHeader(event, "Cookie") ?? ""),
+        setAll: (cookies) => setCookies(event, cookies)
+      },
+      cookieOptions: {
+        ...cookieOptions,
+        name: cookiePrefix
+      },
+      global: {
+        fetch: fetchWithRetry,
+        ...global
+      }
+    });
+  }
+  return event.context._supabaseClient;
+};
+
+const serverSupabaseServiceRole = (event) => {
+  const config = useRuntimeConfig(event);
+  const secretKey = config.supabase.secretKey;
+  const serviceKey = config.supabase.serviceKey;
+  const url = config.public.supabase.url;
+  const serverKey = secretKey || serviceKey;
+  if (!serverKey) {
+    throw new Error("Missing server key. Set either `SUPABASE_SECRET_KEY` (recommended) or `SUPABASE_SERVICE_KEY` (deprecated) in your environment variables.");
+  }
+  if (!event.context._supabaseServiceRole) {
+    event.context._supabaseServiceRole = createClient(url, serverKey, {
+      auth: {
+        detectSessionInUrl: false,
+        persistSession: false,
+        autoRefreshToken: false
+      },
+      global: {
+        fetch: fetchWithRetry
+      }
+    });
+  }
+  return event.context._supabaseServiceRole;
+};
+
+const crearTerapeuta_post = defineEventHandler(async (event) => {
+  try {
+    const body = await readBody(event);
+    const { nombreCompleto, email, password, telefono } = body;
+    if (!nombreCompleto || !email || !password) {
+      throw createError({
+        statusCode: 400,
+        message: "Faltan campos requeridos: nombreCompleto, email, password"
+      });
+    }
+    console.log("\u{1F4DD} Creando terapeuta:", email);
+    const supabaseAdmin = serverSupabaseServiceRole(event);
+    const supabaseClient = await serverSupabaseClient(event);
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
+      throw createError({
+        statusCode: 401,
+        message: "No autenticado"
+      });
+    }
+    const { data: profile, error: profileError } = await supabaseClient.from("profiles").select("rol").eq("id", user.id).single();
+    if (profileError || (profile == null ? void 0 : profile.rol) !== "admin") {
+      throw createError({
+        statusCode: 403,
+        message: "Acceso denegado. Solo administradores pueden crear terapeutas."
+      });
+    }
+    console.log("\u2705 Usuario admin verificado:", user.email);
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        nombre: nombreCompleto,
+        telefono: telefono || "",
+        rol: "psicologa"
+      }
+    });
+    if (authError) {
+      console.error("\u274C Error al crear usuario en Auth:", authError);
+      throw createError({
+        statusCode: 500,
+        message: `Error al crear usuario: ${authError.message}`
+      });
+    }
+    console.log("\u2705 Usuario Auth creado:", authData.user.id);
+    await new Promise((resolve) => setTimeout(resolve, 1e3));
+    const { data: profileData, error: profileCheckError } = await supabaseAdmin.from("profiles").select("*").eq("id", authData.user.id).single();
+    if (profileCheckError) {
+      console.error("\u274C Error al verificar profile:", profileCheckError);
+      throw createError({
+        statusCode: 500,
+        message: "El perfil no se cre\xF3 correctamente"
+      });
+    }
+    console.log("\u2705 Profile verificado:", profileData.email);
+    const { data: terapeutaExistente, error: checkError } = await supabaseAdmin.from("terapeutas").select("*").eq("email", email).single();
+    let terapeutaData = terapeutaExistente;
+    if (checkError && checkError.code === "PGRST116") {
+      console.log("\u26A0\uFE0F Trigger no cre\xF3 terapeuta, creando manualmente...");
+      const { data: nuevaTerapeuta, error: terapeutaError } = await supabaseAdmin.from("terapeutas").insert({
+        nombre_completo: nombreCompleto,
+        email,
+        telefono: telefono || null,
+        activo: true,
+        metadata: {
+          auth_user_id: authData.user.id,
+          created_by_admin: true,
+          created_at: (/* @__PURE__ */ new Date()).toISOString()
+        }
+      }).select().single();
+      if (terapeutaError) {
+        console.error("\u274C Error al crear terapeuta:", terapeutaError);
+        throw createError({
+          statusCode: 500,
+          message: `Error al crear registro de terapeuta: ${terapeutaError.message}`
+        });
+      }
+      terapeutaData = nuevaTerapeuta;
+    }
+    console.log("\u2705 Terapeuta creada/verificada:", terapeutaData.email);
+    return {
+      success: true,
+      message: "Terapeuta creada exitosamente",
+      data: {
+        authUserId: authData.user.id,
+        terapeutaId: terapeutaData.id,
+        email,
+        nombreCompleto
+      }
+    };
+  } catch (error) {
+    console.error("\u274C Error en crear-terapeuta:", error);
+    if (error.statusCode) {
+      throw error;
+    }
+    throw createError({
+      statusCode: 500,
+      message: error.message || "Error al crear terapeuta"
+    });
+  }
+});
+
+const crearTerapeuta_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: crearTerapeuta_post
 }, Symbol.toStringTag, { value: 'Module' }));
 
 function renderPayloadResponse(ssrContext) {

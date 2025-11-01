@@ -5,8 +5,9 @@
  * 1. Verifica que el usuario esté autenticado
  * 2. Obtiene el rol del usuario desde la tabla profiles
  * 3. Redirige al dashboard correspondiente según el rol:
- *    - psicologa → /terapeuta/dashboard
- *    - coordinadora → /coordinacion/dashboard
+ *    - admin → /admin
+ *    - psicologa/terapeuta → /terapeuta/dashboard
+ *    - coordinadora → /coordinadora/dashboard
  *    - paciente → /paciente/dashboard
  */
 
@@ -37,7 +38,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Determinar la ruta base según el rol
   const roleBasePath: Record<string, string> = {
     psicologa: '/terapeuta',
+    terapeuta: '/terapeuta',
     coordinadora: '/coordinadora',
+    admin: '/admin',
     paciente: '/paciente'
   }
 

@@ -272,12 +272,12 @@ const guardandoNotas = ref(false)
 onMounted(async () => {
   try {
     const { data, error: fetchError } = await supabase
-      .from('sesiones' as any)
+      .from('citas')
       .select(`
         *,
-        pacientes (
+        pacientes:paciente_id (
           id,
-          nombre,
+          nombre_completo,
           email
         )
       `)
@@ -287,7 +287,7 @@ onMounted(async () => {
     if (fetchError) throw fetchError
 
     sesion.value = data
-    notas.value = data?.notas || ''
+    notas.value = data?.notas_terapeuta || ''
     
   } catch (err: any) {
     console.error('Error al cargar sesión:', err)
@@ -360,8 +360,8 @@ const guardarNotas = async () => {
   
   try {
     const { error: updateError } = await supabase
-      .from('sesiones' as any)
-      .update({ notas: notas.value })
+      .from('citas')
+      .update({ notas_terapeuta: notas.value })
       .eq('id', route.params.id)
 
     if (updateError) throw updateError
@@ -384,7 +384,7 @@ const cambiarEstado = async (nuevoEstado: string) => {
   
   try {
     const { error: updateError } = await supabase
-      .from('sesiones' as any)
+      .from('citas')
       .update({ estado: nuevoEstado })
       .eq('id', route.params.id)
 
@@ -394,7 +394,7 @@ const cambiarEstado = async (nuevoEstado: string) => {
     
   } catch (err: any) {
     console.error('Error al cambiar estado:', err)
-    alert('No se pudo cambiar el estado. Intenta nuevamente.')
+    alert('Error al actualizar la cita: ' + (err.message || 'Intenta nuevamente.'))
   }
 }
 </script>
