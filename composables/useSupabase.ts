@@ -303,11 +303,42 @@ export const useSupabase = () => {
   }
 
   const signOut = async () => {
+    console.log('🚪 [Auth] Iniciando cierre de sesión...')
+    
     const { error } = await supabase.auth.signOut()
+    
     if (!error) {
+      console.log('✅ [Auth] Sesión cerrada en Supabase, limpiando estado local...')
+      
+      // Limpiar estado completamente
       session.value = null
       userProfile.value = null
+      isLoadingProfile = false
+      
+      // Limpiar estado de Nuxt (importante para evitar persistencia)
+      if (process.client) {
+        try {
+          // Limpiar Nuxt state
+          await $fetch('/api/clear-state', { method: 'POST' }).catch(() => {})
+          
+          // Limpiar localStorage y sessionStorage
+          localStorage.clear()
+          sessionStorage.clear()
+          
+          // Force refresh para limpiar completamente el estado
+          setTimeout(() => {
+            window.location.href = '/login'
+          }, 100)
+        } catch (e) {
+          console.warn('[Auth] Error limpiando storage:', e)
+        }
+      }
+      
+      console.log('🧹 [Auth] Estado completamente limpiado')
+    } else {
+      console.error('❌ [Auth] Error al cerrar sesión:', error)
     }
+    
     return { error }
   }
 
