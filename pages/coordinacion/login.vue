@@ -125,6 +125,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const router = useRouter()
+const { signOut } = useSupabase()
 
 // Estado
 const email = ref('')
@@ -180,7 +181,7 @@ const iniciarSesion = async () => {
       error.value = 'No tienes permisos de coordinación. Este panel es exclusivo para personal autorizado.'
       
       // Cerrar sesión inmediatamente
-      await supabase.auth.signOut()
+      await signOut()
       cargando.value = false
       return
     }

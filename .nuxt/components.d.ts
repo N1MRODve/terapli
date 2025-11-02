@@ -20,6 +20,7 @@ export const AlertaBono: typeof import("../components/AlertaBono.vue")['default'
 export const AuthDebugPanel: typeof import("../components/AuthDebugPanel.vue")['default']
 export const BonoCard: typeof import("../components/BonoCard.vue")['default']
 export const BonosPaciente: typeof import("../components/BonosPaciente.vue")['default']
+export const CalmButton: typeof import("../components/CalmButton.vue")['default']
 export const Card: typeof import("../components/Card.vue")['default']
 export const CardRecurso: typeof import("../components/CardRecurso.vue")['default']
 export const CookieConsent: typeof import("../components/CookieConsent.vue")['default']
@@ -150,6 +151,7 @@ export const LazyAlertaBono: LazyComponent<typeof import("../components/AlertaBo
 export const LazyAuthDebugPanel: LazyComponent<typeof import("../components/AuthDebugPanel.vue")['default']>
 export const LazyBonoCard: LazyComponent<typeof import("../components/BonoCard.vue")['default']>
 export const LazyBonosPaciente: LazyComponent<typeof import("../components/BonosPaciente.vue")['default']>
+export const LazyCalmButton: LazyComponent<typeof import("../components/CalmButton.vue")['default']>
 export const LazyCard: LazyComponent<typeof import("../components/Card.vue")['default']>
 export const LazyCardRecurso: LazyComponent<typeof import("../components/CardRecurso.vue")['default']>
 export const LazyCookieConsent: LazyComponent<typeof import("../components/CookieConsent.vue")['default']>

@@ -105,18 +105,18 @@ import {
 
 const router = useRouter()
 const route = useRoute()
-const supabase = useSupabaseClient()
+const { signOut } = useSupabase()
 const usuario = ref<any>(null)
 
 const rutaActual = computed(() => route.path)
 
 onMounted(async () => {
+  const supabase = useSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   usuario.value = user
 })
 
 const cerrarSesion = async () => {
-  await supabase.auth.signOut()
-  router.push('/login')
+  await signOut()
 }
 </script>

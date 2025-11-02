@@ -304,10 +304,10 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const mobileMenuOpen = ref(false)
-const supabase = useSupabaseClient()
 const router = useRouter()
 const route = useRoute()
 const user = useSupabaseUser()
+const { signOut } = useSupabase()
 
 // Close mobile menu on route change
 watch(() => route.path, () => {
@@ -346,17 +346,8 @@ const handleLogout = async () => {
     // Cerrar el menú móvil si está abierto
     mobileMenuOpen.value = false
 
-    // Cerrar sesión en Supabase
-    const { error } = await supabase.auth.signOut({ scope: 'local' })
-    
-    if (error) {
-      console.error('Error al cerrar sesión:', error)
-      alert('Ocurrió un error al cerrar sesión. Intenta nuevamente.')
-      return
-    }
-
-    // Forzar recarga completa de la página para limpiar todo el estado
-    window.location.href = '/login'
+    // Usar nuestro composable mejorado para cerrar sesión con limpieza completa
+    await signOut()
     
   } catch (err) {
     console.error('Error inesperado al cerrar sesión:', err)

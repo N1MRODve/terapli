@@ -104,6 +104,7 @@ useHead({
 const router = useRouter()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const { signOut } = useSupabase()
 
 // Estado del formulario
 const email = ref('')
@@ -130,12 +131,12 @@ onMounted(async () => {
         await router.push('/terapeuta/dashboard')
       } else {
         // Si no tiene rol permitido, cerrar sesión
-        await supabase.auth.signOut({ scope: 'local' })
+        await signOut()
       }
     } catch (err) {
       console.error('Error al verificar sesión:', err)
       // En caso de error, cerrar sesión por seguridad
-      await supabase.auth.signOut({ scope: 'local' })
+      await signOut()
     }
   }
 })
@@ -177,7 +178,7 @@ const handleLogin = async () => {
     if (perfilError) {
       console.error('Error al verificar perfil:', perfilError)
       error.value = 'Error al validar tu perfil. Contacta a soporte.'
-      await supabase.auth.signOut({ scope: 'local' })
+      await signOut()
       loading.value = false
       return
     }
@@ -188,7 +189,7 @@ const handleLogin = async () => {
     
     if (!userRole || !rolesPermitidos.includes(userRole)) {
       error.value = 'Acceso no autorizado. Esta área es exclusiva para terapeutas.'
-      await supabase.auth.signOut({ scope: 'local' })
+      await signOut()
       loading.value = false
       return
     }

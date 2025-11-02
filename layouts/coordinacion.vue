@@ -165,6 +165,7 @@ const route = useRoute()
 const user = useSupabaseUser()
 const supabase = useSupabaseClient()
 const router = useRouter()
+const { signOut } = useSupabase()
 
 // Estado
 const mostrarNotificaciones = ref(false)
@@ -185,7 +186,7 @@ const iniciales = computed(() => {
   const nombre = nombreUsuario.value
   return nombre
     .split(' ')
-    .map(n => n[0])
+    .map((n: string) => n[0])
     .join('')
     .toUpperCase()
     .substring(0, 2)
@@ -231,8 +232,7 @@ const formatearFecha = (fecha: string) => {
 
 const cerrarSesion = async () => {
   try {
-    await supabase.auth.signOut()
-    router.push('/coordinacion/login')
+    await signOut()
   } catch (error) {
     console.error('Error al cerrar sesión:', error)
   }

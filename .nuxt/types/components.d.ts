@@ -20,6 +20,7 @@ interface _GlobalComponents {
   'AuthDebugPanel': typeof import("../../components/AuthDebugPanel.vue")['default']
   'BonoCard': typeof import("../../components/BonoCard.vue")['default']
   'BonosPaciente': typeof import("../../components/BonosPaciente.vue")['default']
+  'CalmButton': typeof import("../../components/CalmButton.vue")['default']
   'Card': typeof import("../../components/Card.vue")['default']
   'CardRecurso': typeof import("../../components/CardRecurso.vue")['default']
   'CookieConsent': typeof import("../../components/CookieConsent.vue")['default']
@@ -150,6 +151,7 @@ interface _GlobalComponents {
   'LazyAuthDebugPanel': LazyComponent<typeof import("../../components/AuthDebugPanel.vue")['default']>
   'LazyBonoCard': LazyComponent<typeof import("../../components/BonoCard.vue")['default']>
   'LazyBonosPaciente': LazyComponent<typeof import("../../components/BonosPaciente.vue")['default']>
+  'LazyCalmButton': LazyComponent<typeof import("../../components/CalmButton.vue")['default']>
   'LazyCard': LazyComponent<typeof import("../../components/Card.vue")['default']>
   'LazyCardRecurso': LazyComponent<typeof import("../../components/CardRecurso.vue")['default']>
   'LazyCookieConsent': LazyComponent<typeof import("../../components/CookieConsent.vue")['default']>

@@ -307,8 +307,7 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const mobileMenuOpen = ref(false)
-const supabase = useSupabaseClient()
-const router = useRouter()
+const { signOut } = useSupabase()
 
 // Close mobile menu on route change
 const route = useRoute()
@@ -329,17 +328,8 @@ const handleLogout = async () => {
     // Cerrar el menú móvil si está abierto
     mobileMenuOpen.value = false
 
-    // Cerrar sesión en Supabase con scope 'local' para asegurar cierre completo
-    const { error } = await supabase.auth.signOut({ scope: 'local' })
-    
-    if (error) {
-      console.error('Error al cerrar sesión:', error)
-      alert('Ocurrió un error al cerrar sesión. Intenta nuevamente.')
-      return
-    }
-
-    // Forzar recarga completa de la página para limpiar todo el estado
-    window.location.href = '/terapeuta/login'
+    // Usar nuestro composable mejorado para cerrar sesión con limpieza completa
+    await signOut()
     
   } catch (err) {
     console.error('Error inesperado al cerrar sesión:', err)
