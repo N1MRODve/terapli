@@ -279,12 +279,19 @@ export const useSupabase = () => {
 
   // Métodos de autenticación
   const signInWithEmail = async (email: string, password: string) => {
+    // Limpiar estado anterior para evitar persistencia entre usuarios
+    console.log('🧹 [Auth] Limpiando estado antes del login...')
+    userProfile.value = null
+    session.value = null
+    isLoadingProfile = false
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
     
     if (!error && data.session) {
+      console.log('✅ [Auth] Login exitoso, estableciendo nueva sesión')
       session.value = data.session
     }
     

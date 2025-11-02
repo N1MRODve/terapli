@@ -162,7 +162,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'terapeuta'
+  layout: 'terapeuta',
+  middleware: ['auth-terapeuta']
 })
 
 // Composables y utilidades

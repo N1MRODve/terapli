@@ -26,11 +26,19 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   try {
-    // 2. Obtener el perfil del usuario desde Supabase (consulta sin tipado estricto)
+    // 2. Obtener el ID del usuario de forma más robusta
+    const userId = user.value?.id || (user.value as any)?.sub
+    
+    if (!userId) {
+      console.error('[Middleware] No se pudo obtener el ID del usuario:', user.value)
+      return navigateTo('/terapeuta/login', { replace: true })
+    }
+
+    // 3. Obtener el perfil del usuario desde Supabase (consulta sin tipado estricto)
     const { data: profileData, error: profileError } = await supabase
       .from('profiles' as any)
       .select('rol, nombre')
-      .eq('id', user.value.id)
+      .eq('id', userId)
       .single()
 
     if (profileError) {

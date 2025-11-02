@@ -261,7 +261,10 @@ import {
   CheckCircleIcon 
 } from '@heroicons/vue/24/outline'
 
-definePageMeta({ layout: 'coordinadora', middleware: ['auth'] })
+definePageMeta({ 
+  layout: 'coordinadora', 
+  middleware: ['auth', 'role-coordinadora'] 
+})
 
 const supabase = useSupabaseClient()
 

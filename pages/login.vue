@@ -165,14 +165,23 @@ const redirectBasedOnRole = async (userId?: string) => {
       profile: userProfile.value
     })
     
-    // Si después de waitForUser aún no hay perfil, intentar cargarlo manualmente
+    // Si después de waitForUser aún no hay perfil, intentar cargarlo manualmente con reintentos
     if (!userProfile.value) {
       console.log('[Login] Perfil no cargado después de waitForUser, intentando carga manual...')
-      await loadUserProfile()
-      console.log('[Login] Estado DESPUÉS de loadUserProfile:', {
-        userProfileExists: !!userProfile.value,
-        profile: userProfile.value
-      })
+      
+      // Reintentar hasta 3 veces con delay
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        await loadUserProfile()
+        console.log(`[Login] Intento ${attempt} de loadUserProfile:`, {
+          userProfileExists: !!userProfile.value,
+          profile: userProfile.value
+        })
+        
+        if (userProfile.value) break
+        
+        // Esperar 500ms antes del siguiente intento
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
     }
     
     if (!userProfile.value) {
@@ -184,7 +193,7 @@ const redirectBasedOnRole = async (userId?: string) => {
     const userRole = userProfile.value.rol
     console.log('[Login] Perfil obtenido:', userProfile.value.email, 'Rol:', userRole)
 
-    // Mapeo de roles a rutas
+    // Mapeo de roles a rutas - ACTUALIZADO para evitar cache
     const roleRoutes: Record<string, string> = {
       psicologa: '/terapeuta/dashboard',
       terapeuta: '/terapeuta/dashboard',
@@ -225,6 +234,18 @@ const handleLogin = async () => {
   isLoading.value = true
 
   try {
+    // Limpiar completamente la caché antes del login
+    if (process.client) {
+      // Limpiar localStorage y sessionStorage
+      localStorage.clear()
+      sessionStorage.clear()
+      
+      // Limpiar cookies de Supabase si existen
+      document.cookie.split(";").forEach(function(c) {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+    }
+
     const { data, error } = await signInWithEmail(email.value, password.value)
 
     if (error) {
@@ -243,8 +264,8 @@ const handleLogin = async () => {
     console.log('[Login] Usuario autenticado:', data.user.email, 'ID:', data.user.id)
     successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...'
     
-    // Pasar el userId directamente de la respuesta de autenticación
-    await redirectBasedOnRole(data.user.id)
+    // Estrategia simplificada: redirigir a una página temporal y dejar que el middleware maneje la lógica
+    await navigateTo('/dashboard', { replace: true })
   } catch (err) {
     console.error('[Login] Error en handleLogin:', err)
     errorMessage.value = 'Ocurrió un error. Por favor, intenta de nuevo.'
