@@ -1,12 +1,12 @@
 <template>
   <div 
-    class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6 hover:shadow-md transition-all duration-300 group relative cursor-pointer"
+    class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:border-gray-200 transition-all duration-300 group relative cursor-pointer"
   >
     <!-- Botones de acción (aparecen al hover) -->
-    <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+    <div class="absolute top-4 right-4 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10">
       <button
         @click.stop="$emit('gestionar-bonos', paciente)"
-        class="p-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors shadow-md"
+        class="p-1.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors shadow-md hover:shadow-lg"
         title="Gestionar bonos"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -15,7 +15,7 @@
       </button>
       <button
         @click.stop="$emit('editar', paciente)"
-        class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md"
+        class="p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg"
         title="Editar paciente"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +24,7 @@
       </button>
       <button
         @click.stop="$emit('eliminar', paciente)"
-        class="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md"
+        class="p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md hover:shadow-lg"
         title="Eliminar paciente"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,93 +34,95 @@
     </div>
 
     <!-- Header con avatar y estado -->
-    <div class="flex items-start justify-between mb-4">
+    <div class="flex items-start justify-between mb-5">
       <div class="flex items-center gap-3">
-      <!-- Avatar -->
-      <div 
-        class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg flex-shrink-0"
-        :style="{ backgroundColor: avatarColor }"
-      >
-        {{ iniciales }}
-      </div>
-      
-      <!-- Nombre y estado emocional -->
-      <div>
-        <h3 class="font-serif text-lg font-semibold text-cafe group-hover:text-terracota transition-colors">
-          {{ nombreMostrar }}
-        </h3>
-        <div class="flex items-center gap-2 mt-1">
-          <span class="text-xl" :title="estadoEmocionalTexto">
-            {{ estadoEmocional }}
-          </span>
-          <span class="text-xs text-cafe/60">
-            {{ estadoEmocionalTexto }}
-          </span>
+        <!-- Avatar -->
+        <div 
+          class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg flex-shrink-0 shadow-sm"
+          :style="{ backgroundColor: avatarColor }"
+        >
+          {{ iniciales }}
+        </div>
+        
+        <!-- Nombre y estado emocional -->
+        <div>
+          <h3 class="font-serif text-lg font-semibold text-cafe group-hover:text-terracota transition-colors leading-tight">
+            {{ nombreMostrar }}
+          </h3>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="text-lg" :title="estadoEmocionalTexto">
+              {{ estadoEmocional }}
+            </span>
+            <span class="text-xs text-gray-500">
+              {{ estadoEmocionalTexto }}
+            </span>
+          </div>
         </div>
       </div>
+
+      <!-- Badge de estado del vínculo -->
+      <span 
+        class="px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap"
+        :class="estadoVinculoClasses"
+      >
+        {{ estadoVinculoTexto }}
+      </span>
     </div>
 
-    <!-- Badge de estado del vínculo -->
-    <span 
-      class="px-3 py-1 text-xs font-medium rounded-full"
-      :class="estadoVinculoClasses"
-    >
-      {{ estadoVinculoTexto }}
-    </span>
-  </div>
-
     <!-- Área de acompañamiento -->
-    <div v-if="areaAcompanamiento" class="mb-3 flex items-center gap-2">
-      <span class="text-xs text-cafe/50">Área:</span>
-      <span class="text-sm text-cafe font-medium">
+    <div v-if="areaAcompanamiento" class="mb-4 flex items-center gap-2">
+      <span class="text-xs text-gray-400 uppercase tracking-wide">Área:</span>
+      <span class="text-sm text-gray-700 font-medium">
         {{ areaAcompanamiento }}
       </span>
     </div>
 
     <!-- Información de sesiones -->
-    <div class="space-y-2 mb-4">
-      <div class="flex items-center gap-2 text-sm text-cafe/70">
-        <CalendarIcon class="w-4 h-4 text-terracota" />
-        <span>Última sesión: {{ ultimaSesion }}</span>
+    <div class="space-y-3 mb-5">
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <CalendarIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+        <span>Última sesión: </span>
+        <span class="font-medium">{{ ultimaSesion }}</span>
       </div>
       
-      <div class="flex items-center gap-2 text-sm text-cafe/70">
-        <ClockIcon class="w-4 h-4 text-terracota" />
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <ClockIcon class="w-4 h-4 text-terracota flex-shrink-0" />
         <span>Próxima: </span>
         <button
           v-if="proximaSesion"
           @click.stop="$emit('editar-cita', paciente.proxima_cita_id)"
-          class="text-terracota hover:text-cafe font-medium hover:underline transition-colors"
+          class="text-terracota hover:text-cafe font-medium hover:underline transition-colors flex-shrink-0"
           :title="`Editar cita del ${proximaSesion}`"
         >
           {{ proximaSesion }}
         </button>
-        <span v-else class="text-cafe/50">No programada</span>
+        <span v-else class="text-gray-400 font-medium">No programada</span>
         <button
           @click.stop="$emit('ver-citas', paciente)"
-          class="ml-auto text-xs text-terracota hover:text-cafe hover:underline"
+          class="ml-auto text-xs text-terracota hover:text-cafe hover:underline transition-colors flex-shrink-0"
           title="Ver todas las citas"
         >
           Ver citas →
         </button>
       </div>
 
-      <div class="flex items-center gap-2 text-sm text-cafe/70">
-        <CheckCircleIcon class="w-4 h-4 text-terracota" />
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <CheckCircleIcon class="w-4 h-4 text-terracota flex-shrink-0" />
         <span>{{ totalSesiones }} sesiones completadas</span>
       </div>
     </div>
 
     <!-- Sección de BONO ACTIVO (destacada) -->
-    <div v-if="bonoActivo" class="mb-4 p-4 bg-gradient-to-br from-terracota/5 to-rosa/10 rounded-lg border border-terracota/20">
+        <!-- Sección de BONO ACTIVO (destacada) -->
+    <div v-if="bonoActivo" class="mb-5 p-4 bg-gradient-to-br from-terracota/8 to-rosa/12 rounded-xl border border-terracota/15">
       <div class="space-y-3">
-        <!-- Tipo de Bono -->
+        <!-- Header del Bono -->
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 text-sm">
-            <TicketIcon class="w-4 h-4 text-terracota" />
-            <span class="font-medium text-cafe">Bono:</span>
+          <div class="flex items-center gap-2">
+            <TicketIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+            <span class="text-sm font-medium text-gray-700">Bono:</span>
             <span 
-              class="px-2 py-0.5 rounded-md text-xs font-semibold"
+              class="px-2.5 py-1 rounded-lg text-xs font-semibold"
               :class="tipoBonoClasses"
             >
               {{ tipoBonoTexto }}
@@ -129,7 +131,7 @@
           
           <!-- Estado -->
           <span 
-            class="px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
+            class="px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5"
             :class="estadoBonoClasses"
           >
             <CurrencyDollarIcon class="w-3 h-3" />
@@ -137,33 +139,34 @@
           </span>
         </div>
 
-        <!-- Fecha fin -->
-        <div class="flex items-center gap-2 text-sm text-cafe/80">
-          <CalendarIcon class="w-4 h-4 text-terracota" />
-          <span class="font-medium">Fin:</span>
-          <span :class="fechaFinClasses">{{ fechaFinTexto }}</span>
-        </div>
+        <!-- Información del bono -->
+        <div class="grid grid-cols-1 gap-2">
+          <!-- Fecha fin -->
+          <div class="flex items-center gap-2 text-sm">
+            <CalendarIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+            <span class="text-gray-600">Vigencia:</span>
+            <span :class="fechaFinClases" class="font-medium">{{ fechaFinTexto }}</span>
+          </div>
 
-        <!-- Sesiones X/Y -->
-        <div class="flex items-center gap-2 text-sm">
-          <ChartBarIcon class="w-4 h-4 text-terracota" />
-          <span class="font-medium text-cafe">
-            Sesiones: 
-            <span :class="sesionesColorClass">
+          <!-- Sesiones X/Y -->
+          <div class="flex items-center gap-2 text-sm">
+            <ChartBarIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+            <span class="text-gray-600">Sesiones:</span>
+            <span :class="sesionesColorClass" class="font-semibold">
               {{ sesionesUsadas }}/{{ sesionesTotales }}
             </span>
-          </span>
+          </div>
         </div>
 
         <!-- Barra de progreso -->
-        <div class="pt-2">
-          <div class="flex items-center justify-between text-xs text-cafe/60 mb-1.5">
+        <div class="pt-1">
+          <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
             <span>Progreso del bono</span>
-            <span class="font-semibold">{{ progresoBonoTexto }}%</span>
+            <span class="font-semibold text-gray-700">{{ progresoBonoTexto }}%</span>
           </div>
-          <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
             <div 
-              class="h-2.5 rounded-full transition-all duration-500"
+              class="h-2 rounded-full transition-all duration-500"
               :class="progresoBonoColorClass"
               :style="{ width: `${progresoBono}%` }"
             ></div>
@@ -173,12 +176,12 @@
     </div>
 
     <!-- Indicador de evolución -->
-    <div class="pt-4 border-t border-gray-100">
-      <div class="flex items-center justify-between text-xs text-cafe/60 mb-2">
+    <div class="pt-5 border-t border-gray-100">
+      <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
         <span>Evolución general</span>
-        <span class="font-medium">{{ evolucionPorcentaje }}%</span>
+        <span class="font-semibold text-gray-700">{{ evolucionPorcentaje }}%</span>
       </div>
-      <div class="w-full bg-gray-100 rounded-full h-2">
+      <div class="w-full bg-gray-200 rounded-full h-2">
         <div 
           class="h-2 rounded-full transition-all duration-500"
           :class="evolucionColor"
@@ -188,15 +191,15 @@
     </div>
 
     <!-- Alertas -->
-    <div class="mt-4 space-y-2">
+    <div class="mt-5 space-y-2">
       <!-- Alerta de bono por agotarse (1 sesión restante) -->
       <div 
         v-if="tieneAlertaBonoCritica"
-        class="flex items-start gap-2 p-3 bg-red-50 border border-red-300 rounded-lg animate-pulse-subtle"
+        class="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg animate-pulse-subtle"
       >
         <ExclamationTriangleIcon class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
         <div class="flex-1">
-          <p class="text-xs font-semibold text-red-800 mb-0.5">
+          <p class="text-xs font-semibold text-red-800 mb-1">
             Bono casi agotado
           </p>
           <p class="text-xs text-red-700">
@@ -208,11 +211,11 @@
       <!-- Alerta de bono con pocas sesiones (2 sesiones restantes) -->
       <div 
         v-else-if="tieneAlertaBonoAdvertencia"
-        class="flex items-start gap-2 p-3 bg-amber-50 border border-amber-300 rounded-lg"
+        class="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg"
       >
         <ExclamationCircleIcon class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
         <div class="flex-1">
-          <p class="text-xs font-semibold text-amber-800 mb-0.5">
+          <p class="text-xs font-semibold text-amber-800 mb-1">
             Bono próximo a agotar
           </p>
           <p class="text-xs text-amber-700">
@@ -221,14 +224,14 @@
         </div>
       </div>
 
-      <!-- Alerta de inactividad (más de 45 días sin sesión) -->
+      <!-- Alerta de inactividad (más de 30 días sin sesión) -->
       <div 
         v-if="tieneAlertaInactividad"
-        class="flex items-start gap-2 p-3 bg-red-50 border border-red-300 rounded-lg animate-pulse-subtle"
+        class="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg animate-pulse-subtle"
       >
         <BellAlertIcon class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
         <div class="flex-1">
-          <p class="text-xs font-semibold text-red-800 mb-0.5">
+          <p class="text-xs font-semibold text-red-800 mb-1">
             Riesgo de abandono
           </p>
           <p class="text-xs text-red-700">
@@ -240,12 +243,14 @@
       <!-- Alerta de seguimiento especial (requiere atención por estado emocional) -->
       <div 
         v-if="tieneAlertaEmocional"
-        class="flex items-start gap-2 p-3 bg-orange-50 border border-orange-200 rounded-lg"
+        class="flex items-start gap-3 p-3 bg-orange-50 border border-orange-200 rounded-lg"
       >
         <ExclamationCircleIcon class="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
-        <p class="text-xs text-orange-800">
-          Requiere seguimiento especial por estado emocional
-        </p>
+        <div class="flex-1">
+          <p class="text-xs font-semibold text-orange-800">
+            Requiere seguimiento especial por estado emocional
+          </p>
+        </div>
       </div>
     </div>
   </div>

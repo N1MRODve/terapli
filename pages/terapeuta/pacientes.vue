@@ -1,125 +1,144 @@
 <template>
-  <main class="pacientes-container section-padding">
+  <div>
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-4xl font-serif font-bold text-cafe mb-2">
+    <header class="mb-8">
+      <h1 class="text-3xl font-serif font-bold text-cafe mb-2">
         Pacientes
       </h1>
-      <p class="text-lg text-cafe/70">
+      <p class="text-cafe/60">
         Gestión de pacientes activos
       </p>
-    </div>
+    </header>
 
     <!-- Buscador y filtros -->
-    <div class="mb-6 bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-4">
-      <div class="flex flex-col lg:flex-row gap-4">
-        <!-- Buscador -->
-        <div class="flex-1">
-          <div class="relative">
-            <input
-              v-model="busqueda"
-              type="text"
-              placeholder="Buscar paciente por nombre..."
-              class="w-full px-4 py-2.5 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all text-cafe placeholder-cafe/50"
-            />
-            <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-cafe/50" />
+    <section class="mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex flex-col lg:flex-row gap-4">
+          <!-- Buscador -->
+          <div class="flex-1">
+            <div class="relative">
+              <input
+                v-model="busqueda"
+                type="text"
+                placeholder="Buscar paciente por nombre o email..."
+                class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-lg focus:border-terracota focus:ring-2 focus:ring-terracota/20 focus:bg-white transition-all text-cafe placeholder-gray-400"
+              />
+              <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            </div>
           </div>
-        </div>
 
-        <!-- Filtros de estado -->
-        <div class="flex gap-2">
+          <!-- Filtros de estado -->
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="filtro in filtrosEstado"
+              :key="filtro.valor"
+              @click="estadoSeleccionado = filtro.valor"
+              class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap"
+              :class="estadoSeleccionado === filtro.valor 
+                ? 'bg-terracota text-white shadow-sm' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
+            >
+              {{ filtro.label }}
+            </button>
+          </div>
+
+          <!-- Botón añadir paciente -->
           <button
-            v-for="filtro in filtrosEstado"
-            :key="filtro.valor"
-            @click="estadoSeleccionado = filtro.valor"
-            class="px-4 py-2 rounded-lg text-sm font-medium transition-all"
-            :class="estadoSeleccionado === filtro.valor 
-              ? 'bg-terracota text-white' 
-              : 'bg-base-bg text-cafe hover:bg-rosa/30'"
+            @click="abrirModalNuevoPaciente"
+            class="px-6 py-2.5 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-all flex items-center gap-2 whitespace-nowrap font-medium shadow-sm hover:shadow-md"
           >
-            {{ filtro.label }}
+            <span class="text-lg leading-none">+</span>
+            <span>Nuevo Paciente</span>
           </button>
         </div>
-
-        <!-- Botón añadir paciente -->
-        <button
-          @click="abrirModalNuevoPaciente"
-          class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors flex items-center gap-2 whitespace-nowrap"
-        >
-          <span>+</span>
-          <span>Nuevo Paciente</span>
-        </button>
       </div>
-    </div>
+    </section>
 
     <!-- Lista de pacientes -->
-    <div v-if="loading" class="text-center py-12">
-      <div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mx-auto mb-4"></div>
-      <p class="text-cafe/60">Cargando pacientes...</p>
-    </div>
+    <section>
+      <!-- Estado de carga -->
+      <div v-if="loading" class="flex flex-col items-center justify-center py-16">
+        <div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mb-6"></div>
+        <p class="text-gray-500 font-medium">Cargando pacientes...</p>
+      </div>
 
-    <div v-else-if="pacientesFiltrados.length === 0" class="text-center py-12">
-      <DashboardCard>
-        <UserGroupIcon class="w-24 h-24 mx-auto mb-4 text-cafe/40" />
-        <h3 class="text-xl font-serif font-semibold text-cafe mb-2">
+      <!-- Estado vacío -->
+      <div v-else-if="pacientesFiltrados.length === 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+        <UserGroupIcon class="w-20 h-20 mx-auto mb-6 text-gray-300" />
+        <h3 class="text-xl font-serif font-semibold text-cafe mb-3">
           {{ busqueda || estadoSeleccionado !== 'todos' 
             ? 'No se encontraron pacientes' 
             : 'Aún no tienes pacientes registrados' }}
         </h3>
-        <p class="text-cafe/60 mb-4">
+        <p class="text-gray-500 mb-6 max-w-md mx-auto">
           {{ busqueda || estadoSeleccionado !== 'todos'
-            ? 'Intenta ajustar los filtros de búsqueda'
-            : 'Comienza añadiendo tu primer paciente' }}
+            ? 'Intenta ajustar los filtros de búsqueda para encontrar lo que buscas'
+            : 'Comienza añadiendo tu primer paciente para gestionar su proceso terapéutico' }}
         </p>
         <button
           v-if="!busqueda && estadoSeleccionado === 'todos'"
           @click="abrirModalNuevoPaciente"
-          class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
+          class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-all font-medium shadow-sm hover:shadow-md"
         >
           + Añadir Primer Paciente
         </button>
-      </DashboardCard>
-    </div>
-
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div 
-        v-for="paciente in pacientesFiltrados"
-        :key="paciente.id"
-        class="relative group cursor-pointer"
-        @click="irAFichaPaciente(paciente.id)"
-      >
-        <PacienteCard
-          :paciente="paciente"
-          @editar="abrirModalEditar"
-          @eliminar="abrirModalEliminar"
-          @ver-citas="verCitasPaciente"
-          @gestionar-bonos="gestionarBonosPaciente"
-          @editar-cita="abrirModalEditarCita"
-        />
-        
-        <!-- Botón flotante "Asignar Cita" - Visible al hover en desktop -->
-        <button
-          v-if="paciente.activo && !paciente.en_pausa"
-          @click.stop="abrirModalAsignarCita(paciente)"
-          class="hidden md:flex absolute bottom-4 right-4 px-4 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
-          title="Asignar nueva cita"
-        >
-          <CalendarDaysIcon class="w-4 h-4" />
-          <span>Asignar Cita</span>
-        </button>
-        
-        <!-- Versión visible siempre en móvil -->
-        <button
-          v-if="paciente.activo && !paciente.en_pausa"
-          @click.stop="abrirModalAsignarCita(paciente)"
-          class="md:hidden absolute bottom-4 right-4 px-4 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
-          title="Asignar nueva cita"
-        >
-          <CalendarDaysIcon class="w-4 h-4" />
-          <span>Asignar Cita</span>
-        </button>
       </div>
-    </div>
+
+      <!-- Grid de pacientes -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div 
+          v-for="paciente in pacientesFiltrados"
+          :key="paciente.id"
+          class="relative group cursor-pointer"
+          @click="irAFichaPaciente(paciente.id)"
+        >
+          <PacienteCard
+            :paciente="paciente"
+            @editar="abrirModalEditar"
+            @eliminar="abrirModalEliminar"
+            @ver-citas="verCitasPaciente"
+            @gestionar-bonos="gestionarBonosPaciente"
+            @editar-cita="abrirModalEditarCita"
+          />
+          
+          <!-- Botón flotante "Asignar Cita" - Visible al hover en desktop -->
+          <button
+            v-if="paciente.activo && !paciente.en_pausa"
+            @click.stop="abrirModalAsignarCita(paciente)"
+            class="hidden md:flex absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+            title="Asignar nueva cita"
+          >
+            <CalendarDaysIcon class="w-4 h-4" />
+            <span>Asignar Cita</span>
+          </button>
+          
+          <!-- Versión visible siempre en móvil -->
+          <button
+            v-if="paciente.activo && !paciente.en_pausa"
+            @click.stop="abrirModalAsignarCita(paciente)"
+            class="md:hidden absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
+            title="Asignar nueva cita"
+          >
+            <CalendarDaysIcon class="w-4 h-4" />
+            <span>Asignar Cita</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Paginación (si es necesaria) -->
+      <footer v-if="pacientesFiltrados.length > 0" class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
+        <p class="text-sm text-gray-500">
+          Mostrando {{ pacientesFiltrados.length }} de {{ totalPacientes }} pacientes
+        </p>
+        <div v-if="totalPacientes > pacientesFiltrados.length" class="flex gap-2">
+          <button
+            class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+          >
+            Ver más
+          </button>
+        </div>
+      </footer>
+    </section>
 
     <!-- Modal Asignar Cita -->
     <ModalNuevaCita
@@ -128,20 +147,6 @@
       @cerrar="cerrarModalAsignarCita"
       @cita-creada="manejarCitaCreada"
     />
-
-    <!-- Paginación (si es necesaria) -->
-    <div v-if="pacientesFiltrados.length > 0" class="mt-8 flex items-center justify-between">
-      <p class="text-sm text-cafe/60">
-        Mostrando {{ pacientesFiltrados.length }} de {{ totalPacientes }} pacientes
-      </p>
-      <div v-if="totalPacientes > pacientesFiltrados.length" class="flex gap-2">
-        <button
-          class="px-4 py-2 bg-white border border-cafe/20 text-cafe rounded-lg hover:bg-gray-50 transition-colors text-sm"
-        >
-          Ver más
-        </button>
-      </div>
-    </div>
 
     <!-- Modal Nuevo Paciente -->
     <ModalNuevoPaciente
@@ -174,7 +179,7 @@
       @close="cerrarModalEditarCita"
       @actualizado="handleCitaActualizada"
     />
-  </main>
+  </div>
 </template>
 
 <script setup>
