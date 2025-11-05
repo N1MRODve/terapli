@@ -12,16 +12,16 @@
    ============================================================================ */
 
 /* 1️⃣ Design Tokens - Variables CSS globales */
-@import './design-tokens.css';
+@import '~/assets/css/design-tokens.css';
 
 /* 2️⃣ Tailwind Base */
 @tailwind base;
 
 /* 3️⃣ Componentes reutilizables */
-@import './components.css';
+@import '~/assets/css/components.css';
 
 /* 4️⃣ Tipografía */
-@import './typography.css';
+@import '~/assets/css/typography.css';
 
 /* 5️⃣ Tailwind Components y Utilities */
 @tailwind components;
