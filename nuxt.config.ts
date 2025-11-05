@@ -291,5 +291,10 @@ export default defineNuxtConfig({
     options: {
       scrollBehaviorType: 'smooth'
     }
+  },
+
+  // Configuración para deployment en Vercel
+  nitro: {
+    preset: 'vercel'
   }
 })
