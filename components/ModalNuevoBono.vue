@@ -409,7 +409,7 @@ watch(() => formData.value.tipo, (nuevoTipo) => {
         break
     }
     
-    formData.value.fecha_fin = fin.toISOString().split('T')[0]
+    formData.value.fecha_fin = fin?.toISOString().split('T')[0] || ''
   }
 })
 </script>

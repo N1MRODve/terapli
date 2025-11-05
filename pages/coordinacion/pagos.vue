@@ -144,7 +144,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                   <button
                     v-if="pago.estado === 'pendiente'"
-                    @click="confirmarPagoPaciente(pago)"
+                    @click="confirmarPago(pago)"
                     class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                     title="Confirmar pago de paciente"
                   >
