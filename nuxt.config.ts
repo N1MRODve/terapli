@@ -67,13 +67,13 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
-      name: 'Psicóloga Karem',
-      short_name: 'Karem',
-      description: 'Tu espacio terapéutico digital 🌿',
+      name: 'Agenda Clínica Karem',
+      short_name: 'Agenda',
+      description: 'Sistema de gestión clínica �',
       theme_color: '#D8AFA0',
       background_color: '#F9F7F3',
       display: 'standalone',
-      start_url: '/paciente/dashboard',
+      start_url: '/login',
       orientation: 'portrait',
       lang: 'es',
       scope: '/',
@@ -152,16 +152,20 @@ export default defineNuxtConfig({
   },
 
   app: {
+    baseURL: '/',
+    buildAssetsDir: '/_nuxt/',
     head: {
       htmlAttrs: { lang: 'es' },
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'Psicóloga en Ciempozuelos | Terapia Individual, Pareja y Ansiedad – Karem Peña',
+      title: 'Agenda Clínica | Psicóloga Karem',
       meta: [
         { 
           name: 'description', 
-          content: 'Psicóloga en Ciempozuelos especializada en ansiedad, pareja y autoestima. Un espacio cálido y seguro para recuperar tu bienestar emocional. Primera orientación gratuita.' 
+          content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' 
         },
+        // Robots - No indexar la app de gestión
+        { name: 'robots', content: 'noindex, nofollow' },
         // SEO Local
         { name: 'geo.region', content: 'ES-M' },
         { name: 'geo.placename', content: 'Ciempozuelos' },
@@ -169,19 +173,19 @@ export default defineNuxtConfig({
         { name: 'ICBM', content: '40.1524167, -3.6171837' },
         
         // Open Graph
-        { property: 'og:title', content: 'Psicóloga en Ciempozuelos – Karem Peña' },
-        { property: 'og:description', content: 'Terapia individual, de pareja y para ansiedad. Espacio cálido, profesional y sin juicios en Ciempozuelos.' },
-        { property: 'og:image', content: 'https://psicologakarem.com/images/karem-pena-psicologa.jpg' },
-        { property: 'og:url', content: 'https://psicologakarem.com' },
+        { property: 'og:title', content: 'Agenda Clínica | Psicóloga Karem' },
+        { property: 'og:description', content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
+        { property: 'og:image', content: 'https://agenda.psicologakarem.com/og-image.jpg' },
+        { property: 'og:url', content: 'https://agenda.psicologakarem.com' },
         { property: 'og:type', content: 'website' },
         { property: 'og:locale', content: 'es_ES' },
-        { property: 'og:site_name', content: 'Psicóloga Karem Peña' },
+        { property: 'og:site_name', content: 'Agenda Clínica | Psicóloga Karem' },
         
         // Twitter Card
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Psicóloga en Ciempozuelos – Karem Peña' },
-        { name: 'twitter:description', content: 'Terapia individual, de pareja y para ansiedad. Espacio cálido, profesional y sin juicios en Ciempozuelos.' },
-        { name: 'twitter:image', content: 'https://psicologakarem.com/images/karem-pena-psicologa.jpg' },
+        { name: 'twitter:title', content: 'Agenda Clínica | Psicóloga Karem' },
+        { name: 'twitter:description', content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
+        { name: 'twitter:image', content: 'https://agenda.psicologakarem.com/og-image.jpg' },
         
         // Additional SEO
         { name: 'keywords', content: 'psicóloga Ciempozuelos, terapia ansiedad Madrid Sur, psicología emocional, terapia de pareja, psicóloga online, psicoterapia Madrid' },

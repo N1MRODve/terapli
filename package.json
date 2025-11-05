@@ -8,6 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "deploy:vercel": "vercel --prod",
+    "deploy:check": "nuxt build && nuxt preview",
     "pwa:verify": "node scripts/verify-pwa.cjs",
     "pwa:icons": "node scripts/generate-icons.cjs"
   },
