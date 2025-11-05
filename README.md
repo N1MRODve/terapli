@@ -4,7 +4,7 @@ Sistema completo de gestión clínica para terapeutas, desarrollado con Nuxt 3 y
 
 ## 🌐 Acceso en Vivo
 
-**URL:** [agenda.psicologakarem.com](https://agenda.psicologakarem.com)
+**URL:** [terapli.com](https://terapli.com)
 
 ## 🚀 Características Principales
 
@@ -73,7 +73,7 @@ NUXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
 NUXT_PUBLIC_SUPABASE_ANON_KEY=tu-clave-anonima
 
 # Site URL
-NUXT_PUBLIC_SITE_URL=https://agenda.psicologakarem.com
+NUXT_PUBLIC_SITE_URL=https://terapli.com
 
 # Google Analytics (opcional)
 NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX

@@ -67,7 +67,7 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
-      name: 'Agenda Clínica Karem',
+      name: 'Terapli',
       short_name: 'Agenda',
       description: 'Sistema de gestión clínica �',
       theme_color: '#D8AFA0',
@@ -158,7 +158,7 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'es' },
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'Agenda Clínica | Psicóloga Karem',
+      title: 'Terapli - Sistema de Gestión Clínica',
       meta: [
         { 
           name: 'description', 
@@ -173,19 +173,19 @@ export default defineNuxtConfig({
         { name: 'ICBM', content: '40.1524167, -3.6171837' },
         
         // Open Graph
-        { property: 'og:title', content: 'Agenda Clínica | Psicóloga Karem' },
+        { property: 'og:title', content: 'Terapli - Sistema de Gestión Clínica' },
         { property: 'og:description', content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
-        { property: 'og:image', content: 'https://agenda.psicologakarem.com/og-image.jpg' },
-        { property: 'og:url', content: 'https://agenda.psicologakarem.com' },
+        { property: 'og:image', content: 'https://terapli.com/og-image.jpg' },
+        { property: 'og:url', content: 'https://terapli.com' },
         { property: 'og:type', content: 'website' },
         { property: 'og:locale', content: 'es_ES' },
-        { property: 'og:site_name', content: 'Agenda Clínica | Psicóloga Karem' },
+        { property: 'og:site_name', content: 'Terapli - Sistema de Gestión Clínica' },
         
         // Twitter Card
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Agenda Clínica | Psicóloga Karem' },
+        { name: 'twitter:title', content: 'Terapli - Sistema de Gestión Clínica' },
         { name: 'twitter:description', content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
-        { name: 'twitter:image', content: 'https://agenda.psicologakarem.com/og-image.jpg' },
+        { name: 'twitter:image', content: 'https://terapli.com/og-image.jpg' },
         
         // Additional SEO
         { name: 'keywords', content: 'psicóloga Ciempozuelos, terapia ansiedad Madrid Sur, psicología emocional, terapia de pareja, psicóloga online, psicoterapia Madrid' },

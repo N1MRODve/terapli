@@ -21,7 +21,7 @@
     }
   ],
   "env": {
-    "NUXT_PUBLIC_SITE_URL": "https://agenda.psicologakarem.com"
+    "NUXT_PUBLIC_SITE_URL": "https://terapli.com"
   },
   "functions": {
     "pages/api/**/*.js": {

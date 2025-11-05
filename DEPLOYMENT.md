@@ -1,6 +1,6 @@
 # 🏥 Agenda Clínica - Despliegue
 
-Sistema de gestión clínica desplegado en `agenda.psicologakarem.com`
+Sistema de gestión clínica desplegado en `terapli.com`
 
 ## 🚀 Despliegue Rápido
 
@@ -11,14 +11,14 @@ Configurar en tu plataforma de hosting (Vercel/Netlify):
 ```bash
 NUXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
 NUXT_PUBLIC_SUPABASE_ANON_KEY=tu-clave-anonima
-NUXT_PUBLIC_SITE_URL=https://agenda.psicologakarem.com
+NUXT_PUBLIC_SITE_URL=https://terapli.com
 NODE_ENV=production
 ```
 
 ### 2. Configuración de Dominio
 
 - **Dominio principal:** `psicologakarem.com` (sitio web marketing)
-- **Subdominio clínica:** `agenda.psicologakarem.com` (sistema de gestión)
+- **Subdominio clínica:** `terapli.com` (sistema de gestión)
 
 ### 3. DNS Configuration
 
@@ -29,7 +29,7 @@ CNAME: agenda -> tu-deployment-url.vercel.app
 ## 📋 Checklist de Despliegue
 
 - [ ] Variables de entorno configuradas
-- [ ] DNS configurado para agenda.psicologakarem.com
+- [ ] DNS configurado para terapli.com
 - [ ] Supabase RLS policies activas
 - [ ] SSL certificate configurado
 - [ ] PWA funcionando correctamente
@@ -51,7 +51,7 @@ npm run preview
 
 1. Crear usuario administrador en Supabase
 2. Asignar rol 'admin' en la tabla user_roles
-3. Acceder a `https://agenda.psicologakarem.com`
+3. Acceder a `https://terapli.com`
 
 ## 🛠️ Stack Tecnológico
 
@@ -70,6 +70,6 @@ npm run preview
 
 ## 🔗 Enlaces
 
-- **App:** https://agenda.psicologakarem.com
+- **App:** https://terapli.com
 - **Docs:** Ver archivos MD en el proyecto
 - **Supabase:** Panel de administración
