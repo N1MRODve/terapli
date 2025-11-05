@@ -2,12 +2,6 @@
   "env": {
     "NUXT_PUBLIC_SITE_URL": "https://terapli.com"
   },
-  "functions": {
-    "server/api/**/*.{js,ts}": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",

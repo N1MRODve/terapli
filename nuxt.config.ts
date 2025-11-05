@@ -295,6 +295,12 @@ export default defineNuxtConfig({
 
   // Configuración para deployment en Vercel
   nitro: {
-    preset: 'vercel'
+    preset: 'vercel',
+    vercel: {
+      functions: {
+        maxDuration: 30,
+        memory: 1024
+      }
+    }
   }
 })
