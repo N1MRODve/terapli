@@ -23,7 +23,7 @@
                 placeholder="Buscar paciente por nombre o email..."
                 class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-lg focus:border-terracota focus:ring-2 focus:ring-terracota/20 focus:bg-white transition-all text-cafe placeholder-gray-400"
               />
-              <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></MagnifyingGlassIcon>
             </div>
           </div>
 
@@ -64,7 +64,7 @@
 
       <!-- Estado vacío -->
       <div v-else-if="pacientesFiltrados.length === 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-        <UserGroupIcon class="w-20 h-20 mx-auto mb-6 text-gray-300" />
+        <UserGroupIcon class="w-20 h-20 mx-auto mb-6 text-gray-300"></UserGroupIcon>
         <h3 class="text-xl font-serif font-semibold text-cafe mb-3">
           {{ busqueda || estadoSeleccionado !== 'todos' 
             ? 'No se encontraron pacientes' 
@@ -99,7 +99,7 @@
             @ver-citas="verCitasPaciente"
             @gestionar-bonos="gestionarBonosPaciente"
             @editar-cita="abrirModalEditarCita"
-          />
+          ></PacienteCard>
           
           <!-- Botón flotante "Asignar Cita" - Visible al hover en desktop -->
           <button
@@ -108,7 +108,7 @@
             class="hidden md:flex absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
             title="Asignar nueva cita"
           >
-            <CalendarDaysIcon class="w-4 h-4" />
+            <CalendarDaysIcon class="w-4 h-4"></CalendarDaysIcon>
             <span>Asignar Cita</span>
           </button>
           
@@ -119,7 +119,7 @@
             class="md:hidden absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
             title="Asignar nueva cita"
           >
-            <CalendarDaysIcon class="w-4 h-4" />
+            <CalendarDaysIcon class="w-4 h-4"></CalendarDaysIcon>
             <span>Asignar Cita</span>
           </button>
         </div>
@@ -146,14 +146,14 @@
       :paciente-preseleccionado="pacienteSeleccionadoCita"
       @cerrar="cerrarModalAsignarCita"
       @cita-creada="manejarCitaCreada"
-    />
+    ></ModalNuevaCita>
 
     <!-- Modal Nuevo Paciente -->
     <ModalNuevoPaciente
       :mostrar="mostrarModalNuevo"
       @cerrar="cerrarModalNuevo"
       @paciente-creado="manejarPacienteCreado"
-    />
+    ></ModalNuevoPaciente>
 
     <!-- Modal Editar Paciente -->
     <ModalEditarPaciente
@@ -161,7 +161,7 @@
       :paciente="pacienteSeleccionado"
       @cerrar="cerrarModalEditar"
       @paciente-actualizado="manejarPacienteActualizado"
-    />
+    ></ModalEditarPaciente>
 
     <!-- Modal Eliminar Paciente -->
     <ModalEliminarPaciente
@@ -170,7 +170,7 @@
       @cerrar="cerrarModalEliminar"
       @paciente-eliminado="manejarPacienteEliminado"
       @paciente-desactivado="manejarPacienteDesactivado"
-    />
+    ></ModalEliminarPaciente>
 
     <!-- Modal Editar Cita -->
     <ModalEditarCita
@@ -178,7 +178,7 @@
       :citaId="citaIdSeleccionada"
       @close="cerrarModalEditarCita"
       @actualizado="handleCitaActualizada"
-    />
+    ></ModalEditarCita>
   </div>
 </template>
 
