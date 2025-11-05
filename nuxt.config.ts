@@ -2,7 +2,14 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxtjs/supabase', '@nuxtjs/tailwindcss', '@nuxt/content', '@nuxtjs/google-fonts', '@vite-pwa/nuxt'],
+  modules: [
+    '@nuxtjs/supabase', 
+    '@nuxtjs/tailwindcss', 
+    // Solo incluir @nuxt/content en desarrollo
+    ...(process.env.NODE_ENV === 'development' ? ['@nuxt/content'] : []),
+    '@nuxtjs/google-fonts', 
+    '@vite-pwa/nuxt'
+  ],
 
   css: ['~/assets/css/main.css'],
 
@@ -60,9 +67,12 @@ export default defineNuxtConfig({
     viewer: false
   },
 
-  content: {
-    // highlight configuration is not supported, removing it
-  },
+  // Content solo se configura si está disponible (desarrollo)
+  ...(process.env.NODE_ENV === 'development' && {
+    content: {
+      // Configuración básica para desarrollo
+    }
+  }),
 
   pwa: {
     registerType: 'prompt',
