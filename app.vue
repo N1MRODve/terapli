@@ -1,9 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onErrorCaptured } from 'vue'
 import { Analytics } from '@vercel/analytics/nuxt'
 
 // Mostrar panel de debug (solo en desarrollo)
 const mostrarDebug = ref(process.env.NODE_ENV === 'development')
+
+// Capturar errores de inicialización
+onErrorCaptured((error, instance, info) => {
+  console.error('Error capturado en app:', error, info)
+  return false
+})
 
 // Metadatos PWA para iOS
 useHead({
@@ -38,12 +44,33 @@ onMounted(() => {
 
 <template>
   <div class="bg-fondo min-h-screen">
-    <NuxtLayout>
-      <NuxtPage :transition="{
-        name: 'fade-route',
-        mode: 'out-in'
-      }" />
-    </NuxtLayout>
+    <NuxtErrorBoundary>
+      <NuxtLayout>
+        <NuxtPage :transition="{
+          name: 'fade-route',
+          mode: 'out-in'
+        }" />
+      </NuxtLayout>
+      
+      <template #error="{ error }">
+        <div class="min-h-screen flex items-center justify-center bg-fondo">
+          <div class="text-center p-8">
+            <h1 class="text-2xl font-semibold text-cafe mb-4">Oops! Algo salió mal</h1>
+            <p class="text-cafe/70 mb-6">Ha ocurrido un error inesperado. Por favor, recarga la página.</p>
+            <button 
+              @click="$router.go(0)"
+              class="btn btn-primary"
+            >
+              Recargar página
+            </button>
+            <details class="mt-4 text-xs text-cafe/50 cursor-pointer">
+              <summary>Detalles del error</summary>
+              <pre class="mt-2 text-left bg-cafe/5 p-3 rounded">{{ error }}</pre>
+            </details>
+          </div>
+        </div>
+      </template>
+    </NuxtErrorBoundary>
     
     <!-- Panel de debug de autenticación -->
     <AuthDebugPanel 

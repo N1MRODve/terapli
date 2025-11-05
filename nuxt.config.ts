@@ -65,15 +65,16 @@ export default defineNuxtConfig({
   },
 
   pwa: {
-    registerType: 'autoUpdate',
+    registerType: 'prompt',
+    disable: process.env.NODE_ENV === 'development',
     manifest: {
       name: 'Terapli',
       short_name: 'Agenda',
-      description: 'Sistema de gestión clínica �',
+      description: 'Sistema de gestión clínica',
       theme_color: '#D8AFA0',
       background_color: '#F9F7F3',
       display: 'standalone',
-      start_url: '/login',
+      start_url: '/',
       orientation: 'portrait',
       lang: 'es',
       scope: '/',
@@ -101,8 +102,10 @@ export default defineNuxtConfig({
     workbox: {
       cleanupOutdatedCaches: true,
       clientsClaim: true,
-      skipWaiting: true,
-      navigateFallback: '/',
+      skipWaiting: false,
+      globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg,ico}'],
+      navigateFallback: null,
+      navigateFallbackDenylist: [/^\/api\//, /^\/_nuxt\//],
       runtimeCaching: [
         {
           urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
