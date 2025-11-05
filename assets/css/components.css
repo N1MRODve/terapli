@@ -1,5 +1,5 @@
 /* ============================================================================
-   🧩 COMPONENTES BASE - SISTEMA DE DISEÑO PSICÓLOGA KAREM
+   🧩 COMPONENTES BASE - SISTEMA DE DISEÑO TERAPLÍ
    ============================================================================
    Componentes reutilizables construidos sobre los design tokens.
    Usa @apply de Tailwind para consistencia con la configuración extendida.
@@ -13,39 +13,39 @@
   
   /* Tarjeta base - Contenedor principal para secciones */
   .card {
-    @apply bg-white rounded-xl border border-cafe/5 shadow-sm p-6 transition-all duration-200;
+    @apply bg-white rounded-xl border border-neutral/5 shadow-sm p-6 transition-all duration-200;
   }
   
   .card:hover {
-    @apply shadow-md border-cafe/8;
+    @apply shadow-md border-neutral/8;
   }
   
   /* Variantes de tarjetas */
   .card-flat {
-    @apply bg-white rounded-xl border border-cafe/5 p-6;
+    @apply bg-white rounded-xl border border-neutral/5 p-6;
   }
   
   .card-elevated {
-    @apply bg-white rounded-2xl shadow-lg p-6 border border-cafe/5;
+    @apply bg-white rounded-2xl shadow-lg p-6 border border-neutral/5;
   }
   
   .card-soft {
-    @apply bg-white/80 backdrop-blur-sm rounded-xl border border-cafe/8 p-6;
+    @apply bg-white/80 backdrop-blur-sm rounded-xl border border-neutral/8 p-6;
   }
   
   .card-interactive {
-    @apply bg-white rounded-xl border border-cafe/5 shadow-sm p-6 
+    @apply bg-white rounded-xl border border-neutral/5 shadow-sm p-6 
            transition-all duration-200 cursor-pointer
-           hover:shadow-md hover:border-terracota/30 hover:scale-[1.01];
+           hover:shadow-md hover:border-violeta/30 hover:scale-[1.01];
   }
   
   /* Panel con título */
   .panel {
-    @apply bg-white rounded-xl border border-cafe/5 overflow-hidden;
+    @apply bg-white rounded-xl border border-neutral/5 overflow-hidden;
   }
   
   .panel-header {
-    @apply px-6 py-4 border-b border-cafe/5 bg-base-bg;
+    @apply px-6 py-4 border-b border-neutral/5 bg-base-bg;
   }
   
   .panel-body {
@@ -53,7 +53,7 @@
   }
   
   .panel-footer {
-    @apply px-6 py-4 border-t border-cafe/5 bg-base-bg;
+    @apply px-6 py-4 border-t border-neutral/5 bg-base-bg;
   }
 
   /* ==========================================================================
@@ -70,46 +70,46 @@
   }
   
   .btn-primary {
-    @apply btn bg-terracota text-white 
-           hover:bg-terracota/90 hover:shadow-md
-           focus:ring-terracota/50
+    @apply btn bg-violeta text-white 
+           hover:bg-violeta-dark hover:shadow-md
+           focus:ring-violeta/50
            active:scale-95;
   }
   
   .btn-secondary {
-    @apply btn bg-white text-cafe border border-cafe/20
-           hover:bg-cafe/5 hover:border-cafe/30
-           focus:ring-cafe/30;
+    @apply btn bg-white text-neutral border border-neutral/20
+           hover:bg-neutral/5 hover:border-neutral/30
+           focus:ring-neutral/30;
   }
   
   .btn-outline {
-    @apply btn border border-cafe/20 text-cafe bg-transparent
-           hover:bg-cafe/5 hover:border-cafe/30
-           focus:ring-cafe/30;
+    @apply btn border border-neutral/20 text-neutral bg-transparent
+           hover:bg-neutral/5 hover:border-neutral/30
+           focus:ring-neutral/30;
   }
   
   .btn-ghost {
-    @apply btn text-cafe bg-transparent
-           hover:bg-cafe/5
-           focus:ring-cafe/20;
+    @apply btn text-neutral bg-transparent
+           hover:bg-neutral/5
+           focus:ring-neutral/20;
   }
   
-  .btn-terracota-light {
-    @apply btn bg-terracota/10 text-terracota
-           hover:bg-terracota/20
-           focus:ring-terracota/30;
+  .btn-violeta-light {
+    @apply btn bg-violeta/10 text-violeta
+           hover:bg-violeta/20
+           focus:ring-violeta/30;
   }
   
   .btn-success {
-    @apply btn bg-green-500 text-white
-           hover:bg-green-600
-           focus:ring-green-400;
+    @apply btn bg-menta text-white
+           hover:bg-menta-dark
+           focus:ring-menta/40;
   }
   
   .btn-danger {
-    @apply btn bg-red-500 text-white
-           hover:bg-red-600
-           focus:ring-red-400;
+    @apply btn bg-error text-white
+           hover:bg-error/90
+           focus:ring-error/40;
   }
   
   /* Tamaños de botones */
@@ -132,11 +132,11 @@
   
   .input {
     @apply w-full px-4 py-2.5 rounded-lg 
-           border border-cafe/10 bg-white
-           text-cafe placeholder:text-cafe/40
+           border border-neutral/10 bg-white
+           text-neutral placeholder:text-neutral/40
            transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-terracota/30 focus:border-terracota/50
-           disabled:bg-cafe/5 disabled:cursor-not-allowed;
+           focus:outline-none focus:ring-2 focus:ring-violeta/30 focus:border-violeta/50
+           disabled:bg-neutral/5 disabled:cursor-not-allowed;
   }
   
   .input-error {
@@ -149,25 +149,25 @@
   
   .select {
     @apply input appearance-none bg-no-repeat bg-right pr-10;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B5B55' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234A5568' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.75rem center;
     background-size: 1.25rem 1.25rem;
   }
   
   .checkbox {
-    @apply w-4 h-4 rounded border-cafe/30 
-           text-terracota focus:ring-terracota/30 focus:ring-offset-0
+    @apply w-4 h-4 rounded border-neutral/30 
+           text-violeta focus:ring-violeta/30 focus:ring-offset-0
            transition-colors;
   }
   
   .radio {
-    @apply w-4 h-4 border-cafe/30
-           text-terracota focus:ring-terracota/30 focus:ring-offset-0
+    @apply w-4 h-4 border-neutral/30
+           text-violeta focus:ring-violeta/30 focus:ring-offset-0
            transition-colors;
   }
   
   .label {
-    @apply block text-sm font-medium text-cafe/80 mb-1.5;
+    @apply block text-sm font-medium text-neutral/80 mb-1.5;
   }
   
   .form-group {
@@ -179,7 +179,7 @@
   }
   
   .form-hint {
-    @apply text-xs text-cafe/60 mt-1;
+    @apply text-xs text-neutral/60 mt-1;
   }
 
   /* ==========================================================================
@@ -192,44 +192,44 @@
   }
   
   .badge-primary {
-    @apply badge bg-terracota/10 text-terracota;
+    @apply badge bg-violeta/10 text-violeta;
   }
   
   .badge-secondary {
-    @apply badge bg-cafe/10 text-cafe;
+    @apply badge bg-neutral/10 text-neutral;
   }
   
   .badge-success {
-    @apply badge bg-green-50 text-green-700;
+    @apply badge bg-menta/10 text-menta-dark;
   }
   
   .badge-warning {
-    @apply badge bg-yellow-50 text-yellow-700;
+    @apply badge bg-dorado/10 text-dorado-dark;
   }
   
   .badge-error {
-    @apply badge bg-red-50 text-red-700;
+    @apply badge bg-error/10 text-error;
   }
   
   .badge-info {
-    @apply badge bg-blue-50 text-blue-700;
+    @apply badge bg-violeta/10 text-violeta;
   }
   
-  /* Estados de citas */
+  /* Estados de citas - Nueva paleta Teraplí */
   .badge-pendiente {
-    @apply badge bg-yellow-50 text-yellow-700 border border-yellow-200;
+    @apply badge bg-dorado/10 text-dorado-dark border border-dorado/20;
   }
   
   .badge-confirmada {
-    @apply badge bg-green-50 text-green-700 border border-green-200;
+    @apply badge bg-menta/10 text-menta-dark border border-menta/20;
   }
   
   .badge-realizada {
-    @apply badge bg-blue-50 text-blue-700 border border-blue-200;
+    @apply badge bg-violeta/10 text-violeta border border-violeta/20;
   }
   
   .badge-cancelada {
-    @apply badge bg-cafe/10 text-cafe/70 border border-cafe/20;
+    @apply badge bg-neutral/10 text-neutral/70 border border-neutral/20;
   }
 
   /* ==========================================================================
@@ -241,19 +241,19 @@
   }
   
   .status-dot-success {
-    @apply status-dot bg-green-500;
+    @apply status-dot bg-menta;
   }
   
   .status-dot-warning {
-    @apply status-dot bg-yellow-500;
+    @apply status-dot bg-dorado;
   }
   
   .status-dot-error {
-    @apply status-dot bg-red-500;
+    @apply status-dot bg-error;
   }
   
   .status-dot-info {
-    @apply status-dot bg-blue-500;
+    @apply status-dot bg-violeta;
   }
 
   /* ==========================================================================
@@ -262,7 +262,7 @@
   
   .tooltip {
     @apply absolute z-50 px-3 py-2 text-xs font-medium text-white 
-           bg-cafe/90 rounded-lg shadow-lg backdrop-blur-sm
+           bg-neutral/90 rounded-lg shadow-lg backdrop-blur-sm
            pointer-events-none opacity-0 transition-opacity duration-200;
   }
   
@@ -279,19 +279,19 @@
   }
   
   .alert-success {
-    @apply alert bg-green-50 border-green-200 text-green-800;
+    @apply alert bg-menta/10 border-menta/20 text-menta-dark;
   }
   
   .alert-warning {
-    @apply alert bg-yellow-50 border-yellow-200 text-yellow-800;
+    @apply alert bg-dorado/10 border-dorado/20 text-dorado-dark;
   }
   
   .alert-error {
-    @apply alert bg-red-50 border-red-200 text-red-800;
+    @apply alert bg-error/10 border-error/20 text-error;
   }
   
   .alert-info {
-    @apply alert bg-blue-50 border-blue-200 text-blue-800;
+    @apply alert bg-violeta/10 border-violeta/20 text-violeta;
   }
 
   /* ==========================================================================
@@ -301,15 +301,15 @@
   .list-item {
     @apply flex items-center gap-3 p-3 rounded-lg
            transition-colors duration-150
-           hover:bg-cafe/5 cursor-pointer;
+           hover:bg-neutral/5 cursor-pointer;
   }
   
   .list-item-active {
-    @apply list-item bg-terracota/10 text-terracota;
+    @apply list-item bg-violeta/10 text-violeta;
   }
   
   .divider {
-    @apply border-t border-cafe/10;
+    @apply border-t border-neutral/10;
   }
 
   /* ==========================================================================
@@ -318,7 +318,7 @@
   
   .avatar {
     @apply inline-flex items-center justify-center 
-           rounded-full bg-terracota/10 text-terracota 
+           rounded-full bg-violeta/10 text-violeta 
            font-medium overflow-hidden;
   }
   
@@ -343,7 +343,7 @@
      ========================================================================== */
   
   .modal-overlay {
-    @apply fixed inset-0 bg-cafe/50 backdrop-blur-sm z-40
+    @apply fixed inset-0 bg-neutral/50 backdrop-blur-sm z-40
            transition-opacity duration-300;
   }
   
@@ -357,7 +357,7 @@
   }
   
   .modal-header {
-    @apply px-6 py-4 border-b border-cafe/5;
+    @apply px-6 py-4 border-b border-neutral/5;
   }
   
   .modal-body {
@@ -365,7 +365,7 @@
   }
   
   .modal-footer {
-    @apply px-6 py-4 border-t border-cafe/5 flex items-center justify-end gap-3;
+    @apply px-6 py-4 border-t border-neutral/5 flex items-center justify-end gap-3;
   }
 
   /* ==========================================================================
@@ -373,13 +373,13 @@
      ========================================================================== */
   
   .link {
-    @apply text-terracota hover:text-terracota/80 
+    @apply text-violeta hover:text-violeta/80 
            transition-colors duration-150
            underline-offset-2 hover:underline;
   }
   
   .link-muted {
-    @apply text-cafe/70 hover:text-cafe
+    @apply text-neutral/70 hover:text-neutral
            transition-colors duration-150;
   }
 
@@ -392,8 +392,8 @@
   }
   
   .table-header {
-    @apply text-xs font-semibold text-cafe/70 uppercase tracking-wider
-           bg-cafe/5 border-b border-cafe/10;
+    @apply text-xs font-semibold text-neutral/70 uppercase tracking-wider
+           bg-neutral/5 border-b border-neutral/10;
   }
   
   .table-header th {
@@ -401,7 +401,7 @@
   }
   
   .table-row {
-    @apply border-b border-cafe/5 hover:bg-cafe/5 transition-colors;
+    @apply border-b border-neutral/5 hover:bg-neutral/5 transition-colors;
   }
   
   .table-cell {
@@ -413,7 +413,7 @@
      ========================================================================== */
   
   .skeleton {
-    @apply animate-pulse bg-cafe/10 rounded;
+    @apply animate-pulse bg-neutral/10 rounded;
   }
   
   .skeleton-text {
@@ -438,7 +438,7 @@
   }
   
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-terracota/30 focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-violeta/30 focus:ring-offset-2;
   }
 
   /* ==========================================================================

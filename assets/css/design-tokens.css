@@ -1,5 +1,5 @@
 /* ============================================================================
-   🎨 DESIGN TOKENS - SISTEMA DE DISEÑO PSICÓLOGA KAREM
+   🎨 DESIGN TOKENS - SISTEMA DE DISEÑO TERAPLÍ
    ============================================================================
    Sistema centralizado de variables CSS que define todos los valores de diseño
    de la plataforma. Estos tokens son consumidos por Tailwind y componentes.
@@ -7,62 +7,63 @@
 
 :root {
   /* ========================================================================
-     🌈 PALETA DE COLORES - Cálida, Serena y Premium
+     🌈 PALETA DE COLORES - Moderna, Profesional y Accesible
      ======================================================================== */
   
   /* Fondos principales */
-  --color-bg-primary: #FDFBF9;        /* Fondo principal cálido */
-  --color-bg-secondary: #F9F7F3;      /* Fondo alternativo */
-  --color-bg-tertiary: #F5F2EE;       /* Fondo terciario */
+  --color-bg-primary: #F2F2F2;        /* Fondo principal neutro */
+  --color-bg-secondary: #FAFAFA;      /* Fondo alternativo */
+  --color-bg-tertiary: #FFFFFF;       /* Fondo terciario */
   
   /* Superficies (tarjetas, paneles) */
   --color-surface: #FFFFFF;           /* Tarjetas y paneles */
-  --color-surface-hover: #FFFDFB;     /* Hover en superficies */
+  --color-surface-hover: #FAFAFA;     /* Hover en superficies */
   --color-surface-elevated: #FFFFFF;  /* Superficies elevadas (modales) */
   
   /* Textos */
-  --color-text-primary: #4A3B35;      /* Texto principal */
-  --color-text-secondary: #6B5B55;    /* Texto secundario */
-  --color-text-tertiary: #8E7F79;     /* Texto terciario */
-  --color-text-muted: #A59082;        /* Texto deshabilitado */
+  --color-text-primary: #2D3748;      /* Texto principal oscuro */
+  --color-text-secondary: #4A5568;    /* Texto secundario */
+  --color-text-tertiary: #718096;     /* Texto terciario */
+  --color-text-muted: #A0AEC0;        /* Texto deshabilitado */
   --color-text-inverse: #FFFFFF;      /* Texto sobre fondos oscuros */
   
-  /* Colores de marca (terracota) */
-  --color-brand-primary: #C97C5D;     /* Terracota principal */
-  --color-brand-light: #E8BAAA;       /* Terracota claro */
-  --color-brand-lighter: #F2DCD3;     /* Terracota muy claro */
-  --color-brand-dark: #B66A4E;        /* Terracota oscuro */
+  /* Colores de marca Teraplí */
+  --color-brand-primary: #5550F2;     /* Violeta principal */
+  --color-brand-light: #7B72F7;       /* Violeta claro */
+  --color-brand-lighter: #B8B2FB;     /* Violeta muy claro */
+  --color-brand-dark: #3D38C7;        /* Violeta oscuro */
   
-  /* Rosa cálido (complementario) */
-  --color-accent-rose: #EAD5D3;       /* Rosa suave */
-  --color-accent-rose-light: #F5E8E6; /* Rosa muy claro */
+  /* Verde esmeralda (confianza y crecimiento) */
+  --color-accent-emerald: #027368;    /* Verde esmeralda principal */
+  --color-accent-emerald-light: #04BF9D; /* Verde menta claro */
+  --color-accent-emerald-lighter: #B3F5EC; /* Verde muy claro */
   
-  /* Café (estructura y bordes) */
-  --color-cafe: #5D4A44;              /* Café principal */
-  --color-cafe-light: #8B7A74;        /* Café claro */
-  --color-cafe-lighter: #C4B8B3;      /* Café muy claro */
+  /* Amarillo dorado (calidez y energía) */
+  --color-accent-gold: #F2B33D;       /* Dorado principal */
+  --color-accent-gold-light: #F5CC6B; /* Dorado claro */
+  --color-accent-gold-lighter: #FDF4E3; /* Dorado muy claro */
   
   /* Bordes y separadores */
-  --color-border-default: rgba(93, 74, 68, 0.08);    /* Borde sutil */
-  --color-border-medium: rgba(93, 74, 68, 0.12);     /* Borde medio */
-  --color-border-strong: rgba(93, 74, 68, 0.20);     /* Borde fuerte */
-  --color-divider: #EADBD3;                          /* Línea divisoria */
+  --color-border-default: rgba(45, 55, 72, 0.08);    /* Borde sutil */
+  --color-border-medium: rgba(45, 55, 72, 0.12);     /* Borde medio */
+  --color-border-strong: rgba(45, 55, 72, 0.20);     /* Borde fuerte */
+  --color-divider: #E2E8F0;                          /* Línea divisoria */
   
   /* Estados (semánticos) */
-  --color-success: #54BF83;           /* Verde éxito */
-  --color-success-light: #D4F0E0;     /* Verde claro */
-  --color-warning: #F2C94C;           /* Amarillo advertencia */
-  --color-warning-light: #FDF7E0;     /* Amarillo claro */
-  --color-error: #E85D4A;             /* Rojo error */
-  --color-error-light: #FDEAE7;       /* Rojo claro */
-  --color-info: #5B9BD5;              /* Azul información */
-  --color-info-light: #E7F1F9;        /* Azul claro */
+  --color-success: #04BF9D;           /* Verde menta éxito */
+  --color-success-light: #B3F5EC;     /* Verde menta claro */
+  --color-warning: #F2B33D;           /* Dorado advertencia */
+  --color-warning-light: #FDF4E3;     /* Dorado claro */
+  --color-error: #E53E3E;             /* Rojo error */
+  --color-error-light: #FED7D7;       /* Rojo claro */
+  --color-info: #5550F2;              /* Violeta información */
+  --color-info-light: #B8B2FB;        /* Violeta claro */
   
   /* Estados de citas */
-  --color-status-pending: #F2C94C;    /* Pendiente (amarillo) */
-  --color-status-confirmed: #54BF83;  /* Confirmada (verde) */
-  --color-status-completed: #5B9BD5;  /* Realizada (azul) */
-  --color-status-cancelled: #A59082;  /* Cancelada (gris) */
+  --color-status-pending: #F2B33D;    /* Pendiente (dorado) */
+  --color-status-confirmed: #04BF9D;  /* Confirmada (verde menta) */
+  --color-status-completed: #5550F2;  /* Realizada (violeta) */
+  --color-status-cancelled: #A0AEC0;  /* Cancelada (gris) */
 
   /* ========================================================================
      📏 ESPACIADO - Sistema coherente basado en 4px
@@ -85,8 +86,8 @@
      ======================================================================== */
   
   /* Familias tipográficas */
-  --font-serif: 'Lora', Georgia, serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Elms Sans', Georgia, serif;
+  --font-sans: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
   
   /* Tamaños de fuente */
@@ -151,9 +152,9 @@
                 0 8px 16px rgba(74, 59, 53, 0.07);
   
   /* Sombras especiales */
-  --shadow-inner: inset 0 2px 4px rgba(74, 59, 53, 0.06);
-  --shadow-glow: 0 0 20px rgba(201, 124, 93, 0.15);
-  --shadow-focus: 0 0 0 3px rgba(201, 124, 93, 0.20);
+  --shadow-inner: inset 0 2px 4px rgba(45, 55, 72, 0.06);
+  --shadow-glow: 0 0 20px rgba(85, 80, 242, 0.15);
+  --shadow-focus: 0 0 0 3px rgba(85, 80, 242, 0.20);
 
   /* ========================================================================
      🎭 OPACIDADES

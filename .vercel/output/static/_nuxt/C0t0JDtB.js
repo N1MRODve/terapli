@@ -1,0 +1,1 @@
+import{_ as a}from"./DIp5k0Rm.js";import{g as t,n,c as o,b as s,o as c}from"#entry";const r={class:"flex items-center justify-center min-h-screen"},u={__name:"index",setup(i){return t(async()=>{await n("/paciente/dashboard",{replace:!0})}),(_,d)=>{const e=a;return c(),o("div",r,[s(e,{text:"Redirigiendo a tu dashboard..."})])}}};export{u as default};

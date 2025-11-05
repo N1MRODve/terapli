@@ -1,0 +1,8 @@
+const login_vue_vue_type_style_index_0_scoped_bf719394_lang = "form[data-v-bf719394]{animation:fadeIn-bf719394 .3s ease-in-out}@keyframes fadeIn-bf719394{0%{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}input[data-v-bf719394]:focus{box-shadow:0 0 0 3px #d9b0a11a}input[data-v-bf719394]:disabled{background-color:#f9f9f9;cursor:not-allowed}";
+
+const loginStyles_D7oVLDAe = [
+  login_vue_vue_type_style_index_0_scoped_bf719394_lang
+];
+
+export { loginStyles_D7oVLDAe as default };
+//# sourceMappingURL=login-styles.D7oVLDAe.mjs.map

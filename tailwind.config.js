@@ -13,74 +13,80 @@ module.exports = {
          🌈 COLORES - Integrados desde design tokens
          ================================================================ */
       colors: {
-        // Fondos
-        'base-bg': '#FDFBF9',
-        'base-bg-secondary': '#F9F7F3',
-        'base-bg-tertiary': '#F5F2EE',
+        // Fondos - Teraplí
+        'base-bg': '#F2F2F2',
+        'base-bg-secondary': '#FAFAFA',
+        'base-bg-tertiary': '#FFFFFF',
         
-        // Terracota (marca principal)
-        terracota: {
-          DEFAULT: '#B46E4B',
-          light: '#E8BAAA',
-          lighter: '#F2DCD3',
-          dark: '#9A5E3E',
+        // Violeta (marca principal Teraplí)
+        violeta: {
+          DEFAULT: '#5550F2',
+          light: '#7B72F7',
+          lighter: '#B8B2FB',
+          dark: '#3D38C7',
         },
         
-        // Arena (fondo cálido)
-        arena: {
-          DEFAULT: '#F9F7F5',
-          light: '#FDFCFB',
-          dark: '#F5F2EE',
+        // Verde esmeralda (confianza)
+        esmeralda: {
+          DEFAULT: '#027368',
+          light: '#04BF9D',
+          lighter: '#B3F5EC',
+          dark: '#015B52',
         },
         
-        // Verde suave
-        verde: {
-          DEFAULT: '#6BAE75',
-          light: '#A8D5AE',
-          dark: '#5A9463',
+        // Verde menta (crecimiento)
+        menta: {
+          DEFAULT: '#04BF9D',
+          light: '#66D4B8',
+          lighter: '#B3F5EC',
+          dark: '#038A72',
         },
         
-        // Rosa complementario
-        rosa: {
-          DEFAULT: '#EAD5D3',
-          light: '#F5E8E6',
+        // Dorado (energía y calidez)
+        dorado: {
+          DEFAULT: '#F2B33D',
+          light: '#F5CC6B',
+          lighter: '#FDF4E3',
+          dark: '#E09E1A',
         },
         
-        // Café (estructura)
-        cafe: {
-          DEFAULT: '#5D4A44',
-          light: '#8B7A74',
-          lighter: '#C4B8B3',
-          dark: '#4A3B35',
+        // Neutrales modernos
+        neutral: {
+          DEFAULT: '#2D3748',
+          light: '#4A5568',
+          lighter: '#718096',
+          lightest: '#A0AEC0',
         },
         
-        // Fondo (alias para retrocompatibilidad)
-        fondo: '#F9F7F3',
+        // Alias para retrocompatibilidad
+        fondo: '#F2F2F2',
+        terracota: '#5550F2',   // Mapear a violeta
+        cafe: '#2D3748',        // Mapear a neutral
         
-        // Estados semánticos
+        // Estados semánticos - Teraplí
         success: {
-          DEFAULT: '#54BF83',
-          light: '#D4F0E0',
+          DEFAULT: '#04BF9D',
+          light: '#B3F5EC',
         },
         warning: {
-          DEFAULT: '#F2C94C',
-          light: '#FDF7E0',
+          DEFAULT: '#F2B33D',
+          light: '#FDF4E3',
         },
         error: {
-          DEFAULT: '#E85D4A',
-          light: '#FDEAE7',
+          DEFAULT: '#E53E3E',
+          light: '#FED7D7',
         },
         info: {
-          DEFAULT: '#5B9BD5',
-          light: '#E7F1F9',
+          DEFAULT: '#5550F2',
+          light: '#B8B2FB',
         },
         
-        // Estados de citas
+        // Estados de citas - Teraplí
         status: {
-          pending: '#F2C94C',
-          confirmed: '#54BF83',
-          completed: '#5B9BD5',
-          cancelled: '#A59082',
+          pending: '#F2B33D',    // Dorado
+          confirmed: '#04BF9D',  // Verde menta
+          completed: '#5550F2',  // Violeta
+          cancelled: '#A0AEC0',  // Gris neutral
         },
       },
       
@@ -88,8 +94,8 @@ module.exports = {
          🔤 TIPOGRAFÍA
          ================================================================ */
       fontFamily: {
-        serif: ['Lora', 'Georgia', 'serif'],
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        serif: ['Elms Sans', 'Georgia', 'serif'],
+        sans: ['Lato', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         mono: ['SF Mono', 'Monaco', 'Cascadia Code', 'monospace'],
       },
       
@@ -132,16 +138,16 @@ module.exports = {
          🌑 SOMBRAS
          ================================================================ */
       boxShadow: {
-        'xs': '0 1px 2px rgba(74, 59, 53, 0.04)',
-        'sm': '0 2px 4px rgba(74, 59, 53, 0.04), 0 1px 2px rgba(74, 59, 53, 0.02)',
-        'DEFAULT': '0 4px 8px rgba(74, 59, 53, 0.06), 0 2px 4px rgba(74, 59, 53, 0.03)',
-        'md': '0 6px 12px rgba(74, 59, 53, 0.08), 0 3px 6px rgba(74, 59, 53, 0.04)',
-        'lg': '0 10px 20px rgba(74, 59, 53, 0.10), 0 4px 8px rgba(74, 59, 53, 0.05)',
-        'xl': '0 16px 32px rgba(74, 59, 53, 0.12), 0 6px 12px rgba(74, 59, 53, 0.06)',
-        '2xl': '0 24px 48px rgba(74, 59, 53, 0.14), 0 8px 16px rgba(74, 59, 53, 0.07)',
-        'inner': 'inset 0 2px 4px rgba(74, 59, 53, 0.06)',
-        'glow': '0 0 20px rgba(201, 124, 93, 0.15)',
-        'focus': '0 0 0 3px rgba(201, 124, 93, 0.20)',
+        'xs': '0 1px 2px rgba(45, 55, 72, 0.04)',
+        'sm': '0 2px 4px rgba(45, 55, 72, 0.04), 0 1px 2px rgba(45, 55, 72, 0.02)',
+        'DEFAULT': '0 4px 8px rgba(45, 55, 72, 0.06), 0 2px 4px rgba(45, 55, 72, 0.03)',
+        'md': '0 6px 12px rgba(45, 55, 72, 0.08), 0 3px 6px rgba(45, 55, 72, 0.04)',
+        'lg': '0 10px 20px rgba(45, 55, 72, 0.10), 0 4px 8px rgba(45, 55, 72, 0.05)',
+        'xl': '0 16px 32px rgba(45, 55, 72, 0.12), 0 6px 12px rgba(45, 55, 72, 0.06)',
+        '2xl': '0 24px 48px rgba(45, 55, 72, 0.14), 0 8px 16px rgba(45, 55, 72, 0.07)',
+        'inner': 'inset 0 2px 4px rgba(45, 55, 72, 0.06)',
+        'glow': '0 0 20px rgba(85, 80, 242, 0.15)',
+        'focus': '0 0 0 3px rgba(85, 80, 242, 0.20)',
         'none': 'none',
       },
       

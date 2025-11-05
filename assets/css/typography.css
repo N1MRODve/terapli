@@ -1,35 +1,35 @@
 /* ============================================
    SISTEMA TIPOGRÁFICO GLOBAL
-   Psicóloga Karem Peña
+   Teraplí - Moderna y Profesional
    Jerarquía UX + Accesibilidad WCAG 2.1
    ============================================ */
 
 @layer base {
-  /* Encabezados principales */
+  /* Encabezados principales - Elms Sans */
   h1 {
-    @apply font-serif text-4xl md:text-5xl text-[#5D4A44] font-semibold leading-snug;
+    @apply font-serif text-4xl md:text-5xl text-[#2D3748] font-semibold leading-snug;
   }
   
   h2 {
-    @apply font-serif text-3xl md:text-4xl text-[#5D4A44] font-semibold leading-snug;
+    @apply font-serif text-3xl md:text-4xl text-[#2D3748] font-semibold leading-snug;
   }
   
   h3 {
-    @apply font-serif text-2xl md:text-3xl text-[#5D4A44] font-medium;
+    @apply font-serif text-2xl md:text-3xl text-[#2D3748] font-medium;
   }
   
   h4 {
-    @apply font-serif text-xl md:text-2xl text-[#5D4A44] font-medium;
+    @apply font-serif text-xl md:text-2xl text-[#2D3748] font-medium;
   }
   
-  /* Párrafos y texto general */
+  /* Párrafos y texto general - Lato */
   p {
-    @apply font-sans text-base md:text-lg text-[#5D4A44] leading-relaxed;
+    @apply font-sans text-base md:text-lg text-[#4A5568] leading-relaxed;
   }
   
   /* Microtextos y notas legales */
   small {
-    @apply font-sans text-sm text-[#5D4A44]/80;
+    @apply font-sans text-sm text-[#718096];
   }
   
   /* Enlaces y botones */
@@ -47,42 +47,42 @@
    ============================================ */
 
 @layer components {
-  /* Títulos de hero/landing - MÁS GRANDES Y PROMINENTES */
+  /* Títulos de hero/landing - Elms Sans Bold */
   .hero-title {
-    @apply font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-[#5D4A44] leading-tight tracking-tight;
+    @apply font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-[#2D3748] leading-tight tracking-tight;
   }
   
-  /* Subtítulos de sección - AUMENTADOS PARA MAYOR JERARQUÍA */
+  /* Subtítulos de sección - Elms Sans Semibold */
   .section-title {
-    @apply font-serif text-4xl md:text-5xl font-semibold text-[#5D4A44] leading-snug;
+    @apply font-serif text-4xl md:text-5xl font-semibold text-[#2D3748] leading-snug;
   }
   
-  /* Títulos de tarjetas */
+  /* Títulos de tarjetas - Elms Sans Medium */
   .card-title {
-    @apply font-serif text-2xl md:text-3xl font-medium text-[#5D4A44];
+    @apply font-serif text-2xl md:text-3xl font-medium text-[#2D3748];
   }
   
-  /* Párrafos destacados/intro */
+  /* Párrafos destacados/intro - Lato */
   .lead-text {
-    @apply font-sans text-lg md:text-xl text-[#5D4A44]/80 leading-relaxed;
+    @apply font-sans text-lg md:text-xl text-[#4A5568] leading-relaxed;
   }
   
-  /* Texto de cuerpo general */
+  /* Texto de cuerpo general - Lato */
   .body-text {
-    @apply font-sans text-base md:text-lg text-[#5D4A44]/80 leading-relaxed;
+    @apply font-sans text-base md:text-lg text-[#4A5568] leading-relaxed;
   }
   
-  /* Citas o frases destacadas */
+  /* Citas o frases destacadas - Elms Sans Italic */
   .quote-text {
-    @apply font-serif text-xl md:text-2xl text-[#5D4A44]/90 font-medium italic leading-relaxed;
+    @apply font-serif text-xl md:text-2xl text-[#2D3748] font-medium italic leading-relaxed;
   }
   
-  /* Microcopy (disclaimers, notas) */
+  /* Microcopy (disclaimers, notas) - Lato Light */
   .microcopy {
-    @apply font-sans text-sm text-[#5D4A44]/60;
+    @apply font-sans text-sm text-[#718096] font-light;
   }
   
-  /* Texto de botones CTA */
+  /* Texto de botones CTA - Lato Medium */
   .btn-text {
     @apply font-sans text-base md:text-lg font-medium tracking-wide;
   }

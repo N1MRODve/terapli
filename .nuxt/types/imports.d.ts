@@ -117,6 +117,7 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useBonos: typeof import('../../composables/useBonos')['useBonos']
   const useCitas: typeof import('../../composables/useCitas')['useCitas']
+  const useConsulta: typeof import('../../composables/useConsulta')['useConsulta']
   const useCookie: typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['useCookie']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
@@ -360,6 +361,7 @@ declare module 'vue' {
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useBonos: UnwrapRef<typeof import('../../composables/useBonos')['useBonos']>
     readonly useCitas: UnwrapRef<typeof import('../../composables/useCitas')['useCitas']>
+    readonly useConsulta: UnwrapRef<typeof import('../../composables/useConsulta')['useConsulta']>
     readonly useCookie: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['useCookie']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>

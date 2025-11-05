@@ -46,8 +46,8 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      'Lora': [400, 500, 600, 700],      // Serif para títulos
-      'Inter': [300, 400, 500, 600, 700] // Sans para cuerpo (mejor legibilidad)
+      'Elms+Sans': [400, 500, 600, 700],  // Sans moderna para títulos
+      'Lato': [300, 400, 500, 600, 700]   // Sans clásica para párrafos
     },
     display: 'swap',
     prefetch: true,
@@ -161,11 +161,11 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'es' },
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'Terapli - Sistema de Gestión Clínica',
+      title: 'Teraplí - Sistema de Gestión Clínica',
       meta: [
         { 
           name: 'description', 
-          content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' 
+          content: 'Teraplí: Sistema de gestión clínica moderna para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' 
         },
         // Robots - No indexar la app de gestión
         { name: 'robots', content: 'noindex, nofollow' },
@@ -176,27 +176,27 @@ export default defineNuxtConfig({
         { name: 'ICBM', content: '40.1524167, -3.6171837' },
         
         // Open Graph
-        { property: 'og:title', content: 'Terapli - Sistema de Gestión Clínica' },
-        { property: 'og:description', content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
+        { property: 'og:title', content: 'Teraplí - Sistema de Gestión Clínica' },
+        { property: 'og:description', content: 'Teraplí: Sistema de gestión clínica moderna para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
         { property: 'og:image', content: 'https://terapli.com/og-image.jpg' },
         { property: 'og:url', content: 'https://terapli.com' },
         { property: 'og:type', content: 'website' },
         { property: 'og:locale', content: 'es_ES' },
-        { property: 'og:site_name', content: 'Terapli - Sistema de Gestión Clínica' },
+        { property: 'og:site_name', content: 'Teraplí - Sistema de Gestión Clínica' },
         
         // Twitter Card
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Terapli - Sistema de Gestión Clínica' },
-        { name: 'twitter:description', content: 'Sistema de gestión clínica para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
+        { name: 'twitter:title', content: 'Teraplí - Sistema de Gestión Clínica' },
+        { name: 'twitter:description', content: 'Teraplí: Sistema de gestión clínica moderna para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura.' },
         { name: 'twitter:image', content: 'https://terapli.com/og-image.jpg' },
         
         // Additional SEO
-        { name: 'keywords', content: 'psicóloga Ciempozuelos, terapia ansiedad Madrid Sur, psicología emocional, terapia de pareja, psicóloga online, psicoterapia Madrid' },
-        { name: 'author', content: 'Karem Peña' },
+        { name: 'keywords', content: 'Teraplí, sistema gestión clínica, software terapeutas, gestión pacientes, agenda citas terapia, bonos terapia, psicoterapia digital' },
+        { name: 'author', content: 'Teraplí Team' },
         { name: 'robots', content: 'index, follow' }
       ],
       link: [
-        { rel: 'canonical', href: 'https://psicologakarem.com' },
+        { rel: 'canonical', href: 'https://terapli.com' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
       ],
       script: [

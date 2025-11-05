@@ -33,6 +33,7 @@ export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
 export { COLORES_ESTADO, useAgenda, Cita, FiltrosAgenda, DisponibilidadTerapeuta, ResultadoCompletar } from '../composables/useAgenda';
 export { useBonos } from '../composables/useBonos';
 export { useCitas } from '../composables/useCitas';
+export { useConsulta } from '../composables/useConsulta';
 export { useInactivityDetector } from '../composables/useInactivityDetector';
 export { useMensajes, Mensaje, Conversacion } from '../composables/useMensajes';
 export { useNotificaciones, Notificacion } from '../composables/useNotificaciones';

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Íconos PWA - Psicóloga Karem</title>
+  <style>
+    body {
+      font-family: 'Lato', sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #F9F7F3;
+    }
+    .icon-preview {
+      display: inline-block;
+      margin: 20px;
+      text-align: center;
+    }
+    canvas {
+      border: 2px solid #D8AFA0;
+      border-radius: 16px;
+      background: white;
+    }
+    button {
+      background: #D8AFA0;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #C99A8A;
+    }
+    .instructions {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border-left: 4px solid #D8AFA0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Generador de Íconos PWA</h1>
+  <p>Genera los íconos necesarios para tu PWA de Psicóloga Karem</p>
+
+  <div class="instructions">
+    <h3>📝 Instrucciones:</h3>
+    <ol>
+      <li>Haz clic en "Generar y Descargar" para cada ícono</li>
+      <li>Guarda los archivos en <code>public/icons/</code></li>
+      <li>O mejor: sube tu logo real a <a href="https://realfavicongenerator.net/" target="_blank">RealFaviconGenerator</a></li>
+    </ol>
+  </div>
+
+  <div class="icon-preview">
+    <h3>192x192</h3>
+    <canvas id="canvas192" width="192" height="192"></canvas><br>
+    <button onclick="downloadIcon('canvas192', 'icon-192x192.png')">Descargar</button>
+  </div>
+
+  <div class="icon-preview">
+    <h3>512x512</h3>
+    <canvas id="canvas512" width="512" height="512"></canvas><br>
+    <button onclick="downloadIcon('canvas512', 'icon-512x512.png')">Descargar</button>
+  </div>
+
+  <div class="icon-preview">
+    <h3>Maskable 512x512</h3>
+    <canvas id="canvasMaskable" width="512" height="512"></canvas><br>
+    <button onclick="downloadIcon('canvasMaskable', 'maskable_icon.png')">Descargar</button>
+  </div>
+
+  <script>
+    function drawIcon(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      
+      // Colores de la marca
+      const bg = '#F9F7F3';
+      const primary = '#D8AFA0';
+      const text = '#5A4A42';
+      
+      // Fondo
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, size, size);
+      
+      // Forma de corazón/hoja (representa bienestar emocional)
+      const centerX = size / 2;
+      const centerY = size / 2.2;
+      const scale = size / 192;
+      
+      ctx.fillStyle = primary;
+      ctx.beginPath();
+      
+      // Corazón simplificado
+      const topCurveHeight = size * 0.15;
+      ctx.moveTo(centerX, centerY + topCurveHeight);
+      
+      // Curva izquierda
+      ctx.bezierCurveTo(
+        centerX - size * 0.15, centerY - size * 0.05,
+        centerX - size * 0.15, centerY - size * 0.15,
+        centerX, centerY - size * 0.08
+      );
+      
+      // Curva derecha
+      ctx.bezierCurveTo(
+        centerX + size * 0.15, centerY - size * 0.15,
+        centerX + size * 0.15, centerY - size * 0.05,
+        centerX, centerY + topCurveHeight
+      );
+      
+      ctx.fill();
+      
+      // Punto decorativo
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY + size * 0.18, size * 0.04, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1.0;
+      
+      // Letra K
+      ctx.fillStyle = text;
+      ctx.font = `bold ${size * 0.25}px Lora, serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('K', centerX, centerY + size * 0.3);
+    }
+
+    function drawMaskableIcon() {
+      const canvas = document.getElementById('canvasMaskable');
+      const ctx = canvas.getContext('2d');
+      const size = 512;
+      
+      // Fondo completo (para maskable necesita llegar a los bordes)
+      ctx.fillStyle = '#D8AFA0';
+      ctx.fillRect(0, 0, size, size);
+      
+      // Círculo central con safe zone (10% de margen)
+      const margin = size * 0.1;
+      const safeSize = size - (margin * 2);
+      const centerX = size / 2;
+      const centerY = size / 2;
+      
+      ctx.fillStyle = '#F9F7F3';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, safeSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Contenido centrado y escalado
+      const scale = 0.8;
+      const contentSize = size * scale;
+      
+      // Forma de corazón
+      ctx.fillStyle = '#D8AFA0';
+      const topCurveHeight = contentSize * 0.15;
+      
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY - contentSize * 0.05 + topCurveHeight);
+      
+      ctx.bezierCurveTo(
+        centerX - contentSize * 0.15, centerY - contentSize * 0.15,
+        centerX - contentSize * 0.15, centerY - contentSize * 0.25,
+        centerX, centerY - contentSize * 0.18
+      );
+      
+      ctx.bezierCurveTo(
+        centerX + contentSize * 0.15, centerY - contentSize * 0.25,
+        centerX + contentSize * 0.15, centerY - contentSize * 0.15,
+        centerX, centerY - contentSize * 0.05 + topCurveHeight
+      );
+      
+      ctx.fill();
+      
+      // Punto decorativo
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY + contentSize * 0.08, contentSize * 0.04, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1.0;
+      
+      // Letra K
+      ctx.fillStyle = '#5A4A42';
+      ctx.font = `bold ${contentSize * 0.2}px Lora, serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('K', centerX, centerY + contentSize * 0.18);
+    }
+
+    function downloadIcon(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      const url = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = url;
+      link.click();
+    }
+
+    // Generar los íconos al cargar
+    drawIcon('canvas192', 192);
+    drawIcon('canvas512', 512);
+    drawMaskableIcon();
+  </script>
+</body>
+</html>

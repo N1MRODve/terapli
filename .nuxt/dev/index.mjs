@@ -1,44 +1,44 @@
 import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, getRouterParam, setHeader, getResponseStatus, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, setCookie, getHeader, getResponseStatusText } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, getRouterParam, setHeader, getResponseStatus, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, setCookie, getHeader, getResponseStatusText } from 'file:///Users/dieterlorenzo/terapli/node_modules/h3/dist/index.mjs';
 import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { escapeHtml } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/@vue/shared/dist/shared.cjs.js';
-import { createClient } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/@supabase/supabase-js/dist/main/index.js';
-import { createServerClient, parseCookieHeader } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/@supabase/ssr/dist/main/index.js';
-import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/vue-bundle-renderer/dist/runtime.mjs';
-import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, joinRelativeURL } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/ufo/dist/index.mjs';
-import destr, { destr as destr$1 } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/destr/dist/index.mjs';
-import { createHooks } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/hookable/dist/index.mjs';
-import { createFetch, Headers as Headers$1 } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/ofetch/dist/node.mjs';
-import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/node-mock-http/dist/index.mjs';
-import { createStorage, prefixStorage } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/unstorage/dist/index.mjs';
-import unstorage_47drivers_47fs from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/unstorage/drivers/fs.mjs';
-import { digest } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/ohash/dist/index.mjs';
-import { klona } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/klona/dist/index.mjs';
-import defu, { defuFn } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/defu/dist/defu.mjs';
-import { snakeCase } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/scule/dist/index.mjs';
-import { getContext } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/unctx/dist/index.mjs';
-import { toRouteMatcher, createRouter } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/radix3/dist/index.mjs';
+import { escapeHtml } from 'file:///Users/dieterlorenzo/terapli/node_modules/@vue/shared/dist/shared.cjs.js';
+import { createClient } from 'file:///Users/dieterlorenzo/terapli/node_modules/@supabase/supabase-js/dist/main/index.js';
+import { createServerClient, parseCookieHeader } from 'file:///Users/dieterlorenzo/terapli/node_modules/@supabase/ssr/dist/main/index.js';
+import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file:///Users/dieterlorenzo/terapli/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, joinRelativeURL } from 'file:///Users/dieterlorenzo/terapli/node_modules/ufo/dist/index.mjs';
+import destr, { destr as destr$1 } from 'file:///Users/dieterlorenzo/terapli/node_modules/destr/dist/index.mjs';
+import { createHooks } from 'file:///Users/dieterlorenzo/terapli/node_modules/hookable/dist/index.mjs';
+import { createFetch, Headers as Headers$1 } from 'file:///Users/dieterlorenzo/terapli/node_modules/ofetch/dist/node.mjs';
+import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file:///Users/dieterlorenzo/terapli/node_modules/node-mock-http/dist/index.mjs';
+import { createStorage, prefixStorage } from 'file:///Users/dieterlorenzo/terapli/node_modules/unstorage/dist/index.mjs';
+import unstorage_47drivers_47fs from 'file:///Users/dieterlorenzo/terapli/node_modules/unstorage/drivers/fs.mjs';
+import { digest } from 'file:///Users/dieterlorenzo/terapli/node_modules/ohash/dist/index.mjs';
+import { klona } from 'file:///Users/dieterlorenzo/terapli/node_modules/klona/dist/index.mjs';
+import defu, { defuFn } from 'file:///Users/dieterlorenzo/terapli/node_modules/defu/dist/defu.mjs';
+import { snakeCase } from 'file:///Users/dieterlorenzo/terapli/node_modules/scule/dist/index.mjs';
+import { getContext } from 'file:///Users/dieterlorenzo/terapli/node_modules/unctx/dist/index.mjs';
+import { toRouteMatcher, createRouter } from 'file:///Users/dieterlorenzo/terapli/node_modules/radix3/dist/index.mjs';
 import { readFile } from 'node:fs/promises';
-import consola, { consola as consola$1 } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/consola/dist/index.mjs';
-import { ErrorParser } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/youch-core/build/index.js';
-import { Youch } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/youch/build/index.js';
-import { SourceMapConsumer } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/source-map/source-map.js';
+import consola, { consola as consola$1 } from 'file:///Users/dieterlorenzo/terapli/node_modules/consola/dist/index.mjs';
+import { ErrorParser } from 'file:///Users/dieterlorenzo/terapli/node_modules/youch-core/build/index.js';
+import { Youch } from 'file:///Users/dieterlorenzo/terapli/node_modules/youch/build/index.js';
+import { SourceMapConsumer } from 'file:///Users/dieterlorenzo/terapli/node_modules/source-map/source-map.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { stringify, uneval } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/devalue/index.js';
-import { captureRawStackTrace, parseRawStackTrace } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/errx/dist/index.js';
-import { isVNode, toValue, isRef } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/vue/index.mjs';
+import { stringify, uneval } from 'file:///Users/dieterlorenzo/terapli/node_modules/devalue/index.js';
+import { captureRawStackTrace, parseRawStackTrace } from 'file:///Users/dieterlorenzo/terapli/node_modules/errx/dist/index.js';
+import { isVNode, toValue, isRef } from 'file:///Users/dieterlorenzo/terapli/node_modules/vue/index.mjs';
 import { promises } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname as dirname$1, resolve as resolve$1, isAbsolute } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/pathe/dist/index.mjs';
-import { createHead as createHead$1, propsToString, renderSSRHead } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/unhead/dist/server.mjs';
-import { renderToString } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/vue/server-renderer/index.mjs';
-import { walkResolver } from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/unhead/dist/utils.mjs';
-import localAdapter from 'file:///Users/dieterlorenzo/psicologakarem/node_modules/db0/dist/connectors/better-sqlite3.mjs';
+import { dirname as dirname$1, resolve as resolve$1, isAbsolute } from 'file:///Users/dieterlorenzo/terapli/node_modules/pathe/dist/index.mjs';
+import { createHead as createHead$1, propsToString, renderSSRHead } from 'file:///Users/dieterlorenzo/terapli/node_modules/unhead/dist/server.mjs';
+import { renderToString } from 'file:///Users/dieterlorenzo/terapli/node_modules/vue/server-renderer/index.mjs';
+import { walkResolver } from 'file:///Users/dieterlorenzo/terapli/node_modules/unhead/dist/utils.mjs';
+import localAdapter from 'file:///Users/dieterlorenzo/terapli/node_modules/db0/dist/connectors/better-sqlite3.mjs';
 
-const serverAssets = [{"baseName":"server","dir":"/Users/dieterlorenzo/psicologakarem/server/assets"}];
+const serverAssets = [{"baseName":"server","dir":"/Users/dieterlorenzo/terapli/server/assets"}];
 
 const assets$1 = createStorage();
 
@@ -50,11 +50,11 @@ const storage = createStorage({});
 
 storage.mount('/assets', assets$1);
 
-storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/dieterlorenzo/psicologakarem","watchOptions":{"ignored":[null]}}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/dieterlorenzo/psicologakarem/server","watchOptions":{"ignored":[null]}}));
-storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/dieterlorenzo/psicologakarem/.nuxt"}));
-storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/dieterlorenzo/psicologakarem/.nuxt/cache"}));
-storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/dieterlorenzo/psicologakarem/.data/kv"}));
+storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/dieterlorenzo/terapli","watchOptions":{"ignored":[null]}}));
+storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/dieterlorenzo/terapli/server","watchOptions":{"ignored":[null]}}));
+storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/dieterlorenzo/terapli/.nuxt"}));
+storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/dieterlorenzo/terapli/.nuxt/cache"}));
+storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/dieterlorenzo/terapli/.data/kv"}));
 
 function useStorage(base = "") {
   return base ? prefixStorage(storage, base) : storage;
@@ -712,11 +712,11 @@ const _inlineRuntimeConfig = {
     "version": "3.7.1",
     "database": {
       "type": "sqlite",
-      "filename": "./contents.sqlite"
+      "filename": "/tmp/contents.sqlite"
     },
     "localDatabase": {
       "type": "sqlite",
-      "filename": "/Users/dieterlorenzo/psicologakarem/.data/content/contents.sqlite"
+      "filename": "/Users/dieterlorenzo/terapli/.data/content/contents.sqlite"
     },
     "integrityCheck": true
   }
@@ -1089,15 +1089,15 @@ if (!window.__NUXT_DEVTOOLS_TIME_METRIC__) {
 window.__NUXT_DEVTOOLS_TIME_METRIC__.appInit = Date.now()
 `;
 
-const _FNsreTxblVi1MW5VpgeZWRe3rkdGK38qg8bGGKlqY = (function(nitro) {
+const _oosvyEpb347PxGb4j92YzvYiJXImztVL_EiErE7RA = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script}<\/script>`);
   });
 });
 
-const rootDir = "/Users/dieterlorenzo/psicologakarem";
+const rootDir = "/Users/dieterlorenzo/terapli";
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Psicóloga en Ciempozuelos especializada en ansiedad, pareja y autoestima. Un espacio cálido y seguro para recuperar tu bienestar emocional. Primera orientación gratuita."},{"name":"geo.region","content":"ES-M"},{"name":"geo.placename","content":"Ciempozuelos"},{"name":"geo.position","content":"40.1524167;-3.6171837"},{"name":"ICBM","content":"40.1524167, -3.6171837"},{"property":"og:title","content":"Psicóloga en Ciempozuelos – Karem Peña"},{"property":"og:description","content":"Terapia individual, de pareja y para ansiedad. Espacio cálido, profesional y sin juicios en Ciempozuelos."},{"property":"og:image","content":"https://psicologakarem.com/images/karem-pena-psicologa.jpg"},{"property":"og:url","content":"https://psicologakarem.com"},{"property":"og:type","content":"website"},{"property":"og:locale","content":"es_ES"},{"property":"og:site_name","content":"Psicóloga Karem Peña"},{"name":"twitter:card","content":"summary_large_image"},{"name":"twitter:title","content":"Psicóloga en Ciempozuelos – Karem Peña"},{"name":"twitter:description","content":"Terapia individual, de pareja y para ansiedad. Espacio cálido, profesional y sin juicios en Ciempozuelos."},{"name":"twitter:image","content":"https://psicologakarem.com/images/karem-pena-psicologa.jpg"},{"name":"keywords","content":"psicóloga Ciempozuelos, terapia ansiedad Madrid Sur, psicología emocional, terapia de pareja, psicóloga online, psicoterapia Madrid"},{"name":"author","content":"Karem Peña"},{"name":"robots","content":"index, follow"}],"link":[{"rel":"canonical","href":"https://psicologakarem.com"},{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"}],"style":[],"script":[{"type":"application/ld+json","innerHTML":"{\"@context\":\"https://schema.org\",\"@type\":\"Psychologist\",\"name\":\"Psicóloga Karem Peña\",\"image\":\"https://psicologakarem.com/images/karem-pena-psicologa.jpg\",\"@id\":\"https://psicologakarem.com\",\"url\":\"https://psicologakarem.com\",\"telephone\":\"+34722377290\",\"priceRange\":\"€€\",\"address\":{\"@type\":\"PostalAddress\",\"streetAddress\":\"Calle del Dr. Rivas, 2, Número 8\",\"addressLocality\":\"Ciempozuelos\",\"postalCode\":\"28350\",\"addressRegion\":\"Madrid\",\"addressCountry\":\"ES\"},\"geo\":{\"@type\":\"GeoCoordinates\",\"latitude\":40.1524167,\"longitude\":-3.6171837},\"openingHoursSpecification\":[{\"@type\":\"OpeningHoursSpecification\",\"dayOfWeek\":[\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\"],\"opens\":\"11:00\",\"closes\":\"14:00\"},{\"@type\":\"OpeningHoursSpecification\",\"dayOfWeek\":[\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\"],\"opens\":\"18:00\",\"closes\":\"22:00\"}],\"sameAs\":[\"https://www.instagram.com/psicokarem\",\"https://www.tiktok.com/@psicokarem\",\"https://www.copc.cat/es/contacte/karem-eydelys-pena-de-rodriguez-138759\"],\"areaServed\":[{\"@type\":\"City\",\"name\":\"Ciempozuelos\"},{\"@type\":\"AdministrativeArea\",\"name\":\"Madrid Sur\"}],\"hasOfferCatalog\":{\"@type\":\"OfferCatalog\",\"name\":\"Servicios de Psicoterapia\",\"itemListElement\":[{\"@type\":\"Offer\",\"itemOffered\":{\"@type\":\"Service\",\"name\":\"Terapia Individual\",\"description\":\"Acompañamiento psicológico personalizado para ansiedad, autoestima y bienestar emocional\"}},{\"@type\":\"Offer\",\"itemOffered\":{\"@type\":\"Service\",\"name\":\"Terapia de Pareja\",\"description\":\"Psicoterapia de pareja para mejorar la comunicación y fortalecer el vínculo emocional\"}},{\"@type\":\"Service\",\"name\":\"Terapia Online\",\"description\":\"Sesiones de psicoterapia a distancia con la misma cercanía y confidencialidad\"}]}}"}],"noscript":[],"htmlAttrs":{"lang":"es"},"charset":"utf-8","viewport":"width=device-width, initial-scale=1","title":"Psicóloga en Ciempozuelos | Terapia Individual, Pareja y Ansiedad – Karem Peña"};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Teraplí: Sistema de gestión clínica moderna para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura."},{"name":"robots","content":"noindex, nofollow"},{"name":"geo.region","content":"ES-M"},{"name":"geo.placename","content":"Ciempozuelos"},{"name":"geo.position","content":"40.1524167;-3.6171837"},{"name":"ICBM","content":"40.1524167, -3.6171837"},{"property":"og:title","content":"Teraplí - Sistema de Gestión Clínica"},{"property":"og:description","content":"Teraplí: Sistema de gestión clínica moderna para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura."},{"property":"og:image","content":"https://terapli.com/og-image.jpg"},{"property":"og:url","content":"https://terapli.com"},{"property":"og:type","content":"website"},{"property":"og:locale","content":"es_ES"},{"property":"og:site_name","content":"Teraplí - Sistema de Gestión Clínica"},{"name":"twitter:card","content":"summary_large_image"},{"name":"twitter:title","content":"Teraplí - Sistema de Gestión Clínica"},{"name":"twitter:description","content":"Teraplí: Sistema de gestión clínica moderna para terapeutas. Gestiona pacientes, citas, bonos y recursos de manera eficiente y segura."},{"name":"twitter:image","content":"https://terapli.com/og-image.jpg"},{"name":"keywords","content":"Teraplí, sistema gestión clínica, software terapeutas, gestión pacientes, agenda citas terapia, bonos terapia, psicoterapia digital"},{"name":"author","content":"Teraplí Team"},{"name":"robots","content":"index, follow"}],"link":[{"rel":"canonical","href":"https://terapli.com"},{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"}],"style":[],"script":[{"type":"application/ld+json","innerHTML":"{\"@context\":\"https://schema.org\",\"@type\":\"Psychologist\",\"name\":\"Psicóloga Karem Peña\",\"image\":\"https://psicologakarem.com/images/karem-pena-psicologa.jpg\",\"@id\":\"https://psicologakarem.com\",\"url\":\"https://psicologakarem.com\",\"telephone\":\"+34722377290\",\"priceRange\":\"€€\",\"address\":{\"@type\":\"PostalAddress\",\"streetAddress\":\"Calle del Dr. Rivas, 2, Número 8\",\"addressLocality\":\"Ciempozuelos\",\"postalCode\":\"28350\",\"addressRegion\":\"Madrid\",\"addressCountry\":\"ES\"},\"geo\":{\"@type\":\"GeoCoordinates\",\"latitude\":40.1524167,\"longitude\":-3.6171837},\"openingHoursSpecification\":[{\"@type\":\"OpeningHoursSpecification\",\"dayOfWeek\":[\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\"],\"opens\":\"11:00\",\"closes\":\"14:00\"},{\"@type\":\"OpeningHoursSpecification\",\"dayOfWeek\":[\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\"],\"opens\":\"18:00\",\"closes\":\"22:00\"}],\"sameAs\":[\"https://www.instagram.com/psicokarem\",\"https://www.tiktok.com/@psicokarem\",\"https://www.copc.cat/es/contacte/karem-eydelys-pena-de-rodriguez-138759\"],\"areaServed\":[{\"@type\":\"City\",\"name\":\"Ciempozuelos\"},{\"@type\":\"AdministrativeArea\",\"name\":\"Madrid Sur\"}],\"hasOfferCatalog\":{\"@type\":\"OfferCatalog\",\"name\":\"Servicios de Psicoterapia\",\"itemListElement\":[{\"@type\":\"Offer\",\"itemOffered\":{\"@type\":\"Service\",\"name\":\"Terapia Individual\",\"description\":\"Acompañamiento psicológico personalizado para ansiedad, autoestima y bienestar emocional\"}},{\"@type\":\"Offer\",\"itemOffered\":{\"@type\":\"Service\",\"name\":\"Terapia de Pareja\",\"description\":\"Psicoterapia de pareja para mejorar la comunicación y fortalecer el vínculo emocional\"}},{\"@type\":\"Service\",\"name\":\"Terapia Online\",\"description\":\"Sesiones de psicoterapia a distancia con la misma cercanía y confidencialidad\"}]}}"}],"noscript":[],"htmlAttrs":{"lang":"es"},"charset":"utf-8","viewport":"width=device-width, initial-scale=1","title":"Teraplí - Sistema de Gestión Clínica"};
 
 const appRootTag = "div";
 
@@ -1118,7 +1118,7 @@ const devReducers = {
   URL: (data) => data instanceof URL ? data.toString() : void 0
 };
 const asyncContext = getContext("nuxt-dev", { asyncContext: true, AsyncLocalStorage });
-const _NHzFQvmk5uYQU1UXGltzqdw09LRTJWXYvV1HWhTarlo = (nitroApp) => {
+const _EPWUl40tvSlbsMJOsH2NYh1GaActnNA1zeX4lI9wp2k = (nitroApp) => {
   const handler = nitroApp.h3App.handler;
   nitroApp.h3App.handler = (event) => {
     return asyncContext.callAsync({ logs: [], event }, () => handler(event));
@@ -1188,8 +1188,8 @@ function onConsoleLog(callback) {
 }
 
 const plugins = [
-  _FNsreTxblVi1MW5VpgeZWRe3rkdGK38qg8bGGKlqY,
-_NHzFQvmk5uYQU1UXGltzqdw09LRTJWXYvV1HWhTarlo
+  _oosvyEpb347PxGb4j92YzvYiJXImztVL_EiErE7RA,
+_EPWUl40tvSlbsMJOsH2NYh1GaActnNA1zeX4lI9wp2k
 ];
 
 const assets = {};
@@ -1217,7 +1217,7 @@ function getAsset (id) {
 
 const METHODS = /* @__PURE__ */ new Set(["HEAD", "GET"]);
 const EncodingMap = { gzip: ".gz", br: ".br" };
-const _B3LvAu = eventHandler((event) => {
+const _9BwJOE = eventHandler((event) => {
   if (event.method && !METHODS.has(event.method)) {
     return;
   }
@@ -1353,8 +1353,8 @@ function publicAssetsURL(...path) {
 
 const APP_ROOT_OPEN_TAG = `<${appRootTag}${propsToString(appRootAttrs)}>`;
 const APP_ROOT_CLOSE_TAG = `</${appRootTag}>`;
-const getServerEntry = () => import('file:///Users/dieterlorenzo/psicologakarem/.nuxt//dist/server/server.mjs').then((r) => r.default || r);
-const getClientManifest = () => import('file:///Users/dieterlorenzo/psicologakarem/.nuxt//dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
+const getServerEntry = () => import('file:///Users/dieterlorenzo/terapli/.nuxt//dist/server/server.mjs').then((r) => r.default || r);
+const getClientManifest = () => import('file:///Users/dieterlorenzo/terapli/.nuxt//dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
 const getSSRRenderer = lazyCachedFunction(async () => {
   const manifest = await getClientManifest();
   if (!manifest) {
@@ -1605,7 +1605,7 @@ async function getIslandContext(event) {
   return ctx;
 }
 
-const _3arA8D = eventHandler(async (event) => {
+const _OYDMnG = eventHandler(async (event) => {
   const collection = getRouterParam(event, "collection");
   setHeader(event, "Content-Type", "text/plain");
   const data = await useStorage().getItem(`build:content:database.compressed.mjs`) || "";
@@ -1616,7 +1616,7 @@ const _3arA8D = eventHandler(async (event) => {
       return content.substring(lineStart.length, content.length - 1);
     }
   }
-  return await import('file:///Users/dieterlorenzo/psicologakarem/.nuxt/content/database.compressed.mjs').then((m) => m[collection]);
+  return await import('file:///Users/dieterlorenzo/terapli/.nuxt/content/database.compressed.mjs').then((m) => m[collection]);
 });
 
 async function decompressSQLDump(base64Str, compressionType = "gzip") {
@@ -2007,7 +2007,7 @@ async function runTask(name, {
   }
 }
 
-const _JhEXvW = eventHandler(async (event) => {
+const _JoBvgp = eventHandler(async (event) => {
   const { sql } = await readBody(event);
   const collection = getRouterParam(event, "collection");
   assertSafeQuery(sql, collection);
@@ -2018,17 +2018,17 @@ const _JhEXvW = eventHandler(async (event) => {
   return loadDatabaseAdapter(conf).all(sql);
 });
 
-const _lazy_Ddvcyd = () => Promise.resolve().then(function () { return crearTerapeuta_post$1; });
-const _lazy_AgM2m0 = () => Promise.resolve().then(function () { return renderer$1; });
+const _lazy_Q8S7sP = () => Promise.resolve().then(function () { return crearTerapeuta_post$1; });
+const _lazy_rJnY_v = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
-  { route: '', handler: _B3LvAu, lazy: false, middleware: true, method: undefined },
-  { route: '/api/admin/crear-terapeuta', handler: _lazy_Ddvcyd, lazy: true, middleware: false, method: "post" },
-  { route: '/__nuxt_error', handler: _lazy_AgM2m0, lazy: true, middleware: false, method: undefined },
+  { route: '', handler: _9BwJOE, lazy: false, middleware: true, method: undefined },
+  { route: '/api/admin/crear-terapeuta', handler: _lazy_Q8S7sP, lazy: true, middleware: false, method: "post" },
+  { route: '/__nuxt_error', handler: _lazy_rJnY_v, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: _SxA8c9, lazy: false, middleware: false, method: undefined },
-  { route: '/__nuxt_content/:collection/sql_dump.txt', handler: _3arA8D, lazy: false, middleware: false, method: undefined },
-  { route: '/__nuxt_content/:collection/query', handler: _JhEXvW, lazy: false, middleware: false, method: undefined },
-  { route: '/**', handler: _lazy_AgM2m0, lazy: true, middleware: false, method: undefined }
+  { route: '/__nuxt_content/:collection/sql_dump.txt', handler: _OYDMnG, lazy: false, middleware: false, method: undefined },
+  { route: '/__nuxt_content/:collection/query', handler: _JoBvgp, lazy: false, middleware: false, method: undefined },
+  { route: '/**', handler: _lazy_rJnY_v, lazy: true, middleware: false, method: undefined }
 ];
 
 function createNitroApp() {

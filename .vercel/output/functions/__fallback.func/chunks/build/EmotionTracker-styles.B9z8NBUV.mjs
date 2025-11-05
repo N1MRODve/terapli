@@ -1,0 +1,8 @@
+const EmotionTracker_vue_vue_type_style_index_0_scoped_2fde22bb_lang = ".scrollbar-hide[data-v-2fde22bb]{-ms-overflow-style:none;scrollbar-width:none}.scrollbar-hide[data-v-2fde22bb]::-webkit-scrollbar{display:none}.animate-fadeIn[data-v-2fde22bb]{animation:fadeIn-2fde22bb .5s ease-out}@keyframes fadeIn-2fde22bb{0%{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.animate-float[data-v-2fde22bb]{animation:float-2fde22bb 2s ease-in-out infinite}@keyframes float-2fde22bb{0%,to{transform:translateY(0)}50%{transform:translateY(-10px)}}";
+
+const EmotionTrackerStyles_B9z8NBUV = [
+  EmotionTracker_vue_vue_type_style_index_0_scoped_2fde22bb_lang
+];
+
+export { EmotionTrackerStyles_B9z8NBUV as default };
+//# sourceMappingURL=EmotionTracker-styles.B9z8NBUV.mjs.map
