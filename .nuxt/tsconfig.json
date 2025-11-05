@@ -85,21 +85,6 @@
       "vue-demi": [
         "../node_modules/nuxt/dist/app/compat/vue-demi"
       ],
-      "#content/components": [
-        "./content/components"
-      ],
-      "#content/manifest": [
-        "./content/manifest"
-      ],
-      "#mdc-configs": [
-        "./mdc-configs"
-      ],
-      "#mdc-highlighter": [
-        "./mdc-highlighter"
-      ],
-      "#mdc-imports": [
-        "./mdc-imports"
-      ],
       "#pwa": [
         "../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index"
       ],
@@ -115,11 +100,8 @@
       "#tailwind-config": [
         "./tailwind/expose"
       ],
-      "#tailwind-config/*": [
-        "./tailwind/expose/*"
-      ],
       "#app-manifest": [
-        "./manifest/meta/dev.json"
+        "./manifest/meta/31dc6f6d-8245-4790-bf9a-53afb25a79e9.json"
       ],
       "#components": [
         "./components"
@@ -188,8 +170,6 @@
     "../node_modules/nuxt/node_modules",
     "../node_modules/@nuxtjs/supabase/node_modules",
     "../node_modules/@nuxtjs/tailwindcss/node_modules",
-    "../node_modules/@nuxtjs/mdc/node_modules",
-    "../node_modules/@nuxt/content/node_modules",
     "../node_modules/@nuxtjs/google-fonts/node_modules",
     "../node_modules/@vite-pwa/nuxt/node_modules",
     "../node_modules/@nuxt/devtools/node_modules",

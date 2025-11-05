@@ -197,6 +197,10 @@
       "dest": "/contacto"
     },
     {
+      "src": "/api/pagos/confirmar",
+      "dest": "/api/pagos/confirmar"
+    },
+    {
       "src": "/api/admin/crear-terapeuta",
       "dest": "/api/admin/crear-terapeuta"
     },
@@ -243,14 +247,6 @@
     {
       "src": "/coordinadora/pacientes/(?<id>[^/]+)",
       "dest": "/coordinadora/pacientes/[id]"
-    },
-    {
-      "src": "/__nuxt_content/(?<collection>[^/]+)/sql_dump.txt",
-      "dest": "/__nuxt_content/[collection]/sql_dump.txt"
-    },
-    {
-      "src": "/__nuxt_content/(?<collection>[^/]+)/query",
-      "dest": "/__nuxt_content/[collection]/query"
     },
     {
       "src": "/__nuxt_island/(?:.*)",

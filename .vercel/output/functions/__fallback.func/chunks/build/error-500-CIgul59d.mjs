@@ -10,16 +10,15 @@ import 'node:buffer';
 import 'node:fs';
 import 'node:path';
 import 'node:crypto';
-import 'better-sqlite3';
-import 'vue-router';
-import '@supabase/ssr';
-import '@vercel/analytics/nuxt';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';
 import 'unhead/server';
 import 'devalue';
 import 'unhead/plugins';
 import 'unhead/utils';
+import 'vue-router';
+import '@supabase/ssr';
+import '@vercel/analytics/nuxt';
 
 const _sfc_main = {
   __name: "error-500",

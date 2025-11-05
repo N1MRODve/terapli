@@ -23,26 +23,6 @@ import { RuntimeConfig as UserRuntimeConfig, PublicRuntimeConfig as UserPublicRu
 
       secretKey: any,
    },
-
-   content: {
-      databaseVersion: string,
-
-      version: string,
-
-      database: {
-         type: string,
-
-         filename: string,
-      },
-
-      localDatabase: {
-         type: string,
-
-         filename: string,
-      },
-
-      integrityCheck: boolean,
-   },
   }
   interface SharedPublicRuntimeConfig {
    supabaseUrl: string,
@@ -87,34 +67,6 @@ import { RuntimeConfig as UserRuntimeConfig, PublicRuntimeConfig as UserPublicRu
       },
 
       clientOptions: any,
-   },
-
-   content: {
-      wsUrl: string,
-   },
-
-   mdc: {
-      components: {
-         prose: boolean,
-
-         map: any,
-      },
-
-      headings: {
-         anchorLinks: {
-            h1: boolean,
-
-            h2: boolean,
-
-            h3: boolean,
-
-            h4: boolean,
-
-            h5: boolean,
-
-            h6: boolean,
-         },
-      },
    },
   }
 declare module '@nuxt/schema' {

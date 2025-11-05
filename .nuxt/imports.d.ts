@@ -52,9 +52,4 @@ export { useSupabaseClient } from '../node_modules/@nuxtjs/supabase/dist/runtime
 export { useSupabaseCookieRedirect } from '../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseCookieRedirect';
 export { useSupabaseSession } from '../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseSession';
 export { useSupabaseUser } from '../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseUser';
-export { queryCollection, queryCollectionSearchSections, queryCollectionNavigation, queryCollectionItemSurroundings } from '../node_modules/@nuxt/content/dist/runtime/app';
-export { flatUnwrap as unwrapSlot } from '../node_modules/@nuxtjs/mdc/dist/runtime/utils/node';
-export { parseMarkdown } from '../node_modules/@nuxtjs/mdc/dist/runtime/parser';
-export { stringifyMarkdown } from '../node_modules/@nuxtjs/mdc/dist/runtime/stringify';
 export { usePWA, useTransparentPwaIcon, useMaskablePwaIcon, useFaviconPwaIcon, useApplePwaIcon, useAppleSplashScreenPwaIcon } from '../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index';
-export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';

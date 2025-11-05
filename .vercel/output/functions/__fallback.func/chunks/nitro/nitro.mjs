@@ -1,11 +1,10 @@
-import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import http from 'node:http';
+import http from 'node:http';
 import https from 'node:https';
 import { EventEmitter } from 'node:events';
 import { Buffer as Buffer$1 } from 'node:buffer';
-import { promises, existsSync, mkdirSync } from 'node:fs';
-import { resolve as resolve$1, dirname, join } from 'node:path';
+import { promises, existsSync } from 'node:fs';
+import { resolve, dirname, join } from 'node:path';
 import { createHash } from 'node:crypto';
-import Database from 'better-sqlite3';
 
 const suspectProtoRx = /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/;
 const suspectConstructorRx = /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/;
@@ -935,19 +934,8 @@ function isError(input) {
 function getQuery(event) {
   return getQuery$1(event.path || "");
 }
-function getRouterParams(event, opts = {}) {
-  let params = event.context.params || {};
-  if (opts.decode) {
-    params = { ...params };
-    for (const key in params) {
-      params[key] = decode(params[key]);
-    }
-  }
-  return params;
-}
-function getRouterParam(event, name, opts = {}) {
-  const params = getRouterParams(event, opts);
-  return params[name];
+function getMethod(event, defaultMethod = "GET") {
+  return (event.node.req.method || defaultMethod).toUpperCase();
 }
 function isMethod(event, expected, allowHead) {
   if (typeof expected === "string") {
@@ -1372,7 +1360,6 @@ const setHeaders = setResponseHeaders;
 function setResponseHeader(event, name, value) {
   event.node.res.setHeader(name, value);
 }
-const setHeader = setResponseHeader;
 function appendResponseHeader(event, name, value) {
   let current = event.node.res.getHeader(name);
   if (!current) {
@@ -2744,7 +2731,7 @@ const fetch = globalThis.fetch ? (...args) => globalThis.fetch(...args) : create
 const Headers$1 = globalThis.Headers || s$1;
 const AbortController = globalThis.AbortController || i;
 const ofetch = createFetch({ fetch, Headers: Headers$1, AbortController });
-const $fetch$1 = ofetch;
+const $fetch = ofetch;
 
 function wrapToPromise(value) {
   if (!value || typeof value.then !== "function") {
@@ -3421,7 +3408,7 @@ async function readdirRecursive(dir, ignore, maxDepth) {
   const files = [];
   await Promise.all(
     entries.map(async (entry) => {
-      const entryPath = resolve$1(dir, entry.name);
+      const entryPath = resolve(dir, entry.name);
       if (entry.isDirectory()) {
         if (maxDepth === void 0 || maxDepth > 0) {
           const dirFiles = await readdirRecursive(
@@ -3444,7 +3431,7 @@ async function rmRecursive(dir) {
   const entries = await readdir(dir);
   await Promise.all(
     entries.map((entry) => {
-      const entryPath = resolve$1(dir, entry.name);
+      const entryPath = resolve(dir, entry.name);
       if (entry.isDirectory()) {
         return rmRecursive(entryPath).then(() => promises.rmdir(entryPath));
       } else {
@@ -3460,7 +3447,7 @@ const unstorage_47drivers_47fs_45lite = defineDriver((opts = {}) => {
   if (!opts.base) {
     throw createRequiredError(DRIVER_NAME, "base");
   }
-  opts.base = resolve$1(opts.base);
+  opts.base = resolve(opts.base);
   const r = (key) => {
     if (PATH_TRAVERSE_RE.test(key)) {
       throw createError(
@@ -4236,7 +4223,7 @@ function _expandFromEnv(value) {
 const _inlineRuntimeConfig = {
   "app": {
     "baseURL": "/",
-    "buildId": "be7ad894-62a4-4062-bfc0-0933d8af18ad",
+    "buildId": "31dc6f6d-8245-4790-bf9a-53afb25a79e9",
     "buildAssetsDir": "/_nuxt/",
     "cdnURL": ""
   },
@@ -4246,12 +4233,6 @@ const _inlineRuntimeConfig = {
       "/__nuxt_error": {
         "cache": false,
         "isr": false
-      },
-      "/__nuxt_content/**": {
-        "robots": false
-      },
-      "/__nuxt_content/content/sql_dump.txt": {
-        "prerender": true
       },
       "/_nuxt/builds/meta/**": {
         "headers": {
@@ -4295,25 +4276,6 @@ const _inlineRuntimeConfig = {
         "secure": true
       },
       "clientOptions": {}
-    },
-    "content": {
-      "wsUrl": ""
-    },
-    "mdc": {
-      "components": {
-        "prose": true,
-        "map": {}
-      },
-      "headings": {
-        "anchorLinks": {
-          "h1": false,
-          "h2": true,
-          "h3": true,
-          "h4": true,
-          "h5": false,
-          "h6": false
-        }
-      }
     }
   },
   "supabaseUrl": "https://pcbchuaezokqppwsbnty.supabase.co",
@@ -4321,19 +4283,6 @@ const _inlineRuntimeConfig = {
   "supabase": {
     "serviceKey": "",
     "secretKey": ""
-  },
-  "content": {
-    "databaseVersion": "v3.5.0",
-    "version": "3.7.1",
-    "database": {
-      "type": "sqlite",
-      "filename": "/tmp/contents.sqlite"
-    },
-    "localDatabase": {
-      "type": "sqlite",
-      "filename": "/Users/dieterlorenzo/terapli/.data/content/contents.sqlite"
-    },
-    "integrityCheck": true
   }
 };
 const envOptions = {
@@ -4739,593 +4688,15 @@ const plugins = [
 
 const _SxA8c9 = defineEventHandler(() => {});
 
-const _OYDMnG = eventHandler(async (event) => {
-  const collection = getRouterParam(event, "collection");
-  setHeader(event, "Content-Type", "text/plain");
-  const data = await useStorage().getItem(`build:content:database.compressed.mjs`) || "";
-  if (data) {
-    const lineStart = `export const ${collection} = "`;
-    const content = String(data).split("\n").find((line) => line.startsWith(lineStart));
-    if (content) {
-      return content.substring(lineStart.length, content.length - 1);
-    }
-  }
-  return await import('../build/database.compressed.mjs').then((m) => m[collection]);
-});
-
-const _DRIVE_LETTER_START_RE = /^[A-Za-z]:\//;
-function normalizeWindowsPath(input = "") {
-  if (!input) {
-    return input;
-  }
-  return input.replace(/\\/g, "/").replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase());
-}
-const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
-const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
-function cwd() {
-  if (typeof process !== "undefined" && typeof process.cwd === "function") {
-    return process.cwd().replace(/\\/g, "/");
-  }
-  return "/";
-}
-const resolve = function(...arguments_) {
-  arguments_ = arguments_.map((argument) => normalizeWindowsPath(argument));
-  let resolvedPath = "";
-  let resolvedAbsolute = false;
-  for (let index = arguments_.length - 1; index >= -1 && !resolvedAbsolute; index--) {
-    const path = index >= 0 ? arguments_[index] : cwd();
-    if (!path || path.length === 0) {
-      continue;
-    }
-    resolvedPath = `${path}/${resolvedPath}`;
-    resolvedAbsolute = isAbsolute(path);
-  }
-  resolvedPath = normalizeString(resolvedPath, !resolvedAbsolute);
-  if (resolvedAbsolute && !isAbsolute(resolvedPath)) {
-    return `/${resolvedPath}`;
-  }
-  return resolvedPath.length > 0 ? resolvedPath : ".";
-};
-function normalizeString(path, allowAboveRoot) {
-  let res = "";
-  let lastSegmentLength = 0;
-  let lastSlash = -1;
-  let dots = 0;
-  let char = null;
-  for (let index = 0; index <= path.length; ++index) {
-    if (index < path.length) {
-      char = path[index];
-    } else if (char === "/") {
-      break;
-    } else {
-      char = "/";
-    }
-    if (char === "/") {
-      if (lastSlash === index - 1 || dots === 1) ; else if (dots === 2) {
-        if (res.length < 2 || lastSegmentLength !== 2 || res[res.length - 1] !== "." || res[res.length - 2] !== ".") {
-          if (res.length > 2) {
-            const lastSlashIndex = res.lastIndexOf("/");
-            if (lastSlashIndex === -1) {
-              res = "";
-              lastSegmentLength = 0;
-            } else {
-              res = res.slice(0, lastSlashIndex);
-              lastSegmentLength = res.length - 1 - res.lastIndexOf("/");
-            }
-            lastSlash = index;
-            dots = 0;
-            continue;
-          } else if (res.length > 0) {
-            res = "";
-            lastSegmentLength = 0;
-            lastSlash = index;
-            dots = 0;
-            continue;
-          }
-        }
-        if (allowAboveRoot) {
-          res += res.length > 0 ? "/.." : "..";
-          lastSegmentLength = 2;
-        }
-      } else {
-        if (res.length > 0) {
-          res += `/${path.slice(lastSlash + 1, index)}`;
-        } else {
-          res = path.slice(lastSlash + 1, index);
-        }
-        lastSegmentLength = index - lastSlash - 1;
-      }
-      lastSlash = index;
-      dots = 0;
-    } else if (char === "." && dots !== -1) {
-      ++dots;
-    } else {
-      dots = -1;
-    }
-  }
-  return res;
-}
-const isAbsolute = function(p) {
-  return _IS_ABSOLUTE_RE.test(p);
-};
-const relative = function(from, to) {
-  const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/");
-  const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/");
-  if (_to[0][1] === ":" && _from[0][1] === ":" && _from[0] !== _to[0]) {
-    return _to.join("/");
-  }
-  const _fromCopy = [..._from];
-  for (const segment of _fromCopy) {
-    if (_to[0] !== segment) {
-      break;
-    }
-    _from.shift();
-    _to.shift();
-  }
-  return [..._from.map(() => ".."), ..._to].join("/");
-};
-
-async function decompressSQLDump(base64Str, compressionType = "gzip") {
-  const binaryData = Uint8Array.from(atob(base64Str), (c) => c.charCodeAt(0));
-  const response = new Response(new Blob([binaryData]));
-  const decompressedStream = response.body?.pipeThrough(new DecompressionStream(compressionType));
-  const text = await new Response(decompressedStream).text();
-  return JSON.parse(text);
-}
-
-const checksums = {
-  "content": "v3.5.0--8PCS2Wv99Ad2HQvbT8V5LCsQA0Y2ftuF5_0eXwM4UlY"
-};
-const checksumsStructure = {
-  "content": "bgIYhpjRuV8zbHJE_CfelwKpJ_Td6YuGJwixiek8lmI"
-};
-const tables = {
-  "content": "_content_content",
-  "info": "_content_info"
-};
-const contentManifest = {
-  "content": {
-    "type": "page",
-    "fields": {
-      "id": "string",
-      "title": "string",
-      "body": "json",
-      "description": "string",
-      "extension": "string",
-      "meta": "json",
-      "navigation": "json",
-      "path": "string",
-      "seo": "json",
-      "stem": "string"
-    }
-  },
-  "info": {
-    "type": "data",
-    "fields": {}
-  }
-};
-
-async function fetchDatabase(event, collection) {
-  return await $fetch(`/__nuxt_content/${collection}/sql_dump.txt`, {
-    context: event ? { cloudflare: event.context.cloudflare } : {},
-    responseType: "text",
-    headers: {
-      "content-type": "text/plain",
-      ...event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}
-    },
-    query: { v: checksums[String(collection)], t: void 0 }
-  });
-}
-
-function refineContentFields(sql, doc) {
-  const fields = findCollectionFields(sql);
-  const item = { ...doc };
-  for (const key in item) {
-    if (fields[key] === "json" && item[key] && item[key] !== "undefined") {
-      item[key] = JSON.parse(item[key]);
-    }
-    if (fields[key] === "boolean" && item[key] !== "undefined") {
-      item[key] = Boolean(item[key]);
-    }
-  }
-  for (const key in item) {
-    if (item[key] === "NULL") {
-      item[key] = void 0;
-    }
-  }
-  return item;
-}
-function findCollectionFields(sql) {
-  const table = sql.match(/FROM\s+(\w+)/);
-  if (!table) {
-    return {};
-  }
-  const info = contentManifest[getCollectionName(table[1])];
-  return info?.fields || {};
-}
-function getCollectionName(table) {
-  return table.replace(/^_content_/, "");
-}
-
-class BoundableStatement {
-	_statement;
-	constructor(rawStmt) {
-		this._statement = rawStmt;
-	}
-	bind(...params) {
-		return new BoundStatement(this, params);
-	}
-}
-class BoundStatement {
-	#statement;
-	#params;
-	constructor(statement, params) {
-		this.#statement = statement;
-		this.#params = params;
-	}
-	bind(...params) {
-		return new BoundStatement(this.#statement, params);
-	}
-	all() {
-		return this.#statement.all(...this.#params);
-	}
-	run() {
-		return this.#statement.run(...this.#params);
-	}
-	get() {
-		return this.#statement.get(...this.#params);
-	}
-}
-
-function sqliteConnector(opts) {
-	let _db;
-	const getDB = () => {
-		if (_db) {
-			return _db;
-		}
-		if (opts.name === ":memory:") {
-			_db = new Database(":memory:");
-			return _db;
-		}
-		const filePath = resolve$1(opts.cwd || ".", opts.path || `.data/${opts.name || "db"}.sqlite3`);
-		mkdirSync(dirname(filePath), { recursive: true });
-		_db = new Database(filePath);
-		return _db;
-	};
-	return {
-		name: "sqlite",
-		dialect: "sqlite",
-		getInstance: () => getDB(),
-		exec: (sql) => getDB().exec(sql),
-		prepare: (sql) => new StatementWrapper(() => getDB().prepare(sql)),
-		dispose: () => {
-			_db?.close?.();
-			_db = undefined;
-		}
-	};
-}
-class StatementWrapper extends BoundableStatement {
-	async all(...params) {
-		return this._statement().all(...params);
-	}
-	async run(...params) {
-		const res = this._statement().run(...params);
-		return {
-			success: res.changes > 0,
-			...res
-		};
-	}
-	async get(...params) {
-		return this._statement().get(...params);
-	}
-}
-
-let db;
-function loadDatabaseAdapter(config) {
-  const { database, localDatabase } = config;
-  if (!db) {
-    if (["nitro-prerender", "nitro-dev"].includes("vercel")) {
-      db = sqliteConnector(refineDatabaseConfig(localDatabase));
-    } else {
-      db = sqliteConnector(refineDatabaseConfig(database));
-    }
-  }
-  return {
-    all: async (sql, params = []) => {
-      return db.prepare(sql).all(...params).then((result) => (result || []).map((item) => refineContentFields(sql, item)));
-    },
-    first: async (sql, params = []) => {
-      return db.prepare(sql).get(...params).then((item) => item ? refineContentFields(sql, item) : item);
-    },
-    exec: async (sql, params = []) => {
-      return db.prepare(sql).run(...params);
-    }
-  };
-}
-const checkDatabaseIntegrity = {};
-const integrityCheckPromise = {};
-async function checkAndImportDatabaseIntegrity(event, collection, config) {
-  if (checkDatabaseIntegrity[String(collection)] !== false) {
-    checkDatabaseIntegrity[String(collection)] = false;
-    integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], checksumsStructure[String(collection)], config).then((isValid) => {
-      checkDatabaseIntegrity[String(collection)] = !isValid;
-    }).catch((error) => {
-      console.error("Database integrity check failed", error);
-      checkDatabaseIntegrity[String(collection)] = true;
-      integrityCheckPromise[String(collection)] = null;
-    });
-  }
-  if (integrityCheckPromise[String(collection)]) {
-    await integrityCheckPromise[String(collection)];
-  }
-}
-async function _checkAndImportDatabaseIntegrity(event, collection, integrityVersion, structureIntegrityVersion, config) {
-  const db2 = loadDatabaseAdapter(config);
-  const before = await db2.first(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => null);
-  if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
-    await db2.exec(`DROP TABLE IF EXISTS ${tables.info}`);
-    before.version = "";
-  }
-  const unchangedStructure = before?.structureVersion === structureIntegrityVersion;
-  if (before?.version) {
-    if (before.version === integrityVersion) {
-      if (before.ready) {
-        return true;
-      }
-      await waitUntilDatabaseIsReady(db2, collection);
-      return true;
-    }
-    await db2.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]);
-    if (!unchangedStructure) {
-      await db2.exec(`DROP TABLE IF EXISTS ${tables[collection]}`);
-    }
-  }
-  const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump);
-  const dumpLinesHash = dump.map((row) => row.split(" -- ").pop());
-  let hashesInDb = /* @__PURE__ */ new Set();
-  if (unchangedStructure) {
-    const hashListFromTheDump = new Set(dumpLinesHash);
-    const hashesInDbRecords = await db2.all(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => []);
-    hashesInDb = new Set(hashesInDbRecords.map((r) => r.__hash__));
-    const hashesToDelete = hashesInDb.difference(hashListFromTheDump);
-    if (hashesToDelete.size) {
-      await db2.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${Array(hashesToDelete.size).fill("?").join(",")})`, Array.from(hashesToDelete));
-    }
-  }
-  await dump.reduce(async (prev, sql, index) => {
-    await prev;
-    const hash = dumpLinesHash[index];
-    const statement = sql.substring(0, sql.length - hash.length - 4);
-    if (unchangedStructure) {
-      if (hash === "structure") {
-        return Promise.resolve();
-      }
-      if (hashesInDb.has(hash)) {
-        return Promise.resolve();
-      }
-    }
-    await db2.exec(statement).catch((err) => {
-      const message = err.message || "Unknown error";
-      console.error(`Failed to execute SQL ${sql}: ${message}`);
-    });
-  }, Promise.resolve());
-  const after = await db2.first(`SELECT version FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: "" }));
-  return after?.version === integrityVersion;
-}
-const REQUEST_TIMEOUT = 90;
-async function waitUntilDatabaseIsReady(db2, collection) {
-  let iterationCount = 0;
-  let interval;
-  await new Promise((resolve, reject) => {
-    interval = setInterval(async () => {
-      const row = await db2.first(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }));
-      if (row?.ready) {
-        clearInterval(interval);
-        resolve(0);
-      }
-      if (iterationCount++ > REQUEST_TIMEOUT) {
-        clearInterval(interval);
-        reject(new Error("Waiting for another database initialization timed out"));
-      }
-    }, 1e3);
-  }).catch((e) => {
-    throw e;
-  }).finally(() => {
-    if (interval) {
-      clearInterval(interval);
-    }
-  });
-}
-async function loadDatabaseDump(event, collection) {
-  return await fetchDatabase(event, String(collection)).catch((e) => {
-    console.error("Failed to fetch compressed dump", e);
-    return "";
-  });
-}
-function refineDatabaseConfig(config) {
-  if (config.type === "d1") {
-    return { ...config, bindingName: config.bindingName || config.binding };
-  }
-  if (config.type === "sqlite") {
-    const _config = { ...config };
-    if (config.filename === ":memory:") {
-      return { name: "memory" };
-    }
-    if ("filename" in config) {
-      const filename = isAbsolute(config?.filename || "") || config?.filename === ":memory:" ? config?.filename : new URL(config.filename, globalThis._importMeta_.url).pathname;
-      _config.path = process.platform === "win32" && filename.startsWith("/") ? filename.slice(1) : filename;
-    }
-    return _config;
-  }
-  return config;
-}
-
-const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i;
-const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?([a-z_]\w+|\*)\)/i;
-const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/;
-function assertSafeQuery(sql, collection) {
-  if (!sql) {
-    throw new Error("Invalid query");
-  }
-  const cleanedupQuery = cleanupQuery(sql);
-  if (cleanedupQuery !== sql) {
-    throw new Error("Invalid query");
-  }
-  const match = sql.match(SQL_SELECT_REGEX);
-  if (!match) {
-    throw new Error("Invalid query");
-  }
-  const [_, select, from, where, orderBy, order, limit, offset] = match;
-  const columns = select?.trim().split(", ") || [];
-  if (columns.length === 1) {
-    if (columns[0] !== "*" && !columns[0]?.match(SQL_COUNT_REGEX) && !columns[0]?.match(/^"[a-z_]\w+"$/i)) {
-      throw new Error("Invalid query");
-    }
-  } else if (!columns.every((column) => column.match(/^"[a-z_]\w+"$/i))) {
-    throw new Error("Invalid query");
-  }
-  if (from !== `_content_${collection}`) {
-    throw new Error("Invalid query");
-  }
-  if (where) {
-    if (!where.startsWith(" WHERE (") || !where.endsWith(")")) {
-      throw new Error("Invalid query");
-    }
-    const noString = cleanupQuery(where, { removeString: true });
-    if (noString.match(SQL_COMMANDS)) {
-      throw new Error("Invalid query");
-    }
-  }
-  const _order = (orderBy + " " + order).split(", ");
-  if (!_order.every((column) => column.match(/^("[a-zA-Z_]+"|[a-zA-Z_]+) (ASC|DESC)$/))) {
-    throw new Error("Invalid query");
-  }
-  if (limit !== void 0 && !limit.match(/^ LIMIT \d+$/)) {
-    throw new Error("Invalid query");
-  }
-  if (offset !== void 0 && !offset.match(/^ OFFSET \d+$/)) {
-    throw new Error("Invalid query");
-  }
-  return true;
-}
-function cleanupQuery(query, options = { removeString: false }) {
-  let inString = false;
-  let stringFence = "";
-  let result = "";
-  for (let i = 0; i < query.length; i++) {
-    const char = query[i];
-    const prevChar = query[i - 1];
-    const nextChar = query[i + 1];
-    if (char === "'" || char === '"') {
-      if (!options?.removeString) {
-        result += char;
-        continue;
-      }
-      if (inString) {
-        if (char !== stringFence || nextChar === stringFence || prevChar === stringFence) {
-          continue;
-        }
-        inString = false;
-        stringFence = "";
-        continue;
-      } else {
-        inString = true;
-        stringFence = char;
-        continue;
-      }
-    }
-    if (!inString) {
-      if (char === "-" && nextChar === "-") {
-        return result;
-      }
-      if (char === "/" && nextChar === "*") {
-        i += 2;
-        while (i < query.length && !(query[i] === "*" && query[i + 1] === "/")) {
-          i += 1;
-        }
-        i += 2;
-        continue;
-      }
-      result += char;
-    }
-  }
-  return result;
-}
-
-function defineRenderHandler(render) {
-  const runtimeConfig = useRuntimeConfig();
-  return eventHandler(async (event) => {
-    const nitroApp = useNitroApp();
-    const ctx = { event, render, response: void 0 };
-    await nitroApp.hooks.callHook("render:before", ctx);
-    if (!ctx.response) {
-      if (event.path === `${runtimeConfig.app.baseURL}favicon.ico`) {
-        setResponseHeader(event, "Content-Type", "image/x-icon");
-        return send(
-          event,
-          "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-        );
-      }
-      ctx.response = await ctx.render(event);
-      if (!ctx.response) {
-        const _currentStatus = getResponseStatus(event);
-        setResponseStatus(event, _currentStatus === 200 ? 500 : _currentStatus);
-        return send(
-          event,
-          "No response returned from render handler: " + event.path
-        );
-      }
-    }
-    await nitroApp.hooks.callHook("render:response", ctx.response, ctx);
-    if (ctx.response.headers) {
-      setResponseHeaders(event, ctx.response.headers);
-    }
-    if (ctx.response.statusCode || ctx.response.statusMessage) {
-      setResponseStatus(
-        event,
-        ctx.response.statusCode,
-        ctx.response.statusMessage
-      );
-    }
-    return ctx.response.body;
-  });
-}
-
-function baseURL() {
-  return useRuntimeConfig().app.baseURL;
-}
-function buildAssetsDir() {
-  return useRuntimeConfig().app.buildAssetsDir;
-}
-function buildAssetsURL(...path) {
-  return joinRelativeURL(publicAssetsURL(), buildAssetsDir(), ...path);
-}
-function publicAssetsURL(...path) {
-  const app = useRuntimeConfig().app;
-  const publicBase = app.cdnURL || app.baseURL;
-  return path.length ? joinRelativeURL(publicBase, ...path) : publicBase;
-}
-
-const _JoBvgp = eventHandler(async (event) => {
-  const { sql } = await readBody(event);
-  const collection = getRouterParam(event, "collection");
-  assertSafeQuery(sql, collection);
-  const conf = useRuntimeConfig().content;
-  if (conf.integrityCheck) {
-    await checkAndImportDatabaseIntegrity(event, collection, conf);
-  }
-  return loadDatabaseAdapter(conf).all(sql);
-});
-
 const _lazy_Q8S7sP = () => import('../routes/api/admin/crear-terapeuta.post.mjs');
+const _lazy_amM4NL = () => import('../routes/api/pagos/confirmar.post.mjs');
 const _lazy_rJnY_v = () => import('../routes/renderer.mjs').then(function (n) { return n.r; });
 
 const handlers = [
   { route: '/api/admin/crear-terapeuta', handler: _lazy_Q8S7sP, lazy: true, middleware: false, method: "post" },
+  { route: '/api/pagos/confirmar', handler: _lazy_amM4NL, lazy: true, middleware: false, method: "post" },
   { route: '/__nuxt_error', handler: _lazy_rJnY_v, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: _SxA8c9, lazy: false, middleware: false, method: undefined },
-  { route: '/__nuxt_content/:collection/sql_dump.txt', handler: _OYDMnG, lazy: false, middleware: false, method: undefined },
-  { route: '/__nuxt_content/:collection/query', handler: _JoBvgp, lazy: false, middleware: false, method: undefined },
   { route: '/**', handler: _lazy_rJnY_v, lazy: true, middleware: false, method: undefined }
 ];
 
@@ -5470,6 +4841,45 @@ function useNitroApp() {
 }
 runNitroPlugins(nitroApp$1);
 
+function defineRenderHandler(render) {
+  const runtimeConfig = useRuntimeConfig();
+  return eventHandler(async (event) => {
+    const nitroApp = useNitroApp();
+    const ctx = { event, render, response: void 0 };
+    await nitroApp.hooks.callHook("render:before", ctx);
+    if (!ctx.response) {
+      if (event.path === `${runtimeConfig.app.baseURL}favicon.ico`) {
+        setResponseHeader(event, "Content-Type", "image/x-icon");
+        return send(
+          event,
+          "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        );
+      }
+      ctx.response = await ctx.render(event);
+      if (!ctx.response) {
+        const _currentStatus = getResponseStatus(event);
+        setResponseStatus(event, _currentStatus === 200 ? 500 : _currentStatus);
+        return send(
+          event,
+          "No response returned from render handler: " + event.path
+        );
+      }
+    }
+    await nitroApp.hooks.callHook("render:response", ctx.response, ctx);
+    if (ctx.response.headers) {
+      setResponseHeaders(event, ctx.response.headers);
+    }
+    if (ctx.response.statusCode || ctx.response.statusMessage) {
+      setResponseStatus(
+        event,
+        ctx.response.statusCode,
+        ctx.response.statusMessage
+      );
+    }
+    return ctx.response.body;
+  });
+}
+
 const nitroApp = useNitroApp();
 const handler = toNodeListener(nitroApp.h3App);
 const listener = function(req, res) {
@@ -5483,5 +4893,5 @@ const listener = function(req, res) {
   return handler(req, res);
 };
 
-export { $fetch$1 as $, createRouter$1 as A, defu as B, parseQuery as C, withTrailingSlash as D, withoutTrailingSlash as E, withLeadingSlash as F, listener as G, getResponseStatusText as a, buildAssetsURL as b, createError$1 as c, defineEventHandler as d, getResponseStatus as e, defineRenderHandler as f, getHeader as g, getQuery as h, destr as i, getRouteRules as j, relative as k, joinURL as l, useNitroApp as m, hasProtocol as n, isScriptProtocol as o, publicAssetsURL as p, sanitizeStatusCode as q, readBody as r, setCookie as s, getContext as t, useRuntimeConfig as u, baseURL as v, withQuery as w, createHooks as x, executeAsync as y, toRouteMatcher as z };
+export { $fetch as $, parseQuery as A, withTrailingSlash as B, withoutTrailingSlash as C, listener as D, getHeader as a, getResponseStatusText as b, createError$1 as c, defineEventHandler as d, getResponseStatus as e, defineRenderHandler as f, getMethod as g, getQuery as h, destr as i, joinRelativeURL as j, getRouteRules as k, joinURL as l, useNitroApp as m, hasProtocol as n, isScriptProtocol as o, sanitizeStatusCode as p, getContext as q, readBody as r, setCookie as s, createHooks as t, useRuntimeConfig as u, executeAsync as v, withQuery as w, toRouteMatcher as x, createRouter$1 as y, defu as z };
 //# sourceMappingURL=nitro.mjs.map

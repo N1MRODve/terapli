@@ -1,10 +1,10 @@
-import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { defineComponent, inject, computed, unref, defineAsyncComponent, shallowRef, readonly, toRef, isRef, hasInjectionContext, getCurrentInstance, useSSRContext, h, Suspense, nextTick, mergeProps, provide, shallowReactive, ref, Fragment, createApp, watch, onErrorCaptured, onServerPrefetch, createVNode, resolveDynamicComponent, reactive, effectScope, isReadonly, isShallow, isReactive, toRaw, withCtx, toDisplayString, getCurrentScope } from 'vue';
-import { n as hasProtocol, o as isScriptProtocol, l as joinURL, w as withQuery, q as sanitizeStatusCode, t as getContext, $ as $fetch, v as baseURL, x as createHooks, y as executeAsync, g as getHeader, c as createError$1, z as toRouteMatcher, A as createRouter$1, B as defu, s as setCookie } from '../nitro/nitro.mjs';
+import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { defineComponent, inject, computed, unref, defineAsyncComponent, shallowRef, toRef, isRef, hasInjectionContext, getCurrentInstance, useSSRContext, h, Suspense, nextTick, mergeProps, provide, shallowReactive, ref, Fragment, createApp, onErrorCaptured, onServerPrefetch, createVNode, resolveDynamicComponent, reactive, effectScope, isReadonly, isShallow, isReactive, toRaw, withCtx, toDisplayString, getCurrentScope } from 'vue';
+import { n as hasProtocol, o as isScriptProtocol, l as joinURL, w as withQuery, p as sanitizeStatusCode, q as getContext, $ as $fetch, t as createHooks, v as executeAsync, a as getHeader, c as createError$1, x as toRouteMatcher, y as createRouter$1, z as defu, s as setCookie } from '../nitro/nitro.mjs';
+import { u as useSeoMeta$1, a as useHead$1, h as headSymbol, b as baseURL } from '../routes/renderer.mjs';
 import { useRoute as useRoute$1, RouterView, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
 import { createServerClient, parseCookieHeader } from '@supabase/ssr';
-import { ssrRenderSlot, ssrRenderAttrs, ssrRenderClass, ssrInterpolate, ssrIncludeBooleanAttr, ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode } from 'vue/server-renderer';
+import { ssrRenderSlot, ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode, ssrRenderAttrs, ssrInterpolate } from 'vue/server-renderer';
 import { Analytics } from '@vercel/analytics/nuxt';
-import { u as useSeoMeta$1, a as useHead$1, h as headSymbol } from '../routes/renderer.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -12,7 +12,6 @@ import 'node:buffer';
 import 'node:fs';
 import 'node:path';
 import 'node:crypto';
-import 'better-sqlite3';
 import 'vue-bundle-renderer/runtime';
 import 'unhead/server';
 import 'devalue';
@@ -378,10 +377,10 @@ async function getRouteRules(arg) {
   const path = typeof arg === "string" ? arg : arg.path;
   {
     useNuxtApp().ssrContext._preloadManifest = true;
-    const _routeRulesMatcher2 = toRouteMatcher(
+    const _routeRulesMatcher = toRouteMatcher(
       createRouter$1({ routes: (/* @__PURE__ */ useRuntimeConfig()).nitro.routeRules })
     );
-    return defu({}, ..._routeRulesMatcher2.matchAll(path).reverse());
+    return defu({}, ..._routeRulesMatcher.matchAll(path).reverse());
   }
 }
 const __nuxt_page_meta$A = {
@@ -510,31 +509,31 @@ const _routes = [
     name: "login",
     path: "/login",
     meta: __nuxt_page_meta$z || {},
-    component: () => import('./login-tzk8Uxx6.mjs')
+    component: () => import('./login-BEgPp5OT.mjs')
   },
   {
     name: "contacto",
     path: "/contacto",
     meta: __nuxt_page_meta$y || {},
-    component: () => import('./contacto-Bkw9V2g4.mjs')
+    component: () => import('./contacto-C86lbK82.mjs')
   },
   {
     name: "dashboard",
     path: "/dashboard",
     meta: { "middleware": ["auth", "auth-role"] },
-    component: () => import('./dashboard-Dl5xv53s.mjs')
+    component: () => import('./dashboard-BbbLLB-J.mjs')
   },
   {
     name: "admin",
     path: "/admin",
     meta: { ...__nuxt_page_meta$x || {}, ...{ "middleware": ["admin-auth"] } },
-    component: () => import('./index-DHtKHkHG.mjs')
+    component: () => import('./index-Cr-c_zBi.mjs')
   },
   {
     name: "agenda",
     path: "/agenda",
     meta: { ...__nuxt_page_meta$w || {}, ...{ "middleware": "auth" } },
-    component: () => import('./index-DHanVk-I.mjs')
+    component: () => import('./index-zH4ko6Cv.mjs')
   },
   {
     name: "legal-cookies",
@@ -557,7 +556,7 @@ const _routes = [
     name: "ejemplo-agenda",
     path: "/ejemplo-agenda",
     meta: { "middleware": "auth" },
-    component: () => import('./ejemplo-agenda-hEV-b2gi.mjs')
+    component: () => import('./ejemplo-agenda-BNieH30q.mjs')
   },
   {
     name: "paciente",
@@ -569,19 +568,19 @@ const _routes = [
     name: "admin-pacientes",
     path: "/admin/pacientes",
     meta: { ...__nuxt_page_meta$t || {}, ...{ "middleware": ["admin-auth"] } },
-    component: () => import('./pacientes-C4-y0lWs.mjs')
+    component: () => import('./pacientes-p7uzohW8.mjs')
   },
   {
     name: "terapeuta-login",
     path: "/terapeuta/login",
     meta: { ...__nuxt_page_meta$s || {}, ...{ "middleware": [] } },
-    component: () => import('./login-DpuU8X8q.mjs')
+    component: () => import('./login-DUaceMoY.mjs')
   },
   {
     name: "admin-terapeutas",
     path: "/admin/terapeutas",
     meta: { ...__nuxt_page_meta$r || {}, ...{ "middleware": ["admin-auth"] } },
-    component: () => import('./terapeutas-DGGm7CeC.mjs')
+    component: () => import('./terapeutas-53kPHukX.mjs')
   },
   {
     name: "legal-privacidad",
@@ -592,7 +591,7 @@ const _routes = [
     name: "terapeuta-agenda",
     path: "/terapeuta/agenda",
     meta: { ...__nuxt_page_meta$q || {}, ...{ "middleware": "auth" } },
-    component: () => import('./agenda-C4UuEj4B.mjs')
+    component: () => import('./agenda-BZLj3pN4.mjs')
   },
   {
     name: "legal-aviso-legal",
@@ -621,18 +620,18 @@ const _routes = [
     name: "coordinacion-login",
     path: "/coordinacion/login",
     meta: __nuxt_page_meta$m || {},
-    component: () => import('./login-B2442rFT.mjs')
+    component: () => import('./login-CLyQphrm.mjs')
   },
   {
     name: "coordinacion-pagos",
     path: "/coordinacion/pagos",
-    component: () => import('./pagos-8h4BJnJM.mjs')
+    component: () => import('./pagos-BinS2ZXw.mjs')
   },
   {
     name: "coordinadora-pagos",
     path: "/coordinadora/pagos",
     meta: { ...__nuxt_page_meta$l || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-    component: () => import('./pagos-CuDHPsx2.mjs')
+    component: () => import('./pagos-C7Ce3SnS.mjs')
   },
   {
     name: "paciente-dashboard",
@@ -644,49 +643,49 @@ const _routes = [
     name: "terapeuta-mensajes",
     path: "/terapeuta/mensajes",
     meta: { ...__nuxt_page_meta$j || {}, ...{ "middleware": "auth" } },
-    component: () => import('./mensajes-CcSgWGZV.mjs')
+    component: () => import('./mensajes-KvctJL5Z.mjs')
   },
   {
     name: "terapeuta-recursos",
     path: "/terapeuta/recursos",
     meta: { ...__nuxt_page_meta$i || {}, ...{ "middleware": "auth" } },
-    component: () => import('./recursos-DRlAiYE6.mjs')
+    component: () => import('./recursos-QLHBG_-x.mjs')
   },
   {
     name: "coordinacion-agenda",
     path: "/coordinacion/agenda",
     meta: __nuxt_page_meta$h || {},
-    component: () => import('./agenda-iIfpoO_x.mjs')
+    component: () => import('./agenda-BIm77Ave.mjs')
   },
   {
     name: "coordinadora-agenda",
     path: "/coordinadora/agenda",
     meta: { ...__nuxt_page_meta$g || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-    component: () => import('./agenda-sN09hhR9.mjs')
+    component: () => import('./agenda-Dylwur4O.mjs')
   },
   {
     name: "terapeuta-dashboard",
     path: "/terapeuta/dashboard",
     meta: { ...__nuxt_page_meta$f || {}, ...{ "middleware": ["auth-terapeuta"] } },
-    component: () => import('./dashboard-aIjQYbEz.mjs')
+    component: () => import('./dashboard-DE0q7763.mjs')
   },
   {
     name: "terapeuta-pacientes",
     path: "/terapeuta/pacientes",
     meta: __nuxt_page_meta$c || {},
-    component: () => import('./pacientes-Y7MLjuJN.mjs'),
+    component: () => import('./pacientes-BPB0IjLK.mjs'),
     children: [
       {
         name: "terapeuta-pacientes-id",
         path: ":id()",
         meta: __nuxt_page_meta$d || {},
-        component: () => import('./_id_-C1V-dEMC.mjs'),
+        component: () => import('./_id_-Dkiqj3ie.mjs'),
         children: [
           {
             name: "terapeuta-pacientes-id-bonos",
             path: "bonos",
             meta: __nuxt_page_meta$e || {},
-            component: () => import('./bonos-DCwHiFz4.mjs')
+            component: () => import('./bonos-0bodcLXQ.mjs')
           }
         ]
       }
@@ -695,7 +694,7 @@ const _routes = [
   {
     name: "coordinacion-mensajes",
     path: "/coordinacion/mensajes",
-    component: () => import('./mensajes-BA4nKV5U.mjs')
+    component: () => import('./mensajes-CcOwygxE.mjs')
   },
   {
     name: "coordinadora-mensajes",
@@ -706,31 +705,31 @@ const _routes = [
   {
     name: "coordinacion-dashboard",
     path: "/coordinacion/dashboard",
-    component: () => import('./dashboard-D-NFQHXu.mjs')
+    component: () => import('./dashboard-DceEhoEM.mjs')
   },
   {
     name: "coordinadora-dashboard",
     path: "/coordinadora/dashboard",
     meta: { ...__nuxt_page_meta$a || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-    component: () => import('./dashboard-BKgabz6a.mjs')
+    component: () => import('./dashboard-CS5udT1O.mjs')
   },
   {
     name: "coordinadora-pacientes",
     path: "/coordinadora/pacientes",
     meta: { ...__nuxt_page_meta$7 || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-    component: () => import('./pacientes-Cvmrgsub.mjs'),
+    component: () => import('./pacientes-Q2Wjet9i.mjs'),
     children: [
       {
         name: "coordinadora-pacientes-id",
         path: ":id()",
         meta: { ...__nuxt_page_meta$9 || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-        component: () => import('./_id_-Cix0smvL.mjs')
+        component: () => import('./_id_-CnwAzCzu.mjs')
       },
       {
         name: "coordinadora-pacientes-nuevo",
         path: "nuevo",
         meta: { ...__nuxt_page_meta$8 || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-        component: () => import('./nuevo-XgXvDbCO.mjs')
+        component: () => import('./nuevo-9hWhc-Gp.mjs')
       }
     ]
   },
@@ -749,19 +748,19 @@ const _routes = [
     name: "terapeuta-sesiones-id",
     path: "/terapeuta/sesiones/:id()",
     meta: { ...__nuxt_page_meta$5 || {}, ...{ "middleware": ["auth-terapeuta"] } },
-    component: () => import('./_id_-C8BOoM3a.mjs')
+    component: () => import('./_id_-BgdLq3Xu.mjs')
   },
   {
     name: "terapeuta-sesiones",
     path: "/terapeuta/sesiones",
     meta: { ...__nuxt_page_meta$4 || {}, ...{ "middleware": "auth" } },
-    component: () => import('./index-4bgUjwWZ.mjs')
+    component: () => import('./index-DNqz321y.mjs')
   },
   {
     name: "coordinadora-pacientes-old",
     path: "/coordinadora/pacientes-old",
     meta: { ...__nuxt_page_meta$3 || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-    component: () => import('./pacientes-old-CHCZ5uY4.mjs')
+    component: () => import('./pacientes-old-qq4FLqx6.mjs')
   },
   {
     name: "coordinadora-recordatorios",
@@ -773,13 +772,13 @@ const _routes = [
     name: "coordinadora-confirmaciones",
     path: "/coordinadora/confirmaciones",
     meta: { ...__nuxt_page_meta$1 || {}, ...{ "middleware": ["auth", "role-coordinadora"] } },
-    component: () => import('./confirmaciones-uCooWR5b.mjs')
+    component: () => import('./confirmaciones-D296wk2n.mjs')
   },
   {
     name: "coordinadora-notificaciones",
     path: "/coordinadora/notificaciones",
     meta: { ...__nuxt_page_meta || {}, ...{ "middleware": "auth" } },
-    component: () => import('./notificaciones-CdB-4r9O.mjs')
+    component: () => import('./notificaciones-BmTzPzv5.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -953,11 +952,11 @@ const globalMiddleware = [
   manifest_45route_45rule
 ];
 const namedMiddleware = {
-  "admin-auth": () => import('./admin-auth-CoWkfpRP.mjs'),
-  "auth-role": () => import('./auth-role-sAOJkCLQ.mjs'),
-  "auth-terapeuta": () => import('./auth-terapeuta-KKOfByx5.mjs'),
-  auth: () => import('./auth-Cym5EgbQ.mjs'),
-  "role-coordinadora": () => import('./role-coordinadora-laMUBNO1.mjs')
+  "admin-auth": () => import('./admin-auth-ChkobtFH.mjs'),
+  "auth-role": () => import('./auth-role-BZkJ8HXi.mjs'),
+  "auth-terapeuta": () => import('./auth-terapeuta-CwgvpQQv.mjs'),
+  auth: () => import('./auth-BkiEt3kg.mjs'),
+  "role-coordinadora": () => import('./role-coordinadora-CcWU2Byb.mjs')
 };
 const plugin = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:router",
@@ -966,7 +965,7 @@ const plugin = /* @__PURE__ */ defineNuxtPlugin({
     let __temp, __restore;
     let routerBase = (/* @__PURE__ */ useRuntimeConfig()).app.baseURL;
     const history = routerOptions.history?.(routerBase) ?? createMemoryHistory(routerBase);
-    const routes2 = routerOptions.routes ? ([__temp, __restore] = executeAsync(() => routerOptions.routes(_routes)), __temp = await __temp, __restore(), __temp) ?? _routes : _routes;
+    const routes = routerOptions.routes ? ([__temp, __restore] = executeAsync(() => routerOptions.routes(_routes)), __temp = await __temp, __restore(), __temp) ?? _routes : _routes;
     let startPosition;
     const router = createRouter({
       ...routerOptions,
@@ -987,7 +986,7 @@ const plugin = /* @__PURE__ */ defineNuxtPlugin({
         }
       },
       history,
-      routes: routes2
+      routes
     });
     nuxtApp.vueApp.use(router);
     const previousRoute = shallowRef(router.currentRoute.value);
@@ -1308,66 +1307,8 @@ const revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms = /* @__
     }
   }
 });
-const LazyProseA = defineAsyncComponent(() => import('./ProseA-CzIDAHdP.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseBlockquote = defineAsyncComponent(() => import('./ProseBlockquote-BkpxK8z-.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseCode = defineAsyncComponent(() => import('./ProseCode-C7VoUayb.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseEm = defineAsyncComponent(() => import('./ProseEm-VK330rxv.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseH1 = defineAsyncComponent(() => import('./ProseH1-VCDN6obL.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseH2 = defineAsyncComponent(() => import('./ProseH2-BexIayeu.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseH3 = defineAsyncComponent(() => import('./ProseH3-7Fy_WdLX.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseH4 = defineAsyncComponent(() => import('./ProseH4-B3h-Idgf.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseH5 = defineAsyncComponent(() => import('./ProseH5-KWQNaaSk.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseH6 = defineAsyncComponent(() => import('./ProseH6-Dq3QGIFU.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseHr = defineAsyncComponent(() => import('./ProseHr-3bktmzoE.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseImg = defineAsyncComponent(() => import('./ProseImg-BGgr4NKp.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseLi = defineAsyncComponent(() => import('./ProseLi-Da9gev7V.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseOl = defineAsyncComponent(() => import('./ProseOl-DF2wfbBq.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseP = defineAsyncComponent(() => import('./ProseP-Bsh96eLw.mjs').then((r) => r["default"] || r.default || r));
-const LazyProsePre = defineAsyncComponent(() => import('./ProsePre-ByG-rB1z.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseScript = defineAsyncComponent(() => import('./ProseScript-B3ujpe25.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseStrong = defineAsyncComponent(() => import('./ProseStrong-CE9OH7vB.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseTable = defineAsyncComponent(() => import('./ProseTable-302S3YP5.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseTbody = defineAsyncComponent(() => import('./ProseTbody-CNb7vfsk.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseTd = defineAsyncComponent(() => import('./ProseTd-LCnB6-B2.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseTh = defineAsyncComponent(() => import('./ProseTh--HeWf-Zp.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseThead = defineAsyncComponent(() => import('./ProseThead-DMCUGZrE.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseTr = defineAsyncComponent(() => import('./ProseTr-Cs0lgGlv.mjs').then((r) => r["default"] || r.default || r));
-const LazyProseUl = defineAsyncComponent(() => import('./ProseUl-CusC3LTf.mjs').then((r) => r["default"] || r.default || r));
-const lazyGlobalComponents = [
-  ["ProseA", LazyProseA],
-  ["ProseBlockquote", LazyProseBlockquote],
-  ["ProseCode", LazyProseCode],
-  ["ProseEm", LazyProseEm],
-  ["ProseH1", LazyProseH1],
-  ["ProseH2", LazyProseH2],
-  ["ProseH3", LazyProseH3],
-  ["ProseH4", LazyProseH4],
-  ["ProseH5", LazyProseH5],
-  ["ProseH6", LazyProseH6],
-  ["ProseHr", LazyProseHr],
-  ["ProseImg", LazyProseImg],
-  ["ProseLi", LazyProseLi],
-  ["ProseOl", LazyProseOl],
-  ["ProseP", LazyProseP],
-  ["ProsePre", LazyProsePre],
-  ["ProseScript", LazyProseScript],
-  ["ProseStrong", LazyProseStrong],
-  ["ProseTable", LazyProseTable],
-  ["ProseTbody", LazyProseTbody],
-  ["ProseTd", LazyProseTd],
-  ["ProseTh", LazyProseTh],
-  ["ProseThead", LazyProseThead],
-  ["ProseTr", LazyProseTr],
-  ["ProseUl", LazyProseUl]
-];
 const components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4 = /* @__PURE__ */ defineNuxtPlugin({
-  name: "nuxt:global-components",
-  setup(nuxtApp) {
-    for (const [name, component] of lazyGlobalComponents) {
-      nuxtApp.vueApp.component(name, component);
-      nuxtApp.vueApp.component("Lazy" + name, component);
-    }
-  }
+  name: "nuxt:global-components"
 });
 const pwa_icons_plugin_C24GcIKjcI2zsa8A86om0L2LZjx1chWtzYxD11T7Txg = /* @__PURE__ */ defineNuxtPlugin(() => {
   return {
@@ -1382,21 +1323,15 @@ const pwa_icons_plugin_C24GcIKjcI2zsa8A86om0L2LZjx1chWtzYxD11T7Txg = /* @__PURE_
     }
   };
 });
-const prerender_server_sqIxOBipVr4FbVMA9kqWL0wT8FPop6sKAXLVfifsJzk = /* @__PURE__ */ defineNuxtPlugin(async () => {
-  {
-    return;
-  }
-});
 const plugins = [
   unhead_k2P3m_ZDyjlr2mMYnoDPwavjsDN8hBlk9cFai0bbopU,
   plugin,
   supabase_server_NZuw_NDm2ZtOgvg4QqXN_Xqdg_KPvGuBBWKrLH15GWY,
   revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms,
   components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4,
-  pwa_icons_plugin_C24GcIKjcI2zsa8A86om0L2LZjx1chWtzYxD11T7Txg,
-  prerender_server_sqIxOBipVr4FbVMA9kqWL0wT8FPop6sKAXLVfifsJzk
+  pwa_icons_plugin_C24GcIKjcI2zsa8A86om0L2LZjx1chWtzYxD11T7Txg
 ];
-const _sfc_main$4 = /* @__PURE__ */ Object.assign({
+const _sfc_main$3 = /* @__PURE__ */ Object.assign({
   name: "NuxtErrorBoundary",
   inheritAttrs: false
 }, {
@@ -1418,19 +1353,19 @@ const _sfc_main$4 = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_setup$4 = _sfc_main$4.setup;
-_sfc_main$4.setup = (props, ctx) => {
+const _sfc_setup$3 = _sfc_main$3.setup;
+_sfc_main$3.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue");
-  return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
+  return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
 };
 const layouts = {
-  admin: defineAsyncComponent(() => import('./admin-Cyd5kA0g.mjs').then((m) => m.default || m)),
-  coordinacion: defineAsyncComponent(() => import('./coordinacion-Dpf_F8rx.mjs').then((m) => m.default || m)),
-  coordinadora: defineAsyncComponent(() => import('./coordinadora-B-Pv1pXE.mjs').then((m) => m.default || m)),
-  default: defineAsyncComponent(() => import('./default-BfMEigMp.mjs').then((m) => m.default || m)),
-  paciente: defineAsyncComponent(() => import('./paciente-1lDpJsaG.mjs').then((m) => m.default || m)),
-  terapeuta: defineAsyncComponent(() => import('./terapeuta-3OjAPgNT.mjs').then((m) => m.default || m))
+  admin: defineAsyncComponent(() => import('./admin-COSaxqMY.mjs').then((m) => m.default || m)),
+  coordinacion: defineAsyncComponent(() => import('./coordinacion-D2PQmYDi.mjs').then((m) => m.default || m)),
+  coordinadora: defineAsyncComponent(() => import('./coordinadora-B99pHcHp.mjs').then((m) => m.default || m)),
+  default: defineAsyncComponent(() => import('./default-CqTbvf_d.mjs').then((m) => m.default || m)),
+  paciente: defineAsyncComponent(() => import('./paciente-CzG8wURd.mjs').then((m) => m.default || m)),
+  terapeuta: defineAsyncComponent(() => import('./terapeuta-Ch9zBeoS.mjs').then((m) => m.default || m))
 };
 const LayoutLoader = defineComponent({
   name: "LayoutLoader",
@@ -1642,326 +1577,11 @@ function normalizeSlot(slot, data) {
   const slotContent = slot(data);
   return slotContent.length === 1 ? h(slotContent[0]) : h(Fragment, void 0, slotContent);
 }
-const useSupabaseClient = () => {
-  return useNuxtApp().$supabase.client;
-};
-let isLoadingProfile = false;
-const useSupabase = () => {
-  const supabase = useSupabaseClient();
-  const user = useSupabaseUser();
-  const session = useState("supabase-session", () => null);
-  const userProfile = useState("user-profile", () => null);
-  const loadUserProfile = async () => {
-    if (userProfile.value) {
-      return userProfile.value;
-    }
-    if (isLoadingProfile) {
-      let attempts = 0;
-      while (isLoadingProfile && attempts < 50) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        attempts++;
-      }
-      if (userProfile.value) {
-        return userProfile.value;
-      }
-    }
-    isLoadingProfile = true;
-    try {
-      let attempts = 0;
-      while (!user.value && attempts < 10) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        attempts++;
-      }
-      const userId = user.value?.id || user.value?.sub;
-      if (!userId) {
-        console.warn("[useSupabase] No hay usuario autenticado o ID inválido después de esperar");
-        console.warn("[useSupabase] user.value:", user.value);
-        userProfile.value = null;
-        return null;
-      }
-      console.log("[useSupabase] Cargando perfil para usuario:", userId);
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
-      if (error) {
-        console.error("[useSupabase] Error al cargar perfil:", error);
-        console.error("[useSupabase] Error code:", error.code);
-        console.error("[useSupabase] Error message:", error.message);
-        console.error("[useSupabase] Error details:", error.details);
-        console.error("[useSupabase] User ID:", userId);
-        userProfile.value = null;
-        return null;
-      }
-      if (!data) {
-        console.warn("[useSupabase] No se encontró perfil para el usuario:", userId);
-        console.warn("[useSupabase] El usuario existe en auth pero no tiene perfil en la tabla profiles");
-        userProfile.value = null;
-        return null;
-      }
-      userProfile.value = data;
-      console.log("[useSupabase] ✅ Perfil cargado correctamente:", data.email, "Rol:", data.rol);
-      if (data.rol === "psicologa") {
-        await syncTerapeutaProfile(data);
-      }
-      return data;
-    } catch (err) {
-      console.error("[useSupabase] Error en loadUserProfile:", err);
-      userProfile.value = null;
-      return null;
-    } finally {
-      isLoadingProfile = false;
-    }
-  };
-  const syncTerapeutaProfile = async (profile) => {
-    try {
-      console.log("[Sync] Verificando sincronización con tabla terapeutas...");
-      if (!profile.email) {
-        console.warn("[Sync] No se puede sincronizar: email faltante");
-        return;
-      }
-      const supabaseClient = supabase;
-      const { data: existingTerapeuta, error: searchError } = await supabaseClient.from("terapeutas").select("*").eq("email", profile.email).maybeSingle();
-      if (searchError && searchError.code !== "PGRST116") {
-        console.warn("[Sync] Error al buscar terapeuta:", searchError);
-        return;
-      }
-      const terapeutaData = {
-        id: profile.id,
-        nombre_completo: profile.nombre || profile.email.split("@")[0] || "Psicóloga",
-        email: profile.email,
-        telefono: null,
-        especialidad: null,
-        num_colegiada: null,
-        disponibilidad: null,
-        activo: true,
-        metadata: {
-          sincronizado_desde_profile: true,
-          ultima_sincronizacion: (/* @__PURE__ */ new Date()).toISOString()
-        }
-      };
-      if (!existingTerapeuta) {
-        console.log("[Sync] Creando nuevo registro en tabla terapeutas...");
-        const { error: insertError } = await supabaseClient.from("terapeutas").insert(terapeutaData);
-        if (insertError) {
-          if (insertError.code === "23505") {
-            console.log("[Sync] El terapeuta ya existe por ID, actualizando...");
-            const { error: updateError } = await supabaseClient.from("terapeutas").update({
-              nombre_completo: terapeutaData.nombre_completo,
-              email: terapeutaData.email,
-              activo: true,
-              metadata: terapeutaData.metadata
-            }).eq("id", profile.id);
-            if (updateError) {
-              console.warn("[Sync] No se pudo actualizar el terapeuta:", updateError);
-            } else {
-              console.log("[Sync] ✅ Terapeuta actualizado correctamente");
-            }
-          } else {
-            console.warn("[Sync] No se pudo insertar el terapeuta:", insertError);
-          }
-        } else {
-          console.log("[Sync] ✅ Terapeuta creado correctamente en la tabla terapeutas");
-        }
-      } else {
-        const needsUpdate = existingTerapeuta.nombre_completo !== terapeutaData.nombre_completo || existingTerapeuta.email !== terapeutaData.email || !existingTerapeuta.activo;
-        if (needsUpdate) {
-          console.log("[Sync] Actualizando registro existente en tabla terapeutas...");
-          const { error: updateError } = await supabaseClient.from("terapeutas").update({
-            nombre_completo: terapeutaData.nombre_completo,
-            email: terapeutaData.email,
-            activo: true,
-            metadata: terapeutaData.metadata
-          }).eq("id", profile.id);
-          if (updateError) {
-            console.warn("[Sync] No se pudo actualizar el terapeuta:", updateError);
-          } else {
-            console.log("[Sync] ✅ Terapeuta actualizado correctamente");
-          }
-        } else {
-          console.log("[Sync] ✅ Terapeuta ya está sincronizado correctamente");
-        }
-      }
-    } catch (err) {
-      console.warn("[Sync] Error al sincronizar terapeuta:", err);
-    }
-  };
-  const getUserRole = async () => {
-    const userId = user.value?.id || user.value?.sub;
-    if (!userId) {
-      console.warn("[useSupabase] getUserRole: No hay usuario autenticado");
-      return null;
-    }
-    if (userProfile.value) {
-      return userProfile.value.rol;
-    }
-    const profile = await loadUserProfile();
-    return profile?.rol || null;
-  };
-  const signInWithEmail = async (email, password) => {
-    console.log("🧹 [Auth] Limpiando estado antes del login...");
-    userProfile.value = null;
-    session.value = null;
-    isLoadingProfile = false;
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    if (!error && data.session) {
-      console.log("✅ [Auth] Login exitoso, estableciendo nueva sesión");
-      session.value = data.session;
-    }
-    return { data, error };
-  };
-  const signUpWithEmail = async (email, password, metadata) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata
-      }
-    });
-    return { data, error };
-  };
-  const signOut = async () => {
-    console.log("🚪 [Auth] Iniciando cierre de sesión...");
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-      console.log("✅ [Auth] Sesión cerrada en Supabase, limpiando estado local...");
-      session.value = null;
-      userProfile.value = null;
-      isLoadingProfile = false;
-      console.log("🧹 [Auth] Estado completamente limpiado");
-    } else {
-      console.error("❌ [Auth] Error al cerrar sesión:", error);
-    }
-    return { error };
-  };
-  const resetPassword = async (email) => {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${(void 0).location.origin}/reset-password`
-    });
-    return { data, error };
-  };
-  const updatePassword = async (newPassword) => {
-    const { data, error } = await supabase.auth.updateUser({
-      password: newPassword
-    });
-    return { data, error };
-  };
-  const waitForUser = async (maxAttempts = 20) => {
-    let attempts = 0;
-    while (!user.value && attempts < maxAttempts) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      attempts++;
-    }
-    return user.value;
-  };
-  const getUserId = () => {
-    return user.value?.id || user.value?.sub || null;
-  };
-  return {
-    supabase,
-    user: readonly(user),
-    session: readonly(session),
-    userProfile: readonly(userProfile),
-    signInWithEmail,
-    signUpWithEmail,
-    signOut,
-    resetPassword,
-    updatePassword,
-    loadUserProfile,
-    getUserRole,
-    waitForUser,
-    getUserId,
-    // Nueva función helper
-    isAuthenticated: computed(() => !!user.value)
-  };
-};
-const _sfc_main$3 = {
-  __name: "AuthDebugPanel",
-  __ssrInlineRender: true,
-  props: {
-    mostrar: {
-      type: Boolean,
-      default: true
-    }
-  },
-  emits: ["cerrar"],
-  setup(__props, { emit: __emit }) {
-    const { user, session, userProfile } = useSupabase();
-    const isDevelopment = computed(() => {
-      return "production" === "development";
-    });
-    const tiempoInicio = ref(Date.now());
-    const tiempoActual = ref(Date.now());
-    const recargando = ref(false);
-    const panelAbierto = ref(true);
-    const tiempoTranscurrido = computed(() => {
-      return Math.floor((tiempoActual.value - tiempoInicio.value) / 1e3);
-    });
-    watch(user, (newUser) => {
-      console.log("👤 [Debug Panel] Usuario cambió:", newUser ? "Autenticado" : "No autenticado");
-    });
-    watch(session, (newSession) => {
-      console.log("🔐 [Debug Panel] Sesión cambió:", newSession ? "Activa" : "Inactiva");
-    });
-    watch(userProfile, (newProfile) => {
-      console.log("📋 [Debug Panel] Perfil cambió:", newProfile ? `Rol: ${newProfile.rol}` : "Sin perfil");
-    });
-    return (_ctx, _push, _parent, _attrs) => {
-      if (isDevelopment.value) {
-        _push(`<div${ssrRenderAttrs(_attrs)}>`);
-        if (!panelAbierto.value) {
-          _push(`<button class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-xl z-50 hover:bg-gray-800 transition-all" title="Abrir panel de debug (Cmd/Ctrl+Shift+D)"> 🔍 </button>`);
-        } else {
-          _push(`<!---->`);
-        }
-        if (__props.mostrar && panelAbierto.value) {
-          _push(`<div class="fixed bottom-4 right-4 bg-gray-900 text-white p-4 rounded-lg shadow-xl max-w-md z-50 font-mono text-xs"><div class="flex justify-between items-center mb-2"><h3 class="font-bold text-sm">🔍 Debug: Autenticación</h3><div class="flex gap-2"><button class="text-gray-400 hover:text-white" title="Minimizar">−</button><button class="text-gray-400 hover:text-white" title="Cerrar">✕</button></div></div><div class="space-y-2"><div class="border-t border-gray-700 pt-2"><div class="flex items-center gap-2"><span class="${ssrRenderClass([unref(user) ? "bg-green-500" : "bg-red-500", "w-2 h-2 rounded-full"])}"></span><span class="font-semibold">Usuario:</span><span class="${ssrRenderClass(unref(user) ? "text-green-400" : "text-red-400")}">${ssrInterpolate(unref(user) ? "Autenticado" : "No autenticado")}</span></div>`);
-          if (unref(user)) {
-            _push(`<div class="ml-4 mt-1 text-gray-400"><div>ID: ${ssrInterpolate(unref(user).id?.substring(0, 8))}...</div><div>Email: ${ssrInterpolate(unref(user).email)}</div></div>`);
-          } else {
-            _push(`<!---->`);
-          }
-          _push(`</div><div class="border-t border-gray-700 pt-2"><div class="flex items-center gap-2"><span class="${ssrRenderClass([unref(session) ? "bg-green-500" : "bg-red-500", "w-2 h-2 rounded-full"])}"></span><span class="font-semibold">Sesión:</span><span class="${ssrRenderClass(unref(session) ? "text-green-400" : "text-red-400")}">${ssrInterpolate(unref(session) ? "Activa" : "Inactiva")}</span></div>`);
-          if (unref(session)) {
-            _push(`<div class="ml-4 mt-1 text-gray-400"><div>Expira: ${ssrInterpolate(new Date(unref(session).expires_at * 1e3).toLocaleTimeString())}</div></div>`);
-          } else {
-            _push(`<!---->`);
-          }
-          _push(`</div><div class="border-t border-gray-700 pt-2"><div class="flex items-center gap-2"><span class="${ssrRenderClass([unref(userProfile) ? "bg-green-500" : "bg-red-500", "w-2 h-2 rounded-full"])}"></span><span class="font-semibold">Perfil:</span><span class="${ssrRenderClass(unref(userProfile) ? "text-green-400" : "text-red-400")}">${ssrInterpolate(unref(userProfile) ? "Cargado" : "Sin cargar")}</span></div>`);
-          if (unref(userProfile)) {
-            _push(`<div class="ml-4 mt-1 text-gray-400"><div>Rol: ${ssrInterpolate(unref(userProfile).rol)}</div><div>Staff: ${ssrInterpolate(unref(userProfile).is_staff ? "✅ Sí" : "❌ No")}</div></div>`);
-          } else {
-            _push(`<!---->`);
-          }
-          _push(`</div><div class="border-t border-gray-700 pt-2"><div class="text-gray-400"> ⏱️ Tiempo desde login: ${ssrInterpolate(tiempoTranscurrido.value)}s </div></div><div class="border-t border-gray-700 pt-2"><button${ssrIncludeBooleanAttr(recargando.value) ? " disabled" : ""} class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-3 py-2 rounded text-white font-semibold">${ssrInterpolate(recargando.value ? "⏳ Recargando..." : "🔄 Recargar Perfil")}</button>`);
-          if (unref(user) && !unref(userProfile)) {
-            _push(`<button class="w-full mt-2 bg-yellow-600 hover:bg-yellow-700 px-3 py-2 rounded text-white font-semibold"> 🚨 Diagnosticar Problema </button>`);
-          } else {
-            _push(`<!---->`);
-          }
-          _push(`</div></div></div>`);
-        } else {
-          _push(`<!---->`);
-        }
-        _push(`</div>`);
-      } else {
-        _push(`<!---->`);
-      }
-    };
-  }
-};
-const _sfc_setup$3 = _sfc_main$3.setup;
-_sfc_main$3.setup = (props, ctx) => {
-  const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/AuthDebugPanel.vue");
-  return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
-};
-const __nuxt_component_3 = Object.assign(_sfc_main$3, { __name: "AuthDebugPanel" });
 const _sfc_main$2 = {
   __name: "app",
   __ssrInlineRender: true,
   setup(__props) {
-    const mostrarDebug = ref("production" === "development");
+    ref("production" === "development");
     onErrorCaptured((error, instance, info) => {
       console.error("Error capturado en app:", error, info);
       return false;
@@ -1980,11 +1600,11 @@ const _sfc_main$2 = {
         { rel: "apple-touch-icon", sizes: "512x512", href: "/icons/icon-512x512.png" }
       ]
     });
+    ref(false);
     return (_ctx, _push, _parent, _attrs) => {
-      const _component_NuxtErrorBoundary = _sfc_main$4;
+      const _component_NuxtErrorBoundary = _sfc_main$3;
       const _component_NuxtLayout = __nuxt_component_0;
       const _component_NuxtPage = __nuxt_component_2;
-      const _component_AuthDebugPanel = __nuxt_component_3;
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "bg-fondo min-h-screen" }, _attrs))}>`);
       _push(ssrRenderComponent(_component_NuxtErrorBoundary, null, {
         error: withCtx(({ error }, _push2, _parent2, _scopeId) => {
@@ -2045,14 +1665,6 @@ const _sfc_main$2 = {
         }),
         _: 1
       }, _parent));
-      if (mostrarDebug.value) {
-        _push(ssrRenderComponent(_component_AuthDebugPanel, {
-          mostrar: mostrarDebug.value,
-          onCerrar: ($event) => mostrarDebug.value = false
-        }, null, _parent));
-      } else {
-        _push(`<!---->`);
-      }
       _push(ssrRenderComponent(unref(Analytics), null, null, _parent));
       _push(`</div>`);
     };
@@ -2167,5 +1779,5 @@ let entry;
 }
 const entry$1 = (ssrContext) => entry(ssrContext);
 
-export { __nuxt_component_0 as _, useRouter as a, useNuxtApp as b, useRuntimeConfig as c, nuxtLinkDefaults as d, entry$1 as default, useSupabase as e, useSeoMeta as f, useSupabaseClient as g, useSupabaseUser as h, useRoute as i, defineNuxtRouteMiddleware as j, navigateTo as n, resolveRouteObject as r, useHead as u };
+export { __nuxt_component_0 as _, useRouter as a, useNuxtApp as b, useRuntimeConfig as c, nuxtLinkDefaults as d, entry$1 as default, useSupabaseUser as e, useState as f, useSeoMeta as g, useRoute as h, defineNuxtRouteMiddleware as i, navigateTo as n, resolveRouteObject as r, useHead as u };
 //# sourceMappingURL=server.mjs.map

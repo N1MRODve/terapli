@@ -1,6 +1,6 @@
-import { s as setCookie, u as useRuntimeConfig, g as getHeader, d as defineEventHandler, r as readBody, c as createError } from '../../../nitro/nitro.mjs';
+import { u as useRuntimeConfig, d as defineEventHandler, g as getMethod, c as createError, r as readBody } from '../../../nitro/nitro.mjs';
 import { createClient } from '@supabase/supabase-js';
-import { createServerClient, parseCookieHeader } from '@supabase/ssr';
+import { f as fetchWithRetry, s as serverSupabaseClient } from '../../../_/serverSupabaseClient.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -8,63 +8,7 @@ import 'node:buffer';
 import 'node:fs';
 import 'node:path';
 import 'node:crypto';
-import 'better-sqlite3';
-
-async function fetchWithRetry(req, init) {
-  const retries = 3;
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      return await fetch(req, init);
-    } catch (error) {
-      if (init?.signal?.aborted) {
-        throw error;
-      }
-      if (attempt === retries) {
-        console.error(`Error fetching request ${req}`, error, init);
-        throw error;
-      }
-      console.warn(`Retrying fetch attempt ${attempt + 1} for request: ${req}`);
-      await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
-    }
-  }
-  throw new Error("Unreachable code");
-}
-
-function setCookies(event, cookies) {
-  const response = event.node.res;
-  const headersWritable = () => !response.headersSent && !response.writableEnded;
-  if (!headersWritable()) {
-    return;
-  }
-  for (const { name, value, options } of cookies) {
-    if (!headersWritable()) {
-      break;
-    }
-    setCookie(event, name, value, options);
-  }
-}
-
-const serverSupabaseClient = async (event) => {
-  if (!event.context._supabaseClient) {
-    const { url, key, cookiePrefix, cookieOptions, clientOptions: { auth = {}, global = {} } } = useRuntimeConfig(event).public.supabase;
-    event.context._supabaseClient = createServerClient(url, key, {
-      auth,
-      cookies: {
-        getAll: () => parseCookieHeader(getHeader(event, "Cookie") ?? ""),
-        setAll: (cookies) => setCookies(event, cookies)
-      },
-      cookieOptions: {
-        ...cookieOptions,
-        name: cookiePrefix
-      },
-      global: {
-        fetch: fetchWithRetry,
-        ...global
-      }
-    });
-  }
-  return event.context._supabaseClient;
-};
+import '@supabase/ssr';
 
 const serverSupabaseServiceRole = (event) => {
   const config = useRuntimeConfig(event);
@@ -91,105 +35,305 @@ const serverSupabaseServiceRole = (event) => {
 };
 
 const crearTerapeuta_post = defineEventHandler(async (event) => {
+  var _a, _b, _c;
+  console.log("[Server] Iniciando crear-terapeuta handler");
+  if (getMethod(event) !== "POST") {
+    console.error("[Server Error] M\xE9todo no permitido:", getMethod(event));
+    throw createError({
+      statusCode: 405,
+      statusMessage: "Method Not Allowed"
+    });
+  }
   try {
-    const body = await readBody(event);
-    const { nombreCompleto, email, password, telefono } = body;
-    if (!nombreCompleto || !email || !password) {
+    console.log("[Server] Leyendo body de la petici\xF3n...");
+    let body;
+    try {
+      body = await readBody(event);
+    } catch (bodyError) {
+      console.error("[Server Error] Error al leer body:", bodyError);
       throw createError({
         statusCode: 400,
-        message: "Faltan campos requeridos: nombreCompleto, email, password"
+        statusMessage: "Invalid request body"
       });
     }
-    console.log("\u{1F4DD} Creando terapeuta:", email);
-    const supabaseAdmin = serverSupabaseServiceRole(event);
-    const supabaseClient = await serverSupabaseClient(event);
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) {
+    console.log("[Server] Body recibido, validando campos...");
+    const { nombreCompleto, email, password, telefono } = body || {};
+    if (!body || typeof body !== "object") {
+      console.error("[Server Error] Body inv\xE1lido:", typeof body);
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Request body must be a valid JSON object"
+      });
+    }
+    if (!nombreCompleto || typeof nombreCompleto !== "string" || nombreCompleto.trim().length < 2) {
+      console.error("[Server Error] Nombre completo inv\xE1lido:", nombreCompleto);
+      throw createError({
+        statusCode: 400,
+        statusMessage: "nombreCompleto debe ser un string v\xE1lido con al menos 2 caracteres"
+      });
+    }
+    if (!email || typeof email !== "string" || !email.includes("@")) {
+      console.error("[Server Error] Email inv\xE1lido:", email);
+      throw createError({
+        statusCode: 400,
+        statusMessage: "email debe ser una direcci\xF3n v\xE1lida"
+      });
+    }
+    if (!password || typeof password !== "string" || password.length < 6) {
+      console.error("[Server Error] Password inv\xE1lido:", password ? "[HIDDEN]" : "undefined");
+      throw createError({
+        statusCode: 400,
+        statusMessage: "password debe tener al menos 6 caracteres"
+      });
+    }
+    console.log("[Server] \u2705 Campos validados, creando terapeuta:", email);
+    console.log("[Server] Verificando variables de entorno...");
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("[Server Error] SUPABASE_SERVICE_ROLE_KEY no configurada");
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Server configuration error: Missing service role key"
+      });
+    }
+    if (!process.env.SUPABASE_URL) {
+      console.error("[Server Error] SUPABASE_URL no configurada");
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Server configuration error: Missing Supabase URL"
+      });
+    }
+    console.log("[Server] Inicializando cliente Supabase admin...");
+    let supabaseAdmin;
+    try {
+      supabaseAdmin = serverSupabaseServiceRole(event);
+    } catch (adminError) {
+      console.error("[Server Error] Error al inicializar cliente admin:", adminError);
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Failed to initialize admin client"
+      });
+    }
+    console.log("[Server] Obteniendo cliente de usuario autenticado...");
+    let supabaseClient;
+    try {
+      supabaseClient = await serverSupabaseClient(event);
+    } catch (clientError) {
+      console.error("[Server Error] Error al obtener cliente de usuario:", clientError);
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Failed to initialize user client"
+      });
+    }
+    console.log("[Server] Verificando autenticaci\xF3n del usuario...");
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    if (userError) {
+      console.error("[Server Error] Error al obtener usuario:", userError);
       throw createError({
         statusCode: 401,
-        message: "No autenticado"
+        statusMessage: "Authentication failed"
       });
     }
+    const user = userData == null ? void 0 : userData.user;
+    if (!user || !user.id) {
+      console.error("[Server Error] Usuario no encontrado o sin ID");
+      throw createError({
+        statusCode: 401,
+        statusMessage: "User not authenticated"
+      });
+    }
+    console.log("[Server] Verificando rol de admin para usuario:", user.id);
     const { data: profile, error: profileError } = await supabaseClient.from("profiles").select("rol").eq("id", user.id).single();
-    if (profileError || (profile == null ? void 0 : profile.rol) !== "admin") {
+    if (profileError) {
+      console.error("[Server Error] Error al obtener perfil:", profileError);
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Failed to verify user permissions"
+      });
+    }
+    if (!profile || profile.rol !== "admin") {
+      console.error("[Server Error] Acceso denegado, rol:", profile == null ? void 0 : profile.rol);
       throw createError({
         statusCode: 403,
-        message: "Acceso denegado. Solo administradores pueden crear terapeutas."
+        statusMessage: "Access denied. Admin role required"
       });
     }
-    console.log("\u2705 Usuario admin verificado:", user.email);
+    console.log("[Server] \u2705 Usuario admin verificado:", user.email);
+    console.log("[Server] Creando usuario en Auth...");
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
+      email: email.trim().toLowerCase(),
+      password: password.trim(),
       email_confirm: true,
       user_metadata: {
-        nombre: nombreCompleto,
-        telefono: telefono || "",
+        nombre: nombreCompleto.trim(),
+        telefono: telefono ? String(telefono).trim() : "",
         rol: "psicologa"
       }
     });
     if (authError) {
-      console.error("\u274C Error al crear usuario en Auth:", authError);
-      throw createError({
-        statusCode: 500,
-        message: `Error al crear usuario: ${authError.message}`
-      });
-    }
-    console.log("\u2705 Usuario Auth creado:", authData.user.id);
-    await new Promise((resolve) => setTimeout(resolve, 1e3));
-    const { data: profileData, error: profileCheckError } = await supabaseAdmin.from("profiles").select("*").eq("id", authData.user.id).single();
-    if (profileCheckError) {
-      console.error("\u274C Error al verificar profile:", profileCheckError);
-      throw createError({
-        statusCode: 500,
-        message: "El perfil no se cre\xF3 correctamente"
-      });
-    }
-    console.log("\u2705 Profile verificado:", profileData.email);
-    const { data: terapeutaExistente, error: checkError } = await supabaseAdmin.from("terapeutas").select("*").eq("email", email).single();
-    let terapeutaData = terapeutaExistente;
-    if (checkError && checkError.code === "PGRST116") {
-      console.log("\u26A0\uFE0F Trigger no cre\xF3 terapeuta, creando manualmente...");
-      const { data: nuevaTerapeuta, error: terapeutaError } = await supabaseAdmin.from("terapeutas").insert({
-        nombre_completo: nombreCompleto,
-        email,
-        telefono: telefono || null,
-        activo: true,
-        metadata: {
-          auth_user_id: authData.user.id,
-          created_by_admin: true,
-          created_at: (/* @__PURE__ */ new Date()).toISOString()
-        }
-      }).select().single();
-      if (terapeutaError) {
-        console.error("\u274C Error al crear terapeuta:", terapeutaError);
+      console.error("[Server Error] Error al crear usuario en Auth:", authError);
+      if ((_a = authError.message) == null ? void 0 : _a.includes("already registered")) {
         throw createError({
-          statusCode: 500,
-          message: `Error al crear registro de terapeuta: ${terapeutaError.message}`
+          statusCode: 409,
+          statusMessage: `Email ${email} ya est\xE1 registrado`
         });
       }
-      terapeutaData = nuevaTerapeuta;
+      if ((_b = authError.message) == null ? void 0 : _b.includes("Password should be")) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: "Password no cumple con los requisitos m\xEDnimos"
+        });
+      }
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Error al crear usuario: ${authError.message}`
+      });
     }
-    console.log("\u2705 Terapeuta creada/verificada:", terapeutaData.email);
-    return {
+    if (!((_c = authData == null ? void 0 : authData.user) == null ? void 0 : _c.id)) {
+      console.error("[Server Error] Usuario creado pero sin datos v\xE1lidos");
+      throw createError({
+        statusCode: 500,
+        statusMessage: "User creation failed: Invalid response data"
+      });
+    }
+    console.log("[Server] \u2705 Usuario Auth creado:", authData.user.id);
+    console.log("[Server] Esperando a triggers de BD...");
+    let profileData;
+    let retryCount = 0;
+    const maxRetries = 5;
+    const retryDelay = 1e3;
+    while (retryCount < maxRetries) {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        console.log(`[Server] Verificando profile (intento ${retryCount + 1}/${maxRetries})...`);
+        const { data: profileResult, error: profileCheckError } = await supabaseAdmin.from("profiles").select("*").eq("id", authData.user.id).single();
+        if (profileCheckError) {
+          if (profileCheckError.code === "PGRST116") {
+            console.log("[Server] Profile no encontrado a\xFAn, reintentando...");
+            retryCount++;
+            continue;
+          } else {
+            console.error("[Server Error] Error al verificar profile:", profileCheckError);
+            throw createError({
+              statusCode: 500,
+              statusMessage: `Profile verification failed: ${profileCheckError.message}`
+            });
+          }
+        }
+        profileData = profileResult;
+        break;
+      } catch (retryError) {
+        console.error(`[Server Error] Error en intento ${retryCount + 1}:`, retryError);
+        if (retryCount >= maxRetries - 1) {
+          throw retryError;
+        }
+        retryCount++;
+      }
+    }
+    if (!profileData) {
+      console.error("[Server Error] Profile no se cre\xF3 despu\xE9s de m\xFAltiples intentos");
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Profile creation timeout: Database triggers may not be working"
+      });
+    }
+    console.log("[Server] \u2705 Profile verificado:", profileData.email);
+    console.log("[Server] Verificando registro de terapeuta...");
+    let terapeutaData;
+    retryCount = 0;
+    while (retryCount < maxRetries) {
+      try {
+        const { data: terapeutaExistente, error: checkError } = await supabaseAdmin.from("terapeutas").select("*").eq("email", email.trim().toLowerCase()).single();
+        if (checkError && checkError.code === "PGRST116") {
+          console.log("[Server] Trigger no cre\xF3 terapeuta, creando manualmente...");
+          const { data: nuevaTerapeuta, error: terapeutaError } = await supabaseAdmin.from("terapeutas").insert({
+            nombre_completo: nombreCompleto.trim(),
+            email: email.trim().toLowerCase(),
+            telefono: telefono ? String(telefono).trim() : null,
+            activo: true,
+            metadata: {
+              auth_user_id: authData.user.id,
+              created_by_admin: true,
+              created_at: (/* @__PURE__ */ new Date()).toISOString()
+            }
+          }).select().single();
+          if (terapeutaError) {
+            if (terapeutaError.code === "23505") {
+              console.log("[Server] Terapeuta ya existe, reintentando obtenci\xF3n...");
+              retryCount++;
+              continue;
+            }
+            console.error("[Server Error] Error al crear terapeuta:", terapeutaError);
+            throw createError({
+              statusCode: 500,
+              statusMessage: `Failed to create therapist record: ${terapeutaError.message}`
+            });
+          }
+          terapeutaData = nuevaTerapeuta;
+          break;
+        } else if (checkError) {
+          console.error("[Server Error] Error al verificar terapeuta:", checkError);
+          throw createError({
+            statusCode: 500,
+            statusMessage: `Therapist verification failed: ${checkError.message}`
+          });
+        } else {
+          terapeutaData = terapeutaExistente;
+          break;
+        }
+      } catch (retryError) {
+        console.error(`[Server Error] Error en verificaci\xF3n de terapeuta (intento ${retryCount + 1}):`, retryError);
+        if (retryCount >= maxRetries - 1) {
+          throw retryError;
+        }
+        retryCount++;
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      }
+    }
+    if (!terapeutaData) {
+      console.error("[Server Error] No se pudo crear/verificar registro de terapeuta");
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Therapist record creation failed after multiple attempts"
+      });
+    }
+    console.log("[Server] \u2705 Terapeuta creada/verificada:", terapeutaData.email);
+    console.log("[Server] \u2705 Proceso completado exitosamente");
+    const responseData = {
       success: true,
       message: "Terapeuta creada exitosamente",
       data: {
         authUserId: authData.user.id,
         terapeutaId: terapeutaData.id,
-        email,
-        nombreCompleto
+        email: email.trim().toLowerCase(),
+        nombreCompleto: nombreCompleto.trim(),
+        telefono: telefono ? String(telefono).trim() : null
       }
     };
+    console.log("[Server] Enviando respuesta exitosa");
+    return responseData;
   } catch (error) {
-    console.error("\u274C Error en crear-terapeuta:", error);
-    if (error.statusCode) {
+    console.error("[Server Error] Error en crear-terapeuta:", error);
+    if (error.statusCode && error.statusMessage) {
       throw error;
     }
+    if (error.code || error.message) {
+      console.error("[Server Error] Error de Supabase:", {
+        code: error.code,
+        message: error.message,
+        details: error.details
+      });
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Database error: ${error.message || "Unknown error"}`
+      });
+    }
+    console.error("[Server Error] Error no identificado:", error);
     throw createError({
       statusCode: 500,
-      message: error.message || "Error al crear terapeuta"
+      statusMessage: "Internal server error occurred"
     });
+  } finally {
+    console.log("[Server] Finalizando handler crear-terapeuta");
   }
 });
 
