@@ -814,11 +814,21 @@ const obtenerIniciales = (nombre) => {
   return nombre.substring(0, 2).toUpperCase()
 }
 
-// Cargar bonos confirmados
+// Cargar bonos confirmados con manejo robusto de errores
 const cargarBonosConfirmados = async () => {
+  console.log('[Frontend] Iniciando carga de bonos confirmados')
+  
   try {
     cargando.value = true
 
+    // Validar cliente de Supabase
+    if (!supabase) {
+      console.error('[Frontend] Cliente Supabase no disponible')
+      mostrarToast('❌ Error: Cliente de base de datos no disponible', 'error')
+      return
+    }
+
+    console.log('[Frontend] Construyendo query para bonos confirmados...')
     let query = supabase
       .from('bonos')
       .select('*')
@@ -827,44 +837,82 @@ const cargarBonosConfirmados = async () => {
 
     // Filtrar por mes si está seleccionado
     if (mesSeleccionado.value) {
-      const [year, month] = mesSeleccionado.value.split('-')
-      const fechaInicio = new Date(parseInt(year), parseInt(month) - 1, 1)
-      const fechaFin = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59)
-      
-      query = query
-        .gte('fecha_pago', fechaInicio.toISOString())
-        .lte('fecha_pago', fechaFin.toISOString())
+      console.log('[Frontend] Aplicando filtro de mes:', mesSeleccionado.value)
+      try {
+        const [year, month] = mesSeleccionado.value.split('-')
+        
+        // Validar que year y month sean números válidos
+        const yearNum = parseInt(year)
+        const monthNum = parseInt(month)
+        
+        if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+          console.error('[Frontend] Mes seleccionado inválido:', mesSeleccionado.value)
+          mostrarToast('❌ Filtro de mes inválido', 'error')
+          return
+        }
+        
+        const fechaInicio = new Date(yearNum, monthNum - 1, 1)
+        const fechaFin = new Date(yearNum, monthNum, 0, 23, 59, 59)
+        
+        query = query
+          .gte('fecha_pago', fechaInicio.toISOString())
+          .lte('fecha_pago', fechaFin.toISOString())
+      } catch (dateError) {
+        console.error('[Frontend] Error al procesar filtro de fecha:', dateError)
+        mostrarToast('❌ Error en filtro de fecha', 'error')
+        return
+      }
     }
 
+    console.log('[Frontend] Ejecutando query de bonos confirmados...')
     const { data: bonos, error: bonosError } = await query
 
     if (bonosError) {
-      console.error('Error al cargar bonos confirmados:', bonosError)
+      console.error('[Frontend] Error al cargar bonos confirmados:', bonosError)
+      mostrarToast(`❌ Error al cargar bonos: ${bonosError.message}`, 'error')
       return
     }
 
-    // Si no hay bonos, no hacer más consultas
+    // Si no hay bonos, limpiar estado y terminar
     if (!bonos || bonos.length === 0) {
+      console.log('[Frontend] No se encontraron bonos confirmados')
       bonosConfirmados.value = []
       totalConfirmado.value = 0
       promedioPorBono.value = 0
       return
     }
 
-    // Obtener los IDs de pacientes únicos
-    const pacienteIds = [...new Set(bonos.map(b => b.paciente_id))]
+    console.log(`[Frontend] Encontrados ${bonos.length} bonos confirmados`)
+
+    // Obtener los IDs de pacientes únicos con validación
+    const pacienteIds = [...new Set(bonos.map(b => b.paciente_id).filter(Boolean))]
     
-    // Cargar información de pacientes
+    if (pacienteIds.length === 0) {
+      console.warn('[Frontend] No hay IDs de pacientes válidos en los bonos')
+      bonosConfirmados.value = bonos.map(bono => ({
+        ...bono,
+        paciente_nombre: 'Sin nombre',
+        paciente_email: null,
+        terapeuta_nombre: null
+      }))
+      return
+    }
+
+    console.log(`[Frontend] Cargando información de ${pacienteIds.length} pacientes...`)
+    
+    // Cargar información de pacientes con manejo de errores
     const { data: pacientes, error: pacientesError } = await supabase
       .from('pacientes')
       .select('id, nombre_completo, email, terapeuta_id')
       .in('id', pacienteIds)
 
     if (pacientesError) {
-      console.error('Error al cargar pacientes:', pacientesError)
+      console.error('[Frontend] Error al cargar pacientes:', pacientesError)
+      mostrarToast(`⚠️ Error al cargar datos de pacientes: ${pacientesError.message}`, 'warning')
+      // Continuar sin datos de pacientes
     }
 
-    // Obtener IDs de terapeutas únicos
+    // Obtener IDs de terapeutas únicos con validación
     const terapeutaIds = pacientes 
       ? [...new Set(pacientes.map(p => p.terapeuta_id).filter(Boolean))]
       : []
@@ -872,59 +920,130 @@ const cargarBonosConfirmados = async () => {
     // Cargar información de terapeutas si hay
     let terapeutas = []
     if (terapeutaIds.length > 0) {
-      const { data: terapeutasData, error: terapeutasError } = await supabase
-        .from('terapeutas')
-        .select('id, nombre_completo')
-        .in('id', terapeutaIds)
+      console.log(`[Frontend] Cargando información de ${terapeutaIds.length} terapeutas...`)
       
-      if (!terapeutasError) {
-        terapeutas = terapeutasData || []
+      try {
+        const { data: terapeutasData, error: terapeutasError } = await supabase
+          .from('terapeutas')
+          .select('id, nombre_completo')
+          .in('id', terapeutaIds)
+        
+        if (terapeutasError) {
+          console.error('[Frontend] Error al cargar terapeutas:', terapeutasError)
+          mostrarToast(`⚠️ Error al cargar datos de terapeutas: ${terapeutasError.message}`, 'warning')
+        } else {
+          terapeutas = terapeutasData || []
+          console.log(`[Frontend] ✅ ${terapeutas.length} terapeutas cargados`)
+        }
+      } catch (terapeutasError) {
+        console.error('[Frontend] Excepción al cargar terapeutas:', terapeutasError)
       }
     }
 
-    // Crear mapas para búsqueda rápida
-    const pacientesMap = new Map(pacientes?.map(p => [p.id, p]) || [])
-    const terapeutasMap = new Map(terapeutas.map(t => [t.id, t]))
+    // Crear mapas para búsqueda rápida con validación
+    const pacientesMap = new Map()
+    if (pacientes && Array.isArray(pacientes)) {
+      pacientes.forEach(p => {
+        if (p && p.id) {
+          pacientesMap.set(p.id, p)
+        }
+      })
+    }
 
-    // Transformar los datos
+    const terapeutasMap = new Map()
+    if (terapeutas && Array.isArray(terapeutas)) {
+      terapeutas.forEach(t => {
+        if (t && t.id) {
+          terapeutasMap.set(t.id, t)
+        }
+      })
+    }
+
+    console.log('[Frontend] Transformando datos de bonos confirmados...')
+
+    // Transformar los datos con validaciones
     bonosConfirmados.value = bonos.map(bono => {
-      const paciente = pacientesMap.get(bono.paciente_id)
-      const terapeuta = paciente?.terapeuta_id ? terapeutasMap.get(paciente.terapeuta_id) : null
-      
-      return {
-        id: bono.id,
-        paciente_id: bono.paciente_id,
-        paciente_nombre: paciente?.nombre_completo || 'Sin nombre',
-        paciente_email: paciente?.email,
-        terapeuta_nombre: terapeuta?.nombre_completo,
-        sesiones_totales: bono.sesiones_totales,
-        sesiones_restantes: bono.sesiones_restantes,
-        monto_total: bono.monto_total,
-        tipo_bono: bono.tipo_bono,
-        fecha_pago: bono.fecha_pago,
-        metodo_pago: bono.metodo_pago
+      try {
+        const paciente = bono.paciente_id ? pacientesMap.get(bono.paciente_id) : null
+        const terapeuta = (paciente?.terapeuta_id) ? terapeutasMap.get(paciente.terapeuta_id) : null
+        
+        return {
+          id: bono.id,
+          paciente_id: bono.paciente_id,
+          paciente_nombre: paciente?.nombre_completo || 'Sin nombre',
+          paciente_email: paciente?.email || null,
+          terapeuta_nombre: terapeuta?.nombre_completo || null,
+          sesiones_totales: Number(bono.sesiones_totales) || 0,
+          sesiones_restantes: Number(bono.sesiones_restantes) || 0,
+          monto_total: Number(bono.monto_total) || 0,
+          tipo_bono: bono.tipo_bono || 'Bono Estándar',
+          fecha_pago: bono.fecha_pago,
+          metodo_pago: bono.metodo_pago || 'No especificado'
+        }
+      } catch (transformError) {
+        console.error('[Frontend] Error al transformar bono:', transformError, bono)
+        return {
+          id: bono.id || 'unknown',
+          paciente_id: bono.paciente_id,
+          paciente_nombre: 'Error en datos',
+          paciente_email: null,
+          terapeuta_nombre: null,
+          sesiones_totales: 0,
+          sesiones_restantes: 0,
+          monto_total: 0,
+          tipo_bono: 'Error',
+          fecha_pago: bono.fecha_pago,
+          metodo_pago: 'Error'
+        }
       }
     })
 
-    // Calcular totales
-    totalConfirmado.value = bonosConfirmados.value.reduce((sum, bono) => {
-      return sum + (Number(bono.monto_total) || 0)
-    }, 0)
+    console.log(`[Frontend] ✅ ${bonosConfirmados.value.length} bonos confirmados procesados`)
 
-    promedioPorBono.value = bonosConfirmados.value.length > 0 
-      ? totalConfirmado.value / bonosConfirmados.value.length 
-      : 0
+    // Calcular totales con validación
+    try {
+      totalConfirmado.value = bonosConfirmados.value.reduce((sum, bono) => {
+        const monto = Number(bono.monto_total)
+        return sum + (isNaN(monto) ? 0 : monto)
+      }, 0)
+
+      promedioPorBono.value = bonosConfirmados.value.length > 0 
+        ? totalConfirmado.value / bonosConfirmados.value.length 
+        : 0
+
+      console.log(`[Frontend] ✅ Totales calculados - Total: ${totalConfirmado.value}€, Promedio: ${promedioPorBono.value}€`)
+    } catch (calculationError) {
+      console.error('[Frontend] Error al calcular totales:', calculationError)
+      totalConfirmado.value = 0
+      promedioPorBono.value = 0
+    }
 
   } catch (error) {
-    console.error('Error al cargar bonos confirmados:', error)
+    console.error('[Frontend] Error general al cargar bonos confirmados:', error)
+    mostrarToast(`❌ Error al cargar bonos confirmados: ${error.message}`, 'error')
+    
+    // Limpiar estado en caso de error
+    bonosConfirmados.value = []
+    totalConfirmado.value = 0
+    promedioPorBono.value = 0
   } finally {
     cargando.value = false
+    console.log('[Frontend] Carga de bonos confirmados finalizada')
   }
 }
 
-// Cargar meses disponibles
+// Cargar meses disponibles con manejo robusto de errores
 const cargarMesesDisponibles = async () => {
+  console.log('[Frontend] Iniciando carga de meses disponibles')
+  
   try {
+    // Validar cliente de Supabase
+    if (!supabase) {
+      console.error('[Frontend] Cliente Supabase no disponible para meses')
+      return
+    }
+
+    console.log('[Frontend] Ejecutando query de meses disponibles...')
     const { data, error } = await supabase
       .from('bonos')
       .select('fecha_pago')
@@ -933,38 +1052,96 @@ const cargarMesesDisponibles = async () => {
       .order('fecha_pago', { ascending: false })
 
     if (error) {
-      console.error('Error al cargar meses:', error)
+      console.error('[Frontend] Error al cargar meses:', error)
+      mostrarToast(`⚠️ Error al cargar filtro de meses: ${error.message}`, 'warning')
       return
     }
 
     if (!data || data.length === 0) {
+      console.log('[Frontend] No se encontraron fechas de pago')
       mesesDisponibles.value = []
       return
     }
 
-    // Extraer meses únicos
+    console.log(`[Frontend] Procesando ${data.length} fechas para extraer meses únicos`)
+
+    // Extraer meses únicos con manejo de errores
     const mesesSet = new Set()
+    let fechasValidas = 0
+    let fechasInvalidas = 0
+
     data.forEach(bono => {
-      if (bono.fecha_pago) {
-        const fecha = new Date(bono.fecha_pago)
-        const mesValor = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`
-        mesesSet.add(mesValor)
+      try {
+        if (bono.fecha_pago) {
+          const fecha = new Date(bono.fecha_pago)
+          
+          // Validar que la fecha es válida
+          if (isNaN(fecha.getTime())) {
+            fechasInvalidas++
+            console.warn('[Frontend] Fecha inválida encontrada:', bono.fecha_pago)
+            return
+          }
+          
+          const mesValor = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`
+          mesesSet.add(mesValor)
+          fechasValidas++
+        }
+      } catch (fechaError) {
+        fechasInvalidas++
+        console.error('[Frontend] Error al procesar fecha:', fechaError, bono.fecha_pago)
       }
     })
 
-    // Convertir a array y formatear
+    console.log(`[Frontend] Fechas procesadas - Válidas: ${fechasValidas}, Inválidas: ${fechasInvalidas}`)
+
+    // Convertir a array y formatear con manejo de errores
     const mesesArray = Array.from(mesesSet).sort().reverse()
     mesesDisponibles.value = mesesArray.map(mesValor => {
-      const [year, month] = mesValor.split('-')
-      const fecha = new Date(parseInt(year), parseInt(month) - 1)
-      const nombreMes = fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
-      return {
-        valor: mesValor,
-        nombre: nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)
+      try {
+        const [year, month] = mesValor.split('-')
+        const yearNum = parseInt(year)
+        const monthNum = parseInt(month)
+        
+        // Validar números
+        if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+          console.error('[Frontend] Valores de fecha inválidos:', { year, month })
+          return {
+            valor: mesValor,
+            nombre: 'Mes inválido'
+          }
+        }
+        
+        const fecha = new Date(yearNum, monthNum - 1)
+        
+        // Validar fecha resultante
+        if (isNaN(fecha.getTime())) {
+          console.error('[Frontend] Fecha construida inválida:', { yearNum, monthNum })
+          return {
+            valor: mesValor,
+            nombre: 'Fecha inválida'
+          }
+        }
+        
+        const nombreMes = fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+        return {
+          valor: mesValor,
+          nombre: nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)
+        }
+      } catch (formatError) {
+        console.error('[Frontend] Error al formatear mes:', formatError, mesValor)
+        return {
+          valor: mesValor,
+          nombre: `Error: ${mesValor}`
+        }
       }
-    })
+    }).filter(mes => mes.nombre !== 'Mes inválido' && mes.nombre !== 'Fecha inválida')
+
+    console.log(`[Frontend] ✅ ${mesesDisponibles.value.length} meses únicos disponibles`)
+    
   } catch (error) {
-    console.error('Error al cargar meses disponibles:', error)
+    console.error('[Frontend] Error general al cargar meses disponibles:', error)
+    mostrarToast(`⚠️ Error al cargar filtro de meses`, 'warning')
+    mesesDisponibles.value = []
   }
 }
 
@@ -984,11 +1161,21 @@ const cerrarDetallePago = () => {
   bonoSeleccionado.value = null
 }
 
-// Cargar bonos pendientes de pago
+// Cargar bonos pendientes de pago con manejo robusto de errores
 const cargarBonosPendientes = async () => {
+  console.log('[Frontend] Iniciando carga de bonos pendientes')
+  
   try {
     cargandoPendientes.value = true
 
+    // Validar cliente de Supabase
+    if (!supabase) {
+      console.error('[Frontend] Cliente Supabase no disponible')
+      mostrarToast('❌ Error: Cliente de base de datos no disponible', 'error')
+      return
+    }
+
+    console.log('[Frontend] Ejecutando query de bonos pendientes...')
     // Obtener bonos con estado "pendiente" (pendientes de confirmar pago)
     const { data: bonos, error: bonosError } = await supabase
       .from('bonos')
@@ -998,31 +1185,49 @@ const cargarBonosPendientes = async () => {
       .order('created_at', { ascending: false })
 
     if (bonosError) {
-      console.error('Error al cargar bonos pendientes:', bonosError)
+      console.error('[Frontend] Error al cargar bonos pendientes:', bonosError)
+      mostrarToast(`❌ Error al cargar bonos pendientes: ${bonosError.message}`, 'error')
       return
     }
 
     if (!bonos || bonos.length === 0) {
+      console.log('[Frontend] No se encontraron bonos pendientes')
       bonosPendientes.value = []
       totalPorConfirmar.value = 0
       bonosUrgentes.value = 0
       return
     }
 
-    // Obtener los IDs de pacientes únicos
-    const pacienteIds = [...new Set(bonos.map(b => b.paciente_id))]
+    console.log(`[Frontend] Encontrados ${bonos.length} bonos pendientes`)
+
+    // Obtener los IDs de pacientes únicos con validación
+    const pacienteIds = [...new Set(bonos.map(b => b.paciente_id).filter(Boolean))]
     
-    // Cargar información de pacientes
+    if (pacienteIds.length === 0) {
+      console.warn('[Frontend] No hay IDs de pacientes válidos en los bonos pendientes')
+      bonosPendientes.value = bonos.map(bono => ({
+        ...bono,
+        paciente_nombre: 'Sin nombre',
+        paciente_email: null,
+        terapeuta_nombre: null
+      }))
+      return
+    }
+
+    console.log(`[Frontend] Cargando información de ${pacienteIds.length} pacientes para bonos pendientes...`)
+    
+    // Cargar información de pacientes con manejo de errores
     const { data: pacientes, error: pacientesError } = await supabase
       .from('pacientes')
       .select('id, nombre_completo, email, terapeuta_id')
       .in('id', pacienteIds)
 
     if (pacientesError) {
-      console.error('Error al cargar pacientes:', pacientesError)
+      console.error('[Frontend] Error al cargar pacientes para bonos pendientes:', pacientesError)
+      mostrarToast(`⚠️ Error al cargar datos de pacientes: ${pacientesError.message}`, 'warning')
     }
 
-    // Obtener IDs de terapeutas únicos
+    // Obtener IDs de terapeutas únicos con validación
     const terapeutaIds = pacientes 
       ? [...new Set(pacientes.map(p => p.terapeuta_id).filter(Boolean))]
       : []
@@ -1030,54 +1235,117 @@ const cargarBonosPendientes = async () => {
     // Cargar información de terapeutas si hay
     let terapeutas = []
     if (terapeutaIds.length > 0) {
-      const { data: terapeutasData, error: terapeutasError } = await supabase
-        .from('terapeutas')
-        .select('id, nombre_completo')
-        .in('id', terapeutaIds)
+      console.log(`[Frontend] Cargando información de ${terapeutaIds.length} terapeutas para bonos pendientes...`)
       
-      if (!terapeutasError) {
-        terapeutas = terapeutasData || []
+      try {
+        const { data: terapeutasData, error: terapeutasError } = await supabase
+          .from('terapeutas')
+          .select('id, nombre_completo')
+          .in('id', terapeutaIds)
+        
+        if (terapeutasError) {
+          console.error('[Frontend] Error al cargar terapeutas para bonos pendientes:', terapeutasError)
+          mostrarToast(`⚠️ Error al cargar datos de terapeutas: ${terapeutasError.message}`, 'warning')
+        } else {
+          terapeutas = terapeutasData || []
+          console.log(`[Frontend] ✅ ${terapeutas.length} terapeutas cargados para bonos pendientes`)
+        }
+      } catch (terapeutasError) {
+        console.error('[Frontend] Excepción al cargar terapeutas para bonos pendientes:', terapeutasError)
       }
     }
 
-    // Crear mapas para búsqueda rápida
-    const pacientesMap = new Map(pacientes?.map(p => [p.id, p]) || [])
-    const terapeutasMap = new Map(terapeutas.map(t => [t.id, t]))
+    // Crear mapas para búsqueda rápida con validación
+    const pacientesMap = new Map()
+    if (pacientes && Array.isArray(pacientes)) {
+      pacientes.forEach(p => {
+        if (p && p.id) {
+          pacientesMap.set(p.id, p)
+        }
+      })
+    }
 
-    // Transformar los datos
+    const terapeutasMap = new Map()
+    if (terapeutas && Array.isArray(terapeutas)) {
+      terapeutas.forEach(t => {
+        if (t && t.id) {
+          terapeutasMap.set(t.id, t)
+        }
+      })
+    }
+
+    console.log('[Frontend] Transformando datos de bonos pendientes...')
+
+    // Transformar los datos con validaciones
     bonosPendientes.value = bonos.map(bono => {
-      const paciente = pacientesMap.get(bono.paciente_id)
-      const terapeuta = paciente?.terapeuta_id ? terapeutasMap.get(paciente.terapeuta_id) : null
-      
-      return {
-        id: bono.id,
-        paciente_id: bono.paciente_id,
-        paciente_nombre: paciente?.nombre_completo || 'Sin nombre',
-        paciente_email: paciente?.email,
-        terapeuta_nombre: terapeuta?.nombre_completo,
-        sesiones_totales: bono.sesiones_totales,
-        sesiones_restantes: bono.sesiones_restantes,
-        monto_total: bono.monto_total,
-        tipo_bono: bono.tipo_bono,
-        estado: bono.estado,
-        created_at: bono.created_at
+      try {
+        const paciente = bono.paciente_id ? pacientesMap.get(bono.paciente_id) : null
+        const terapeuta = (paciente?.terapeuta_id) ? terapeutasMap.get(paciente.terapeuta_id) : null
+        
+        return {
+          id: bono.id,
+          paciente_id: bono.paciente_id,
+          paciente_nombre: paciente?.nombre_completo || 'Sin nombre',
+          paciente_email: paciente?.email || null,
+          terapeuta_nombre: terapeuta?.nombre_completo || null,
+          sesiones_totales: Number(bono.sesiones_totales) || 0,
+          sesiones_restantes: Number(bono.sesiones_restantes) || 0,
+          monto_total: Number(bono.monto_total) || 0,
+          tipo_bono: bono.tipo_bono || 'Bono Estándar',
+          estado: bono.estado || 'pendiente',
+          created_at: bono.created_at
+        }
+      } catch (transformError) {
+        console.error('[Frontend] Error al transformar bono pendiente:', transformError, bono)
+        return {
+          id: bono.id || 'unknown',
+          paciente_id: bono.paciente_id,
+          paciente_nombre: 'Error en datos',
+          paciente_email: null,
+          terapeuta_nombre: null,
+          sesiones_totales: 0,
+          sesiones_restantes: 0,
+          monto_total: 0,
+          tipo_bono: 'Error',
+          estado: 'error',
+          created_at: bono.created_at
+        }
       }
     })
 
-    // Calcular totales
-    totalPorConfirmar.value = bonosPendientes.value.reduce((sum, bono) => {
-      return sum + (Number(bono.monto_total) || 0)
-    }, 0)
+    console.log(`[Frontend] ✅ ${bonosPendientes.value.length} bonos pendientes procesados`)
 
-    // Contar bonos urgentes (con 1 o menos sesiones restantes)
-    bonosUrgentes.value = bonosPendientes.value.filter(bono => 
-      bono.sesiones_restantes <= 1
-    ).length
+    // Calcular totales con validación
+    try {
+      totalPorConfirmar.value = bonosPendientes.value.reduce((sum, bono) => {
+        const monto = Number(bono.monto_total)
+        return sum + (isNaN(monto) ? 0 : monto)
+      }, 0)
+
+      // Contar bonos urgentes (con 1 o menos sesiones restantes) con validación
+      bonosUrgentes.value = bonosPendientes.value.filter(bono => {
+        const sesiones = Number(bono.sesiones_restantes)
+        return !isNaN(sesiones) && sesiones <= 1
+      }).length
+
+      console.log(`[Frontend] ✅ Totales pendientes calculados - Total: ${totalPorConfirmar.value}€, Urgentes: ${bonosUrgentes.value}`)
+    } catch (calculationError) {
+      console.error('[Frontend] Error al calcular totales de bonos pendientes:', calculationError)
+      totalPorConfirmar.value = 0
+      bonosUrgentes.value = 0
+    }
 
   } catch (error) {
-    console.error('Error al cargar bonos pendientes:', error)
+    console.error('[Frontend] Error general al cargar bonos pendientes:', error)
+    mostrarToast(`❌ Error al cargar bonos pendientes: ${error.message}`, 'error')
+    
+    // Limpiar estado en caso de error
+    bonosPendientes.value = []
+    totalPorConfirmar.value = 0
+    bonosUrgentes.value = 0
   } finally {
     cargandoPendientes.value = false
+    console.log('[Frontend] Carga de bonos pendientes finalizada')
   }
 }
 
@@ -1088,66 +1356,177 @@ const abrirConfirmarPago = (bono) => {
   metodoPagoSeleccionado.value = ''
 }
 
-// Confirmar pago rápido con toast notification
+// Confirmar pago rápido con API segura y manejo robusto de errores
 const confirmarPagoRapido = async (bono) => {
+  if (!bono || !bono.id) {
+    console.error('[Frontend] Bono inválido para confirmación:', bono)
+    mostrarToast('❌ Error: Datos del bono inválidos', 'error')
+    return
+  }
+
+  console.log('[Frontend] Iniciando confirmación de pago para bono:', bono.id)
+
   try {
     procesandoConfirmacion.value = true
     
-    const { error } = await supabase
-      .from('bonos')
-      .update({ 
-        estado_pago: 'pagado',
-        fecha_pago: new Date().toISOString()
-      })
-      .eq('id', bono.id)
+    // Usar la nueva API endpoint en lugar de acceso directo a Supabase
+    const { data: response, error: apiError } = await $fetch('/api/pagos/confirmar', {
+      method: 'POST',
+      body: {
+        bonoId: bono.id,
+        metodoPago: 'coordinacion' // Método por defecto para confirmaciones manuales
+      }
+    }).catch(fetchError => {
+      console.error('[Frontend] Error en fetch:', fetchError)
+      
+      // Manejar errores específicos de la API
+      if (fetchError.status === 401) {
+        throw new Error('No tienes permisos para confirmar pagos')
+      } else if (fetchError.status === 403) {
+        throw new Error('Acceso denegado. Solo coordinadoras pueden confirmar pagos')
+      } else if (fetchError.status === 404) {
+        throw new Error('El bono no existe o ya fue confirmado')
+      } else if (fetchError.status === 409) {
+        throw new Error('El bono ya fue confirmado por otro usuario')
+      } else if (fetchError.status >= 500) {
+        throw new Error('Error del servidor. Por favor intenta nuevamente')
+      } else {
+        throw new Error(fetchError.data?.message || fetchError.statusText || 'Error al confirmar pago')
+      }
+    })
 
-    if (error) throw error
+    if (apiError) {
+      console.error('[Frontend] Error de la API:', apiError)
+      throw new Error(apiError.message || 'Error desconocido de la API')
+    }
 
-    // Recargar ambas listas
-    await Promise.all([
-      cargarBonosPendientes(),
-      cargarBonosConfirmados()
-    ])
+    if (!response || !response.success) {
+      console.error('[Frontend] Respuesta inválida de la API:', response)
+      throw new Error('Respuesta inválida del servidor')
+    }
+
+    console.log('[Frontend] ✅ Pago confirmado exitosamente')
+
+    // Recargar ambas listas con manejo de errores
+    try {
+      await Promise.all([
+        cargarBonosPendientes().catch(error => {
+          console.error('[Frontend] Error al recargar bonos pendientes:', error)
+        }),
+        cargarBonosConfirmados().catch(error => {
+          console.error('[Frontend] Error al recargar bonos confirmados:', error)
+        })
+      ])
+    } catch (reloadError) {
+      console.error('[Frontend] Error al recargar listas:', reloadError)
+      mostrarToast('⚠️ Pago confirmado pero las listas no se actualizaron. Recarga la página', 'warning')
+      return
+    }
 
     // Mostrar notificación de éxito
     mostrarToast('✅ Pago confirmado exitosamente', 'success')
+    
   } catch (error) {
-    console.error('Error al confirmar pago:', error)
-    mostrarToast('❌ Error al confirmar pago: ' + error.message, 'error')
+    console.error('[Frontend] Error al confirmar pago:', error)
+    const errorMessage = error.message || error.statusText || 'Error al confirmar pago'
+    mostrarToast(`❌ ${errorMessage}`, 'error')
   } finally {
     procesandoConfirmacion.value = false
   }
 }
 
-// Sistema de toast notifications simple
+// Sistema de toast notifications mejorado con manejo de errores
 const mostrarToast = (mensaje, tipo = 'info') => {
-  // Crear elemento toast
-  const toast = document.createElement('div')
-  toast.className = `fixed top-4 right-4 z-[100] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 ${
-    tipo === 'success' ? 'bg-[#027368] text-white' : 
-    tipo === 'error' ? 'bg-red-500 text-white' : 
-    'bg-neutral-800 text-white'
-  }`
-  toast.innerHTML = `
-    <span class="text-lg">${tipo === 'success' ? '✓' : tipo === 'error' ? '✕' : 'ℹ'}</span>
-    <span class="font-medium">${mensaje}</span>
-  `
-  
-  document.body.appendChild(toast)
-  
-  // Animar entrada
-  setTimeout(() => {
-    toast.style.transform = 'translateX(0)'
-  }, 10)
-  
-  // Remover después de 3 segundos
-  setTimeout(() => {
-    toast.style.opacity = '0'
-    toast.style.transform = 'translateX(100%)'
-    setTimeout(() => {
-      document.body.removeChild(toast)
-    }, 300)
-  }, 3000)
+  try {
+    // Validar parámetros
+    if (!mensaje || typeof mensaje !== 'string') {
+      console.error('[Frontend] Toast mensaje inválido:', mensaje)
+      return
+    }
+
+    // Crear elemento toast con manejo seguro
+    const toast = document.createElement('div')
+    const tipoValido = ['success', 'error', 'warning', 'info'].includes(tipo) ? tipo : 'info'
+    
+    // Estilos mejorados con soporte para warnings
+    const estilos = {
+      success: 'bg-[#027368] text-white border-[#04BF9D]/20',
+      error: 'bg-red-500 text-white border-red-400/20',
+      warning: 'bg-amber-500 text-white border-amber-400/20',
+      info: 'bg-neutral-800 text-white border-neutral-600/20'
+    }
+
+    // Iconos mejorados
+    const iconos = {
+      success: '✓',
+      error: '✕',
+      warning: '⚠',
+      info: 'ℹ'
+    }
+    
+    toast.className = `fixed top-4 right-4 z-[100] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 border-2 ${estilos[tipoValido]} max-w-md`
+    
+    // Escapar HTML para prevenir XSS
+    const mensajeSeguro = mensaje.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    
+    toast.innerHTML = `
+      <span class="text-lg flex-shrink-0">${iconos[tipoValido]}</span>
+      <span class="font-medium text-sm leading-tight">${mensajeSeguro}</span>
+    `
+    
+    // Verificar que document.body existe
+    if (!document.body) {
+      console.error('[Frontend] document.body no disponible para toast')
+      return
+    }
+    
+    document.body.appendChild(toast)
+    
+    // Animar entrada con validación
+    requestAnimationFrame(() => {
+      if (toast.parentNode) {
+        toast.style.transform = 'translateX(0)'
+      }
+    })
+    
+    // Duración variable según tipo
+    const duracion = tipoValido === 'error' ? 5000 : tipoValido === 'warning' ? 4000 : 3000
+    
+    // Remover después del tiempo especificado
+    const timeoutId = setTimeout(() => {
+      if (toast.parentNode) {
+        toast.style.opacity = '0'
+        toast.style.transform = 'translateX(100%)'
+        setTimeout(() => {
+          if (toast.parentNode) {
+            document.body.removeChild(toast)
+          }
+        }, 300)
+      }
+    }, duracion)
+
+    // Permitir cerrar al hacer click
+    toast.addEventListener('click', () => {
+      clearTimeout(timeoutId)
+      if (toast.parentNode) {
+        toast.style.opacity = '0'
+        toast.style.transform = 'translateX(100%)'
+        setTimeout(() => {
+          if (toast.parentNode) {
+            document.body.removeChild(toast)
+          }
+        }, 300)
+      }
+    })
+
+    // Añadir cursor pointer
+    toast.style.cursor = 'pointer'
+    
+  } catch (toastError) {
+    console.error('[Frontend] Error al mostrar toast:', toastError)
+    // Fallback simple
+    alert(mensaje)
+  }
 }
 
 // Cargar datos al montar
