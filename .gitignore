@@ -11,6 +11,9 @@ node_modules/
 .output/
 dist/
 
+# Data
+.data/
+
 # Logs
 logs
 *.log
