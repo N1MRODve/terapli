@@ -1,51 +1,61 @@
 <template>
   <div
     v-if="mostrar"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     @click.self="cerrar"
   >
-    <div class="bg-[#F9F7F3] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-      <!-- Header -->
-      <div class="sticky top-0 bg-[#F9F7F3] border-b border-[#D8AFA0]/30 px-6 py-4 flex justify-between items-center">
-        <div>
-          <h2 class="text-2xl font-['Lora'] text-[#5D4A44] font-semibold flex items-center gap-2">
-            <span class="text-2xl">🎫</span>
-            Nuevo Bono
-          </h2>
-          <p class="text-sm text-[#5D4A44]/60 mt-1">
-            Crea un nuevo bono para {{ pacienteNombre }}
-          </p>
-        </div>
-        <button
-          @click="cerrar"
-          class="text-[#5D4A44] hover:text-[#D8AFA0] transition-colors"
-          aria-label="Cerrar modal"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+    <div class="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/50 max-w-3xl w-full max-h-[90vh] overflow-hidden relative">
+      <!-- Efectos decorativos -->
+      <div class="absolute inset-0 bg-gradient-to-br from-[#5550F2]/5 via-transparent to-[#04BF9D]/5 pointer-events-none"></div>
+      <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-[#F2B33D]/20 to-[#5550F2]/20 rounded-full blur-2xl"></div>
+      
+      <!-- Contenido con scroll -->
+      <div class="relative max-h-[90vh] overflow-y-auto">
+        <!-- Header -->
+        <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-200/50 px-8 py-6 flex justify-between items-center z-10">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center">
+              <span class="text-2xl">🎫</span>
+            </div>
+            <div>
+              <h2 class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
+                Nuevo Bono
+              </h2>
+              <p class="text-sm font-['Lato'] text-gray-600 mt-1">
+                Crea un nuevo bono para {{ pacienteNombre }}
+              </p>
+            </div>
+          </div>
+          <button
+            @click="cerrar"
+            class="p-3 text-gray-500 hover:text-[#5550F2] hover:bg-gradient-to-br from-[#5550F2]/10 to-[#027368]/10 rounded-2xl transition-all duration-300 backdrop-blur-sm border border-white/50 hover:shadow-lg"
+            aria-label="Cerrar modal"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
       </div>
 
-      <!-- Formulario -->
-      <form @submit.prevent="guardarBono" class="px-6 py-6 space-y-6">
-        <!-- Tipo y Frecuencia -->
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">
-              Tipo de Bono <span class="text-red-500">*</span>
-            </label>
-            <select
-              v-model="formData.tipo"
-              required
-              class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] bg-white"
-            >
-              <option value="">Seleccionar tipo</option>
-              <option value="quincenal">Quincenal</option>
-              <option value="mensual">Mensual</option>
-              <option value="semestral">Semestral</option>
-            </select>
-          </div>
+        <!-- Formulario -->
+        <form @submit.prevent="guardarBono" class="px-8 py-8 space-y-8">
+          <!-- Tipo y Frecuencia -->
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-['Lato'] font-semibold text-gray-700 mb-3">
+                Tipo de Bono <span class="text-[#F2B33D]">*</span>
+              </label>
+              <select
+                v-model="formData.tipo"
+                required
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-['Lato'] hover:bg-white shadow-sm hover:shadow-md"
+              >
+                <option value="">Seleccionar tipo</option>
+                <option value="quincenal">Quincenal</option>
+                <option value="mensual">Mensual</option>
+                <option value="semestral">Semestral</option>
+              </select>
+            </div>
 
           <div>
             <label class="block text-sm font-medium text-[#5D4A44] mb-2">

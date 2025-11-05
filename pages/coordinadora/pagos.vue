@@ -1,38 +1,48 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-neutral-50 via-orange-50/30 to-terracota-50/20 p-6 md:p-8 space-y-8">
+  <div class="min-h-screen bg-gradient-to-br from-[#F2F2F2] via-[#FAFAFA] to-[#F8F9FA] p-6 md:p-8 space-y-8 relative overflow-hidden">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-[#5550F2]/10 to-[#027368]/5 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-gradient-to-tr from-[#04BF9D]/10 to-[#F2B33D]/5 rounded-full blur-3xl"></div>
+      <div class="absolute top-1/3 right-1/4 w-64 h-64 bg-gradient-to-r from-[#027368]/8 to-[#5550F2]/8 rounded-full blur-2xl"></div>
+    </div>
+
     <!-- Sección de Bonos Pendientes de Pago (PRIORITARIO) -->
-    <div class="bg-white rounded-2xl shadow-sm border border-[#EFCB9D] overflow-hidden transition-all duration-300 hover:shadow-lg">
-      <!-- Header suave y elegante - STICKY -->
-      <div class="sticky top-0 z-20 bg-[#FFF6EC] border-t-4 border-[#EFCB9D] px-6 md:px-8 py-6 shadow-md">
+    <div class="relative z-10 bg-white/85 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:bg-white/90">
+      <!-- Header moderno con glassmorphism - STICKY -->
+      <div class="sticky top-0 z-20 bg-gradient-to-r from-[#5550F2]/5 via-[#027368]/5 to-[#04BF9D]/5 backdrop-blur-md border-t-4 border-gradient-to-r from-[#5550F2] to-[#027368] px-6 md:px-8 py-6 shadow-lg">
         <div class="flex items-start justify-between gap-4 mb-4">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-2">
-              <!-- Ícono Clock de lucide-react -->
-              <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center">
-                <svg class="w-6 h-6 text-[#C57A3E]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <!-- Ícono moderno con gradiente -->
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center group-hover:shadow-xl transition-all duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
               </div>
-              <h2 class="text-2xl font-serif font-bold text-[#C57A3E]">
+              <h2 class="text-2xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
                 Bonos Pendientes de Confirmar
               </h2>
             </div>
-            <p class="text-sm text-neutral-600 leading-relaxed ml-13">
+            <p class="text-sm font-['Lato'] text-gray-600 leading-relaxed ml-15">
               Gestiona aquí los pagos pendientes y el seguimiento financiero de cada paciente.
             </p>
           </div>
-          <!-- Contador grande -->
+          <!-- Contador moderno con gradiente -->
           <div class="text-right flex-shrink-0">
-            <p class="text-xs text-neutral-500 uppercase tracking-wider font-semibold mb-1">Pendientes</p>
-            <p class="text-5xl font-bold text-[#C57A3E] leading-none">{{ bonosPendientesFiltrados.length }}</p>
+            <p class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider font-semibold mb-1">Pendientes</p>
+            <div class="relative">
+              <p class="text-5xl font-bold bg-gradient-to-r from-[#F2B33D] to-[#5550F2] bg-clip-text text-transparent leading-none">{{ bonosPendientesFiltrados.length }}</p>
+              <div class="absolute -inset-2 bg-gradient-to-r from-[#F2B33D]/20 to-[#5550F2]/20 rounded-xl blur opacity-60"></div>
+            </div>
           </div>
         </div>
         
-        <!-- Barra de búsqueda -->
-        <div class="relative">
+        <!-- Barra de búsqueda moderna -->
+        <div class="relative group">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-            <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-[#027368] group-focus-within:text-[#5550F2] transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.35-4.35"></path>
             </svg>
@@ -41,76 +51,80 @@
             v-model="busquedaPendientes"
             type="text"
             placeholder="Buscar paciente en bonos pendientes..."
-            class="w-full pl-12 pr-4 py-3 border border-neutral-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C57A3E]/20 focus:border-[#C57A3E] transition-all bg-white placeholder:text-neutral-400"
+            class="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl text-sm font-['Lato'] focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder:text-gray-400 hover:bg-white/90 shadow-sm hover:shadow-md"
           />
-          <!-- Badge con resultados -->
+          <!-- Badge moderno con resultados -->
           <div v-if="busquedaPendientes" class="absolute inset-y-0 right-0 flex items-center pr-4">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#C57A3E] text-white">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-['Lato'] font-semibold bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white shadow-lg">
               {{ bonosPendientesFiltrados.length }} resultado{{ bonosPendientesFiltrados.length !== 1 ? 's' : '' }}
             </span>
           </div>
         </div>
       </div>
 
-      <!-- Barra de progreso sutil -->
-      <div v-if="bonosPendientes.length > 0 || bonosConfirmados.length > 0" class="bg-neutral-100 h-1.5 relative overflow-hidden">
+      <!-- Barra de progreso moderna -->
+      <div v-if="bonosPendientes.length > 0 || bonosConfirmados.length > 0" class="bg-gradient-to-r from-gray-100 to-gray-50 h-2 relative overflow-hidden">
         <div 
-          class="absolute inset-y-0 left-0 bg-gradient-to-r from-[#54BF83] to-[#B46E4B] transition-all duration-700 ease-out"
+          class="absolute inset-y-0 left-0 bg-gradient-to-r from-[#04BF9D] via-[#027368] to-[#5550F2] transition-all duration-700 ease-out shadow-lg"
           :style="{ width: `${progresoConfirmados}%` }"
         ></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
       </div>
 
-      <!-- Tarjetas resumen unificadas -->
-      <div class="px-6 md:px-8 py-6 bg-gradient-to-b from-neutral-50 to-white">
+      <!-- Tarjetas resumen modernas -->
+      <div class="px-6 md:px-8 py-8 bg-gradient-to-b from-white/50 to-white/80 backdrop-blur-sm">
         <!-- Scroll horizontal en móvil -->
         <div class="overflow-x-auto -mx-2 px-2 pb-2">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-max md:min-w-0">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 min-w-max md:min-w-0">
             <!-- Tarjeta: Bonos Pendientes -->
-            <div class="bg-white rounded-xl p-5 shadow-sm border border-neutral-200 hover:shadow-md transition-all duration-200 min-w-[280px] md:min-w-0">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F4A261]/20 to-[#F4A261]/10 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-7 h-7 text-[#F4A261]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <div class="group bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-md hover:bg-white/95 transition-all duration-300 min-w-[280px] md:min-w-0 relative overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-br from-[#F2B33D]/5 to-[#5550F2]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="relative flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F2B33D] to-[#F2B33D]/70 shadow-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                 </div>
                 <div class="flex-1">
-                  <p class="text-xs text-neutral-500 uppercase font-semibold tracking-wide mb-1">Bonos Pendientes</p>
-                  <p class="text-3xl font-bold text-neutral-800">{{ bonosPendientes.length }}</p>
+                  <p class="text-xs font-['Lato'] text-gray-500 uppercase font-semibold tracking-wider mb-2">Bonos Pendientes</p>
+                  <p class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#F2B33D] to-[#5550F2] bg-clip-text text-transparent">{{ bonosPendientes.length }}</p>
                 </div>
               </div>
             </div>
 
             <!-- Tarjeta: Total por Confirmar -->
-            <div class="bg-white rounded-xl p-5 shadow-sm border border-neutral-200 hover:shadow-md transition-all duration-200 min-w-[280px] md:min-w-0">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#B46E4B]/20 to-[#B46E4B]/10 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-7 h-7 text-[#B46E4B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <div class="group bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-md hover:bg-white/95 transition-all duration-300 min-w-[280px] md:min-w-0 relative overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-br from-[#027368]/5 to-[#04BF9D]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="relative flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#027368] to-[#04BF9D] shadow-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                   </svg>
                 </div>
                 <div class="flex-1">
-                  <p class="text-xs text-neutral-500 uppercase font-semibold tracking-wide mb-1">Total por Confirmar</p>
-                  <p class="text-3xl font-bold text-[#B46E4B]">{{ formatearPrecio(totalPorConfirmarFiltrado) }}€</p>
-                  <p v-if="busquedaPendientes" class="text-xs text-neutral-500 mt-0.5">de {{ formatearPrecio(totalPorConfirmar) }}€ total</p>
+                  <p class="text-xs font-['Lato'] text-gray-500 uppercase font-semibold tracking-wider mb-2">Total por Confirmar</p>
+                  <p class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#027368] to-[#04BF9D] bg-clip-text text-transparent">{{ formatearPrecio(totalPorConfirmarFiltrado) }}€</p>
+                  <p v-if="busquedaPendientes" class="text-xs font-['Lato'] text-gray-500 mt-1">de {{ formatearPrecio(totalPorConfirmar) }}€ total</p>
                 </div>
               </div>
             </div>
 
             <!-- Tarjeta: Requieren Atención -->
-            <div class="bg-white rounded-xl p-5 shadow-sm border border-neutral-200 hover:shadow-md transition-all duration-200 min-w-[280px] md:min-w-0">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#E9C46A]/20 to-[#E9C46A]/10 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-7 h-7 text-[#E9C46A]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <div class="group bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/50 hover:shadow-xl hover:bg-white/95 transition-all duration-300 min-w-[280px] md:min-w-0 relative overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-br from-[#F2B33D]/5 to-[#5550F2]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="relative flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F2B33D] to-[#5550F2] shadow-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
                     <path d="M12 9v4"></path>
                     <path d="M12 17h.01"></path>
                   </svg>
                 </div>
                 <div class="flex-1">
-                  <p class="text-xs text-neutral-500 uppercase font-semibold tracking-wide mb-1">Requieren Atención</p>
-                  <p class="text-3xl font-bold text-[#E9C46A]">{{ bonosUrgentesFiltrados }}</p>
-                  <p class="text-xs text-neutral-500 mt-0.5">{{ busquedaPendientes ? 'en resultados' : 'Pocas sesiones restantes' }}</p>
+                  <p class="text-xs font-['Lato'] text-gray-500 uppercase font-semibold tracking-wider mb-2">Requieren Atención</p>
+                  <p class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#F2B33D] to-[#5550F2] bg-clip-text text-transparent">{{ bonosUrgentesFiltrados }}</p>
+                  <p class="text-xs font-['Lato'] text-gray-500 mt-1">{{ busquedaPendientes ? 'en resultados' : 'Pocas sesiones restantes' }}</p>
                 </div>
               </div>
             </div>
@@ -131,7 +145,7 @@
           <div
             v-for="bono in bonosPendientesFiltrados"
             :key="bono.id"
-            class="group relative bg-white rounded-xl p-5 md:p-6 hover:shadow-lg transition-all duration-200 border border-neutral-200 hover:border-[#C57A3E]"
+            class="group relative bg-white rounded-xl p-5 md:p-6 hover:shadow-md transition-all duration-300 border border-neutral-200/50 hover:border-[#5550F2]/30 shadow-sm"
           >
             <!-- Indicador de prioridad lateral -->
             <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
@@ -139,14 +153,14 @@
                 'bg-red-500': bono.sesiones_restantes === 0,
                 'bg-orange-500': bono.sesiones_restantes === 1,
                 'bg-amber-500': bono.sesiones_restantes === 2,
-                'bg-[#C57A3E]': bono.sesiones_restantes > 2
+                'bg-gradient-to-b from-[#04BF9D] to-[#027368]': bono.sesiones_restantes > 2
               }"
             ></div>
 
             <div class="flex flex-col md:flex-row md:items-center gap-5 ml-2">
               <!-- Avatar del paciente -->
               <div class="relative flex-shrink-0">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-[#C57A3E] to-[#B46E4B] flex items-center justify-center text-white font-bold shadow-sm text-xl">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-[#04BF9D] to-[#027368] flex items-center justify-center text-white font-bold shadow-sm text-xl">
                   {{ obtenerIniciales(bono.paciente_nombre) }}
                 </div>
                 <!-- Badge de urgencia -->
@@ -166,7 +180,7 @@
                 <div>
                   <p class="font-bold text-neutral-800 text-lg mb-1">{{ bono.paciente_nombre }}</p>
                   <p class="text-sm text-neutral-500 capitalize flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#C57A3E]"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#04BF9D]"></span>
                     {{ bono.tipo_bono || 'Bono Estándar' }}
                   </p>
                 </div>
@@ -207,7 +221,7 @@
                         'text-red-600': bono.sesiones_restantes === 0,
                         'text-orange-600': bono.sesiones_restantes === 1,
                         'text-amber-600': bono.sesiones_restantes === 2,
-                        'text-green-600': bono.sesiones_restantes > 2
+                        'text-[#027368]': bono.sesiones_restantes > 2
                       }"
                     >
                       {{ bono.sesiones_restantes }}
@@ -242,9 +256,9 @@
                 <button
                   @click.stop="confirmarPagoRapido(bono)"
                   :disabled="procesandoConfirmacion"
-                  class="w-full md:w-auto px-6 py-3 bg-[#B46E4B] text-white rounded-xl hover:bg-[#C57A3E] transition-all duration-200 font-semibold text-sm shadow-sm hover:shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group-hover:scale-105"
+                  class="group/btn w-full md:w-auto px-6 py-3 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white rounded-xl hover:from-[#027368] hover:to-[#5550F2] transition-all duration-300 font-['Lato'] font-semibold text-sm shadow-sm hover:shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 border border-white/20 backdrop-blur-sm"
                 >
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                   <span>Confirmar Pago</span>
@@ -270,7 +284,7 @@
           </p>
           <button
             @click="busquedaPendientes = ''"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-[#B46E4B] text-white rounded-xl hover:bg-[#C57A3E] transition-all duration-200 font-semibold shadow-sm hover:shadow-md"
+            class="group/btn inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#5550F2] to-[#027368] text-white rounded-xl hover:from-[#027368] hover:to-[#04BF9D] transition-all duration-300 font-['Lato'] font-semibold shadow-sm hover:shadow-md hover:scale-105 border border-white/20 backdrop-blur-sm"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M18 6 6 18"></path>
@@ -283,7 +297,7 @@
         <!-- Estado: Todo al día -->
         <div v-else class="text-center py-16">
           <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#F8FFF9] mb-5">
-            <svg class="w-12 h-12 text-[#54BF83]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-12 h-12 text-[#027368]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
@@ -295,7 +309,7 @@
           </p>
           <NuxtLink
             to="/coordinadora/pacientes"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-[#B46E4B] text-white rounded-xl hover:bg-[#C57A3E] transition-all duration-200 font-semibold shadow-sm hover:shadow-md"
+            class="group/btn inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#5550F2] to-[#027368] text-white rounded-xl hover:from-[#027368] hover:to-[#04BF9D] transition-all duration-300 font-['Lato'] font-semibold shadow-sm hover:shadow-md hover:scale-105 border border-white/20 backdrop-blur-sm"
           >
             <span>Gestionar Pacientes</span>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -314,7 +328,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
           <div>
             <h2 class="text-xl font-serif font-bold text-neutral-800 flex items-center gap-2.5 mb-1">
-              <svg class="w-6 h-6 text-[#54BF83]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 text-[#027368]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M3 3v18h18"></path>
                 <path d="m19 9-5 5-4-4-3 3"></path>
               </svg>
@@ -329,7 +343,7 @@
           <select
             v-model="mesSeleccionado"
             @change="cargarBonosPorMes"
-            class="px-4 py-2.5 border border-neutral-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#54BF83]/20 focus:border-[#54BF83] transition-all bg-white hover:border-[#54BF83] cursor-pointer"
+            class="px-4 py-2.5 border border-neutral-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] transition-all bg-white hover:border-[#027368] cursor-pointer"
           >
             <option value="">📅 Todos los meses</option>
             <option v-for="mes in mesesDisponibles" :key="mes.valor" :value="mes.valor">
@@ -350,11 +364,11 @@
             v-model="busquedaConfirmados"
             type="text"
             placeholder="Buscar paciente en pagos confirmados..."
-            class="w-full pl-12 pr-4 py-3 border border-neutral-300 rounded-xl text-sm focus:ring-2 focus:ring-[#54BF83]/20 focus:border-[#54BF83] transition-all bg-white placeholder:text-neutral-400"
+            class="w-full pl-12 pr-4 py-3 border border-neutral-300 rounded-xl text-sm focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] transition-all bg-white placeholder:text-neutral-400"
           />
           <!-- Badge con resultados -->
           <div v-if="busquedaConfirmados" class="absolute inset-y-0 right-0 flex items-center pr-4">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#54BF83] text-white">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#027368] text-white">
               {{ bonosConfirmadosFiltrados.length }} resultado{{ bonosConfirmadosFiltrados.length !== 1 ? 's' : '' }}
             </span>
           </div>
@@ -367,8 +381,8 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-max md:min-w-0">
             <div class="bg-white rounded-xl p-5 shadow-sm border border-green-200 hover:shadow-md transition-all duration-200 min-w-[280px] md:min-w-0">
               <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#54BF83]/20 to-[#54BF83]/10 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-7 h-7 text-[#54BF83]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#027368]/20 to-[#027368]/10 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-7 h-7 text-[#027368]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
@@ -382,14 +396,14 @@
 
             <div class="bg-white rounded-xl p-5 shadow-sm border border-green-200 hover:shadow-md transition-all duration-200 min-w-[280px] md:min-w-0">
               <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#54BF83]/30 to-[#54BF83]/15 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-7 h-7 text-[#54BF83]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#027368]/30 to-[#027368]/15 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-7 h-7 text-[#027368]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                   </svg>
                 </div>
                 <div>
                   <p class="text-xs text-neutral-500 uppercase font-semibold tracking-wide mb-1">Total Confirmado</p>
-                  <p class="text-3xl font-bold text-[#54BF83]">{{ formatearPrecio(totalConfirmadoFiltrado) }}€</p>
+                  <p class="text-3xl font-bold text-[#027368]">{{ formatearPrecio(totalConfirmadoFiltrado) }}€</p>
                   <p v-if="busquedaConfirmados" class="text-xs text-neutral-500 mt-0.5">de {{ formatearPrecio(totalConfirmado) }}€ total</p>
                 </div>
               </div>
@@ -429,20 +443,20 @@
           <div
             v-for="bono in bonosConfirmadosFiltrados"
             :key="bono.id"
-            class="group relative bg-white rounded-xl p-5 md:p-6 hover:shadow-lg transition-all duration-200 cursor-pointer border border-green-100 hover:border-[#54BF83]"
+            class="group relative bg-white rounded-xl p-5 md:p-6 hover:shadow-md transition-all duration-200 cursor-pointer border border-green-100 hover:border-[#027368] shadow-sm"
             @click="abrirDetallePago(bono)"
           >
             <!-- Indicador lateral verde -->
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#54BF83] rounded-l-xl"></div>
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#027368] rounded-l-xl"></div>
 
             <div class="flex flex-col md:flex-row md:items-center gap-5 ml-2">
               <!-- Avatar del paciente -->
               <div class="relative flex-shrink-0">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-[#54BF83] to-emerald-600 flex items-center justify-center text-white font-bold shadow-sm text-xl">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-[#027368] to-[#04BF9D] flex items-center justify-center text-white font-bold shadow-sm text-xl">
                   {{ obtenerIniciales(bono.paciente_nombre) }}
                 </div>
                 <!-- Badge de confirmado -->
-                <div class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#54BF83] flex items-center justify-center shadow-md">
+                <div class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#027368] flex items-center justify-center shadow-md">
                   <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M5 13l4 4L19 7"></path>
                   </svg>
@@ -455,7 +469,7 @@
                 <div>
                   <p class="font-bold text-neutral-800 text-lg mb-1">{{ bono.paciente_nombre }}</p>
                   <p class="text-sm text-neutral-500 capitalize flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#54BF83]"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#027368]"></span>
                     {{ bono.tipo_bono || 'Bono Estándar' }}
                   </p>
                 </div>
@@ -469,8 +483,8 @@
                 <!-- Estado Confirmado -->
                 <div>
                   <p class="text-xs text-neutral-500 uppercase font-semibold mb-1">Estado</p>
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#027368]/10 text-[#027368]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#027368]"></span>
                     <span>Confirmado</span>
                   </span>
                 </div>
@@ -484,7 +498,7 @@
                         'text-red-600': bono.sesiones_restantes === 0,
                         'text-orange-600': bono.sesiones_restantes === 1,
                         'text-amber-600': bono.sesiones_restantes === 2,
-                        'text-green-600': bono.sesiones_restantes > 2
+                        'text-[#027368]': bono.sesiones_restantes > 2
                       }"
                     >
                       {{ bono.sesiones_restantes }}
@@ -509,7 +523,7 @@
                 <!-- Monto y fecha -->
                 <div class="text-left md:text-right">
                   <p class="text-xs text-neutral-500 uppercase font-semibold mb-1">Pago Confirmado</p>
-                  <p class="text-2xl font-bold text-[#54BF83]">{{ formatearPrecio(bono.monto_total) }}€</p>
+                  <p class="text-2xl font-bold text-[#027368]">{{ formatearPrecio(bono.monto_total) }}€</p>
                   <p class="text-xs text-neutral-500 mt-1 flex items-center md:justify-end gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                       <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
@@ -528,7 +542,7 @@
         <!-- Estado vacío -->
         <div v-else-if="busquedaConfirmados && bonosConfirmadosFiltrados.length === 0" class="text-center py-16">
           <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-50 mb-5">
-            <svg class="w-12 h-12 text-[#54BF83]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-12 h-12 text-[#027368]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.35-4.35"></path>
             </svg>
@@ -541,7 +555,7 @@
           </p>
           <button
             @click="busquedaConfirmados = ''"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-[#54BF83] text-white rounded-xl hover:bg-emerald-600 transition-all duration-200 font-semibold shadow-sm hover:shadow-md"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white rounded-xl hover:from-[#027368] hover:to-[#04BF9D] transition-all duration-200 font-semibold shadow-sm hover:shadow-md"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M18 6 6 18"></path>
@@ -594,8 +608,8 @@
             <!-- Header del modal -->
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#54BF83]/20 to-[#54BF83]/10 flex items-center justify-center">
-                  <svg class="w-6 h-6 text-[#54BF83]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#027368]/20 to-[#027368]/10 flex items-center justify-center">
+                  <svg class="w-6 h-6 text-[#027368]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
@@ -616,7 +630,7 @@
             <div v-if="bonoSeleccionado" class="space-y-6">
               <!-- Avatar y nombre del paciente -->
               <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-transparent rounded-xl border border-green-100">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-[#54BF83] to-emerald-600 flex items-center justify-center text-white font-bold shadow-sm text-2xl">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-[#027368] to-[#04BF9D] flex items-center justify-center text-white font-bold shadow-sm text-2xl">
                   {{ obtenerIniciales(bonoSeleccionado.paciente_nombre) }}
                 </div>
                 <div>
@@ -629,7 +643,7 @@
               <div class="grid grid-cols-2 gap-4">
                 <div class="p-4 bg-neutral-50 rounded-xl border border-neutral-200">
                   <p class="text-xs text-neutral-500 uppercase font-semibold mb-1">Monto Total</p>
-                  <p class="text-2xl font-bold text-[#54BF83]">{{ formatearPrecio(bonoSeleccionado.monto_total) }}€</p>
+                  <p class="text-2xl font-bold text-[#027368]">{{ formatearPrecio(bonoSeleccionado.monto_total) }}€</p>
                 </div>
                 <div class="p-4 bg-neutral-50 rounded-xl border border-neutral-200">
                   <p class="text-xs text-neutral-500 uppercase font-semibold mb-1">Fecha de Pago</p>
@@ -646,7 +660,7 @@
                       'text-red-600': bonoSeleccionado.sesiones_restantes === 0,
                       'text-orange-600': bonoSeleccionado.sesiones_restantes === 1,
                       'text-amber-600': bonoSeleccionado.sesiones_restantes === 2,
-                      'text-green-600': bonoSeleccionado.sesiones_restantes > 2
+                      'text-[#027368]': bonoSeleccionado.sesiones_restantes > 2
                     }"
                   >
                     {{ bonoSeleccionado.sesiones_restantes }}
@@ -1110,7 +1124,7 @@ const mostrarToast = (mensaje, tipo = 'info') => {
   // Crear elemento toast
   const toast = document.createElement('div')
   toast.className = `fixed top-4 right-4 z-[100] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 ${
-    tipo === 'success' ? 'bg-[#54BF83] text-white' : 
+    tipo === 'success' ? 'bg-[#027368] text-white' : 
     tipo === 'error' ? 'bg-red-500 text-white' : 
     'bg-neutral-800 text-white'
   }`

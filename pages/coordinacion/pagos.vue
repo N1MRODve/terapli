@@ -2,33 +2,39 @@
   <div>
     <NuxtLayout name="coordinacion">
       <!-- Encabezado -->
-      <div class="mb-8 flex items-center justify-between">
+      <div class="mb-10 flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-lora font-bold text-[#5D4A44] mb-2">
-            Gestión de Pagos
-          </h1>
-          <p class="text-[#8B7470]">
-            Registro y confirmación de pagos de sesiones
+          <div class="flex items-center gap-4 mb-3">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center">
+              <span class="text-2xl">💰</span>
+            </div>
+            <h1 class="text-4xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
+              Gestión de Pagos
+            </h1>
+          </div>
+          <p class="font-['Lato'] text-gray-600 ml-18">
+            Registro y confirmación de pagos de sesiones con Teraplí
           </p>
         </div>
 
         <button
           @click="mostrarModalNuevoPago = true"
-          class="px-6 py-3 bg-gradient-to-r from-[#D8AFA0] to-[#C49484] text-white rounded-lg hover:shadow-lg transition-all flex items-center space-x-2"
+          class="group px-8 py-4 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center space-x-3 hover:scale-105 backdrop-blur-sm border border-white/20"
         >
-          <Icon name="heroicons:plus" class="w-5 h-5" />
-          <span>Registrar pago</span>
+          <Icon name="heroicons:plus" class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+          <span class="font-['Lato'] font-semibold">Registrar pago</span>
         </button>
       </div>
 
       <!-- Filtros -->
-      <div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#5550F2]/5 via-transparent to-[#04BF9D]/5"></div>
+        <div class="relative grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">Estado</label>
+            <label class="block text-sm font-['Lato'] font-semibold text-gray-700 mb-3">Estado</label>
             <select
               v-model="filtroEstado"
-              class="w-full px-4 py-2 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-['Lato'] hover:bg-white shadow-sm hover:shadow-md"
             >
               <option value="">Todos</option>
               <option value="pendiente">Pendiente</option>
@@ -39,12 +45,12 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">Búsqueda</label>
+            <label class="block text-sm font-['Lato'] font-semibold text-gray-700 mb-3">Búsqueda</label>
             <input
               v-model="busqueda"
               type="text"
               placeholder="Nombre del paciente..."
-              class="w-full px-4 py-2 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-['Lato'] hover:bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
             />
           </div>
 

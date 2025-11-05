@@ -1,21 +1,27 @@
 <template>
-  <div class="bono-card bg-[#F9F7F3] border-2 rounded-xl p-5 hover:shadow-lg transition-all duration-300"
+  <div class="group bono-card bg-white/90 backdrop-blur-md border-2 rounded-2xl p-6 hover:shadow-xl transition-all duration-500 relative overflow-hidden hover:bg-white/95 hover:scale-[1.02]"
     :class="[borderColor, { 'opacity-60': bono.estado === 'cancelado' }]"
   >
+    <!-- Efectos decorativos de fondo -->
+    <div class="absolute inset-0 bg-gradient-to-br from-[#5550F2]/5 via-transparent to-[#04BF9D]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+    <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-[#F2B33D]/10 to-[#5550F2]/10 rounded-full blur-2xl opacity-0 group-hover:opacity-60 transition-all duration-700"></div>
+
     <!-- Header del bono -->
-    <div class="flex items-start justify-between mb-4">
+    <div class="relative flex items-start justify-between mb-6">
       <div class="flex-1">
-        <div class="flex items-center gap-3 mb-2">
-          <span class="text-2xl">🎫</span>
-          <h3 class="font-['Lora'] text-xl font-semibold text-[#5D4A44]">
+        <div class="flex items-center gap-4 mb-3">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="text-xl">🎫</span>
+          </div>
+          <h3 class="font-['Elms_Sans'] text-xl font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
             Bono {{ tipoTexto }}
           </h3>
         </div>
         
         <!-- Estado del bono -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3 flex-wrap">
           <span 
-            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border"
+            class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-['Lato'] font-semibold border backdrop-blur-sm shadow-sm"
             :class="estadoColor"
           >
             {{ estadoIcono }} {{ estadoTexto }}
@@ -24,7 +30,7 @@
           <!-- Alerta de vencimiento próximo -->
           <span 
             v-if="proximoAVencer"
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 border border-orange-300"
+            class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-['Lato'] font-semibold bg-gradient-to-r from-[#F2B33D]/20 to-[#F2B33D]/10 text-[#F2B33D] border border-[#F2B33D]/30 backdrop-blur-sm shadow-sm"
           >
             ⚠️ Vence pronto
           </span>
@@ -32,7 +38,7 @@
           <!-- Alerta de pocas sesiones -->
           <span 
             v-if="pocasSesiones"
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-300"
+            class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-['Lato'] font-semibold bg-gradient-to-r from-[#04BF9D]/20 to-[#027368]/10 text-[#027368] border border-[#04BF9D]/30 backdrop-blur-sm shadow-sm"
           >
             📊 Pocas sesiones
           </span>
@@ -40,63 +46,66 @@
       </div>
 
       <!-- Acciones rápidas -->
-      <div class="flex gap-2">
+      <div class="flex gap-3">
         <button
           v-if="puedeVerPagos"
           @click="$emit('verPagos', bono)"
-          class="p-2 hover:bg-[#D8AFA0]/20 rounded-lg transition-colors"
+          class="p-3 hover:bg-gradient-to-br from-[#5550F2]/10 to-[#027368]/10 rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/50 hover:shadow-lg hover:scale-110 group/btn"
           title="Ver pagos"
         >
-          <span class="text-lg">💰</span>
+          <span class="text-lg group-hover/btn:scale-110 transition-transform duration-300">💰</span>
         </button>
         <button
           v-if="puedeRenovar"
           @click="$emit('renovar', bono)"
-          class="p-2 hover:bg-[#D8AFA0]/20 rounded-lg transition-colors"
+          class="p-3 hover:bg-gradient-to-br from-[#04BF9D]/10 to-[#F2B33D]/10 rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/50 hover:shadow-lg hover:scale-110 group/btn"
           title="Renovar bono"
         >
-          <span class="text-lg">🔄</span>
+          <span class="text-lg group-hover/btn:scale-110 transition-transform duration-300">🔄</span>
         </button>
       </div>
     </div>
 
     <!-- Progreso de sesiones -->
-    <div class="mb-4">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-sm text-[#5D4A44]/70">Sesiones</span>
-        <span class="text-sm font-semibold text-[#5D4A44]">
+    <div class="relative mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm font-['Lato'] text-gray-600 font-medium">Sesiones</span>
+        <span class="text-sm font-['Lato'] font-semibold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
           {{ sesionesRestantes }} / {{ bono.sesiones_totales }} disponibles
         </span>
       </div>
       
-      <!-- Barra de progreso -->
-      <div class="w-full bg-gray-200 rounded-full h-3">
+      <!-- Barra de progreso moderna -->
+      <div class="relative w-full bg-gradient-to-r from-gray-100 to-gray-50 rounded-full h-4 overflow-hidden shadow-inner">
         <div 
-          class="h-3 rounded-full transition-all duration-500"
+          class="h-4 rounded-full transition-all duration-700 ease-out shadow-lg relative overflow-hidden"
           :class="barraProgresoColor"
           :style="{ width: porcentajeUsado + '%' }"
-        ></div>
+        >
+          <div class="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+        </div>
       </div>
       
-      <div class="flex justify-between mt-1 text-xs text-[#5D4A44]/60">
+      <div class="flex justify-between mt-2 text-xs font-['Lato'] text-gray-600">
         <span>{{ sesionesUsadas }} usadas</span>
-        <span>{{ porcentajeUsado }}% completado</span>
+        <span class="font-semibold">{{ porcentajeUsado }}% completado</span>
       </div>
     </div>
 
     <!-- Información del bono -->
-    <div class="grid grid-cols-2 gap-3 mb-4">
+    <div class="relative grid grid-cols-2 gap-4 mb-6">
       <!-- Tipo y frecuencia -->
-      <div class="p-3 bg-white rounded-lg border border-[#D8AFA0]/20">
-        <div class="text-xs text-[#5D4A44]/60 mb-1">Tipo</div>
-        <div class="text-sm font-medium text-[#5D4A44] capitalize">
+      <div class="p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50 shadow-sm group-hover:shadow-md transition-all duration-300">
+        <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Tipo</div>
+        <div class="text-sm font-['Lato'] font-semibold text-gray-800 capitalize">
           {{ bono.tipo || 'Estándar' }}
         </div>
       </div>
       
-      <div class="p-3 bg-white rounded-lg border border-[#D8AFA0]/20">
-        <div class="text-xs text-[#5D4A44]/60 mb-1">Frecuencia</div>
-        <div class="text-sm font-medium text-[#5D4A44] capitalize">
+      <div class="p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50 shadow-sm group-hover:shadow-md transition-all duration-300">
+        <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Frecuencia</div>
+        <div class="text-sm font-['Lato'] font-semibold text-gray-800 capitalize">
           {{ bono.frecuencia || 'Semanal' }}
         </div>
       </div>

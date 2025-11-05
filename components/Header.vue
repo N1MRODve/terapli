@@ -8,11 +8,9 @@
         to="/" 
         class="flex items-center h-full hover:opacity-80 transition-opacity duration-300"
       >
-        <img 
-          src="/images/Karem-Logo-purpu.png" 
-          alt="Karem Peña"
-          class="h-8 md:h-9"
-        />
+        <span class="text-2xl md:text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
+          Teraplí
+        </span>
       </NuxtLink>
 
       <!-- Desktop Navigation Links -->

@@ -1,32 +1,62 @@
-<template>
-  <!-- 🚧 PANEL DE DEBUG: Solo visible en desarrollo -->
-  <div v-if="isDevelopment">
-    <!-- Botón flotante para abrir/cerrar -->
-    <button
-      v-if="!panelAbierto"
-      @click="panelAbierto = true"
-      class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-xl z-50 hover:bg-gray-800 transition-all"
-      title="Abrir panel de debug (Cmd/Ctrl+Shift+D)"
-    >
-      🔍
-    </button>
+<template><template>
 
-    <!-- Panel de debug -->
-    <div 
-      v-if="mostrar && panelAbierto" 
-      class="fixed bottom-4 right-4 bg-gray-900 text-white p-4 rounded-lg shadow-xl max-w-md z-50 font-mono text-xs"
-    >
-      <div class="flex justify-between items-center mb-2">
-        <h3 class="font-bold text-sm">🔍 Debug: Autenticación</h3>
-        <div class="flex gap-2">
-          <button @click="panelAbierto = false" class="text-gray-400 hover:text-white" title="Minimizar">−</button>
-          <button @click="cerrar" class="text-gray-400 hover:text-white" title="Cerrar">✕</button>
-        </div>
+  <ClientOnly>  <!-- 🚧 PANEL DE DEBUG: Solo visible en desarrollo -->
+
+    <div v-if="isDevelopment && mostrar" class="fixed bottom-4 right-4 z-50">  <ClientOnly>
+
+      <!-- Panel de debug simple -->    <div v-if="isDevelopment">
+
+      <div class="bg-gray-900 text-white p-4 rounded-lg shadow-xl max-w-md font-mono text-xs">    <!-- Botón flotante para abrir/cerrar -->
+
+        <div class="flex justify-between items-center mb-2">    <button
+
+          <h3 class="font-bold text-sm">🔍 Debug</h3>      v-if="!panelAbierto"
+
+          <button @click="$emit('cerrar')" class="text-gray-400 hover:text-white">✕</button>      @click="panelAbierto = true"
+
+        </div>      class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-xl z-50 hover:bg-gray-800 transition-all"
+
+        <div class="space-y-2">      title="Abrir panel de debug (Cmd/Ctrl+Shift+D)"
+
+          <div>Estado: {{ user ? 'Autenticado' : 'No autenticado' }}</div>    >
+
+          <div v-if="userProfile">Rol: {{ userProfile.rol }}</div>      🔍
+
+        </div>    </button>
+
       </div>
+
+    </div>    <!-- Panel de debug -->
+
+  </ClientOnly>    <div 
+
+</template>      v-if="mostrar && panelAbierto" 
+
+      class="fixed bottom-4 right-4 bg-gray-900 text-white p-4 rounded-lg shadow-xl max-w-md z-50 font-mono text-xs"
+
+<script setup>    >
+
+import { computed } from 'vue'      <div class="flex justify-between items-center mb-2">
+
+        <h3 class="font-bold text-sm">🔍 Debug: Autenticación</h3>
+
+defineProps({        <div class="flex gap-2">
+
+  mostrar: { type: Boolean, default: true }          <button @click="panelAbierto = false" class="text-gray-400 hover:text-white" title="Minimizar">−</button>
+
+})          <button @click="cerrar" class="text-gray-400 hover:text-white" title="Cerrar">✕</button>
+
+        </div>
+
+defineEmits(['cerrar'])      </div>
+
     
-    <div class="space-y-2">
-      <!-- Estado del usuario -->
-      <div class="border-t border-gray-700 pt-2">
+
+const isDevelopment = computed(() => process.env.NODE_ENV === 'development')    <div class="space-y-2">
+
+const { user, userProfile } = useSupabase()      <!-- Estado del usuario -->
+
+</script>      <div class="border-t border-gray-700 pt-2">
         <div class="flex items-center gap-2">
           <span :class="user ? 'bg-green-500' : 'bg-red-500'" class="w-2 h-2 rounded-full"></span>
           <span class="font-semibold">Usuario:</span>
@@ -95,9 +125,9 @@
           🚨 Diagnosticar Problema
         </button>
       </div>
-      </div>
     </div>
-  </div>
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup>

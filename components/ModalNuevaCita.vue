@@ -4,20 +4,20 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     @click.self="cerrarModal"
   >
-    <div class="bg-[#F9F7F3] rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-white/30">
       <!-- Header -->
-      <div class="sticky top-0 bg-[#F9F7F3] border-b border-[#D8AFA0]/30 px-6 py-4 flex justify-between items-center">
+      <div class="sticky top-0 bg-gradient-to-r from-[#5550F2]/5 via-[#027368]/5 to-[#04BF9D]/5 backdrop-blur-md border-b border-neutral-200 px-6 py-4 flex justify-between items-center shadow-sm">
         <div>
-          <h2 class="text-2xl font-['Lora'] text-[#5D4A44] font-semibold">
+          <h2 class="text-2xl font-['Elms_Sans'] text-neutral-800 font-semibold">
             {{ titulo || 'Nueva Cita' }}
           </h2>
-          <p v-if="fechaPreseleccionada" class="text-sm text-[#5D4A44]/60 mt-1">
+          <p v-if="fechaPreseleccionada" class="text-sm text-neutral-600 mt-1">
             {{ formatearFechaLegible(fechaPreseleccionada) }} a las {{ horaPreseleccionada }}
           </p>
         </div>
         <button
           @click="cerrarModal"
-          class="text-[#5D4A44] hover:text-[#D8AFA0] transition-colors"
+          class="text-neutral-600 hover:text-[#027368] transition-colors p-2 hover:bg-white/50 rounded-lg"
           aria-label="Cerrar modal"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,7 +27,7 @@
       </div>
 
       <!-- Contenido -->
-      <form @submit.prevent="guardarCita" class="px-6 py-6 space-y-6">
+      <form @submit.prevent="guardarCita" class="px-6 py-6 space-y-6 bg-gradient-to-b from-white/50 to-transparent">
         <!-- Indicador de Paciente Preseleccionado (desde ficha) -->
         <div v-if="props.pacientePreseleccionado && pacienteSeleccionado" class="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl shadow-sm">
           <div class="flex items-center justify-between">
@@ -63,11 +63,11 @@
         <!-- Paso 1: Selección de Paciente (SOLO SI NO HAY PRESELECCIONADO) -->
         <div v-if="!props.pacientePreseleccionado" class="space-y-4">
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold flex items-center gap-2">
-              <span v-if="!pacienteSeleccionado" class="w-7 h-7 rounded-full bg-[#D8AFA0] text-white flex items-center justify-center text-sm font-bold">
+            <h3 class="text-lg font-['Elms_Sans'] text-neutral-800 font-semibold flex items-center gap-2">
+              <span v-if="!pacienteSeleccionado" class="w-7 h-7 rounded-full bg-gradient-to-r from-[#5550F2] to-[#027368] text-white flex items-center justify-center text-sm font-bold shadow-sm">
                 1
               </span>
-              <span v-else class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+              <span v-else class="w-7 h-7 rounded-full bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white flex items-center justify-center shadow-sm">
                 <CheckCircleIcon class="w-5 h-5" />
               </span>
               Seleccionar Paciente
@@ -93,25 +93,25 @@
                 v-model="busquedaPaciente"
                 type="text"
                 placeholder="Buscar paciente por nombre o email..."
-                class="w-full px-4 py-2.5 pl-10 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2.5 pl-10 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
                 @focus="mostrarListaPacientes = true"
                 @input="onBusquedaInput"
                 autocomplete="off"
               />
               <span class="absolute left-3 top-1/2 -translate-y-1/2">
-                <MagnifyingGlassIcon class="w-5 h-5 text-[#5D4A44]/50" />
+                <MagnifyingGlassIcon class="w-5 h-5 text-neutral-400" />
               </span>
               
               <!-- Indicador de carga -->
               <span v-if="cargandoPacientes" class="absolute right-3 top-1/2 -translate-y-1/2">
-                <svg class="animate-spin h-5 w-5 text-[#D8AFA0]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg class="animate-spin h-5 w-5 text-[#027368]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               </span>
               
               <!-- Tooltip de ayuda -->
-              <div v-if="!busquedaPaciente && !cargandoPacientes" class="mt-1 flex items-center gap-2 text-xs text-[#5D4A44]/50">
+              <div v-if="!busquedaPaciente && !cargandoPacientes" class="mt-1 flex items-center gap-2 text-xs text-neutral-500">
                 <InformationCircleIcon class="w-4 h-4 flex-shrink-0" />
                 <span>Escribe al menos 2 caracteres para buscar</span>
               </div>
@@ -127,26 +127,26 @@
                 :key="paciente.id"
                 type="button"
                 @click="seleccionarPaciente(paciente)"
-                class="p-4 text-left hover:bg-[#D8AFA0]/10 transition-all border-2 border-[#D8AFA0]/30 hover:border-[#D8AFA0] rounded-lg cursor-pointer group bg-white"
+                class="p-4 text-left hover:bg-[#027368]/5 transition-all border-2 border-neutral-200 hover:border-[#027368] rounded-xl cursor-pointer group bg-white/90 backdrop-blur-sm shadow-sm hover:shadow-md"
               >
                 <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-full bg-[#D8AFA0]/20 group-hover:bg-[#D8AFA0] flex items-center justify-center transition-colors">
-                    <UserIcon class="w-6 h-6 text-[#5D4A44] group-hover:text-white transition-colors" />
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#027368]/20 to-[#04BF9D]/20 group-hover:from-[#027368] group-hover:to-[#04BF9D] flex items-center justify-center transition-all">
+                    <UserIcon class="w-6 h-6 text-[#027368] group-hover:text-white transition-colors" />
                   </div>
                   <div class="flex-1">
-                    <div class="font-medium text-[#5D4A44] group-hover:text-[#D8AFA0] transition-colors">
+                    <div class="font-medium text-neutral-800 group-hover:text-[#027368] transition-colors">
                       {{ paciente.nombre }}
                     </div>
-                    <div class="text-sm text-[#5D4A44]/60">
+                    <div class="text-sm text-neutral-600">
                       {{ paciente.email }}
                     </div>
-                    <div v-if="paciente.frecuencia" class="text-xs text-[#5D4A44]/50 mt-1 flex items-center gap-1">
+                    <div v-if="paciente.frecuencia" class="text-xs text-neutral-500 mt-1 flex items-center gap-1">
                       <CalendarIcon class="w-3 h-3" />
                       <span class="font-medium capitalize">{{ paciente.frecuencia }}</span>
                     </div>
                   </div>
                   <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                    <svg class="w-5 h-5 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-[#027368]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -157,9 +157,9 @@
             <!-- Mensaje cuando no hay resultados -->
             <div
               v-if="mostrarListaPacientes && busquedaPaciente && pacientesFiltrados.length === 0 && !cargandoPacientes"
-              class="border border-[#D8AFA0]/30 rounded-lg bg-white p-6 text-center text-sm text-[#5D4A44]/60"
+              class="border border-neutral-200 rounded-xl bg-white/90 backdrop-blur-sm p-6 text-center text-sm text-neutral-600 shadow-sm"
             >
-              <MagnifyingGlassIcon class="w-12 h-12 mx-auto mb-2 text-[#D8AFA0]/50" />
+              <MagnifyingGlassIcon class="w-12 h-12 mx-auto mb-2 text-neutral-400" />
               <p>No se encontraron pacientes con "<strong>{{ busquedaPaciente }}</strong>"</p>
             </div>
           </div>

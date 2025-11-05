@@ -27,7 +27,7 @@ const supabase = useSupabaseClient()
 
 // Estado local
 const filtroActivo = ref<'hoy' | 'pendientes' | 'todas' | 'completadas'>('hoy')
-const vista = ref<'lista' | 'calendario'>('calendario')
+const vista = ref<'dia' | 'lista' | 'calendario'>('calendario')
 const fechaSeleccionada = ref(new Date())
 const mostrarModalHistorial = ref(false)
 const bonoSeleccionado = ref<string | null>(null)
@@ -41,7 +41,7 @@ const celdaObjetivo = ref<{ fecha: string; hora: string } | null>(null)
 
 // Horario laboral: 11:00 - 22:00 con descanso de 14:00 - 17:00
 // Horas disponibles en la agenda
-const horasDelDia = [
+const horasDelDia: string[] = [
   // Mañana: 11:00 - 13:00 (antes del descanso)
   '11:00', '12:00', '13:00',
   // Descanso: 14:00 - 16:00 (no mostrar)
@@ -109,6 +109,27 @@ const formatearFechaLarga = (fecha: Date) => {
   })
 }
 
+const formatearFechaCompleta = (fecha: Date) => {
+  return fecha.toLocaleDateString('es-ES', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
+}
+
+// Función para obtener clases de badge según estado
+const getBadgeEstado = (estado: string) => {
+  const clases = {
+    pendiente: 'bg-amber-100 text-amber-700 border border-amber-200',
+    confirmada: 'bg-green-100 text-green-700 border border-green-200',
+    completada: 'bg-blue-100 text-blue-700 border border-blue-200',
+    realizada: 'bg-blue-100 text-blue-700 border border-blue-200',
+    cancelada: 'bg-red-100 text-red-700 border border-red-200'
+  }
+  return clases[estado as keyof typeof clases] || 'bg-gray-100 text-gray-700 border border-gray-200'
+}
+
 const esHoy = (fecha: string) => {
   const hoy = new Date().toISOString().split('T')[0]
   return fecha === hoy
@@ -120,8 +141,28 @@ const cambiarSemana = (direccion: number) => {
   fechaSeleccionada.value = nueva
 }
 
+// Nueva función para cambiar fecha según vista
+const cambiarFecha = (direccion: number) => {
+  const nueva = new Date(fechaSeleccionada.value)
+  if (vista.value === 'dia') {
+    nueva.setDate(nueva.getDate() + direccion)
+  } else {
+    nueva.setDate(nueva.getDate() + (direccion * 7))
+  }
+  fechaSeleccionada.value = nueva
+}
+
 const irHoy = () => {
   fechaSeleccionada.value = new Date()
+}
+
+// Función para obtener citas por hora (vista día)
+const citasPorHora = (hora: string) => {
+  const fechaStr = fechaSeleccionada.value.toISOString().split('T')[0]
+  return citas.value.filter(c => 
+    c.fecha_cita === fechaStr && 
+    c.hora_inicio?.startsWith(hora)
+  )
 }
 
 // Clase CSS según estado
@@ -334,64 +375,97 @@ const recargarCitas = async () => {
 </script>
 
 <template>
-  <div class="agenda-terapeuta p-6 max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Mi Agenda</h1>
-        <p class="text-gray-600">Gestiona tus citas y sesiones</p>
+  <div class="space-y-3">
+    <!-- Header con filtros -->
+    <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-4">
+      <!-- Primera línea: Título + Controles principales -->
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <div class="flex items-center gap-3">
+          <h1 class="text-xl font-['Elms_Sans'] font-bold text-neutral-800">Mi Agenda</h1>
+          <span class="text-sm text-neutral-600">{{ formatearFechaLarga(fechaSeleccionada) }}</span>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <!-- Selector de vista -->
+          <div class="flex bg-neutral-100 rounded-xl p-1">
+            <button
+              @click="vista = 'dia'"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+              :class="vista === 'dia' ? 'bg-white text-neutral-800 shadow-sm' : 'text-neutral-600 hover:text-neutral-800'"
+            >
+              Día
+            </button>
+            <button
+              @click="vista = 'calendario'"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+              :class="vista === 'calendario' ? 'bg-white text-neutral-800 shadow-sm' : 'text-neutral-600 hover:text-neutral-800'"
+            >
+              Semana
+            </button>
+            <button
+              @click="vista = 'lista'"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+              :class="vista === 'lista' ? 'bg-white text-neutral-800 shadow-sm' : 'text-neutral-600 hover:text-neutral-800'"
+            >
+              Lista
+            </button>
+          </div>
+
+          <!-- Navegación de fecha -->
+          <div class="flex items-center gap-1">
+            <button
+              @click="cambiarFecha(-1)"
+              class="p-2 rounded-lg hover:bg-neutral-100 text-neutral-700 transition-all"
+              title="Anterior"
+            >
+              ←
+            </button>
+            <button
+              @click="irHoy"
+              class="px-3 py-1.5 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white hover:from-[#027368] hover:to-[#04BF9D] rounded-lg text-sm font-medium transition-all"
+            >
+              Hoy
+            </button>
+            <button
+              @click="cambiarFecha(1)"
+              class="p-2 rounded-lg hover:bg-neutral-100 text-neutral-700 transition-all"
+              title="Siguiente"
+            >
+              →
+            </button>
+          </div>
+
+          <!-- Botón actualizar -->
+          <button
+            @click="recargarCitas"
+            class="px-4 py-2 bg-white/80 backdrop-blur-sm border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all text-sm font-medium shadow-sm"
+            :disabled="loading"
+          >
+            <span v-if="loading">Actualizando...</span>
+            <span v-else>↻ Actualizar</span>
+          </button>
+        </div>
       </div>
-      
-      <!-- Selector de vista -->
-      <div class="flex items-center gap-2">
-        <div class="flex bg-gray-100 rounded-lg p-0.5">
-          <button
-            @click="vista = 'calendario'"
-            class="px-3 py-1.5 rounded text-sm font-medium transition-colors"
-            :class="vista === 'calendario' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
-          >
-            Calendario
-          </button>
-          <button
-            @click="vista = 'lista'"
-            class="px-3 py-1.5 rounded text-sm font-medium transition-colors"
-            :class="vista === 'lista' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
-          >
-            Lista
-          </button>
-        </div>
-        
-        <!-- Navegación de semana (solo para calendario) -->
-        <div v-if="vista === 'calendario'" class="flex items-center gap-1 ml-2">
-          <button
-            @click="cambiarSemana(-1)"
-            class="p-2 rounded hover:bg-gray-100 text-gray-900"
-            title="Semana anterior"
-          >
-            ←
-          </button>
-          <button
-            @click="irHoy"
-            class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm font-medium text-gray-900 transition-colors"
-          >
-            Hoy
-          </button>
-          <button
-            @click="cambiarSemana(1)"
-            class="p-2 rounded hover:bg-gray-100 text-gray-900"
-            title="Semana siguiente"
-          >
-            →
-          </button>
-        </div>
-        
+
+      <!-- Segunda línea: Filtros (solo para vista lista) -->
+      <div v-if="vista === 'lista'" class="flex flex-wrap gap-2">
         <button
-          @click="recargarCitas"
-          class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          :disabled="loading"
+          v-for="filtro in [
+            { key: 'hoy', label: 'Hoy', count: citasDelDia.length },
+            { key: 'pendientes', label: 'Pendientes', count: citasPendientes.length },
+            { key: 'completadas', label: 'Completadas', count: citasCompletadas.length },
+            { key: 'todas', label: 'Todas', count: citas.length }
+          ]"
+          :key="filtro.key"
+          @click="filtroActivo = filtro.key as any"
+          :class="[
+            'px-3 py-1.5 rounded-xl text-sm font-medium transition-all shadow-sm',
+            filtroActivo === filtro.key
+              ? 'bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white'
+              : 'bg-white text-neutral-700 hover:bg-neutral-50 border border-neutral-200'
+          ]"
         >
-          <span v-if="loading">Cargando...</span>
-          <span v-else>Actualizar</span>
+          {{ filtro.label }} ({{ filtro.count }})
         </button>
       </div>
     </div>
@@ -399,24 +473,135 @@ const recargarCitas = async () => {
     <!-- Alertas de bonos próximos a agotarse -->
     <div
       v-if="citasConBonoProximoAgotar.length > 0"
-      class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6"
+      class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 mb-4 shadow-sm"
     >
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F2B33D] to-[#F2B33D]/70 flex items-center justify-center flex-shrink-0">
+          <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
           </svg>
         </div>
-        <div class="ml-3">
-          <p class="text-sm text-yellow-700">
-            <strong>Atención:</strong> {{ citasConBonoProximoAgotar.length }} paciente(s) con pocas sesiones restantes
+        <div class="flex-1">
+          <p class="text-sm font-medium text-amber-900">
+            Atención: {{ citasConBonoProximoAgotar.length }} paciente(s) con pocas sesiones restantes
+          </p>
+          <p class="text-xs text-amber-700 mt-1">
+            Considera informar a estos pacientes para renovar sus bonos
           </p>
         </div>
       </div>
     </div>
 
+    <!-- Vista Día -->
+    <div v-if="vista === 'dia'" class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 overflow-hidden flex flex-col" style="height: calc(100vh - 200px);">
+      <!-- Header del día (STICKY) -->
+      <div class="sticky top-0 z-10 bg-gradient-to-r from-white/95 via-white/90 to-white/95 backdrop-blur-md border-b border-neutral-200 shadow-sm p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-['Elms_Sans'] font-semibold text-lg text-neutral-800">
+              {{ formatearFechaCompleta(fechaSeleccionada) }}
+            </h3>
+            <p class="text-sm text-neutral-600 mt-1">
+              {{ citasPorHora ? Object.values(horasDelDia).reduce((total, hora) => total + citasPorHora(hora).length, 0) : 0 }} citas programadas
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido con scroll -->
+      <div class="flex-1 overflow-y-auto">
+        <!-- Estado vacío cuando no hay citas -->
+        <div 
+          v-if="citasFiltradas.length === 0" 
+          class="flex items-center justify-center py-16"
+        >
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#027368]/10 to-[#04BF9D]/10 flex items-center justify-center">
+              <svg class="w-8 h-8 text-[#027368]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h3 class="font-['Elms_Sans'] font-medium text-neutral-800 mb-2">No hay citas programadas</h3>
+            <p class="text-neutral-600 text-sm">{{ formatearFechaCompleta(fechaSeleccionada) }} está libre</p>
+          </div>
+        </div>
+
+        <!-- Horarios del día -->
+        <div v-else class="divide-y divide-neutral-100">
+          <div
+            v-for="(hora, index) in horasDelDia"
+            :key="hora"
+            :data-hora="hora"
+            class="flex hover:bg-neutral-50/50 transition-colors"
+          >
+            <div class="w-20 p-3 text-sm font-medium text-neutral-600 border-r border-neutral-200 bg-neutral-50/50 flex-shrink-0">
+              {{ hora }}
+            </div>
+            <div 
+              class="flex-1 p-3 cursor-pointer hover:bg-[#027368]/5 transition-colors relative group/cell"
+            >
+              <!-- Indicador de celda vacía -->
+              <div 
+                v-if="citasPorHora(hora).length === 0" 
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/cell:opacity-100 transition-opacity pointer-events-none"
+              >
+                <span class="text-xs text-[#027368] font-medium bg-white px-3 py-1.5 rounded-full shadow-sm border border-white/50">
+                  Horario libre
+                </span>
+              </div>
+              
+              <div
+                v-for="cita in citasPorHora(hora)"
+                :key="cita.id"
+                draggable="true"
+                @dragstart="onDragStart($event, cita)"
+                @dragend="onDragEnd($event)"
+                class="mb-2 p-3 rounded-xl transition-all hover:shadow-md hover:ring-2 hover:ring-[#027368]/30 group relative cursor-move backdrop-blur-sm"
+                :class="getClasesCita(cita.estado)"
+                @click.stop
+                title="Arrastra para mover a otra hora"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <!-- Indicador de arrastre -->
+                  <div class="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                    <ArrowsPointingOutIcon class="w-4 h-4 text-neutral-500" />
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-medium text-sm text-neutral-800">{{ cita.paciente?.nombre_completo || 'Sin nombre' }}</p>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span class="text-xs text-neutral-600 font-medium">
+                        {{ formatearHora(cita.hora_inicio) }} - {{ formatearHora(cita.hora_fin) }}
+                      </span>
+                      <span class="text-xs px-2 py-1 rounded-lg bg-white/60 text-neutral-700">
+                        {{ cita.modalidad }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="text-xs px-2 py-1 rounded-lg font-medium whitespace-nowrap"
+                      :class="getBadgeEstado(cita.estado)"
+                    >
+                      {{ getEstadoLabel(cita.estado) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div
+                v-if="citasPorHora(hora).length === 0"
+                class="text-xs text-neutral-400 italic"
+              >
+                Sin citas programadas
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Vista Calendario Semanal -->
-    <div v-if="vista === 'calendario'" class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col" style="height: calc(100vh - 280px);">
+    <div v-else-if="vista === 'calendario'" class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 overflow-hidden flex flex-col" style="height: calc(100vh - 200px);">
       <div class="min-w-[800px] overflow-x-auto flex-1 flex flex-col">
         <!-- Encabezados de días (STICKY) -->
         <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">

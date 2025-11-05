@@ -4,15 +4,15 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     @click.self="cerrarModal"
   >
-    <div class="bg-[#F9F7F3] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/30">
       <!-- Header -->
-      <div class="sticky top-0 bg-[#F9F7F3] border-b border-[#D8AFA0]/30 px-6 py-4 flex justify-between items-center">
-        <h2 class="text-2xl font-['Lora'] text-[#5D4A44] font-semibold">
+      <div class="sticky top-0 bg-gradient-to-r from-[#5550F2]/5 via-[#027368]/5 to-[#04BF9D]/5 backdrop-blur-md border-b border-neutral-200 px-6 py-4 flex justify-between items-center shadow-sm">
+        <h2 class="text-2xl font-['Elms_Sans'] text-neutral-800 font-semibold">
           Nuevo Paciente
         </h2>
         <button
           @click="cerrarModal"
-          class="text-[#5D4A44] hover:text-[#D8AFA0] transition-colors"
+          class="text-neutral-600 hover:text-[#027368] transition-colors p-2 hover:bg-white/50 rounded-lg"
           aria-label="Cerrar modal"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,17 +22,17 @@
       </div>
 
       <!-- Formulario -->
-      <form @submit.prevent="guardarPaciente" class="px-6 py-6 space-y-6">
+      <form @submit.prevent="guardarPaciente" class="px-6 py-6 space-y-6 bg-gradient-to-b from-white/50 to-transparent">
         <!-- Información Personal -->
         <div class="space-y-4">
-          <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold">
+          <h3 class="text-lg font-['Elms_Sans'] text-neutral-800 font-semibold">
             Información Personal
           </h3>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Nombre -->
             <div>
-              <label for="nombre" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="nombre" class="block text-sm font-medium text-neutral-700 mb-1">
                 Nombre <span class="text-red-500">*</span>
               </label>
               <input
@@ -40,14 +40,14 @@
                 v-model="formulario.nombre"
                 type="text"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
                 placeholder="Nombre del paciente"
               />
             </div>
 
             <!-- Apellido -->
             <div>
-              <label for="apellido" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="apellido" class="block text-sm font-medium text-neutral-700 mb-1">
                 Apellido <span class="text-red-500">*</span>
               </label>
               <input
@@ -55,14 +55,14 @@
                 v-model="formulario.apellido"
                 type="text"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
                 placeholder="Apellido(s) del paciente"
               />
             </div>
 
             <!-- Email -->
             <div>
-              <label for="email" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="email" class="block text-sm font-medium text-neutral-700 mb-1">
                 Email <span class="text-red-500">*</span>
               </label>
               <input
@@ -70,21 +70,21 @@
                 v-model="formulario.email"
                 type="email"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
                 placeholder="correo@ejemplo.com"
               />
             </div>
 
             <!-- Teléfono -->
             <div>
-              <label for="telefono" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="telefono" class="block text-sm font-medium text-neutral-700 mb-1">
                 Teléfono
               </label>
               <input
                 id="telefono"
                 v-model="formulario.telefono"
                 type="tel"
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
                 placeholder="+52 123 456 7890"
               />
             </div>
@@ -121,8 +121,8 @@
         </div>
 
         <!-- Información Terapéutica -->
-        <div class="space-y-4 pt-4 border-t border-[#D8AFA0]/30">
-          <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold">
+        <div class="space-y-4 pt-4 border-t border-neutral-200">
+          <h3 class="text-lg font-['Elms_Sans'] text-neutral-800 font-semibold">
             Información Terapéutica
           </h3>
 
@@ -409,9 +409,9 @@
         </div>
 
         <!-- Botones de Acción - Fijos al fondo -->
-        <div class="sticky bottom-0 bg-[#F9F7F3] pt-4 pb-2 border-t-2 border-[#D8AFA0]/30 -mx-6 px-6 mt-6">
+        <div class="sticky bottom-0 bg-gradient-to-r from-white/95 via-white/90 to-white/95 backdrop-blur-md pt-4 pb-2 border-t border-neutral-200 -mx-6 px-6 mt-6 shadow-sm">
           <div class="flex justify-between items-center gap-3">
-            <div class="text-xs text-cafe/60">
+            <div class="text-xs text-neutral-600">
               <span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1"></span>
               Los campos con * son obligatorios
             </div>
@@ -420,14 +420,14 @@
                 type="button"
                 @click="cerrarModal"
                 :disabled="guardando"
-                class="px-6 py-2.5 border-2 border-[#D8AFA0] text-[#5D4A44] font-medium rounded-lg hover:bg-[#D8AFA0]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-6 py-2.5 border-2 border-neutral-300 text-neutral-700 font-medium rounded-xl hover:bg-neutral-50 hover:border-[#027368] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 :disabled="guardando || !formularioValido"
-                class="px-8 py-2.5 bg-[#D8AFA0] text-white font-semibold rounded-lg hover:bg-[#C69F91] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md hover:shadow-lg"
+                class="px-8 py-2.5 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white font-semibold rounded-xl hover:from-[#027368] hover:to-[#04BF9D] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm hover:shadow-md"
               >
                 <span v-if="guardando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 <span v-else>✓</span>

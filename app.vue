@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onErrorCaptured } from 'vue'
+import { ref, onMounted, onErrorCaptured } from 'vue'
 import { Analytics } from '@vercel/analytics/nuxt'
 
 // Mostrar panel de debug (solo en desarrollo)
@@ -40,6 +40,12 @@ onMounted(() => {
     })
   }
 })
+
+// Variable reactiva para manejar hydration
+const isClient = ref(false)
+onMounted(() => {
+  isClient.value = true
+})
 </script>
 
 <template>
@@ -72,12 +78,12 @@ onMounted(() => {
       </template>
     </NuxtErrorBoundary>
     
-    <!-- Panel de debug de autenticación -->
-    <AuthDebugPanel 
+    <!-- Panel de debug de autenticación (desactivado temporalmente) -->
+    <!-- <AuthDebugPanel 
       v-if="mostrarDebug" 
       :mostrar="mostrarDebug"
       @cerrar="mostrarDebug = false" 
-    />
+    /> -->
     
     <!-- Analytics de Vercel -->
     <Analytics />

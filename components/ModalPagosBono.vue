@@ -1,54 +1,64 @@
 <template>
   <div
     v-if="mostrar"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     @click.self="cerrar"
   >
-    <div class="bg-[#F9F7F3] rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-      <!-- Header -->
-      <div class="sticky top-0 bg-[#F9F7F3] border-b border-[#D8AFA0]/30 px-6 py-4">
-        <div class="flex justify-between items-start">
-          <div class="flex-1">
-            <h2 class="text-2xl font-['Lora'] text-[#5D4A44] font-semibold flex items-center gap-2">
-              <span class="text-2xl">💰</span>
-              Pagos del Bono
-            </h2>
-            <p class="text-sm text-[#5D4A44]/60 mt-1">
-              Gestiona los pagos y confirma transacciones
-            </p>
+    <div class="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/50 max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
+      <!-- Efectos decorativos -->
+      <div class="absolute inset-0 bg-gradient-to-br from-[#5550F2]/5 via-transparent to-[#04BF9D]/5 pointer-events-none"></div>
+      <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-[#F2B33D]/20 to-[#5550F2]/20 rounded-full blur-2xl"></div>
+      
+      <!-- Contenido con scroll -->
+      <div class="relative max-h-[90vh] overflow-y-auto">
+        <!-- Header -->
+        <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-200/50 px-8 py-6 z-10">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <div class="flex items-center gap-4 mb-3">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center">
+                  <span class="text-2xl">💰</span>
+                </div>
+                <h2 class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
+                  Pagos del Bono
+                </h2>
+              </div>
+              <p class="text-sm font-['Lato'] text-gray-600 ml-18">
+                Gestiona los pagos y confirma transacciones de forma segura
+              </p>
+            </div>
+            <button
+              @click="cerrar"
+              class="p-3 text-gray-500 hover:text-[#5550F2] hover:bg-gradient-to-br from-[#5550F2]/10 to-[#027368]/10 rounded-2xl transition-all duration-300 backdrop-blur-sm border border-white/50 hover:shadow-lg"
+              aria-label="Cerrar modal"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <button
-            @click="cerrar"
-            class="text-[#5D4A44] hover:text-[#D8AFA0] transition-colors"
-            aria-label="Cerrar modal"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
 
-        <!-- Resumen del bono -->
-        <div v-if="bono" class="mt-4 p-4 bg-gradient-to-r from-[#D8AFA0]/10 to-[#ECC8BA]/10 rounded-lg">
-          <div class="grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <div class="text-[#5D4A44]/60 mb-1">Tipo</div>
-              <div class="font-medium text-[#5D4A44] capitalize">{{ bono.tipo }}</div>
-            </div>
-            <div>
-              <div class="text-[#5D4A44]/60 mb-1">Monto Total</div>
-              <div class="font-bold text-[#D8AFA0] text-lg">{{ formatearMonto(bono.monto) }}</div>
-            </div>
-            <div>
-              <div class="text-[#5D4A44]/60 mb-1">Estado</div>
-              <div class="font-medium capitalize"
-                :class="bono.pagado ? 'text-green-600' : 'text-orange-600'"
-              >
-                {{ bono.pagado ? '✓ Pagado' : '⏳ Pendiente' }}
+          <!-- Resumen del bono -->
+          <div v-if="bono" class="mt-6 p-6 bg-gradient-to-r from-[#5550F2]/5 via-[#027368]/5 to-[#04BF9D]/5 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg">
+            <div class="grid grid-cols-3 gap-6 text-sm">
+              <div class="text-center">
+                <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Tipo</div>
+                <div class="font-['Lato'] font-semibold text-gray-800 capitalize text-lg">{{ bono.tipo }}</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Monto Total</div>
+                <div class="font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#F2B33D] to-[#5550F2] bg-clip-text text-transparent text-2xl">{{ formatearMonto(bono.monto) }}</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Estado</div>
+                <div class="font-['Lato'] font-semibold text-lg capitalize"
+                  :class="bono.pagado ? 'text-[#04BF9D]' : 'text-[#F2B33D]'"
+                >
+                  {{ bono.pagado ? '✓ Pagado' : '⏳ Pendiente' }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       <!-- Contenido -->
