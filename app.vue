@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { Analytics } from '@vercel/analytics/nuxt'
 
 // Mostrar panel de debug (solo en desarrollo)
 const mostrarDebug = ref(process.env.NODE_ENV === 'development')
@@ -50,6 +51,9 @@ onMounted(() => {
       :mostrar="mostrarDebug"
       @cerrar="mostrarDebug = false" 
     />
+    
+    <!-- Analytics de Vercel -->
+    <Analytics />
   </div>
 </template>
 
