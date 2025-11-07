@@ -334,6 +334,11 @@ export default defineNuxtConfig({
         '@vue/compiler-sfc',
         '@vue/compiler-ssr',
         'entities',
+        'estree-walker',
+        'magic-string',
+        'source-map',
+        'picocolors',
+        'csstype',
         'unhead',
         'hookable',
         'ufo',
@@ -355,7 +360,12 @@ export default defineNuxtConfig({
       '@vue/compiler-core',
       '@vue/compiler-sfc',
       '@vue/compiler-ssr',
-      'entities'
+      'entities',
+      'estree-walker',
+      'magic-string',
+      'source-map',
+      'picocolors',
+      'csstype'
     ]
   },
 
