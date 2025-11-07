@@ -28,7 +28,13 @@ export default defineNitroConfig({
       'unhead',
       'hookable',
       'ufo',
-      'defu'
+      'defu',
+      'devalue',
+      'klona',
+      'perfect-debounce',
+      'scule',
+      'pathe',
+      'ohash'
     ]
   },
   

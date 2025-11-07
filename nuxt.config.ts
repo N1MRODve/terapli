@@ -342,7 +342,13 @@ export default defineNuxtConfig({
         'unhead',
         'hookable',
         'ufo',
-        'defu'
+        'defu',
+        'devalue',
+        'klona',
+        'perfect-debounce',
+        'scule',
+        'pathe',
+        'ohash'
       ]
     },
     // Optimizar para serverless
@@ -365,7 +371,13 @@ export default defineNuxtConfig({
       'magic-string',
       'source-map',
       'picocolors',
-      'csstype'
+      'csstype',
+      'devalue',
+      'klona',
+      'perfect-debounce',
+      'scule',
+      'pathe',
+      'ohash'
     ]
   },
 
