@@ -329,6 +329,10 @@ export default defineNuxtConfig({
         '@vue/reactivity', 
         '@vue/runtime-core',
         '@vue/runtime-dom',
+        '@vue/compiler-core',
+        '@vue/compiler-dom',
+        '@vue/compiler-sfc',
+        '@vue/compiler-ssr',
         'unhead',
         'hookable',
         'ufo',
@@ -345,7 +349,11 @@ export default defineNuxtConfig({
       'vue-bundle-renderer',
       'vue',
       '@vue/shared',
-      '@vue/server-renderer'
+      '@vue/server-renderer',
+      '@vue/compiler-dom',
+      '@vue/compiler-core',
+      '@vue/compiler-sfc',
+      '@vue/compiler-ssr'
     ]
   },
 

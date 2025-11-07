@@ -16,7 +16,6 @@
     "@vercel/analytics": "1.5.0",
     "@vue/compiler-core": "3.5.22",
     "@vue/compiler-dom": "3.5.22",
-    "@vue/compiler-ssr": "3.5.22",
     "@vue/devtools-api": "6.6.4",
     "@vue/reactivity": "3.5.22",
     "@vue/runtime-core": "3.5.22",
