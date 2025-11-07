@@ -1,1 +1,1 @@
-{"version":3,"file":"DashboardCard-CYAu_T60.mjs","sources":["../../../../../../components/dashboard/DashboardCard.vue"],"sourcesContent":null,"names":[],"mappings":";;;;;;;;;;;;;;;QAEI,KAAA,EAAK,CAAC,kFAAA,EACE,OAAA,CAAA,WAAW;AAAA,OAAA,EAAA,MAAA,CAAA,CAAA,CAAA,CAAA,CAAA,CAAA;;;;;;;;;;;;;;;"}
+{"version":3,"file":"DashboardCard-CYAu_T60.mjs","sources":["../../../../../../components/dashboard/DashboardCard.vue"],"sourcesContent":null,"names":["class","__props","customClass","_attrs"],"mappings":"iQAEIA,MAAK,CAAC,mFACEC,EAAAC,cAAWC"}

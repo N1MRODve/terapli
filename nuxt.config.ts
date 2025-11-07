@@ -314,6 +314,35 @@ export default defineNuxtConfig({
         maxDuration: 30,
         memory: 1024
       }
-    }
+    },
+    // Configuración para vue-bundle-renderer
+    experimental: {
+      wasm: true
+    },
+    // NO bundlear vue-bundle-renderer, dejarlo como externa
+    externals: {
+      inline: [
+        'vue-bundle-renderer',
+        '@vue/server-renderer',
+        'unhead',
+        'defu'
+      ]
+    },
+    // Optimizar para serverless
+    minify: true
+  },
+
+  // Configuración de build para incluir vue-bundle-renderer
+  build: {
+    transpile: ['vue-bundle-renderer']
+  },
+
+  // Asegurar SSR habilitado
+  ssr: true,
+
+  // Configuración experimental para Vercel
+  experimental: {
+    payloadExtraction: false,
+    appManifest: false
   }
 })

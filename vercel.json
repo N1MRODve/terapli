@@ -1,8 +1,20 @@
 {
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
   "env": {
+    "NODE_VERSION": "18.x",
+    "NPM_CONFIG_PRODUCTION": "false",
+    "NITRO_PRESET": "vercel",
     "NUXT_PUBLIC_SITE_URL": "https://terapli.com",
     "NUXT_PUBLIC_SUPABASE_URL": "https://pcbchuaezokqppwsbnty.supabase.co",
     "NUXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjYmNodWFlem9rcXBwd3NibnR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NzQzODEsImV4cCI6MjA3NjI1MDM4MX0.CM-C7CMAUcMvC50U4cN4XgWoiUhazSCIX1x9syD0D3k"
+  },
+  "functions": {
+    "app/**": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
   },
   "headers": [
     {

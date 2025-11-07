@@ -86,21 +86,6 @@
       "#internal/nuxt/paths": [
         "../node_modules/nuxt/dist/core/runtime/nitro/utils/paths"
       ],
-      "#content/components": [
-        "./content/components"
-      ],
-      "#content/manifest": [
-        "./content/manifest"
-      ],
-      "#mdc-configs": [
-        "./mdc-configs"
-      ],
-      "#mdc-highlighter": [
-        "./mdc-highlighter"
-      ],
-      "#mdc-imports": [
-        "./mdc-imports"
-      ],
       "#pwa": [
         "../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index"
       ],
@@ -110,9 +95,6 @@
       "#tailwind-config": [
         "./tailwind/expose"
       ],
-      "#tailwind-config/*": [
-        "./tailwind/expose/*"
-      ],
       "#supabase/server": [
         "../node_modules/@nuxtjs/supabase/dist/runtime/server/services"
       ],
@@ -121,15 +103,6 @@
       ],
       "#supabase/database": [
         "./types/supabase-database"
-      ],
-      "#content/dump": [
-        "./content/database.compressed"
-      ],
-      "#content/adapter": [
-        "./db0/connectors/better-sqlite3"
-      ],
-      "#content/local-adapter": [
-        "./db0/connectors/better-sqlite3"
       ]
     },
     "lib": [
@@ -139,7 +112,6 @@
     ]
   },
   "include": [
-    "./content/types.d.ts",
     "./types/nitro-nuxt.d.ts",
     "../node_modules/runtime/server",
     "../node_modules/dist/runtime/server",
@@ -152,8 +124,6 @@
     "../node_modules/nuxt/node_modules",
     "../node_modules/@nuxtjs/supabase/node_modules",
     "../node_modules/@nuxtjs/tailwindcss/node_modules",
-    "../node_modules/@nuxtjs/mdc/node_modules",
-    "../node_modules/@nuxt/content/node_modules",
     "../node_modules/@nuxtjs/google-fonts/node_modules",
     "../node_modules/@vite-pwa/nuxt/node_modules",
     "../node_modules/@nuxt/devtools/node_modules",

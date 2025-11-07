@@ -1,21 +1,2 @@
-import { defineComponent, useSSRContext } from 'vue';
-import { ssrRenderAttrs } from 'vue/server-renderer';
-
-const _sfc_main = /* @__PURE__ */ defineComponent({
-  __name: "finanzas",
-  __ssrInlineRender: true,
-  setup(__props) {
-    return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(_attrs)}><h2 class="text-3xl font-bold text-gray-900 mb-8">Vista Financiera</h2><div class="bg-white rounded-xl shadow-md border border-gray-200 p-6"><p class="text-gray-600">Funcionalidad en construcción...</p></div></div>`);
-    };
-  }
-});
-const _sfc_setup = _sfc_main.setup;
-_sfc_main.setup = (props, ctx) => {
-  const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/admin/finanzas.vue");
-  return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
-};
-
-export { _sfc_main as default };
+import{defineComponent as e,useSSRContext as r}from"vue";import{ssrRenderAttrs as n}from"vue/server-renderer";const s=e({__name:"finanzas",__ssrInlineRender:!0,setup:e=>(e,r,s,a)=>{r(`<div${n(a)}><h2 class="text-3xl font-bold text-gray-900 mb-8">Vista Financiera</h2><div class="bg-white rounded-xl shadow-md border border-gray-200 p-6"><p class="text-gray-600">Funcionalidad en construcción...</p></div></div>`)}}),a=s.setup;s.setup=(e,n)=>{const s=r();return(s.modules||(s.modules=new Set)).add("pages/admin/finanzas.vue"),a?a(e,n):void 0};export{s as default};
 //# sourceMappingURL=finanzas-DACMPLO4.mjs.map
