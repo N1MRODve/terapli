@@ -10,7 +10,6 @@
     "@supabase/node-fetch": "2.6.15",
     "@supabase/postgrest-js": "2.75.1",
     "@supabase/realtime-js": "2.75.1",
-    "@supabase/ssr": "0.7.0",
     "@supabase/storage-js": "2.75.1",
     "@supabase/supabase-js": "2.75.1",
     "@vercel/analytics": "1.5.0",

@@ -348,7 +348,8 @@ export default defineNuxtConfig({
         'perfect-debounce',
         'scule',
         'pathe',
-        'ohash'
+        'ohash',
+        '@supabase/ssr'
       ]
     },
     // Optimizar para serverless
@@ -377,7 +378,8 @@ export default defineNuxtConfig({
       'perfect-debounce',
       'scule',
       'pathe',
-      'ohash'
+      'ohash',
+      '@supabase/ssr'
     ]
   },
 

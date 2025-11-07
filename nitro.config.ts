@@ -34,7 +34,8 @@ export default defineNitroConfig({
       'perfect-debounce',
       'scule',
       'pathe',
-      'ohash'
+      'ohash',
+      '@supabase/ssr'
     ]
   },
   
