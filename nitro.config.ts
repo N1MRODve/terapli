@@ -10,7 +10,14 @@ export default defineNitroConfig({
     inline: [
       'vue-bundle-renderer',
       '@vue/server-renderer',
+      'vue',
+      '@vue/shared',
+      '@vue/reactivity', 
+      '@vue/runtime-core',
+      '@vue/runtime-dom',
       'unhead',
+      'hookable',
+      'ufo',
       'defu'
     ]
   },

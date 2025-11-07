@@ -324,7 +324,14 @@ export default defineNuxtConfig({
       inline: [
         'vue-bundle-renderer',
         '@vue/server-renderer',
+        'vue',
+        '@vue/shared',
+        '@vue/reactivity', 
+        '@vue/runtime-core',
+        '@vue/runtime-dom',
         'unhead',
+        'hookable',
+        'ufo',
         'defu'
       ]
     },
@@ -334,7 +341,12 @@ export default defineNuxtConfig({
 
   // Configuración de build para incluir vue-bundle-renderer
   build: {
-    transpile: ['vue-bundle-renderer']
+    transpile: [
+      'vue-bundle-renderer',
+      'vue',
+      '@vue/shared',
+      '@vue/server-renderer'
+    ]
   },
 
   // Asegurar SSR habilitado

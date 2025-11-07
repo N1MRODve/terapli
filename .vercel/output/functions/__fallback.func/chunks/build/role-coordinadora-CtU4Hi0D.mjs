@@ -1,0 +1,2 @@
+import{k as r}from"./server.mjs";import"entities/lib/decode.js";import"estree-walker";import"source-map-js";import"../nitro/nitro.mjs";import"node:http";import"node:https";import"node:events";import"node:buffer";import"node:fs";import"node:path";import"node:crypto";import"../routes/renderer.mjs";import"@vue/compiler-dom";import"../_/shared.cjs.prod.mjs";import"@vue/compiler-ssr";import"node:stream";import"devalue";import"@supabase/ssr";import"@vercel/analytics/nuxt";const o=r(async(r,o)=>{});export{o as default};
+//# sourceMappingURL=role-coordinadora-CtU4Hi0D.mjs.map

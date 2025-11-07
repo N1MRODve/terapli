@@ -1,0 +1,1 @@
+{"version":3,"file":"auth-role-DrwUSuOy.mjs","sources":["../../../../../../middleware/auth-role.ts"],"sourcesContent":null,"names":["authRole","defineNuxtRouteMiddleware","async","to","from"],"mappings":"udAeE,MAAAA,EAAoBC,EAAAC,MAAAC,EAAAC"}
