@@ -35,7 +35,8 @@ export default defineNitroConfig({
       'scule',
       'pathe',
       'ohash',
-      '@supabase/ssr'
+      '@supabase/ssr',
+      'cookie'
     ]
   },
   

@@ -1,1 +1,1 @@
-{"version":3,"file":"role-coordinadora-BrankIVg.mjs","sources":["../../../../../../middleware/role-coordinadora.ts"],"sourcesContent":null,"names":["roleCoordinadora","defineNuxtRouteMiddleware","async","to","from"],"mappings":"uYAeE,MAAAA,EAAoBC,EAAAC,MAAAC,EAAAC"}
+{"version":3,"file":"role-coordinadora-BrankIVg.mjs","sources":["../../../../../../middleware/role-coordinadora.ts"],"sourcesContent":null,"names":["roleCoordinadora","defineNuxtRouteMiddleware","async","to","from"],"mappings":"+YAeE,MAAAA,EAAoBC,EAAAC,MAAAC,EAAAC"}

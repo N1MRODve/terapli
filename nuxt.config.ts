@@ -349,7 +349,8 @@ export default defineNuxtConfig({
         'scule',
         'pathe',
         'ohash',
-        '@supabase/ssr'
+        '@supabase/ssr',
+        'cookie'
       ]
     },
     // Optimizar para serverless
