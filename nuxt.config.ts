@@ -333,6 +333,7 @@ export default defineNuxtConfig({
         '@vue/compiler-dom',
         '@vue/compiler-sfc',
         '@vue/compiler-ssr',
+        'entities',
         'unhead',
         'hookable',
         'ufo',
@@ -353,7 +354,8 @@ export default defineNuxtConfig({
       '@vue/compiler-dom',
       '@vue/compiler-core',
       '@vue/compiler-sfc',
-      '@vue/compiler-ssr'
+      '@vue/compiler-ssr',
+      'entities'
     ]
   },
 

@@ -19,6 +19,7 @@ export default defineNitroConfig({
       '@vue/compiler-dom',
       '@vue/compiler-sfc',
       '@vue/compiler-ssr',
+      'entities',
       'unhead',
       'hookable',
       'ufo',
