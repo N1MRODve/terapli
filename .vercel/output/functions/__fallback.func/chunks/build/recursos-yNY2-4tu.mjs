@@ -10,27 +10,27 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     [
       {
         id: "demo-compartido-1",
-        titulo: "Gu\xEDa de Respiraci\xF3n Consciente",
-        descripcion: "Ejercicios de respiraci\xF3n para manejo de ansiedad y momentos de estr\xE9s",
-        tipo: "Gu\xEDa",
-        icono: "\u{1F4CB}",
+        titulo: "Guía de Respiración Consciente",
+        descripcion: "Ejercicios de respiración para manejo de ansiedad y momentos de estrés",
+        tipo: "Guía",
+        icono: "📋",
         url: "https://www.youtube.com/watch?v=YRPh_GaiL8s",
         categoria: "Ansiedad",
-        tags: ["respiraci\xF3n", "ansiedad", "mindfulness"],
-        nota_personal: "\xA1Hola! Te comparto este recurso para que practiques cuando sientas ansiedad. Los ejercicios de respiraci\xF3n son muy efectivos. Prueba hacer el ejercicio 3 veces al d\xEDa.",
+        tags: ["respiración", "ansiedad", "mindfulness"],
+        nota_personal: "¡Hola! Te comparto este recurso para que practiques cuando sientas ansiedad. Los ejercicios de respiración son muy efectivos. Prueba hacer el ejercicio 3 veces al día.",
         visto: false,
         compartido_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1e3).toISOString()
       },
       {
         id: "demo-compartido-2",
-        titulo: "Meditaci\xF3n Guiada 10min",
-        descripcion: "Audio de meditaci\xF3n para principiantes y pr\xE1ctica diaria",
+        titulo: "Meditación Guiada 10min",
+        descripcion: "Audio de meditación para principiantes y práctica diaria",
         tipo: "Audio",
-        icono: "\u{1F3B5}",
+        icono: "🎵",
         url: "https://www.youtube.com/watch?v=O-6f5wQXSu8",
         categoria: "Mindfulness",
-        tags: ["meditaci\xF3n", "mindfulness", "relajaci\xF3n"],
-        nota_personal: "Esta meditaci\xF3n es perfecta para comenzar tu d\xEDa con calma. Te sugiero hacerla por las ma\xF1anas.",
+        tags: ["meditación", "mindfulness", "relajación"],
+        nota_personal: "Esta meditación es perfecta para comenzar tu día con calma. Te sugiero hacerla por las mañanas.",
         visto: true,
         compartido_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1e3).toISOString()
       }
@@ -62,22 +62,20 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       return textos[tipo] || tipo;
     };
     return (_ctx, _push, _parent, _attrs) => {
-      var _a, _b;
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "max-w-4xl mx-auto space-y-6 px-4 py-8" }, _attrs))}>`);
       if (unref(loading)) {
         _push(`<div class="flex flex-col items-center justify-center min-h-[40vh]"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D8AFA0]"></div><p class="mt-4 text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;]">Cargando recursos...</p></div>`);
       } else {
         _push(`<div>`);
-        if (unref(recursos).length > 0 && ((_b = (_a = unref(recursos)[0]) == null ? void 0 : _a.id) == null ? void 0 : _b.startsWith("demo"))) {
-          _push(`<div class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl"><div class="flex items-start gap-3"><span class="text-3xl">\u{1F3AD}</span><div class="flex-1"><h3 class="font-[&#39;Lora&#39;] text-lg font-semibold text-purple-900 mb-1"> Vista de Demostraci\xF3n </h3><p class="text-sm text-purple-700 leading-relaxed"> Est\xE1s viendo <strong>recursos de ejemplo</strong> para probar la funcionalidad. Cuando tu terapeuta comparta recursos reales contigo, aparecer\xE1n aqu\xED con sus notas personales. </p></div></div></div>`);
+        if (unref(recursos).length > 0 && unref(recursos)[0]?.id?.startsWith("demo")) {
+          _push(`<div class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl"><div class="flex items-start gap-3"><span class="text-3xl">🎭</span><div class="flex-1"><h3 class="font-[&#39;Lora&#39;] text-lg font-semibold text-purple-900 mb-1"> Vista de Demostración </h3><p class="text-sm text-purple-700 leading-relaxed"> Estás viendo <strong>recursos de ejemplo</strong> para probar la funcionalidad. Cuando tu terapeuta comparta recursos reales contigo, aparecerán aquí con sus notas personales. </p></div></div></div>`);
         } else {
           _push(`<!---->`);
         }
-        _push(`<header class="mb-8"><h1 class="text-2xl sm:text-3xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44]"> Mis Recursos </h1><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] mt-1"> Material compartido por tu psic\xF3loga para apoyar tu proceso </p></header>`);
+        _push(`<header class="mb-8"><h1 class="text-2xl sm:text-3xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44]"> Mis Recursos </h1><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] mt-1"> Material compartido por tu psicóloga para apoyar tu proceso </p></header>`);
         if (unref(recursos).length > 0) {
           _push(`<div class="space-y-4"><!--[-->`);
           ssrRenderList(unref(recursos), (recurso) => {
-            var _a2, _b2;
             _push(`<article class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/30 p-6 hover:shadow-md transition-shadow"><div class="flex items-start gap-4"><div class="flex-shrink-0 w-12 h-12 rounded-lg bg-[#D8AFA0]/10 flex items-center justify-center">`);
             if (recurso.tipo === "pdf") {
               _push(`<svg class="w-6 h-6 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>`);
@@ -95,11 +93,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
               _push(`<!---->`);
             }
             if (recurso.nota_personal) {
-              _push(`<div class="bg-[#D8AFA0]/10 border-l-4 border-[#D8AFA0] p-3 mb-3 rounded-r"><p class="text-xs font-semibold text-[#5D4A44] mb-1">\u{1F4AC} Nota de tu terapeuta:</p><p class="text-sm text-[#5D4A44] italic">${ssrInterpolate(recurso.nota_personal)}</p></div>`);
+              _push(`<div class="bg-[#D8AFA0]/10 border-l-4 border-[#D8AFA0] p-3 mb-3 rounded-r"><p class="text-xs font-semibold text-[#5D4A44] mb-1">💬 Nota de tu terapeuta:</p><p class="text-sm text-[#5D4A44] italic">${ssrInterpolate(recurso.nota_personal)}</p></div>`);
             } else {
               _push(`<!---->`);
             }
-            if (recurso.categoria || ((_a2 = recurso.tags) == null ? void 0 : _a2.length)) {
+            if (recurso.categoria || recurso.tags?.length) {
               _push(`<div class="mb-3 flex flex-wrap gap-2">`);
               if (recurso.categoria) {
                 _push(`<span class="px-2 py-1 bg-[#EAD5D3]/30 text-[#5D4A44] rounded text-xs">${ssrInterpolate(recurso.categoria)}</span>`);
@@ -107,7 +105,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                 _push(`<!---->`);
               }
               _push(`<!--[-->`);
-              ssrRenderList((_b2 = recurso.tags) == null ? void 0 : _b2.slice(0, 3), (tag) => {
+              ssrRenderList(recurso.tags?.slice(0, 3), (tag) => {
                 _push(`<span class="px-2 py-1 bg-[#F9F7F3] text-[#5D4A44]/70 rounded text-xs"> #${ssrInterpolate(tag)}</span>`);
               });
               _push(`<!--]--></div>`);
@@ -124,7 +122,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           });
           _push(`<!--]--></div>`);
         } else {
-          _push(`<div class="flex flex-col items-center justify-center text-center py-16"><div class="w-20 h-20 rounded-full bg-[#EAD5D3]/30 flex items-center justify-center mb-4"><svg class="w-10 h-10 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div><h3 class="text-xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44] mb-2">No hay recursos disponibles</h3><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] max-w-md"> Tu psic\xF3loga compartir\xE1 material de apoyo contigo durante el proceso terap\xE9utico. </p></div>`);
+          _push(`<div class="flex flex-col items-center justify-center text-center py-16"><div class="w-20 h-20 rounded-full bg-[#EAD5D3]/30 flex items-center justify-center mb-4"><svg class="w-10 h-10 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div><h3 class="text-xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44] mb-2">No hay recursos disponibles</h3><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] max-w-md"> Tu psicóloga compartirá material de apoyo contigo durante el proceso terapéutico. </p></div>`);
         }
         _push(`</div>`);
       }

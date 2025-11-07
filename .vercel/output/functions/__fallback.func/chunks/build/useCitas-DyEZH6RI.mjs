@@ -48,7 +48,6 @@ const useCitas = () => {
     return null;
   };
   const verificarBonoActivo = async (pacienteId) => {
-    var _a;
     const bono = await obtenerBonoActivo();
     if (!bono) {
       return {
@@ -61,7 +60,7 @@ const useCitas = () => {
     }
     try {
       const { data: paciente } = await supabase.from("pacientes").select("metadata, area_de_acompanamiento, frecuencia").eq("id", pacienteId).single();
-      const tipoBono = bono.tipo_bono || (paciente == null ? void 0 : paciente.frecuencia) || ((_a = paciente == null ? void 0 : paciente.metadata) == null ? void 0 : _a.frecuencia) || "mensual";
+      const tipoBono = bono.tipo_bono || paciente?.frecuencia || paciente?.metadata?.frecuencia || "mensual";
       return {
         tiene_bono: true,
         sesiones_restantes: bono.sesiones_restantes || 0,
@@ -70,7 +69,7 @@ const useCitas = () => {
         bono_id: bono.id
       };
     } catch (error) {
-      console.error("\u274C Error al verificar bono:", error);
+      console.error("❌ Error al verificar bono:", error);
       return {
         tiene_bono: false,
         sesiones_restantes: 0,
@@ -118,7 +117,7 @@ const useCitas = () => {
     return `${horaFin}:${minutosFin}`;
   }
   function obtenerNombreDia(fecha) {
-    const dias = ["Domingo", "Lunes", "Martes", "Mi\xE9rcoles", "Jueves", "Viernes", "S\xE1bado"];
+    const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
     const date = /* @__PURE__ */ new Date(fecha + "T00:00:00");
     return dias[date.getDay()] || "Desconocido";
   }

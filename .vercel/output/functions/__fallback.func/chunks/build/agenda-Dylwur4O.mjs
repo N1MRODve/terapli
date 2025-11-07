@@ -79,10 +79,7 @@ const _sfc_main = {
       if (busqueda.value.trim()) {
         const query = busqueda.value.toLowerCase();
         resultado = resultado.filter(
-          (c) => {
-            var _a;
-            return (_a = c.paciente_nombre) == null ? void 0 : _a.toLowerCase().includes(query);
-          }
+          (c) => c.paciente_nombre?.toLowerCase().includes(query)
         );
       }
       return resultado;
@@ -116,10 +113,10 @@ const _sfc_main = {
       });
     });
     const diasDelMes = computed(() => {
-      const a\u00F1o = fechaSeleccionada.value.getFullYear();
+      const año = fechaSeleccionada.value.getFullYear();
       const mes = fechaSeleccionada.value.getMonth();
-      const primerDia = new Date(a\u00F1o, mes, 1);
-      const ultimoDia = new Date(a\u00F1o, mes + 1, 0);
+      const primerDia = new Date(año, mes, 1);
+      const ultimoDia = new Date(año, mes + 1, 0);
       const dias = [];
       for (let dia = primerDia; dia <= ultimoDia; dia.setDate(dia.getDate() + 1)) {
         dias.push({
@@ -154,7 +151,7 @@ const _sfc_main = {
       if (filtroEstado.value) filtros.push(getEstadoLabel(filtroEstado.value));
       if (filtroModalidad.value) filtros.push(filtroModalidad.value);
       if (busqueda.value) filtros.push(`"${busqueda.value}"`);
-      return filtros.length > 0 ? filtros.join(" \xB7 ") : "Sin filtros";
+      return filtros.length > 0 ? filtros.join(" · ") : "Sin filtros";
     };
     const esHoy = (fecha) => {
       const hoy = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -163,18 +160,12 @@ const _sfc_main = {
     const citasPorHora = (hora) => {
       const fechaBuscar = fechaSeleccionada.value.toISOString().split("T")[0];
       return citasFiltradas.value.filter(
-        (c) => {
-          var _a;
-          return c.fecha_cita === fechaBuscar && ((_a = c.hora_inicio) == null ? void 0 : _a.startsWith(hora));
-        }
+        (c) => c.fecha_cita === fechaBuscar && c.hora_inicio?.startsWith(hora)
       );
     };
     const citasPorDiaHora = (fecha, hora) => {
       return citasFiltradas.value.filter(
-        (c) => {
-          var _a;
-          return c.fecha_cita === fecha && ((_a = c.hora_inicio) == null ? void 0 : _a.startsWith(hora));
-        }
+        (c) => c.fecha_cita === fecha && c.hora_inicio?.startsWith(hora)
       );
     };
     const citasPorDia = (fecha) => {
@@ -208,8 +199,7 @@ const _sfc_main = {
       return labels[estado] || estado;
     };
     const esCeldaObjetivo = (fecha, hora) => {
-      var _a, _b;
-      return ((_a = celdaObjetivo.value) == null ? void 0 : _a.fecha) === fecha && ((_b = celdaObjetivo.value) == null ? void 0 : _b.hora) === hora;
+      return celdaObjetivo.value?.fecha === fecha && celdaObjetivo.value?.hora === hora;
     };
     const cerrarModalDetalles = () => {
       mostrarModalDetalles.value = false;
@@ -226,7 +216,7 @@ const _sfc_main = {
     const handleCitaCancelada = (resultado) => {
       cerrarModalCancelar();
       cargarCitas();
-      const mensaje = (resultado == null ? void 0 : resultado.reintegrada) ? "Cita cancelada y sesi\xF3n reintegrada al bono" : "Cita cancelada exitosamente";
+      const mensaje = resultado?.reintegrada ? "Cita cancelada y sesión reintegrada al bono" : "Cita cancelada exitosamente";
       mostrarNotificacion(mensaje, "success");
     };
     const handleCitaCreada = () => {
@@ -245,10 +235,10 @@ const _sfc_main = {
     };
     const mostrarNotificacion = (mensaje, tipo = "info") => {
       const iconos = {
-        success: "\u2705",
-        error: "\u274C",
-        info: "\u2139\uFE0F",
-        warning: "\u26A0\uFE0F"
+        success: "✅",
+        error: "❌",
+        info: "ℹ️",
+        warning: "⚠️"
       };
       console.log(`${iconos[tipo]} ${mensaje}`);
     };
@@ -267,10 +257,10 @@ const _sfc_main = {
           fechaInicio = inicio.toISOString().split("T")[0];
           fechaFin = fin.toISOString().split("T")[0];
         } else {
-          const a\u00F1o = fechaSeleccionada.value.getFullYear();
+          const año = fechaSeleccionada.value.getFullYear();
           const mes = fechaSeleccionada.value.getMonth();
-          fechaInicio = new Date(a\u00F1o, mes, 1).toISOString().split("T")[0];
-          fechaFin = new Date(a\u00F1o, mes + 1, 0).toISOString().split("T")[0];
+          fechaInicio = new Date(año, mes, 1).toISOString().split("T")[0];
+          fechaFin = new Date(año, mes + 1, 0).toISOString().split("T")[0];
         }
         const { data, error } = await supabase.from("citas").select(`
         id,
@@ -288,21 +278,18 @@ const _sfc_main = {
         )
       `).gte("fecha_cita", fechaInicio).lte("fecha_cita", fechaFin).order("fecha_cita", { ascending: true }).order("hora_inicio", { ascending: true });
         if (error) throw error;
-        citas.value = (data || []).map((c) => {
-          var _a, _b, _c, _d, _e;
-          return {
-            id: c.id,
-            fecha_cita: c.fecha_cita,
-            hora_inicio: (_a = c.hora_inicio) == null ? void 0 : _a.substring(0, 5),
-            hora_fin: (_b = c.hora_fin) == null ? void 0 : _b.substring(0, 5),
-            modalidad: c.modalidad || "presencial",
-            estado: c.estado,
-            observaciones: c.observaciones,
-            recordatorio_enviado: c.recordatorio_enviado,
-            paciente_nombre: ((_c = c.pacientes) == null ? void 0 : _c.nombre_completo) || ((_d = c.pacientes) == null ? void 0 : _d.email) || "Sin nombre",
-            paciente_telefono: (_e = c.pacientes) == null ? void 0 : _e.telefono
-          };
-        });
+        citas.value = (data || []).map((c) => ({
+          id: c.id,
+          fecha_cita: c.fecha_cita,
+          hora_inicio: c.hora_inicio?.substring(0, 5),
+          hora_fin: c.hora_fin?.substring(0, 5),
+          modalidad: c.modalidad || "presencial",
+          estado: c.estado,
+          observaciones: c.observaciones,
+          recordatorio_enviado: c.recordatorio_enviado,
+          paciente_nombre: c.pacientes?.nombre_completo || c.pacientes?.email || "Sin nombre",
+          paciente_telefono: c.pacientes?.telefono
+        }));
       } catch (error) {
         console.error("Error al cargar citas:", error);
         mostrarNotificacion("Error al cargar citas", "error");
@@ -314,9 +301,9 @@ const _sfc_main = {
       cargarCitas();
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "space-y-3" }, _attrs))}><div class="bg-white rounded-lg shadow-sm border border-gray-100 p-2.5"><div class="flex items-center justify-between gap-3 mb-2"><div class="flex items-center gap-3"><h1 class="text-lg font-serif font-bold text-cafe">Agenda General</h1><span class="text-xs text-gray-500">${ssrInterpolate(formatearFechaLarga(unref(fechaSeleccionada)))}</span></div><div class="flex items-center gap-2"><div class="flex bg-gray-100 rounded-lg p-0.5"><button class="${ssrRenderClass([unref(vista) === "dia" ? "bg-white text-cafe shadow-sm" : "text-gray-600 hover:text-cafe", "px-2.5 py-1 rounded text-xs font-medium transition-colors"])}"> D\xEDa </button><button class="${ssrRenderClass([unref(vista) === "semana" ? "bg-white text-cafe shadow-sm" : "text-gray-600 hover:text-cafe", "px-2.5 py-1 rounded text-xs font-medium transition-colors"])}"> Semana </button><button class="${ssrRenderClass([unref(vista) === "mes" ? "bg-white text-cafe shadow-sm" : "text-gray-600 hover:text-cafe", "px-2.5 py-1 rounded text-xs font-medium transition-colors"])}"> Mes </button></div><div class="flex items-center gap-1"><button class="p-1 rounded hover:bg-gray-100 text-cafe text-sm" title="Anterior"> \u2190 </button><button class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-medium text-cafe transition-colors"> Hoy </button><button class="p-1 rounded hover:bg-gray-100 text-cafe text-sm" title="Siguiente"> \u2192 </button></div><button class="px-3 py-1 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium whitespace-nowrap"> + Nueva </button></div></div><div class="flex flex-wrap gap-2"><select class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20"><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "") : ssrLooseEqual(unref(filtroEstado), "")) ? " selected" : ""}>Todos estados</option><option value="pendiente"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "pendiente") : ssrLooseEqual(unref(filtroEstado), "pendiente")) ? " selected" : ""}>Pendientes</option><option value="confirmada"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "confirmada") : ssrLooseEqual(unref(filtroEstado), "confirmada")) ? " selected" : ""}>Confirmadas</option><option value="realizada"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "realizada") : ssrLooseEqual(unref(filtroEstado), "realizada")) ? " selected" : ""}>Realizadas</option><option value="cancelada"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "cancelada") : ssrLooseEqual(unref(filtroEstado), "cancelada")) ? " selected" : ""}>Canceladas</option></select><select class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20"><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(filtroModalidad)) ? ssrLooseContain(unref(filtroModalidad), "") : ssrLooseEqual(unref(filtroModalidad), "")) ? " selected" : ""}>Modalidades</option><option value="presencial"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroModalidad)) ? ssrLooseContain(unref(filtroModalidad), "presencial") : ssrLooseEqual(unref(filtroModalidad), "presencial")) ? " selected" : ""}>Presencial</option><option value="virtual"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroModalidad)) ? ssrLooseContain(unref(filtroModalidad), "virtual") : ssrLooseEqual(unref(filtroModalidad), "virtual")) ? " selected" : ""}>Virtual</option></select><input${ssrRenderAttr("value", unref(busqueda))} type="text" placeholder="Buscar paciente..." class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20 flex-1 min-w-[150px]"></div></div>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "space-y-3" }, _attrs))}><div class="bg-white rounded-lg shadow-sm border border-gray-100 p-2.5"><div class="flex items-center justify-between gap-3 mb-2"><div class="flex items-center gap-3"><h1 class="text-lg font-serif font-bold text-cafe">Agenda General</h1><span class="text-xs text-gray-500">${ssrInterpolate(formatearFechaLarga(unref(fechaSeleccionada)))}</span></div><div class="flex items-center gap-2"><div class="flex bg-gray-100 rounded-lg p-0.5"><button class="${ssrRenderClass([unref(vista) === "dia" ? "bg-white text-cafe shadow-sm" : "text-gray-600 hover:text-cafe", "px-2.5 py-1 rounded text-xs font-medium transition-colors"])}"> Día </button><button class="${ssrRenderClass([unref(vista) === "semana" ? "bg-white text-cafe shadow-sm" : "text-gray-600 hover:text-cafe", "px-2.5 py-1 rounded text-xs font-medium transition-colors"])}"> Semana </button><button class="${ssrRenderClass([unref(vista) === "mes" ? "bg-white text-cafe shadow-sm" : "text-gray-600 hover:text-cafe", "px-2.5 py-1 rounded text-xs font-medium transition-colors"])}"> Mes </button></div><div class="flex items-center gap-1"><button class="p-1 rounded hover:bg-gray-100 text-cafe text-sm" title="Anterior"> ← </button><button class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-medium text-cafe transition-colors"> Hoy </button><button class="p-1 rounded hover:bg-gray-100 text-cafe text-sm" title="Siguiente"> → </button></div><button class="px-3 py-1 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium whitespace-nowrap"> + Nueva </button></div></div><div class="flex flex-wrap gap-2"><select class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20"><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "") : ssrLooseEqual(unref(filtroEstado), "")) ? " selected" : ""}>Todos estados</option><option value="pendiente"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "pendiente") : ssrLooseEqual(unref(filtroEstado), "pendiente")) ? " selected" : ""}>Pendientes</option><option value="confirmada"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "confirmada") : ssrLooseEqual(unref(filtroEstado), "confirmada")) ? " selected" : ""}>Confirmadas</option><option value="realizada"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "realizada") : ssrLooseEqual(unref(filtroEstado), "realizada")) ? " selected" : ""}>Realizadas</option><option value="cancelada"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "cancelada") : ssrLooseEqual(unref(filtroEstado), "cancelada")) ? " selected" : ""}>Canceladas</option></select><select class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20"><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(filtroModalidad)) ? ssrLooseContain(unref(filtroModalidad), "") : ssrLooseEqual(unref(filtroModalidad), "")) ? " selected" : ""}>Modalidades</option><option value="presencial"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroModalidad)) ? ssrLooseContain(unref(filtroModalidad), "presencial") : ssrLooseEqual(unref(filtroModalidad), "presencial")) ? " selected" : ""}>Presencial</option><option value="virtual"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroModalidad)) ? ssrLooseContain(unref(filtroModalidad), "virtual") : ssrLooseEqual(unref(filtroModalidad), "virtual")) ? " selected" : ""}>Virtual</option></select><input${ssrRenderAttr("value", unref(busqueda))} type="text" placeholder="Buscar paciente..." class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20 flex-1 min-w-[150px]"></div></div>`);
       if (unref(cargando)) {
-        _push(`<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-8"><div class="text-center text-gray-400"><span class="text-3xl block mb-2">\u23F3</span><p class="text-sm">Cargando agenda...</p></div></div>`);
+        _push(`<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-8"><div class="text-center text-gray-400"><span class="text-3xl block mb-2">⏳</span><p class="text-sm">Cargando agenda...</p></div></div>`);
       } else if (unref(vista) === "dia") {
         _push(`<div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col" style="${ssrRenderStyle({ "height": "calc(100vh - 180px)" })}"><div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm p-2.5"><div class="flex items-center justify-between"><div><h3 class="font-semibold text-base text-cafe">${ssrInterpolate(formatearFechaCompleta(unref(fechaSeleccionada)))}</h3><p class="text-xs text-gray-500 mt-0.5">${ssrInterpolate(unref(citasFiltradas).length)} citas programadas </p></div><div class="text-xs text-gray-600"><span class="font-medium">${ssrInterpolate(filtrosActivos())}</span></div></div></div><div class="flex-1 overflow-y-auto"><div class="divide-y divide-gray-100"><!--[-->`);
         ssrRenderList(horasDelDia, (hora) => {
@@ -328,7 +315,7 @@ const _sfc_main = {
           }
           _push(`<!--[-->`);
           ssrRenderList(citasPorHora(hora), (cita) => {
-            _push(`<div draggable="true" class="${ssrRenderClass([getClasesCita(cita.estado), "mb-1.5 p-2 rounded-lg transition-all hover:shadow-md hover:ring-2 hover:ring-terracota/30 group relative cursor-move"])}" title="Arrastra para mover a otra hora/d\xEDa"><div class="flex items-start justify-between gap-2"><div class="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">`);
+            _push(`<div draggable="true" class="${ssrRenderClass([getClasesCita(cita.estado), "mb-1.5 p-2 rounded-lg transition-all hover:shadow-md hover:ring-2 hover:ring-terracota/30 group relative cursor-move"])}" title="Arrastra para mover a otra hora/día"><div class="flex items-start justify-between gap-2"><div class="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">`);
             _push(ssrRenderComponent(unref(ArrowsPointingOutIcon), { class: "w-3 h-3 text-gray-400" }, null, _parent));
             _push(`</div><div class="flex-1 cursor-pointer"><p class="font-medium text-xs">${ssrInterpolate(cita.paciente_nombre)}</p><div class="flex items-center gap-1.5 mt-0.5"><span class="text-[10px] text-gray-600">${ssrInterpolate(cita.hora_inicio)} - ${ssrInterpolate(cita.hora_fin)}</span><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-white/50">${ssrInterpolate(cita.modalidad)}</span></div></div><div class="flex items-center gap-1.5"><span class="${ssrRenderClass([getBadgeEstado(cita.estado), "text-[10px] px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap"])}">${ssrInterpolate(getEstadoLabel(cita.estado))}</span>`);
             if (cita.estado !== "cancelada") {
@@ -385,7 +372,7 @@ const _sfc_main = {
         ssrRenderList(unref(diasDelMes), (dia) => {
           _push(`<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3" style="${ssrRenderStyle(citasPorDia(dia.fecha).length > 0 ? null : { display: "none" })}"><h3 class="font-semibold text-sm text-cafe mb-2 flex items-center justify-between"><span>${ssrInterpolate(dia.nombreCompleto)}</span><span class="text-xs text-gray-500">${ssrInterpolate(citasPorDia(dia.fecha).length)} citas</span></h3><div class="space-y-1.5"><!--[-->`);
           ssrRenderList(citasPorDia(dia.fecha), (cita) => {
-            _push(`<div class="${ssrRenderClass([getClasesCita(cita.estado), "p-2 rounded-lg transition-all hover:shadow-md group relative"])}"><div class="flex items-center justify-between"><div class="flex-1 cursor-pointer"><p class="font-medium text-xs">${ssrInterpolate(cita.paciente_nombre)}</p><p class="text-[10px] text-gray-600 mt-0.5">${ssrInterpolate(cita.hora_inicio)} - ${ssrInterpolate(cita.hora_fin)} \xB7 ${ssrInterpolate(cita.modalidad)}</p></div><div class="flex items-center gap-1.5"><span class="${ssrRenderClass([getBadgeEstado(cita.estado), "text-[10px] px-1.5 py-0.5 rounded-full font-medium"])}">${ssrInterpolate(getEstadoLabel(cita.estado))}</span>`);
+            _push(`<div class="${ssrRenderClass([getClasesCita(cita.estado), "p-2 rounded-lg transition-all hover:shadow-md group relative"])}"><div class="flex items-center justify-between"><div class="flex-1 cursor-pointer"><p class="font-medium text-xs">${ssrInterpolate(cita.paciente_nombre)}</p><p class="text-[10px] text-gray-600 mt-0.5">${ssrInterpolate(cita.hora_inicio)} - ${ssrInterpolate(cita.hora_fin)} · ${ssrInterpolate(cita.modalidad)}</p></div><div class="flex items-center gap-1.5"><span class="${ssrRenderClass([getBadgeEstado(cita.estado), "text-[10px] px-1.5 py-0.5 rounded-full font-medium"])}">${ssrInterpolate(getEstadoLabel(cita.estado))}</span>`);
             if (cita.estado !== "cancelada") {
               _push(`<button class="p-1 rounded hover:bg-red-100 text-red-600 transition-colors opacity-0 group-hover:opacity-100" title="Cancelar cita"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>`);
             } else {
@@ -397,7 +384,7 @@ const _sfc_main = {
         });
         _push(`<!--]-->`);
         if (unref(citasFiltradas).length === 0) {
-          _push(`<div class="col-span-full text-center py-8 text-gray-400"><span class="text-4xl block mb-3">\u{1F4C5}</span><p class="text-sm">No hay citas en este mes</p></div>`);
+          _push(`<div class="col-span-full text-center py-8 text-gray-400"><span class="text-4xl block mb-3">📅</span><p class="text-sm">No hay citas en este mes</p></div>`);
         } else {
           _push(`<!---->`);
         }
@@ -445,9 +432,9 @@ const _sfc_main = {
         _push(`<!---->`);
       }
       if (unref(mostrarConfirmacionRecordatorios)) {
-        _push(`<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"><div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"><div class="text-center mb-6"><span class="text-6xl block mb-4">\u{1F4AC}</span><h3 class="text-xl font-bold text-cafe mb-2"> \xBFEnviar Recordatorios? </h3><p class="text-gray-600"> Se enviar\xE1 un mensaje de WhatsApp a los pacientes con citas programadas para hoy. </p><p class="text-sm text-terracota mt-2">${ssrInterpolate(unref(citasHoyParaRecordatorio).length)} citas pendientes de recordatorio </p></div><div class="space-y-2 mb-6 max-h-48 overflow-y-auto"><!--[-->`);
+        _push(`<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"><div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"><div class="text-center mb-6"><span class="text-6xl block mb-4">💬</span><h3 class="text-xl font-bold text-cafe mb-2"> ¿Enviar Recordatorios? </h3><p class="text-gray-600"> Se enviará un mensaje de WhatsApp a los pacientes con citas programadas para hoy. </p><p class="text-sm text-terracota mt-2">${ssrInterpolate(unref(citasHoyParaRecordatorio).length)} citas pendientes de recordatorio </p></div><div class="space-y-2 mb-6 max-h-48 overflow-y-auto"><!--[-->`);
         ssrRenderList(unref(citasHoyParaRecordatorio), (cita) => {
-          _push(`<div class="flex items-center gap-2 p-2 bg-gray-50 rounded"><span class="text-sm">\u2713</span><span class="text-sm text-gray-700">${ssrInterpolate(cita.paciente_nombre)}</span><span class="text-xs text-gray-500 ml-auto">${ssrInterpolate(cita.hora_inicio)}</span></div>`);
+          _push(`<div class="flex items-center gap-2 p-2 bg-gray-50 rounded"><span class="text-sm">✓</span><span class="text-sm text-gray-700">${ssrInterpolate(cita.paciente_nombre)}</span><span class="text-xs text-gray-500 ml-auto">${ssrInterpolate(cita.hora_inicio)}</span></div>`);
         });
         _push(`<!--]--></div><div class="flex gap-3"><button class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"> Cancelar </button><button class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"${ssrIncludeBooleanAttr(unref(enviandoRecordatorios)) ? " disabled" : ""}>${ssrInterpolate(unref(enviandoRecordatorios) ? "Enviando..." : "Enviar Ahora")}</button></div></div></div>`);
       } else {

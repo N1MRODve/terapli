@@ -33,19 +33,18 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const usuario = ref(null);
     const rutaActual = computed(() => route.path);
     return (_ctx, _push, _parent, _attrs) => {
-      var _a;
       const _component_NuxtLink = __nuxt_component_0;
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50" }, _attrs))}><nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex justify-between items-center h-16"><div class="flex items-center gap-4"><div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md">`);
       _push(ssrRenderComponent(unref(ChartBarIcon), {
         class: "w-6 h-6 text-white",
         "aria-hidden": "true"
       }, null, _parent));
-      _push(`</div><div><h1 class="text-xl font-bold text-gray-900">Panel de Administraci\xF3n</h1><p class="text-xs text-gray-500">Sistema de gesti\xF3n</p></div></div><div class="flex items-center gap-4"><div class="text-right hidden sm:block"><p class="text-sm font-semibold text-gray-900">${ssrInterpolate(((_a = usuario.value) == null ? void 0 : _a.email) || "Admin")}</p><p class="text-xs text-gray-500">Administrador</p></div><button class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium">`);
+      _push(`</div><div><h1 class="text-xl font-bold text-gray-900">Panel de Administración</h1><p class="text-xs text-gray-500">Sistema de gestión</p></div></div><div class="flex items-center gap-4"><div class="text-right hidden sm:block"><p class="text-sm font-semibold text-gray-900">${ssrInterpolate(usuario.value?.email || "Admin")}</p><p class="text-xs text-gray-500">Administrador</p></div><button class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium">`);
       _push(ssrRenderComponent(unref(ArrowRightOnRectangleIcon), {
         class: "w-4 h-4",
         "aria-hidden": "true"
       }, null, _parent));
-      _push(`<span class="hidden sm:inline">Cerrar sesi\xF3n</span></button></div></div></div></nav><div class="bg-white border-b border-gray-200 shadow-sm"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><nav class="flex gap-1 -mb-px" aria-label="Tabs">`);
+      _push(`<span class="hidden sm:inline">Cerrar sesión</span></button></div></div></div></nav><div class="bg-white border-b border-gray-200 shadow-sm"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><nav class="flex gap-1 -mb-px" aria-label="Tabs">`);
       _push(ssrRenderComponent(_component_NuxtLink, {
         to: "/admin",
         exact: "",
@@ -57,14 +56,14 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
               class: "w-5 h-5",
               "aria-hidden": "true"
             }, null, _parent2, _scopeId));
-            _push2(`<span${_scopeId}>M\xE9tricas</span>`);
+            _push2(`<span${_scopeId}>Métricas</span>`);
           } else {
             return [
               createVNode(unref(ChartBarIcon), {
                 class: "w-5 h-5",
                 "aria-hidden": "true"
               }),
-              createVNode("span", null, "M\xE9tricas")
+              createVNode("span", null, "Métricas")
             ];
           }
         }),

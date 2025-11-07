@@ -45,10 +45,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       if (busqueda.value) {
         const busq = busqueda.value.toLowerCase();
         resultado = resultado.filter(
-          (p) => {
-            var _a, _b;
-            return ((_a = p.nombre_completo) == null ? void 0 : _a.toLowerCase().includes(busq)) || ((_b = p.email) == null ? void 0 : _b.toLowerCase().includes(busq));
-          }
+          (p) => p.nombre_completo?.toLowerCase().includes(busq) || p.email?.toLowerCase().includes(busq)
         );
       }
       if (filtroTerapeuta.value) {
@@ -93,7 +90,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       return tipos[tipo] || tipo;
     };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(_attrs)}><div class="mb-8"><h2 class="text-3xl font-bold text-gray-900 mb-2">Gesti\xF3n de Pacientes</h2><p class="text-gray-600">Vista completa de todos los pacientes del sistema</p></div>`);
+      _push(`<div${ssrRenderAttrs(_attrs)}><div class="mb-8"><h2 class="text-3xl font-bold text-gray-900 mb-2">Gestión de Pacientes</h2><p class="text-gray-600">Vista completa de todos los pacientes del sistema</p></div>`);
       if (cargando.value) {
         _push(`<div class="flex items-center justify-center py-20"><div class="text-center"><div class="w-16 h-16 border-4 border-gray-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4"></div><p class="text-gray-600 text-sm">Cargando pacientes...</p></div></div>`);
       } else {

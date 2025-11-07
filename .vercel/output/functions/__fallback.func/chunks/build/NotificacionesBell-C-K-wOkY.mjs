@@ -38,7 +38,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       if (unref(mostrarDropdown)) {
         _push(`<div class="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white rounded-lg shadow-xl border border-[#EAD5D3]/40 z-50 overflow-hidden" data-v-a17051d2><div class="px-4 py-3 border-b border-[#EAD5D3]/30 flex items-center justify-between bg-[#F9F7F3]" data-v-a17051d2><h3 class="text-sm font-semibold text-[#5D4A44] font-lora" data-v-a17051d2> Notificaciones </h3>`);
         if (unref(notificaciones).length > 0) {
-          _push(`<button class="text-xs text-[#D8AFA0] hover:text-[#C89B8A] font-lato transition-colors" data-v-a17051d2> Marcar todas como le\xEDdas </button>`);
+          _push(`<button class="text-xs text-[#D8AFA0] hover:text-[#C89B8A] font-lato transition-colors" data-v-a17051d2> Marcar todas como leídas </button>`);
         } else {
           _push(`<!---->`);
         }

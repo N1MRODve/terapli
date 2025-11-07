@@ -37,12 +37,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const notificaciones = ref([]);
     const notificacionesNoLeidas = ref(0);
     const nombreUsuario = computed(() => {
-      var _a, _b;
-      return ((_b = (_a = user.value) == null ? void 0 : _a.user_metadata) == null ? void 0 : _b.nombre) || "Coordinaci\xF3n";
+      return user.value?.user_metadata?.nombre || "Coordinación";
     });
     const emailUsuario = computed(() => {
-      var _a;
-      return ((_a = user.value) == null ? void 0 : _a.email) || "";
+      return user.value?.email || "";
     });
     const iniciales = computed(() => {
       const nombre = nombreUsuario.value;
@@ -73,7 +71,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     return (_ctx, _push, _parent, _attrs) => {
       const _component_NuxtLink = __nuxt_component_0;
       const _component_Icon = resolveComponent("Icon");
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "min-h-screen bg-[#F9F7F3]" }, _attrs))} data-v-06e2a812><header class="bg-white shadow-sm border-b border-[#E8DFD8]" data-v-06e2a812><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-v-06e2a812><div class="flex justify-between items-center h-16" data-v-06e2a812><div class="flex items-center space-x-3" data-v-06e2a812><div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#D8AFA0] to-[#C49484] flex items-center justify-center" data-v-06e2a812><span class="text-white font-semibold text-lg" data-v-06e2a812>B</span></div><div data-v-06e2a812><h1 class="text-xl font-lora font-semibold text-[#5D4A44]" data-v-06e2a812>Panel de Coordinaci\xF3n</h1><p class="text-xs text-[#8B7470]" data-v-06e2a812>Hola, ${ssrInterpolate(unref(nombreUsuario))} \u{1F338}</p></div></div><nav class="hidden md:flex items-center space-x-1" data-v-06e2a812><!--[-->`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "min-h-screen bg-[#F9F7F3]" }, _attrs))} data-v-06e2a812><header class="bg-white shadow-sm border-b border-[#E8DFD8]" data-v-06e2a812><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-v-06e2a812><div class="flex justify-between items-center h-16" data-v-06e2a812><div class="flex items-center space-x-3" data-v-06e2a812><div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#D8AFA0] to-[#C49484] flex items-center justify-center" data-v-06e2a812><span class="text-white font-semibold text-lg" data-v-06e2a812>B</span></div><div data-v-06e2a812><h1 class="text-xl font-lora font-semibold text-[#5D4A44]" data-v-06e2a812>Panel de Coordinación</h1><p class="text-xs text-[#8B7470]" data-v-06e2a812>Hola, ${ssrInterpolate(unref(nombreUsuario))} 🌸</p></div></div><nav class="hidden md:flex items-center space-x-1" data-v-06e2a812><!--[-->`);
       ssrRenderList(menuItems, (item) => {
         _push(ssrRenderComponent(_component_NuxtLink, {
           key: item.path,
@@ -170,18 +168,18 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         _push(`<!---->`);
       }
       if (unref(mostrarMenuUsuario)) {
-        _push(`<div class="fixed inset-0 z-40" data-v-06e2a812><div class="absolute top-20 right-4 w-64 bg-white rounded-xl shadow-2xl border border-[#E8DFD8] overflow-hidden" data-v-06e2a812><div class="p-4 border-b border-[#E8DFD8]" data-v-06e2a812><p class="font-semibold text-[#5D4A44]" data-v-06e2a812>${ssrInterpolate(unref(nombreUsuario))}</p><p class="text-sm text-[#8B7470]" data-v-06e2a812>${ssrInterpolate(unref(emailUsuario))}</p><span class="inline-block mt-2 px-3 py-1 bg-[#D8AFA0] text-white text-xs rounded-full" data-v-06e2a812> Coordinaci\xF3n </span></div><div class="p-2" data-v-06e2a812><button class="w-full text-left px-4 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center" data-v-06e2a812>`);
+        _push(`<div class="fixed inset-0 z-40" data-v-06e2a812><div class="absolute top-20 right-4 w-64 bg-white rounded-xl shadow-2xl border border-[#E8DFD8] overflow-hidden" data-v-06e2a812><div class="p-4 border-b border-[#E8DFD8]" data-v-06e2a812><p class="font-semibold text-[#5D4A44]" data-v-06e2a812>${ssrInterpolate(unref(nombreUsuario))}</p><p class="text-sm text-[#8B7470]" data-v-06e2a812>${ssrInterpolate(unref(emailUsuario))}</p><span class="inline-block mt-2 px-3 py-1 bg-[#D8AFA0] text-white text-xs rounded-full" data-v-06e2a812> Coordinación </span></div><div class="p-2" data-v-06e2a812><button class="w-full text-left px-4 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center" data-v-06e2a812>`);
         _push(ssrRenderComponent(_component_Icon, {
           name: "heroicons:arrow-right-on-rectangle",
           class: "w-4 h-4 mr-2"
         }, null, _parent));
-        _push(` Cerrar sesi\xF3n </button></div></div></div>`);
+        _push(` Cerrar sesión </button></div></div></div>`);
       } else {
         _push(`<!---->`);
       }
       _push(`<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-v-06e2a812>`);
       ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
-      _push(`</main><footer class="mt-12 py-6 border-t border-[#E8DFD8] text-center text-sm text-[#8B7470]" data-v-06e2a812><p data-v-06e2a812>Panel de Coordinaci\xF3n Cl\xEDnica \xB7 Psic\xF3loga Karem</p><p class="mt-1" data-v-06e2a812>Gesti\xF3n de citas, pagos y comunicaci\xF3n con pacientes</p></footer></div>`);
+      _push(`</main><footer class="mt-12 py-6 border-t border-[#E8DFD8] text-center text-sm text-[#8B7470]" data-v-06e2a812><p data-v-06e2a812>Panel de Coordinación Clínica · Psicóloga Karem</p><p class="mt-1" data-v-06e2a812>Gestión de citas, pagos y comunicación con pacientes</p></footer></div>`);
     };
   }
 });

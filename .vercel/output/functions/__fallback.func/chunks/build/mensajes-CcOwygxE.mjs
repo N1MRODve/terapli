@@ -39,7 +39,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       try {
         const userId = getUserId();
         if (!userId) {
-          alert("\u274C No est\xE1s autenticado");
+          alert("❌ No estás autenticado");
           return;
         }
         const { error } = await supabase.from("mensajes").insert({
@@ -49,11 +49,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           visto: false
         });
         if (error) throw error;
-        alert("\u2705 Mensaje enviado exitosamente");
+        alert("✅ Mensaje enviado exitosamente");
         mensaje.value = "";
       } catch (error) {
         console.error("Error:", error);
-        alert("\u274C Error al enviar mensaje");
+        alert("❌ Error al enviar mensaje");
       }
     };
     const abrirWhatsApp = () => {
@@ -69,13 +69,13 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       _push(ssrRenderComponent(_component_NuxtLayout, { name: "coordinacion" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<div class="mb-8"${_scopeId}><h1 class="text-3xl font-lora font-bold text-[#5D4A44] mb-2"${_scopeId}> Mensajer\xEDa </h1><p class="text-[#8B7470]"${_scopeId}> Comunicaci\xF3n con pacientes y terapeutas </p></div><div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6 mb-6"${_scopeId}><label class="block text-sm font-medium text-[#5D4A44] mb-3"${_scopeId}> Seleccionar paciente </label><select class="w-full px-4 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"${_scopeId}><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(pacienteSeleccionado)) ? ssrLooseContain(unref(pacienteSeleccionado), "") : ssrLooseEqual(unref(pacienteSeleccionado), "")) ? " selected" : ""}${_scopeId}>-- Selecciona un paciente --</option><!--[-->`);
+            _push2(`<div class="mb-8"${_scopeId}><h1 class="text-3xl font-lora font-bold text-[#5D4A44] mb-2"${_scopeId}> Mensajería </h1><p class="text-[#8B7470]"${_scopeId}> Comunicación con pacientes y terapeutas </p></div><div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6 mb-6"${_scopeId}><label class="block text-sm font-medium text-[#5D4A44] mb-3"${_scopeId}> Seleccionar paciente </label><select class="w-full px-4 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"${_scopeId}><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(pacienteSeleccionado)) ? ssrLooseContain(unref(pacienteSeleccionado), "") : ssrLooseEqual(unref(pacienteSeleccionado), "")) ? " selected" : ""}${_scopeId}>-- Selecciona un paciente --</option><!--[-->`);
             ssrRenderList(unref(pacientes), (paciente) => {
               _push2(`<option${ssrRenderAttr("value", paciente)}${ssrIncludeBooleanAttr(Array.isArray(unref(pacienteSeleccionado)) ? ssrLooseContain(unref(pacienteSeleccionado), paciente) : ssrLooseEqual(unref(pacienteSeleccionado), paciente)) ? " selected" : ""}${_scopeId}>${ssrInterpolate(paciente.nombre)}</option>`);
             });
             _push2(`<!--]--></select></div>`);
             if (unref(pacienteSeleccionado)) {
-              _push2(`<div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6"${_scopeId}><div class="mb-4 flex items-center space-x-3"${_scopeId}><div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#D8AFA0] to-[#C49484] flex items-center justify-center"${_scopeId}><span class="text-white font-semibold"${_scopeId}>${ssrInterpolate(obtenerIniciales(unref(pacienteSeleccionado).nombre))}</span></div><div${_scopeId}><p class="font-semibold text-[#5D4A44]"${_scopeId}>${ssrInterpolate(unref(pacienteSeleccionado).nombre)}</p><p class="text-sm text-[#8B7470]"${_scopeId}>${ssrInterpolate(unref(pacienteSeleccionado).telefono)}</p></div></div><textarea placeholder="Escribe tu mensaje aqu\xED..." rows="5" class="w-full px-4 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent resize-none mb-4"${_scopeId}>${ssrInterpolate(unref(mensaje))}</textarea><div class="flex space-x-3"${_scopeId}><button${ssrIncludeBooleanAttr(!unref(mensaje).trim()) ? " disabled" : ""} class="flex-1 px-6 py-3 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#C49484] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"${_scopeId}>`);
+              _push2(`<div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6"${_scopeId}><div class="mb-4 flex items-center space-x-3"${_scopeId}><div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#D8AFA0] to-[#C49484] flex items-center justify-center"${_scopeId}><span class="text-white font-semibold"${_scopeId}>${ssrInterpolate(obtenerIniciales(unref(pacienteSeleccionado).nombre))}</span></div><div${_scopeId}><p class="font-semibold text-[#5D4A44]"${_scopeId}>${ssrInterpolate(unref(pacienteSeleccionado).nombre)}</p><p class="text-sm text-[#8B7470]"${_scopeId}>${ssrInterpolate(unref(pacienteSeleccionado).telefono)}</p></div></div><textarea placeholder="Escribe tu mensaje aquí..." rows="5" class="w-full px-4 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent resize-none mb-4"${_scopeId}>${ssrInterpolate(unref(mensaje))}</textarea><div class="flex space-x-3"${_scopeId}><button${ssrIncludeBooleanAttr(!unref(mensaje).trim()) ? " disabled" : ""} class="flex-1 px-6 py-3 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#C49484] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"${_scopeId}>`);
               _push2(ssrRenderComponent(_component_Icon, {
                 name: "heroicons:paper-airplane",
                 class: "w-5 h-5"
@@ -97,8 +97,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           } else {
             return [
               createVNode("div", { class: "mb-8" }, [
-                createVNode("h1", { class: "text-3xl font-lora font-bold text-[#5D4A44] mb-2" }, " Mensajer\xEDa "),
-                createVNode("p", { class: "text-[#8B7470]" }, " Comunicaci\xF3n con pacientes y terapeutas ")
+                createVNode("h1", { class: "text-3xl font-lora font-bold text-[#5D4A44] mb-2" }, " Mensajería "),
+                createVNode("p", { class: "text-[#8B7470]" }, " Comunicación con pacientes y terapeutas ")
               ]),
               createVNode("div", { class: "bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6 mb-6" }, [
                 createVNode("label", { class: "block text-sm font-medium text-[#5D4A44] mb-3" }, " Seleccionar paciente "),
@@ -132,7 +132,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                 ]),
                 withDirectives(createVNode("textarea", {
                   "onUpdate:modelValue": ($event) => isRef(mensaje) ? mensaje.value = $event : null,
-                  placeholder: "Escribe tu mensaje aqu\xED...",
+                  placeholder: "Escribe tu mensaje aquí...",
                   rows: "5",
                   class: "w-full px-4 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent resize-none mb-4"
                 }, null, 8, ["onUpdate:modelValue"]), [

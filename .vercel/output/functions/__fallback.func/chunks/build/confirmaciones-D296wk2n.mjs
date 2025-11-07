@@ -80,7 +80,7 @@ const _sfc_main = {
       if (date.getTime() === hoy.getTime()) {
         return "Hoy";
       } else if (date.getTime() === manana.getTime()) {
-        return "Ma\xF1ana";
+        return "Mañana";
       } else {
         return date.toLocaleDateString("es-ES", {
           weekday: "short",
@@ -103,7 +103,7 @@ const _sfc_main = {
         return `${horas}h ${minutos}min`;
       } else {
         const dias = Math.floor(horas / 24);
-        return `${dias} d\xEDa${dias > 1 ? "s" : ""}`;
+        return `${dias} día${dias > 1 ? "s" : ""}`;
       }
     };
     const estaListaParaConfirmar = (fecha, hora) => {
@@ -152,7 +152,7 @@ const _sfc_main = {
           const { data: terapeutasData } = await supabase.from("terapeutas").select("id, nombre_completo").in("id", terapeutaIds);
           terapeutas = terapeutasData || [];
         }
-        const pacientesMap = new Map((pacientes == null ? void 0 : pacientes.map((p) => [p.id, p])) || []);
+        const pacientesMap = new Map(pacientes?.map((p) => [p.id, p]) || []);
         const terapeutasMap = new Map(terapeutas.map((t) => [t.id, t]));
         citasPorConfirmar.value = citas.map((cita) => {
           const paciente = pacientesMap.get(cita.paciente_id);
@@ -169,12 +169,12 @@ const _sfc_main = {
             esUrgente: cita.fecha_cita < fechaManana,
             listaParaConfirmar: estaListaParaConfirmar(cita.fecha_cita, cita.hora_inicio),
             paciente: {
-              nombre: (paciente == null ? void 0 : paciente.nombre_completo) || "Sin nombre",
-              telefono: paciente == null ? void 0 : paciente.telefono,
-              email: paciente == null ? void 0 : paciente.email
+              nombre: paciente?.nombre_completo || "Sin nombre",
+              telefono: paciente?.telefono,
+              email: paciente?.email
             },
             terapeuta: {
-              nombre: (terapeuta == null ? void 0 : terapeuta.nombre_completo) || "Sin terapeuta"
+              nombre: terapeuta?.nombre_completo || "Sin terapeuta"
             }
           };
         });
@@ -184,10 +184,7 @@ const _sfc_main = {
           proximaCitaTiempo.value = calcularTiempoRestante(proxima.fecha, proxima.hora_inicio);
         }
         citasConWhatsApp.value = citasPorConfirmar.value.filter(
-          (cita) => {
-            var _a;
-            return cita.listaParaConfirmar && ((_a = cita.paciente) == null ? void 0 : _a.telefono);
-          }
+          (cita) => cita.listaParaConfirmar && cita.paciente?.telefono
         ).length;
       } catch (error) {
         console.error("Error al cargar citas por confirmar:", error);
@@ -203,8 +200,8 @@ const _sfc_main = {
     };
     const handleCitaCancelada = (resultado) => {
       cerrarModalCancelar();
-      (resultado == null ? void 0 : resultado.reintegrada) ? "\u2713 Cita cancelada y sesi\xF3n reintegrada al bono" : "\u2713 Cita cancelada exitosamente";
-      const descripcion = (resultado == null ? void 0 : resultado.reintegrada) ? `Se devolvi\xF3 1 sesi\xF3n al bono del paciente` : `La sesi\xF3n se descont\xF3 del bono seg\xFAn pol\xEDtica de cancelaci\xF3n`;
+      resultado?.reintegrada ? "✓ Cita cancelada y sesión reintegrada al bono" : "✓ Cita cancelada exitosamente";
+      const descripcion = resultado?.reintegrada ? `Se devolvió 1 sesión al bono del paciente` : `La sesión se descontó del bono según política de cancelación`;
       mostrarNotificacion("Cita Cancelada", descripcion, "success");
       cargarCitasPorConfirmar();
       cargarCitasConfirmadas();
@@ -245,7 +242,7 @@ const _sfc_main = {
           const { data: terapeutasData } = await supabase.from("terapeutas").select("id, nombre_completo").in("id", terapeutaIds);
           terapeutas = terapeutasData || [];
         }
-        const pacientesMap = new Map((pacientes == null ? void 0 : pacientes.map((p) => [p.id, p])) || []);
+        const pacientesMap = new Map(pacientes?.map((p) => [p.id, p]) || []);
         const terapeutasMap = new Map(terapeutas.map((t) => [t.id, t]));
         const bonosMap = new Map(bonos.map((b) => [b.id, b]));
         citasConfirmadasDetalle.value = citas.map((cita) => {
@@ -260,11 +257,11 @@ const _sfc_main = {
             estado: cita.estado,
             listaParaRecordatorio: estaListaParaRecordatorio(cita.fecha_cita, cita.hora_inicio),
             paciente: {
-              nombre: (paciente == null ? void 0 : paciente.nombre_completo) || "Sin nombre",
-              telefono: paciente == null ? void 0 : paciente.telefono
+              nombre: paciente?.nombre_completo || "Sin nombre",
+              telefono: paciente?.telefono
             },
             terapeuta: {
-              nombre: (terapeuta == null ? void 0 : terapeuta.nombre_completo) || "Sin terapeuta"
+              nombre: terapeuta?.nombre_completo || "Sin terapeuta"
             },
             bono: bono ? {
               id: bono.id,
@@ -285,10 +282,7 @@ const _sfc_main = {
           (cita) => cita.fecha <= fecha7DiasStr
         ).length;
         citasListasParaRecordatorio.value = citasConfirmadasDetalle.value.filter(
-          (cita) => {
-            var _a;
-            return cita.listaParaRecordatorio && ((_a = cita.paciente) == null ? void 0 : _a.telefono);
-          }
+          (cita) => cita.listaParaRecordatorio && cita.paciente?.telefono
         ).length;
       } catch (error) {
         console.error("Error al cargar citas confirmadas:", error);
@@ -299,18 +293,18 @@ const _sfc_main = {
       const _component_ModalCancelarCita = __nuxt_component_1;
       _push(`<div${ssrRenderAttrs(_attrs)} data-v-6d26ebe1><div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8" data-v-6d26ebe1><div class="px-8 py-6 border-b border-gray-100" data-v-6d26ebe1><div class="flex items-center justify-between" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-12 h-12 bg-arena rounded-xl flex items-center justify-center" data-v-6d26ebe1>`);
       _push(ssrRenderComponent(unref(ClockIcon), { class: "w-7 h-7 text-terracota" }, null, _parent));
-      _push(`</div><div data-v-6d26ebe1><h2 class="text-xl font-semibold text-cafe" data-v-6d26ebe1> Citas pendientes de confirmaci\xF3n </h2><p class="text-sm text-cafe/60 mt-0.5" data-v-6d26ebe1> Gestiona las citas que requieren confirmaci\xF3n con el paciente </p></div></div>`);
+      _push(`</div><div data-v-6d26ebe1><h2 class="text-xl font-semibold text-cafe" data-v-6d26ebe1> Citas pendientes de confirmación </h2><p class="text-sm text-cafe/60 mt-0.5" data-v-6d26ebe1> Gestiona las citas que requieren confirmación con el paciente </p></div></div>`);
       _push(ssrRenderComponent(_component_NuxtLink, {
         to: "/coordinadora/agenda",
         class: "text-sm text-terracota hover:text-terracota/80 font-medium transition-colors flex items-center gap-1"
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<span data-v-6d26ebe1${_scopeId}>Ver agenda completa</span><span data-v-6d26ebe1${_scopeId}>\u2192</span>`);
+            _push2(`<span data-v-6d26ebe1${_scopeId}>Ver agenda completa</span><span data-v-6d26ebe1${_scopeId}>→</span>`);
           } else {
             return [
               createVNode("span", null, "Ver agenda completa"),
-              createVNode("span", null, "\u2192")
+              createVNode("span", null, "→")
             ];
           }
         }),
@@ -322,7 +316,7 @@ const _sfc_main = {
       _push(ssrRenderComponent(unref(BoltIcon), { class: "w-6 h-6 text-orange-600" }, null, _parent));
       _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-2xl font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(unref(citasUrgentesCount))}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Urgentes</p></div></div></div><div class="bg-verde/10 rounded-xl p-4 hover:shadow-sm transition-shadow" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-10 h-10 bg-verde/20 rounded-lg flex items-center justify-center flex-shrink-0" data-v-6d26ebe1>`);
       _push(ssrRenderComponent(unref(CalendarIcon), { class: "w-6 h-6 text-verde" }, null, _parent));
-      _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-lg font-semibold text-cafe truncate" data-v-6d26ebe1>${ssrInterpolate(unref(proximaCitaTiempo))}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Pr\xF3xima cita</p></div></div></div><div class="bg-green-50/50 rounded-xl p-4 hover:shadow-sm transition-shadow" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0" data-v-6d26ebe1>`);
+      _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-lg font-semibold text-cafe truncate" data-v-6d26ebe1>${ssrInterpolate(unref(proximaCitaTiempo))}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Próxima cita</p></div></div></div><div class="bg-green-50/50 rounded-xl p-4 hover:shadow-sm transition-shadow" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0" data-v-6d26ebe1>`);
       _push(ssrRenderComponent(unref(ChatBubbleLeftRightIcon), { class: "w-6 h-6 text-green-600" }, null, _parent));
       _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-2xl font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(unref(citasConWhatsApp))}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Listas para confirmar</p></div></div></div></div>`);
       if (unref(cargando)) {
@@ -343,14 +337,14 @@ const _sfc_main = {
             _push(`<!---->`);
           }
           if (cita.listaParaConfirmar) {
-            _push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full animate-pulse" data-v-6d26ebe1><span data-v-6d26ebe1>\u{1F514}</span><span data-v-6d26ebe1>Lista para confirmar</span></span>`);
+            _push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full animate-pulse" data-v-6d26ebe1><span data-v-6d26ebe1>🔔</span><span data-v-6d26ebe1>Lista para confirmar</span></span>`);
           } else {
             _push(`<!---->`);
           }
           _push(`</div><p class="text-sm text-cafe/60" data-v-6d26ebe1>${ssrInterpolate(cita.terapeuta.nombre)}</p></div><div data-v-6d26ebe1><p class="text-sm font-medium text-cafe mb-0.5" data-v-6d26ebe1>${ssrInterpolate(formatearFechaCita(cita.fecha))}</p><p class="text-sm text-cafe/60" data-v-6d26ebe1>${ssrInterpolate(cita.hora_inicio)}</p></div><div data-v-6d26ebe1><span class="${ssrRenderClass([{
             "bg-purple-50 text-purple-700": cita.modalidad === "online",
             "bg-verde/10 text-verde": cita.modalidad === "presencial"
-          }, "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"])}" data-v-6d26ebe1><span data-v-6d26ebe1>${ssrInterpolate(cita.modalidad === "online" ? "\u{1F4BB}" : "\u{1F3E5}")}</span><span class="capitalize" data-v-6d26ebe1>${ssrInterpolate(cita.modalidad)}</span></span></div><div class="text-right" data-v-6d26ebe1><p class="${ssrRenderClass([{
+          }, "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"])}" data-v-6d26ebe1><span data-v-6d26ebe1>${ssrInterpolate(cita.modalidad === "online" ? "💻" : "🏥")}</span><span class="capitalize" data-v-6d26ebe1>${ssrInterpolate(cita.modalidad)}</span></span></div><div class="text-right" data-v-6d26ebe1><p class="${ssrRenderClass([{
             "text-terracota": cita.esUrgente,
             "text-cafe/70": !cita.esUrgente
           }, "text-sm font-semibold"])}" data-v-6d26ebe1>${ssrInterpolate(calcularTiempoRestante(cita.fecha, cita.hora_inicio))}</p><p class="text-xs text-cafe/50" data-v-6d26ebe1>restante</p></div></div><div class="flex-shrink-0 flex items-center gap-2" data-v-6d26ebe1><div class="relative" data-v-6d26ebe1>`);
@@ -358,7 +352,7 @@ const _sfc_main = {
             _push(`<button class="${ssrRenderClass([
               "p-2.5 rounded-lg transition-colors",
               cita.listaParaConfirmar ? "bg-green-500 text-white hover:bg-green-600 animate-pulse" : "bg-green-500/10 text-green-600 hover:bg-green-500 hover:text-white"
-            ])}"${ssrRenderAttr("title", cita.listaParaConfirmar ? "\xA1Lista para confirmar! Enviar WhatsApp" : "Enviar WhatsApp")} data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>\u{1F4AC}</span></button>`);
+            ])}"${ssrRenderAttr("title", cita.listaParaConfirmar ? "¡Lista para confirmar! Enviar WhatsApp" : "Enviar WhatsApp")} data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>💬</span></button>`);
           } else {
             _push(`<!---->`);
           }
@@ -367,13 +361,13 @@ const _sfc_main = {
           } else {
             _push(`<!---->`);
           }
-          _push(`</div><button class="p-2.5 bg-verde/10 text-verde hover:bg-verde hover:text-white rounded-lg transition-colors" title="Confirmar cita" data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>\u2713</span></button><button class="p-2.5 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-lg transition-colors" title="Cancelar cita" data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>\u2715</span></button></div></div></div></div></div>`);
+          _push(`</div><button class="p-2.5 bg-verde/10 text-verde hover:bg-verde hover:text-white rounded-lg transition-colors" title="Confirmar cita" data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>✓</span></button><button class="p-2.5 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-lg transition-colors" title="Cancelar cita" data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>✕</span></button></div></div></div></div></div>`);
         });
         _push(`<!--]--></div>`);
       } else {
         _push(`<div class="text-center py-16" data-v-6d26ebe1><div class="inline-flex flex-col items-center gap-4" data-v-6d26ebe1><div class="w-20 h-20 bg-verde/10 rounded-2xl flex items-center justify-center" data-v-6d26ebe1>`);
         _push(ssrRenderComponent(unref(SparklesIcon), { class: "w-12 h-12 text-verde" }, null, _parent));
-        _push(`</div><div class="space-y-1" data-v-6d26ebe1><h3 class="text-lg font-semibold text-cafe" data-v-6d26ebe1> No hay citas pendientes por confirmar </h3><p class="text-sm text-cafe/60 max-w-sm" data-v-6d26ebe1> Todo est\xE1 organizado, puedes revisar la agenda completa </p></div>`);
+        _push(`</div><div class="space-y-1" data-v-6d26ebe1><h3 class="text-lg font-semibold text-cafe" data-v-6d26ebe1> No hay citas pendientes por confirmar </h3><p class="text-sm text-cafe/60 max-w-sm" data-v-6d26ebe1> Todo está organizado, puedes revisar la agenda completa </p></div>`);
         _push(ssrRenderComponent(_component_NuxtLink, {
           to: "/coordinadora/agenda",
           class: "mt-2 px-5 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors font-medium text-sm"
@@ -400,11 +394,11 @@ const _sfc_main = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<span data-v-6d26ebe1${_scopeId}>Ver todas</span><span data-v-6d26ebe1${_scopeId}>\u2192</span>`);
+            _push2(`<span data-v-6d26ebe1${_scopeId}>Ver todas</span><span data-v-6d26ebe1${_scopeId}>→</span>`);
           } else {
             return [
               createVNode("span", null, "Ver todas"),
-              createVNode("span", null, "\u2192")
+              createVNode("span", null, "→")
             ];
           }
         }),
@@ -414,7 +408,7 @@ const _sfc_main = {
       _push(ssrRenderComponent(unref(CheckCircleIcon), { class: "w-6 h-6 text-verde" }, null, _parent));
       _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-2xl font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(unref(citasConfirmadasDetalle).length)}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Confirmadas</p></div></div></div><div class="bg-blue-50/50 rounded-xl p-4 hover:shadow-sm transition-shadow" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0" data-v-6d26ebe1>`);
       _push(ssrRenderComponent(unref(CalendarIcon), { class: "w-6 h-6 text-blue-600" }, null, _parent));
-      _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-2xl font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(unref(citasProximos7Dias))}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Pr\xF3ximos 7 d\xEDas</p></div></div></div><div class="bg-purple-50/50 rounded-xl p-4 hover:shadow-sm transition-shadow" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0" data-v-6d26ebe1>`);
+      _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-2xl font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(unref(citasProximos7Dias))}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Próximos 7 días</p></div></div></div><div class="bg-purple-50/50 rounded-xl p-4 hover:shadow-sm transition-shadow" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0" data-v-6d26ebe1>`);
       _push(ssrRenderComponent(unref(ClockIcon), { class: "w-6 h-6 text-purple-600" }, null, _parent));
       _push(`</div><div class="flex-1 min-w-0" data-v-6d26ebe1><p class="text-2xl font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(unref(citasConfirmadasHoy))}</p><p class="text-xs text-cafe/60 font-medium" data-v-6d26ebe1>Hoy</p></div></div></div><div class="bg-amber-50/50 rounded-xl p-4 hover:shadow-sm transition-shadow" data-v-6d26ebe1><div class="flex items-center gap-3" data-v-6d26ebe1><div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0" data-v-6d26ebe1>`);
       _push(ssrRenderComponent(unref(ChatBubbleLeftRightIcon), { class: "w-6 h-6 text-amber-600" }, null, _parent));
@@ -422,18 +416,18 @@ const _sfc_main = {
       if (unref(citasConfirmadasDetalle).length > 0) {
         _push(`<div data-v-6d26ebe1><div class="space-y-3" data-v-6d26ebe1><!--[-->`);
         ssrRenderList(unref(citasConfirmadasDetalle), (cita) => {
-          _push(`<div class="group bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden" data-v-6d26ebe1><div class="flex items-stretch" data-v-6d26ebe1><div class="w-1 bg-verde flex-shrink-0" data-v-6d26ebe1></div><div class="flex-1 p-5" data-v-6d26ebe1><div class="flex items-center gap-4" data-v-6d26ebe1><div class="flex-shrink-0 relative" data-v-6d26ebe1><div class="w-12 h-12 rounded-full bg-verde flex items-center justify-center text-white font-semibold shadow-sm" data-v-6d26ebe1>${ssrInterpolate(obtenerIniciales(cita.paciente.nombre))}</div><div class="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-sm" data-v-6d26ebe1><span class="text-verde text-xs" data-v-6d26ebe1>\u2713</span></div></div><div class="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-3 items-center" data-v-6d26ebe1><div class="lg:col-span-2" data-v-6d26ebe1><div class="flex items-center gap-2 mb-1" data-v-6d26ebe1><h4 class="font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(cita.paciente.nombre)}</h4>`);
+          _push(`<div class="group bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden" data-v-6d26ebe1><div class="flex items-stretch" data-v-6d26ebe1><div class="w-1 bg-verde flex-shrink-0" data-v-6d26ebe1></div><div class="flex-1 p-5" data-v-6d26ebe1><div class="flex items-center gap-4" data-v-6d26ebe1><div class="flex-shrink-0 relative" data-v-6d26ebe1><div class="w-12 h-12 rounded-full bg-verde flex items-center justify-center text-white font-semibold shadow-sm" data-v-6d26ebe1>${ssrInterpolate(obtenerIniciales(cita.paciente.nombre))}</div><div class="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-sm" data-v-6d26ebe1><span class="text-verde text-xs" data-v-6d26ebe1>✓</span></div></div><div class="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-3 items-center" data-v-6d26ebe1><div class="lg:col-span-2" data-v-6d26ebe1><div class="flex items-center gap-2 mb-1" data-v-6d26ebe1><h4 class="font-semibold text-cafe" data-v-6d26ebe1>${ssrInterpolate(cita.paciente.nombre)}</h4>`);
           if (cita.listaParaRecordatorio) {
-            _push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full animate-pulse" data-v-6d26ebe1><span data-v-6d26ebe1>\u23F0</span><span data-v-6d26ebe1>Enviar recordatorio</span></span>`);
+            _push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full animate-pulse" data-v-6d26ebe1><span data-v-6d26ebe1>⏰</span><span data-v-6d26ebe1>Enviar recordatorio</span></span>`);
           } else {
             _push(`<!---->`);
           }
           _push(`</div><p class="text-sm text-cafe/60" data-v-6d26ebe1>${ssrInterpolate(cita.terapeuta.nombre)}</p></div><div data-v-6d26ebe1><p class="text-sm font-medium text-cafe mb-0.5" data-v-6d26ebe1>${ssrInterpolate(formatearFechaCita(cita.fecha))}</p><p class="text-sm text-cafe/60" data-v-6d26ebe1>${ssrInterpolate(cita.hora_inicio)}</p></div><div data-v-6d26ebe1><span class="${ssrRenderClass([{
             "bg-purple-50 text-purple-700": cita.modalidad === "online",
             "bg-verde/10 text-verde": cita.modalidad === "presencial"
-          }, "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"])}" data-v-6d26ebe1><span data-v-6d26ebe1>${ssrInterpolate(cita.modalidad === "online" ? "\u{1F4BB}" : "\u{1F3E5}")}</span><span class="capitalize" data-v-6d26ebe1>${ssrInterpolate(cita.modalidad)}</span></span></div><div data-v-6d26ebe1>`);
+          }, "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"])}" data-v-6d26ebe1><span data-v-6d26ebe1>${ssrInterpolate(cita.modalidad === "online" ? "💻" : "🏥")}</span><span class="capitalize" data-v-6d26ebe1>${ssrInterpolate(cita.modalidad)}</span></span></div><div data-v-6d26ebe1>`);
           if (cita.bono) {
-            _push(`<div class="flex flex-col gap-1" data-v-6d26ebe1><div class="flex items-center gap-1.5" data-v-6d26ebe1><span class="text-xs text-cafe/60" data-v-6d26ebe1>\u{1F3AB} Bono:</span><span class="${ssrRenderClass([{
+            _push(`<div class="flex flex-col gap-1" data-v-6d26ebe1><div class="flex items-center gap-1.5" data-v-6d26ebe1><span class="text-xs text-cafe/60" data-v-6d26ebe1>🎫 Bono:</span><span class="${ssrRenderClass([{
               "text-red-600": cita.bono.sesiones_restantes === 0,
               "text-orange-600": cita.bono.sesiones_restantes === 1,
               "text-amber-600": cita.bono.sesiones_restantes === 2,
@@ -449,7 +443,7 @@ const _sfc_main = {
                 "text-red-600": cita.bono.sesiones_restantes === 0,
                 "text-orange-600": cita.bono.sesiones_restantes === 1,
                 "text-amber-600": cita.bono.sesiones_restantes === 2
-              }, "text-[10px] font-medium"])}" data-v-6d26ebe1>${ssrInterpolate(cita.bono.sesiones_restantes === 0 ? "\u26A0\uFE0F Agotado" : "\u26A0\uFE0F Renovar pronto")}</span>`);
+              }, "text-[10px] font-medium"])}" data-v-6d26ebe1>${ssrInterpolate(cita.bono.sesiones_restantes === 0 ? "⚠️ Agotado" : "⚠️ Renovar pronto")}</span>`);
             } else {
               _push(`<!---->`);
             }
@@ -457,12 +451,12 @@ const _sfc_main = {
           } else {
             _push(`<div class="text-xs text-cafe/40 italic" data-v-6d26ebe1> Sin bono </div>`);
           }
-          _push(`</div><div class="text-right" data-v-6d26ebe1><span class="inline-flex items-center gap-1 px-2.5 py-1 bg-verde/10 text-verde rounded-full text-xs font-medium" data-v-6d26ebe1><span data-v-6d26ebe1>\u2713</span><span data-v-6d26ebe1>Confirmada</span></span></div></div><div class="flex-shrink-0 flex items-center gap-2" data-v-6d26ebe1>`);
+          _push(`</div><div class="text-right" data-v-6d26ebe1><span class="inline-flex items-center gap-1 px-2.5 py-1 bg-verde/10 text-verde rounded-full text-xs font-medium" data-v-6d26ebe1><span data-v-6d26ebe1>✓</span><span data-v-6d26ebe1>Confirmada</span></span></div></div><div class="flex-shrink-0 flex items-center gap-2" data-v-6d26ebe1>`);
           if (cita.paciente.telefono) {
             _push(`<div class="relative" data-v-6d26ebe1><button class="${ssrRenderClass([
               "p-2.5 rounded-lg transition-colors",
               cita.listaParaRecordatorio ? "bg-blue-500 text-white hover:bg-blue-600 animate-pulse" : "bg-blue-500/10 text-blue-600 hover:bg-blue-500 hover:text-white"
-            ])}"${ssrRenderAttr("title", cita.listaParaRecordatorio ? "\xA1Lista para recordatorio! Enviar WhatsApp" : "Enviar recordatorio por WhatsApp")} data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>\u{1F4AC}</span></button>`);
+            ])}"${ssrRenderAttr("title", cita.listaParaRecordatorio ? "¡Lista para recordatorio! Enviar WhatsApp" : "Enviar recordatorio por WhatsApp")} data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>💬</span></button>`);
             if (cita.listaParaRecordatorio) {
               _push(`<span class="absolute -top-1 -right-1 flex h-3 w-3" data-v-6d26ebe1><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" data-v-6d26ebe1></span><span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500" data-v-6d26ebe1></span></span>`);
             } else {
@@ -472,11 +466,11 @@ const _sfc_main = {
           } else {
             _push(`<!---->`);
           }
-          _push(`<button class="p-2.5 bg-orange-50 text-orange-600 hover:bg-orange-500 hover:text-white rounded-lg transition-colors" title="Volver a pendiente" data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>\u21BA</span></button></div></div></div></div></div>`);
+          _push(`<button class="p-2.5 bg-orange-50 text-orange-600 hover:bg-orange-500 hover:text-white rounded-lg transition-colors" title="Volver a pendiente" data-v-6d26ebe1><span class="text-lg" data-v-6d26ebe1>↺</span></button></div></div></div></div></div>`);
         });
         _push(`<!--]--></div></div>`);
       } else {
-        _push(`<div class="text-center py-16" data-v-6d26ebe1><div class="inline-flex flex-col items-center gap-4" data-v-6d26ebe1><div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center" data-v-6d26ebe1><span class="text-4xl" data-v-6d26ebe1>\u{1F4CB}</span></div><div class="space-y-1" data-v-6d26ebe1><h3 class="text-lg font-semibold text-cafe" data-v-6d26ebe1> No hay citas confirmadas </h3><p class="text-sm text-cafe/60 max-w-sm" data-v-6d26ebe1> Las citas confirmadas con los pacientes aparecer\xE1n aqu\xED </p></div>`);
+        _push(`<div class="text-center py-16" data-v-6d26ebe1><div class="inline-flex flex-col items-center gap-4" data-v-6d26ebe1><div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center" data-v-6d26ebe1><span class="text-4xl" data-v-6d26ebe1>📋</span></div><div class="space-y-1" data-v-6d26ebe1><h3 class="text-lg font-semibold text-cafe" data-v-6d26ebe1> No hay citas confirmadas </h3><p class="text-sm text-cafe/60 max-w-sm" data-v-6d26ebe1> Las citas confirmadas con los pacientes aparecerán aquí </p></div>`);
         _push(ssrRenderComponent(_component_NuxtLink, {
           to: "/coordinadora/agenda",
           class: "mt-2 px-5 py-2 bg-verde text-white rounded-lg hover:bg-verde/90 transition-colors font-medium text-sm"
@@ -513,10 +507,10 @@ const _sfc_main = {
           }, "bg-white rounded-lg shadow-2xl border-l-4 p-4 min-w-[320px] max-w-md"])}" data-v-6d26ebe1><div class="flex items-start gap-3" data-v-6d26ebe1><div class="${ssrRenderClass([{
             "bg-green-100": unref(notificacion).tipo === "success",
             "bg-red-100": unref(notificacion).tipo === "error"
-          }, "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"])}" data-v-6d26ebe1><span class="text-2xl" data-v-6d26ebe1>${ssrInterpolate(unref(notificacion).tipo === "success" ? "\u2713" : "\u2717")}</span></div><div class="flex-1" data-v-6d26ebe1><p class="${ssrRenderClass([{
+          }, "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"])}" data-v-6d26ebe1><span class="text-2xl" data-v-6d26ebe1>${ssrInterpolate(unref(notificacion).tipo === "success" ? "✓" : "✗")}</span></div><div class="flex-1" data-v-6d26ebe1><p class="${ssrRenderClass([{
             "text-green-700": unref(notificacion).tipo === "success",
             "text-red-700": unref(notificacion).tipo === "error"
-          }, "font-bold mb-1"])}" data-v-6d26ebe1>${ssrInterpolate(unref(notificacion).titulo)}</p><p class="text-sm text-cafe/70" data-v-6d26ebe1>${ssrInterpolate(unref(notificacion).mensaje)}</p></div><button class="text-cafe/40 hover:text-cafe/60 transition-colors" data-v-6d26ebe1><span class="text-xl" data-v-6d26ebe1>\xD7</span></button></div></div></div>`);
+          }, "font-bold mb-1"])}" data-v-6d26ebe1>${ssrInterpolate(unref(notificacion).titulo)}</p><p class="text-sm text-cafe/70" data-v-6d26ebe1>${ssrInterpolate(unref(notificacion).mensaje)}</p></div><button class="text-cafe/40 hover:text-cafe/60 transition-colors" data-v-6d26ebe1><span class="text-xl" data-v-6d26ebe1>×</span></button></div></div></div>`);
         } else {
           _push2(`<!---->`);
         }

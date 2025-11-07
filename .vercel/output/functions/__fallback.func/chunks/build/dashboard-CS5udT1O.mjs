@@ -56,11 +56,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       () => citasPorConfirmar4h.value.length > 0 || citasPorConfirmar24h.value.length > 0 || pagosPendientes.value > 0
     );
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "min-h-screen bg-gray-50 p-4 sm:p-6" }, _attrs))}><div class="max-w-7xl mx-auto"><div class="mb-6"><h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1"> \xA1Bienvenida! \u{1F44B} </h1><p class="text-sm text-gray-600">${ssrInterpolate(fechaFormateada.value)}</p></div>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "min-h-screen bg-gray-50 p-4 sm:p-6" }, _attrs))}><div class="max-w-7xl mx-auto"><div class="mb-6"><h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1"> ¡Bienvenida! 👋 </h1><p class="text-sm text-gray-600">${ssrInterpolate(fechaFormateada.value)}</p></div>`);
       if (cargando.value) {
-        _push(`<div class="flex items-center justify-center py-20"><div class="text-center"><div class="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div><p class="text-gray-600 text-sm">Cargando informaci\xF3n...</p></div></div>`);
+        _push(`<div class="flex items-center justify-center py-20"><div class="text-center"><div class="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div><p class="text-gray-600 text-sm">Cargando información...</p></div></div>`);
       } else {
-        _push(`<!--[--><section aria-label="Accesos r\xE1pidos" class="mb-6"><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><button class="bg-white border-2 border-blue-200 rounded-lg p-4 hover:border-blue-400 hover:shadow-md transition-all duration-200 text-left group" aria-label="Ir a la agenda"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">`);
+        _push(`<!--[--><section aria-label="Accesos rápidos" class="mb-6"><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><button class="bg-white border-2 border-blue-200 rounded-lg p-4 hover:border-blue-400 hover:shadow-md transition-all duration-200 text-left group" aria-label="Ir a la agenda"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">`);
         _push(ssrRenderComponent(unref(CalendarDaysIcon), {
           class: "w-5 h-5 text-blue-600",
           "aria-hidden": "true"
@@ -79,7 +79,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         if (!tieneAccionesUrgentes.value) {
           _push(`<div class="bg-white border border-gray-200 rounded-lg p-6 text-center"><div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3">`);
           _push(ssrRenderComponent(unref(CheckCircleIcon), { class: "w-6 h-6 text-emerald-600" }, null, _parent));
-          _push(`</div><h3 class="text-base font-semibold text-gray-900 mb-1">\xA1Todo al d\xEDa!</h3><p class="text-sm text-gray-600"> No tienes acciones urgentes pendientes. </p></div>`);
+          _push(`</div><h3 class="text-base font-semibold text-gray-900 mb-1">¡Todo al día!</h3><p class="text-sm text-gray-600"> No tienes acciones urgentes pendientes. </p></div>`);
         } else {
           _push(`<div class="grid grid-cols-1 md:grid-cols-3 gap-4">`);
           if (citasPorConfirmar4h.value.length > 0) {
@@ -98,7 +98,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             _push(`<!---->`);
           }
           if (citasPorConfirmar24h.value.length > 0) {
-            _push(`<div class="bg-white border-2 border-orange-200 rounded-lg p-4 cursor-pointer hover:border-orange-400 hover:shadow-md transition-all duration-200" role="button" aria-label="Ver citas en las pr\xF3ximas 24 horas" tabindex="0"><div class="flex items-start justify-between mb-3"><div class="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center">`);
+            _push(`<div class="bg-white border-2 border-orange-200 rounded-lg p-4 cursor-pointer hover:border-orange-400 hover:shadow-md transition-all duration-200" role="button" aria-label="Ver citas en las próximas 24 horas" tabindex="0"><div class="flex items-start justify-between mb-3"><div class="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center">`);
             _push(ssrRenderComponent(unref(ExclamationTriangleIcon), {
               class: "w-5 h-5 text-orange-600",
               "aria-hidden": "true"
@@ -113,7 +113,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             _push(`<!---->`);
           }
           if (pagosPendientes.value > 0) {
-            _push(`<div class="bg-white border-2 border-purple-200 rounded-lg p-4 cursor-pointer hover:border-purple-400 hover:shadow-md transition-all duration-200" role="button" aria-label="Ver pagos pendientes de confirmaci\xF3n" tabindex="0"><div class="flex items-start justify-between mb-3"><div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">`);
+            _push(`<div class="bg-white border-2 border-purple-200 rounded-lg p-4 cursor-pointer hover:border-purple-400 hover:shadow-md transition-all duration-200" role="button" aria-label="Ver pagos pendientes de confirmación" tabindex="0"><div class="flex items-start justify-between mb-3"><div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">`);
             _push(ssrRenderComponent(unref(CurrencyDollarIcon), {
               class: "w-5 h-5 text-purple-600",
               "aria-hidden": "true"
@@ -124,7 +124,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           }
           _push(`</div>`);
         }
-        _push(`</section><section aria-label="Vista r\xE1pida del d\xEDa"><h2 class="text-lg font-bold text-gray-900 mb-3">Vista R\xE1pida del D\xEDa</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"><button class="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left group" aria-label="Ver agenda de citas de hoy"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">`);
+        _push(`</section><section aria-label="Vista rápida del día"><h2 class="text-lg font-bold text-gray-900 mb-3">Vista Rápida del Día</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"><button class="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left group" aria-label="Ver agenda de citas de hoy"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">`);
         _push(ssrRenderComponent(unref(CalendarDaysIcon), {
           class: "w-5 h-5 text-blue-600",
           "aria-hidden": "true"
@@ -144,7 +144,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           class: "w-4 h-4 text-gray-400 group-hover:text-amber-600 transition-colors",
           "aria-hidden": "true"
         }, null, _parent));
-        _push(`</div><h3 class="text-2xl font-bold text-gray-900 mb-1">${ssrInterpolate(citasPendientes.value)}</h3><p class="text-sm text-gray-600 font-medium mb-2">Sin confirmar</p><span class="${ssrRenderClass([citasPendientes.value > 0 ? "text-amber-600" : "text-emerald-600", "text-xs font-semibold"])}">${ssrInterpolate(citasPendientes.value > 0 ? "Requiere seguimiento" : "\u2713 Todo confirmado")}</span></button><button class="bg-white border border-gray-200 rounded-lg p-4 hover:border-emerald-300 hover:shadow-md transition-all duration-200 text-left group" aria-label="Ver lista de pacientes"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-100 transition-colors">`);
+        _push(`</div><h3 class="text-2xl font-bold text-gray-900 mb-1">${ssrInterpolate(citasPendientes.value)}</h3><p class="text-sm text-gray-600 font-medium mb-2">Sin confirmar</p><span class="${ssrRenderClass([citasPendientes.value > 0 ? "text-amber-600" : "text-emerald-600", "text-xs font-semibold"])}">${ssrInterpolate(citasPendientes.value > 0 ? "Requiere seguimiento" : "✓ Todo confirmado")}</span></button><button class="bg-white border border-gray-200 rounded-lg p-4 hover:border-emerald-300 hover:shadow-md transition-all duration-200 text-left group" aria-label="Ver lista de pacientes"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-100 transition-colors">`);
         _push(ssrRenderComponent(unref(UserGroupIcon), {
           class: "w-5 h-5 text-emerald-600",
           "aria-hidden": "true"

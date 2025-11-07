@@ -93,7 +93,7 @@ const obtenerTituloAgenda = (vista, fecha) => {
     case "dia":
       return formatearFecha(fechaStr);
     case "semana":
-      return `${formatearMesAnio(fechaStr)} \u2014 Semana ${obtenerNumeroSemana(fechaStr)}`;
+      return `${formatearMesAnio(fechaStr)} — Semana ${obtenerNumeroSemana(fechaStr)}`;
     case "mes":
       return formatearMesAnio(fechaStr);
     default:
@@ -146,17 +146,17 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
       _push(`<header${ssrRenderAttrs(mergeProps({ class: "sticky top-0 z-20 bg-white/70 dark:bg-gray-950/70 backdrop-blur-md border-b border-cafe/10 dark:border-gray-800 shadow-sm" }, _attrs))} data-v-9c60bdb2><div class="px-4 py-2.5 sm:px-6 lg:px-6" data-v-9c60bdb2><div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" data-v-9c60bdb2><div class="flex items-center gap-2.5" data-v-9c60bdb2><div class="flex items-center gap-0.5" data-v-9c60bdb2><button class="px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200" aria-label="Periodo anterior" data-v-9c60bdb2><svg class="w-4 h-4 text-cafe dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-9c60bdb2><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" data-v-9c60bdb2></path></svg></button><button class="px-3.5 py-1.5 mx-1 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200 text-sm font-medium text-cafe dark:text-gray-300" data-v-9c60bdb2> Hoy </button><button class="px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200" aria-label="Periodo siguiente" data-v-9c60bdb2><svg class="w-4 h-4 text-cafe dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-9c60bdb2><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" data-v-9c60bdb2></path></svg></button></div><h1 class="text-lg sm:text-xl font-serif font-bold text-cafe dark:text-gray-100 ml-1" data-v-9c60bdb2>${ssrInterpolate(titulo.value)}</h1></div><div class="flex items-center gap-2.5 w-full sm:w-auto" data-v-9c60bdb2><div class="flex border border-cafe/20 dark:border-gray-700 rounded-xl overflow-hidden shadow-xs" data-v-9c60bdb2><button class="${ssrRenderClass([
         "px-3 py-1.5 text-sm font-medium transition-all duration-200",
         __props.vista === "dia" ? "bg-terracota text-white shadow-sm" : "bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-terracota/10 dark:hover:bg-gray-800"
-      ])}" aria-label="Vista de d\xEDa" data-v-9c60bdb2> \u{1F4C5} D\xEDa </button><button class="${ssrRenderClass([
+      ])}" aria-label="Vista de día" data-v-9c60bdb2> 📅 Día </button><button class="${ssrRenderClass([
         "px-3 py-1.5 text-sm font-medium transition-all duration-200 border-l border-cafe/10 dark:border-gray-700",
         __props.vista === "semana" ? "bg-terracota text-white shadow-sm" : "bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-terracota/10 dark:hover:bg-gray-800"
-      ])}" aria-label="Vista de semana" data-v-9c60bdb2> \u{1F4C6} Semana </button><button class="${ssrRenderClass([
+      ])}" aria-label="Vista de semana" data-v-9c60bdb2> 📆 Semana </button><button class="${ssrRenderClass([
         "px-3 py-1.5 text-sm font-medium transition-all duration-200 border-l border-cafe/10 dark:border-gray-700",
         __props.vista === "mes" ? "bg-terracota text-white shadow-sm" : "bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-terracota/10 dark:hover:bg-gray-800"
-      ])}" aria-label="Vista de mes" data-v-9c60bdb2> \u{1F5D3}\uFE0F Mes </button></div><button class="flex items-center gap-2 px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-xl hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200"${ssrRenderAttr("aria-label", __props.darkMode ? "Desactivar modo oscuro" : "Activar modo oscuro")} data-v-9c60bdb2>`);
+      ])}" aria-label="Vista de mes" data-v-9c60bdb2> 🗓️ Mes </button></div><button class="flex items-center gap-2 px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-xl hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200"${ssrRenderAttr("aria-label", __props.darkMode ? "Desactivar modo oscuro" : "Activar modo oscuro")} data-v-9c60bdb2>`);
       if (__props.darkMode) {
-        _push(`<span class="text-lg" data-v-9c60bdb2>\u{1F319}</span>`);
+        _push(`<span class="text-lg" data-v-9c60bdb2>🌙</span>`);
       } else {
-        _push(`<span class="text-lg" data-v-9c60bdb2>\u2600\uFE0F</span>`);
+        _push(`<span class="text-lg" data-v-9c60bdb2>☀️</span>`);
       }
       _push(`</button><button class="flex items-center gap-2 px-4 py-1.5 bg-terracota hover:bg-terracota/90 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm" data-v-9c60bdb2><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-9c60bdb2><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" data-v-9c60bdb2></path></svg> Nueva Cita </button></div></div></div></header>`);
     };
@@ -184,8 +184,8 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     const busqueda = ref("");
     const mostrarFiltrosAvanzados = ref(false);
     const modalidadesDisponibles = [
-      { value: "online", label: "Online", emoji: "\u{1F4BB}" },
-      { value: "presencial", label: "Presencial", emoji: "\u{1F3E2}" }
+      { value: "online", label: "Online", emoji: "💻" },
+      { value: "presencial", label: "Presencial", emoji: "🏢" }
     ];
     const pacienteSeleccionado = computed({
       get: () => props.filtros.pacienteId || "",
@@ -259,10 +259,10 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   __ssrInlineRender: true,
   setup(__props) {
     const leyenda = [
-      { key: "pendiente", label: "Pendiente", emoji: "\u{1F7E1}", bgClass: "bg-yellow-100", textClass: "text-yellow-800" },
-      { key: "confirmada", label: "Confirmada", emoji: "\u{1F7E2}", bgClass: "bg-green-100", textClass: "text-green-700" },
-      { key: "realizada", label: "Realizada", emoji: "\u{1F535}", bgClass: "bg-blue-100", textClass: "text-blue-700" },
-      { key: "cancelada", label: "Cancelada", emoji: "\u{1F534}", bgClass: "bg-red-100", textClass: "text-red-700" }
+      { key: "pendiente", label: "Pendiente", emoji: "🟡", bgClass: "bg-yellow-100", textClass: "text-yellow-800" },
+      { key: "confirmada", label: "Confirmada", emoji: "🟢", bgClass: "bg-green-100", textClass: "text-green-700" },
+      { key: "realizada", label: "Realizada", emoji: "🔵", bgClass: "bg-blue-100", textClass: "text-blue-700" },
+      { key: "cancelada", label: "Cancelada", emoji: "🔴", bgClass: "bg-red-100", textClass: "text-red-700" }
     ];
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "flex flex-wrap gap-2 items-center py-1.5" }, _attrs))} data-v-5f57fa35><!--[-->`);
@@ -295,7 +295,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       return COLORES_ESTADO[props.event.estado] || COLORES_ESTADO.cancelada;
     });
     const horaFormateada = computed(() => {
-      return `${props.event.horaInicio} \u2013 ${props.event.horaFin}`;
+      return `${props.event.horaInicio} – ${props.event.horaFin}`;
     });
     const horaInicio = computed(() => {
       return props.event.horaInicio;
@@ -305,13 +305,13 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     });
     computed(() => {
       const iconos = {
-        pendiente: "\u{1F7E1}",
-        confirmada: "\u{1F7E2}",
-        cancelada: "\u{1F534}",
-        completada: "\u26AA",
-        realizada: "\u{1F535}"
+        pendiente: "🟡",
+        confirmada: "🟢",
+        cancelada: "🔴",
+        completada: "⚪",
+        realizada: "🔵"
       };
-      return iconos[props.event.estado] || "\u26AA";
+      return iconos[props.event.estado] || "⚪";
     });
     const tieneBono = computed(() => {
       return props.event.bono && props.event.bono.sesionesRestantes !== void 0;
@@ -339,9 +339,9 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         if (__props.event.modalidad) {
           _push(`<span class="modalidad" data-v-720e5f4d>`);
           if (__props.event.modalidad === "online") {
-            _push(`<span data-v-720e5f4d>\u{1F4BB}</span>`);
+            _push(`<span data-v-720e5f4d>💻</span>`);
           } else {
-            _push(`<span data-v-720e5f4d>\u{1F3E5}</span>`);
+            _push(`<span data-v-720e5f4d>🏥</span>`);
           }
           _push(` ${ssrInterpolate(__props.event.modalidad === "online" ? "Online" : "Presencial")}</span>`);
         } else {
@@ -360,12 +360,12 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         if (__props.event.notas || __props.event.terapeuta) {
           _push(`<div class="indicadores" data-v-720e5f4d>`);
           if (__props.event.notas) {
-            _push(`<span title="Tiene notas" data-v-720e5f4d>\u{1F4DD}</span>`);
+            _push(`<span title="Tiene notas" data-v-720e5f4d>📝</span>`);
           } else {
             _push(`<!---->`);
           }
           if (__props.event.terapeuta) {
-            _push(`<span${ssrRenderAttr("title", `Terapeuta: ${__props.event.terapeuta.nombre}`)} data-v-720e5f4d>\u{1F464}</span>`);
+            _push(`<span${ssrRenderAttr("title", `Terapeuta: ${__props.event.terapeuta.nombre}`)} data-v-720e5f4d>👤</span>`);
           } else {
             _push(`<!---->`);
           }
@@ -379,7 +379,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       }
       _push(`</div>`);
       if (!__props.compact) {
-        _push(`<button class="menu-btn" aria-label="Abrir men\xFA de acciones" type="button" data-v-720e5f4d><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" data-v-720e5f4d><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" data-v-720e5f4d></path></svg></button>`);
+        _push(`<button class="menu-btn" aria-label="Abrir menú de acciones" type="button" data-v-720e5f4d><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" data-v-720e5f4d><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" data-v-720e5f4d></path></svg></button>`);
       } else {
         _push(`<!---->`);
       }
@@ -564,7 +564,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         ])}" data-v-e146059a> Normal </button><button class="${ssrRenderClass([
           "px-2 py-1 rounded-md transition-all",
           zoomLevel.value === "comfortable" ? "bg-terracota text-white" : "hover:bg-terracota/10"
-        ])}" data-v-e146059a> C\xF3modo </button></div></div>`);
+        ])}" data-v-e146059a> Cómodo </button></div></div>`);
       } else {
         _push(`<!---->`);
       }
@@ -585,7 +585,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
             if (zoomLevel.value !== "compact") {
               _push(`<div class="info-extra" data-v-e146059a>`);
               if (evento.modalidad) {
-                _push(`<span class="text-[10px]" data-v-e146059a>${ssrInterpolate(evento.modalidad === "online" ? "\u{1F4BB}" : "\u{1F3E5}")}</span>`);
+                _push(`<span class="text-[10px]" data-v-e146059a>${ssrInterpolate(evento.modalidad === "online" ? "💻" : "🏥")}</span>`);
               } else {
                 _push(`<!---->`);
               }
@@ -600,7 +600,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
             }
             _push(`<div class="tooltip" data-v-e146059a><div class="font-semibold" data-v-e146059a>${ssrInterpolate(evento.pacienteNombre)}</div><div data-v-e146059a>${ssrInterpolate(evento.horaInicio)} - ${ssrInterpolate(evento.horaFin)}</div>`);
             if (evento.modalidad) {
-              _push(`<div data-v-e146059a>${ssrInterpolate(evento.modalidad === "online" ? "\u{1F4BB} Online" : "\u{1F3E5} Presencial")}</div>`);
+              _push(`<div data-v-e146059a>${ssrInterpolate(evento.modalidad === "online" ? "💻 Online" : "🏥 Presencial")}</div>`);
             } else {
               _push(`<!---->`);
             }
@@ -639,7 +639,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
                 "top": calcularTopEvento(evento.horaInicio, hora)
               })}" data-v-e146059a><span class="hora" data-v-e146059a>${ssrInterpolate(evento.horaInicio)} - ${ssrInterpolate(evento.horaFin)}</span><span class="nombre" data-v-e146059a>${ssrInterpolate(evento.pacienteNombre)}</span><div class="tooltip" data-v-e146059a><div class="font-semibold" data-v-e146059a>${ssrInterpolate(evento.pacienteNombre)}</div><div data-v-e146059a>${ssrInterpolate(evento.horaInicio)} - ${ssrInterpolate(evento.horaFin)}</div>`);
               if (evento.modalidad) {
-                _push(`<div data-v-e146059a>${ssrInterpolate(evento.modalidad === "online" ? "\u{1F4BB} Online" : "\u{1F3E5} Presencial")}</div>`);
+                _push(`<div data-v-e146059a>${ssrInterpolate(evento.modalidad === "online" ? "💻 Online" : "🏥 Presencial")}</div>`);
               } else {
                 _push(`<!---->`);
               }
@@ -660,7 +660,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       }
       if (!__props.cargando && __props.vista === "mes") {
         _push(`<div class="agenda-mes-container" data-v-e146059a><div class="agenda-mes-grid" data-v-e146059a><!--[-->`);
-        ssrRenderList(["Lun", "Mar", "Mi\xE9", "Jue", "Vie", "S\xE1b", "Dom"], (dia) => {
+        ssrRenderList(["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"], (dia) => {
           _push(`<div class="agenda-mes-header" data-v-e146059a>${ssrInterpolate(dia)}</div>`);
         });
         _push(`<!--]--><!--[-->`);
@@ -690,7 +690,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
           });
           _push(`<!--]-->`);
           if ((eventosPorFecha.value.get(fecha) || []).length > 2) {
-            _push(`<button class="mas-eventos"${ssrRenderAttr("title", `Ver todas las ${(eventosPorFecha.value.get(fecha) || []).length} citas de este d\xEDa`)} data-v-e146059a> +${ssrInterpolate((eventosPorFecha.value.get(fecha) || []).length - 2)} m\xE1s </button>`);
+            _push(`<button class="mas-eventos"${ssrRenderAttr("title", `Ver todas las ${(eventosPorFecha.value.get(fecha) || []).length} citas de este día`)} data-v-e146059a> +${ssrInterpolate((eventosPorFecha.value.get(fecha) || []).length - 2)} más </button>`);
           } else {
             _push(`<!---->`);
           }
@@ -739,55 +739,44 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const menuPosicion = ref({ x: 0, y: 0 });
     const eventoMenu = ref(null);
     const eventosMapeados = computed(() => {
-      var _a;
-      if (!((_a = citasAgenda.value) == null ? void 0 : _a.length)) return [];
-      return citasAgenda.value.map((cita) => {
-        var _a2, _b;
-        return {
-          id: cita.cita_id || cita.id,
-          pacienteNombre: cita.paciente_nombre || "Sin paciente",
-          pacienteId: cita.paciente_id,
-          estado: cita.estado,
-          fecha: cita.fecha_cita,
-          horaInicio: ((_a2 = cita.hora_inicio) == null ? void 0 : _a2.substring(0, 5)) || cita.hora_inicio,
-          // Normalizar HH:MM:SS a HH:MM
-          horaFin: ((_b = cita.hora_fin) == null ? void 0 : _b.substring(0, 5)) || cita.hora_fin,
-          modalidad: cita.modalidad,
-          bono: cita.bono_id ? {
-            id: cita.bono_id,
-            sesionesRestantes: cita.bono_sesiones_restantes,
-            sesionesTotales: cita.bono_sesiones_totales
-          } : null,
-          terapeuta: cita.terapeuta_id ? {
-            id: cita.terapeuta_id,
-            nombre: cita.terapeuta_nombre
-          } : void 0,
-          notas: cita.observaciones || void 0,
-          areaTerapeutica: cita.paciente_area || void 0,
-          tipoSesion: cita.tipo_sesion || void 0
-        };
-      });
+      if (!citasAgenda.value?.length) return [];
+      return citasAgenda.value.map((cita) => ({
+        id: cita.cita_id || cita.id,
+        pacienteNombre: cita.paciente_nombre || "Sin paciente",
+        pacienteId: cita.paciente_id,
+        estado: cita.estado,
+        fecha: cita.fecha_cita,
+        horaInicio: cita.hora_inicio?.substring(0, 5) || cita.hora_inicio,
+        // Normalizar HH:MM:SS a HH:MM
+        horaFin: cita.hora_fin?.substring(0, 5) || cita.hora_fin,
+        modalidad: cita.modalidad,
+        bono: cita.bono_id ? {
+          id: cita.bono_id,
+          sesionesRestantes: cita.bono_sesiones_restantes,
+          sesionesTotales: cita.bono_sesiones_totales
+        } : null,
+        terapeuta: cita.terapeuta_id ? {
+          id: cita.terapeuta_id,
+          nombre: cita.terapeuta_nombre
+        } : void 0,
+        notas: cita.observaciones || void 0,
+        areaTerapeutica: cita.paciente_area || void 0,
+        tipoSesion: cita.tipo_sesion || void 0
+      }));
     });
     const eventosFiltrados = computed(() => {
-      var _a;
       let eventos = eventosMapeados.value;
       if (busqueda.value.trim()) {
         const query = busqueda.value.toLowerCase();
         eventos = eventos.filter(
-          (e) => {
-            var _a2, _b;
-            return e.pacienteNombre.toLowerCase().includes(query) || ((_a2 = e.terapeuta) == null ? void 0 : _a2.nombre.toLowerCase().includes(query)) || ((_b = e.notas) == null ? void 0 : _b.toLowerCase().includes(query));
-          }
+          (e) => e.pacienteNombre.toLowerCase().includes(query) || e.terapeuta?.nombre.toLowerCase().includes(query) || e.notas?.toLowerCase().includes(query)
         );
       }
-      if ((_a = filtros.value.estados) == null ? void 0 : _a.length) {
+      if (filtros.value.estados?.length) {
         eventos = eventos.filter((e) => filtros.value.estados.includes(e.estado));
       }
       if (filtros.value.terapeutaId) {
-        eventos = eventos.filter((e) => {
-          var _a2;
-          return ((_a2 = e.terapeuta) == null ? void 0 : _a2.id) === filtros.value.terapeutaId;
-        });
+        eventos = eventos.filter((e) => e.terapeuta?.id === filtros.value.terapeutaId);
       }
       if (filtros.value.pacienteId) {
         eventos = eventos.filter((e) => e.pacienteId === filtros.value.pacienteId);
@@ -807,9 +796,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       return [];
     });
     const pacientes = computed(() => {
-      var _a;
       const uniquePacientes = /* @__PURE__ */ new Map();
-      (_a = citasAgenda.value) == null ? void 0 : _a.forEach((cita) => {
+      citasAgenda.value?.forEach((cita) => {
         if (cita.paciente_id) {
           uniquePacientes.set(cita.paciente_id, {
             id: cita.paciente_id,
@@ -846,7 +834,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           (cita) => cita.estado !== "cancelada" && cita.estado !== "borrador" && cita.estado !== null
         );
       } catch (err) {
-        console.error("\u274C Error al cargar citas:", err);
+        console.error("❌ Error al cargar citas:", err);
         error.value = err.message;
       } finally {
         loading.value = false;
@@ -897,7 +885,6 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       }
     };
     return (_ctx, _push, _parent, _attrs) => {
-      var _a, _b;
       _push(`<div${ssrRenderAttrs(_attrs)} data-v-644cee40>`);
       if (__props.legacyFallback) {
         _push(ssrRenderComponent(__nuxt_component_0, null, null, _parent));
@@ -936,8 +923,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         _push(ssrRenderComponent(__nuxt_component_2, {
           modelValue: mostrarModalNueva.value,
           "onUpdate:modelValue": ($event) => mostrarModalNueva.value = $event,
-          "fecha-inicial": (_a = slotSeleccionado.value) == null ? void 0 : _a.date,
-          "hora-inicial": (_b = slotSeleccionado.value) == null ? void 0 : _b.horaInicio,
+          "fecha-inicial": slotSeleccionado.value?.date,
+          "hora-inicial": slotSeleccionado.value?.horaInicio,
           onGuardado: cargarCitas
         }, null, _parent));
         _push(ssrRenderComponent(ModalDetallesCita, {
@@ -957,7 +944,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             _push2(`<!---->`);
           }
         }, "body", false, _parent);
-        _push(`<div class="fixed bottom-4 right-4 bg-gray-900/90 dark:bg-gray-100/90 text-white dark:text-gray-900 px-3 py-2 rounded-lg text-xs opacity-0 hover:opacity-100 transition-opacity" data-v-644cee40><kbd data-v-644cee40>j/k</kbd> navegar \xB7 <kbd data-v-644cee40>t</kbd> hoy \xB7 <kbd data-v-644cee40>1/2/3</kbd> vistas \xB7 <kbd data-v-644cee40>n</kbd> nueva \xB7 <kbd data-v-644cee40>f</kbd> buscar </div></div>`);
+        _push(`<div class="fixed bottom-4 right-4 bg-gray-900/90 dark:bg-gray-100/90 text-white dark:text-gray-900 px-3 py-2 rounded-lg text-xs opacity-0 hover:opacity-100 transition-opacity" data-v-644cee40><kbd data-v-644cee40>j/k</kbd> navegar · <kbd data-v-644cee40>t</kbd> hoy · <kbd data-v-644cee40>1/2/3</kbd> vistas · <kbd data-v-644cee40>n</kbd> nueva · <kbd data-v-644cee40>f</kbd> buscar </div></div>`);
       }
       _push(`</div>`);
     };

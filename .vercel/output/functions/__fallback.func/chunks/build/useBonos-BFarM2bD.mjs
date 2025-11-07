@@ -6,38 +6,24 @@ import { n as navigateTo } from './server.mjs';
 const useRoles = () => {
   const { userProfile, getUserRole } = useSupabase();
   const hasRole = (role) => {
-    var _a;
-    return ((_a = userProfile.value) == null ? void 0 : _a.rol) === role;
+    return userProfile.value?.rol === role;
   };
   const hasAnyRole = (roles) => {
-    return roles.some((role) => {
-      var _a;
-      return ((_a = userProfile.value) == null ? void 0 : _a.rol) === role;
-    });
+    return roles.some((role) => userProfile.value?.rol === role);
   };
-  const isPsicologa = computed(() => {
-    var _a;
-    return ((_a = userProfile.value) == null ? void 0 : _a.rol) === "psicologa";
-  });
-  const isPaciente = computed(() => {
-    var _a;
-    return ((_a = userProfile.value) == null ? void 0 : _a.rol) === "paciente";
-  });
-  const isCoordinadora = computed(() => {
-    var _a;
-    return ((_a = userProfile.value) == null ? void 0 : _a.rol) === "coordinadora";
-  });
+  const isPsicologa = computed(() => userProfile.value?.rol === "psicologa");
+  const isPaciente = computed(() => userProfile.value?.rol === "paciente");
+  const isCoordinadora = computed(() => userProfile.value?.rol === "coordinadora");
   const getRoleName = (role) => {
     const nombres = {
-      psicologa: "Psic\xF3loga",
+      psicologa: "Psicóloga",
       paciente: "Paciente",
       coordinadora: "Coordinadora"
     };
     return role ? nombres[role] : "Desconocido";
   };
   const getDashboardPath = (role) => {
-    var _a;
-    const rol = role || ((_a = userProfile.value) == null ? void 0 : _a.rol);
+    const rol = role || userProfile.value?.rol;
     const paths = {
       psicologa: "/terapeuta/dashboard",
       coordinadora: "/coordinadora/dashboard",
@@ -144,7 +130,6 @@ const useBonos = () => {
     }
   };
   const registrarPago = async (bonoId, monto, metodo, confirmado = false) => {
-    var _a;
     try {
       const pagoData = {
         bono_id: bonoId,
@@ -153,7 +138,7 @@ const useBonos = () => {
         confirmado,
         fecha_pago: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
         ...confirmado && {
-          confirmado_por: (_a = userProfile.value) == null ? void 0 : _a.id,
+          confirmado_por: userProfile.value?.id,
           fecha_confirmacion: (/* @__PURE__ */ new Date()).toISOString()
         }
       };
@@ -188,9 +173,8 @@ const useBonos = () => {
     }
   };
   const renovarBono = async (bonoId, motivo, modificarSesiones, modificarMonto) => {
-    var _a;
     try {
-      const userId = (_a = userProfile.value) == null ? void 0 : _a.id;
+      const userId = userProfile.value?.id;
       if (!userId) {
         throw new Error("Usuario no autenticado");
       }
@@ -268,7 +252,7 @@ const useBonos = () => {
         pocasSesiones
       };
     } catch (err) {
-      console.warn("[Bonos] Error al calcular m\xE9tricas:", err);
+      console.warn("[Bonos] Error al calcular métricas:", err);
       return {
         total: 0,
         activos: 0,
@@ -297,7 +281,7 @@ const useBonos = () => {
   };
   const getEstadoTexto = (estado) => {
     const textos = {
-      "pendiente": "Pendiente de activaci\xF3n",
+      "pendiente": "Pendiente de activación",
       "activo": "Activo",
       "completado": "Completado",
       "vencido": "Vencido",
@@ -306,8 +290,7 @@ const useBonos = () => {
     return textos[estado] || estado;
   };
   const puedeGestionarBonos = computed(() => {
-    var _a;
-    return isCoordinadora.value || ((_a = userProfile.value) == null ? void 0 : _a.rol) === "psicologa";
+    return isCoordinadora.value || userProfile.value?.rol === "psicologa";
   });
   const puedeConfirmarPagos = computed(() => {
     return isCoordinadora.value;

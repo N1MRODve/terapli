@@ -6,7 +6,7 @@ const _sfc_main = {
   __ssrInlineRender: true,
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(_attrs)}><div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8"><div class="text-center text-gray-400"><span class="text-6xl mb-4 block">\u{1F514}</span><h3 class="text-xl font-semibold text-cafe mb-2"> Recordatorios Autom\xE1ticos </h3><p class="text-gray-600"> Aqu\xED se gestionar\xE1n los recordatorios de citas y pagos </p></div></div></div>`);
+      _push(`<div${ssrRenderAttrs(_attrs)}><div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8"><div class="text-center text-gray-400"><span class="text-6xl mb-4 block">🔔</span><h3 class="text-xl font-semibold text-cafe mb-2"> Recordatorios Automáticos </h3><p class="text-gray-600"> Aquí se gestionarán los recordatorios de citas y pagos </p></div></div></div>`);
     };
   }
 };

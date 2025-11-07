@@ -125,7 +125,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         valor: "presencial",
         nombre: "Presencial",
         componente: BuildingOfficeIcon,
-        descripcion: "Sesi\xF3n presencial en consultorio"
+        descripcion: "Sesión presencial en consultorio"
       },
       {
         valor: "online",
@@ -135,9 +135,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       },
       {
         valor: "telefonica",
-        nombre: "Telef\xF3nica",
+        nombre: "Telefónica",
         componente: PhoneIcon,
-        descripcion: "Llamada telef\xF3nica"
+        descripcion: "Llamada telefónica"
       }
     ];
     const estadosCita = [
@@ -183,10 +183,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       const manana = new Date(hoy);
       manana.setDate(manana.getDate() + 1);
       opciones.push({
-        label: "Ma\xF1ana",
+        label: "Mañana",
         fecha: formatearFecha(manana)
       });
-      const diasLaborables = ["Lun", "Mar", "Mi\xE9", "Jue", "Vie"];
+      const diasLaborables = ["Lun", "Mar", "Mié", "Jue", "Vie"];
       let fecha = new Date(hoy);
       let contadorDias = 0;
       while (contadorDias < 5) {
@@ -216,49 +216,45 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       return validoPaciente && validoTerapeuta && formulario.value.fecha && formulario.value.hora_inicio && formulario.value.hora_fin && formulario.value.tipo && formulario.value.estado;
     });
     async function cargarPacientes() {
-      var _a, _b, _c;
-      console.log("\u{1F4CB} Cargando pacientes...");
+      console.log("📋 Cargando pacientes...");
       cargandoPacientes.value = true;
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
-          console.error("\u274C No hay usuario autenticado");
+          console.error("❌ No hay usuario autenticado");
           return;
         }
-        console.log("\u{1F464} Usuario ID:", user.id);
+        console.log("👤 Usuario ID:", user.id);
         const { userProfile } = useSupabase();
-        console.log("\u{1F3AD} Rol de usuario:", ((_a = userProfile.value) == null ? void 0 : _a.rol) || "desconocido");
+        console.log("🎭 Rol de usuario:", userProfile.value?.rol || "desconocido");
         let query = supabase.from("pacientes").select(`
         id,
         nombre_completo,
         email,
         metadata
       `).eq("activo", true).order("created_at", { ascending: false });
-        if (((_b = userProfile.value) == null ? void 0 : _b.rol) !== "coordinadora") {
-          console.log("\u{1F468}\u200D\u2695\uFE0F Filtrando por terapeuta_id:", user.id);
+        if (userProfile.value?.rol !== "coordinadora") {
+          console.log("👨‍⚕️ Filtrando por terapeuta_id:", user.id);
           query = query.eq("terapeuta_id", user.id);
         } else {
-          console.log("\u{1F31F} Coordinadora - cargando TODOS los pacientes");
+          console.log("🌟 Coordinadora - cargando TODOS los pacientes");
         }
         const { data, error } = await query;
         if (error) {
-          console.error("\u274C Error al cargar pacientes:", error);
+          console.error("❌ Error al cargar pacientes:", error);
           return;
         }
-        pacientesReales.value = (data || []).map((p) => {
-          var _a2, _b2;
-          return {
-            id: p.id,
-            nombre: p.nombre_completo || "Sin nombre",
-            email: p.email || "",
-            frecuencia: ((_a2 = p.metadata) == null ? void 0 : _a2.frecuencia) || "No definida",
-            area_acompanamiento: ((_b2 = p.metadata) == null ? void 0 : _b2.area_de_acompanamiento) || ""
-          };
-        });
-        console.log(`\u2705 ${pacientesReales.value.length} pacientes cargados (rol: ${((_c = userProfile.value) == null ? void 0 : _c.rol) || "desconocido"})`);
-        console.log("\u{1F4DD} Pacientes:", pacientesReales.value);
+        pacientesReales.value = (data || []).map((p) => ({
+          id: p.id,
+          nombre: p.nombre_completo || "Sin nombre",
+          email: p.email || "",
+          frecuencia: p.metadata?.frecuencia || "No definida",
+          area_acompanamiento: p.metadata?.area_de_acompanamiento || ""
+        }));
+        console.log(`✅ ${pacientesReales.value.length} pacientes cargados (rol: ${userProfile.value?.rol || "desconocido"})`);
+        console.log("📝 Pacientes:", pacientesReales.value);
       } catch (error) {
-        console.error("\u274C Error al cargar pacientes:", error);
+        console.error("❌ Error al cargar pacientes:", error);
       } finally {
         cargandoPacientes.value = false;
       }
@@ -285,7 +281,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             formulario.value.fecha = sugerencia.fecha;
             formulario.value.hora_inicio = sugerencia.hora;
             calcularHoraFin();
-            console.log("\u{1F4A1} Horario sugerido:", sugerencia);
+            console.log("💡 Horario sugerido:", sugerencia);
           }
         } catch (error) {
           console.error("Error al sugerir horario:", error);
@@ -293,7 +289,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           cargandoSugerencia.value = false;
         }
       }
-      console.log("\u2705 Paciente seleccionado:", paciente.nombre);
+      console.log("✅ Paciente seleccionado:", paciente.nombre);
     }
     function calcularHoraFin() {
       if (!formulario.value.hora_inicio || !formulario.value.duracion) return;
@@ -333,7 +329,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           minNuevaInicio <= minExistenteInicio && minNuevaFin >= minExistenteFin || // Contiene otra cita
           minNuevaInicio === minExistenteInicio && minNuevaFin === minExistenteFin;
           if (haySolapamiento) {
-            console.log("\u26A0\uFE0F Conflicto detectado:", {
+            console.log("⚠️ Conflicto detectado:", {
               nueva: `${inicioNueva} - ${finNueva}`,
               existente: `${inicioExistente} - ${finExistente}`,
               estado: cita.estado,
@@ -343,10 +339,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           return haySolapamiento;
         });
         if (conflictoHorario.value) {
-          console.warn("\u26A0\uFE0F Hay conflicto de horario");
+          console.warn("⚠️ Hay conflicto de horario");
         }
       } catch (error) {
-        console.error("\u274C Error al verificar conflicto:", error);
+        console.error("❌ Error al verificar conflicto:", error);
         conflictoHorario.value = false;
       }
     }
@@ -378,7 +374,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           return;
         }
         terapeutas.value = data || [];
-        console.log(`\u2705 ${terapeutas.value.length} terapeutas cargados`);
+        console.log(`✅ ${terapeutas.value.length} terapeutas cargados`);
       } catch (error) {
         console.error("Error al cargar terapeutas:", error);
       } finally {
@@ -387,23 +383,23 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     }
     async function verificarRolUsuario() {
       try {
-        console.log("\u{1F50D} Verificando rol de usuario...");
+        console.log("🔍 Verificando rol de usuario...");
         const { userProfile } = useSupabase();
         if (!userProfile.value) {
-          console.warn("\u26A0\uFE0F No hay perfil cargado");
+          console.warn("⚠️ No hay perfil cargado");
           esCoordinadora.value = false;
           return;
         }
-        console.log("\u{1F464} Usuario:", userProfile.value.email);
-        console.log("\u{1F3AD} Rol del perfil:", userProfile.value.rol);
+        console.log("👤 Usuario:", userProfile.value.email);
+        console.log("🎭 Rol del perfil:", userProfile.value.rol);
         esCoordinadora.value = userProfile.value.rol === "coordinadora";
-        console.log(`\u2705 \xBFEs coordinadora? ${esCoordinadora.value}`);
+        console.log(`✅ ¿Es coordinadora? ${esCoordinadora.value}`);
         if (esCoordinadora.value) {
-          console.log("\u{1F31F} Usuario es coordinadora - cargando terapeutas");
+          console.log("🌟 Usuario es coordinadora - cargando terapeutas");
           await cargarTerapeutas();
         }
       } catch (error) {
-        console.error("\u274C Error al verificar rol:", error);
+        console.error("❌ Error al verificar rol:", error);
         esCoordinadora.value = false;
       }
     }
@@ -425,7 +421,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     });
     watch(() => props.mostrar, (nuevo) => {
       if (nuevo) {
-        console.log("\u{1F3AF} Modal abierto - verificando rol y cargando datos");
+        console.log("🎯 Modal abierto - verificando rol y cargando datos");
         verificarRolUsuario();
         cargarPacientes();
         if (props.pacientePreseleccionado) {
@@ -496,7 +492,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           if (!unref(pacienteSeleccionado)) {
             _push(`<div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded" data-v-75e79c96><p class="flex items-center gap-2 text-sm text-blue-800" data-v-75e79c96>`);
             _push(ssrRenderComponent(unref(MagnifyingGlassIcon), { class: "w-5 h-5 flex-shrink-0" }, null, _parent));
-            _push(`<span data-v-75e79c96>Busca y selecciona un paciente ya registrado en el sistema</span></p><p class="text-xs text-blue-700 mt-1.5 ml-7" data-v-75e79c96> Para crear un paciente nuevo, ve a la secci\xF3n <strong data-v-75e79c96>Pacientes</strong> en el men\xFA principal </p></div>`);
+            _push(`<span data-v-75e79c96>Busca y selecciona un paciente ya registrado en el sistema</span></p><p class="text-xs text-blue-700 mt-1.5 ml-7" data-v-75e79c96> Para crear un paciente nuevo, ve a la sección <strong data-v-75e79c96>Pacientes</strong> en el menú principal </p></div>`);
           } else {
             _push(`<!---->`);
           }
@@ -571,15 +567,15 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
               if (unref(infoBono).sesiones_restantes <= 2) {
                 _push(`<div class="mb-4 flex items-start gap-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded-lg" data-v-75e79c96>`);
                 _push(ssrRenderComponent(unref(ExclamationTriangleIcon), { class: "w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" }, null, _parent));
-                _push(`<div class="text-sm" data-v-75e79c96><div class="font-semibold text-amber-900 mb-1" data-v-75e79c96>${ssrInterpolate(unref(infoBono).sesiones_restantes === 1 ? "\xA1\xDAltima sesi\xF3n del bono!" : "\xA1Pocas sesiones restantes!")}</div><div class="text-amber-800" data-v-75e79c96>${ssrInterpolate(unref(infoBono).sesiones_restantes === 1 ? "Esta es la \xFAltima sesi\xF3n disponible. Considere informar al paciente para renovar su bono." : `Solo quedan ${unref(infoBono).sesiones_restantes} sesiones. Considere informar al paciente para renovar su bono pronto.`)}</div></div></div>`);
+                _push(`<div class="text-sm" data-v-75e79c96><div class="font-semibold text-amber-900 mb-1" data-v-75e79c96>${ssrInterpolate(unref(infoBono).sesiones_restantes === 1 ? "¡Última sesión del bono!" : "¡Pocas sesiones restantes!")}</div><div class="text-amber-800" data-v-75e79c96>${ssrInterpolate(unref(infoBono).sesiones_restantes === 1 ? "Esta es la última sesión disponible. Considere informar al paciente para renovar su bono." : `Solo quedan ${unref(infoBono).sesiones_restantes} sesiones. Considere informar al paciente para renovar su bono pronto.`)}</div></div></div>`);
               } else {
                 _push(`<!---->`);
               }
-              _push(`<div class="flex items-start gap-3 p-3 bg-white border-2 border-blue-300 rounded-lg" data-v-75e79c96><input id="descontar-bono"${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).descontar_de_bono) ? ssrLooseContain(unref(formulario).descontar_de_bono, null) : unref(formulario).descontar_de_bono) ? " checked" : ""} type="checkbox" class="mt-1 w-5 h-5 text-blue-600 border-blue-300 rounded focus:ring-blue-500 focus:ring-2" data-v-75e79c96><label for="descontar-bono" class="flex-1 cursor-pointer" data-v-75e79c96><div class="text-sm text-blue-900 font-semibold mb-1" data-v-75e79c96> Descontar sesi\xF3n de este bono </div><div class="text-xs text-blue-700" data-v-75e79c96> Al completar esta cita, se descontar\xE1 autom\xE1ticamente 1 sesi\xF3n del bono activo. Quedar\xE1n <strong data-v-75e79c96>${ssrInterpolate(unref(infoBono).sesiones_restantes - 1)}</strong> sesiones disponibles. </div></label></div></div>`);
+              _push(`<div class="flex items-start gap-3 p-3 bg-white border-2 border-blue-300 rounded-lg" data-v-75e79c96><input id="descontar-bono"${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).descontar_de_bono) ? ssrLooseContain(unref(formulario).descontar_de_bono, null) : unref(formulario).descontar_de_bono) ? " checked" : ""} type="checkbox" class="mt-1 w-5 h-5 text-blue-600 border-blue-300 rounded focus:ring-blue-500 focus:ring-2" data-v-75e79c96><label for="descontar-bono" class="flex-1 cursor-pointer" data-v-75e79c96><div class="text-sm text-blue-900 font-semibold mb-1" data-v-75e79c96> Descontar sesión de este bono </div><div class="text-xs text-blue-700" data-v-75e79c96> Al completar esta cita, se descontará automáticamente 1 sesión del bono activo. Quedarán <strong data-v-75e79c96>${ssrInterpolate(unref(infoBono).sesiones_restantes - 1)}</strong> sesiones disponibles. </div></label></div></div>`);
             } else {
               _push(`<div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 rounded-lg shadow-sm" data-v-75e79c96><div class="flex items-start gap-3" data-v-75e79c96>`);
               _push(ssrRenderComponent(unref(InformationCircleIcon), { class: "w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" }, null, _parent));
-              _push(`<div data-v-75e79c96><div class="font-semibold text-amber-900 mb-1" data-v-75e79c96>Sin bono activo</div><div class="text-sm text-amber-800" data-v-75e79c96> Este paciente no tiene bonos activos actualmente. Esta sesi\xF3n se cobrar\xE1 de forma individual. </div></div></div></div>`);
+              _push(`<div data-v-75e79c96><div class="font-semibold text-amber-900 mb-1" data-v-75e79c96>Sin bono activo</div><div class="text-sm text-amber-800" data-v-75e79c96> Este paciente no tiene bonos activos actualmente. Esta sesión se cobrará de forma individual. </div></div></div></div>`);
             }
             _push(`</div>`);
           } else {
@@ -602,7 +598,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           if (!unref(terapeutaSeleccionado)) {
             _push(`<div class="p-3 bg-purple-50 border-l-4 border-purple-400 rounded" data-v-75e79c96><p class="flex items-center gap-2 text-sm text-purple-800" data-v-75e79c96>`);
             _push(ssrRenderComponent(unref(UserGroupIcon), { class: "w-5 h-5 flex-shrink-0" }, null, _parent));
-            _push(`<span data-v-75e79c96>Selecciona el terapeuta que atender\xE1 esta cita</span></p></div>`);
+            _push(`<span data-v-75e79c96>Selecciona el terapeuta que atenderá esta cita</span></p></div>`);
           } else {
             _push(`<!---->`);
           }
@@ -644,11 +640,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         if (!unref(formularioValido)) {
           _push(`<span class="w-7 h-7 rounded-full bg-[#D8AFA0] text-white flex items-center justify-center text-sm font-bold" data-v-75e79c96>${ssrInterpolate(unref(esCoordinadora) ? "3" : props.pacientePreseleccionado ? "1" : "2")}</span>`);
         } else {
-          _push(`<span class="w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center" data-v-75e79c96> \u2713 </span>`);
+          _push(`<span class="w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center" data-v-75e79c96> ✓ </span>`);
         }
         _push(` Detalles de la Cita </h3><div class="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm space-y-4" data-v-75e79c96><h4 class="text-sm font-bold text-blue-900 flex items-center gap-2" data-v-75e79c96>`);
         _push(ssrRenderComponent(unref(CalendarIcon), { class: "w-5 h-5 text-blue-600" }, null, _parent));
-        _push(`<span data-v-75e79c96>Detalles de Programaci\xF3n</span></h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4" data-v-75e79c96><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2" data-v-75e79c96>`);
+        _push(`<span data-v-75e79c96>Detalles de Programación</span></h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4" data-v-75e79c96><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2" data-v-75e79c96>`);
         _push(ssrRenderComponent(unref(CalendarIcon), { class: "w-4 h-4" }, null, _parent));
         _push(`<span data-v-75e79c96>Fecha</span><span class="text-red-500" data-v-75e79c96>*</span></label><div class="space-y-2" data-v-75e79c96><input${ssrRenderAttr("value", unref(formulario).fecha)} type="date" required${ssrRenderAttr("min", unref(fechaMinima))} class="${ssrRenderClass([
           "w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white text-base cursor-pointer",
@@ -662,7 +658,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         });
         _push(`<!--]--></div>`);
         if (unref(fechaSugerida) && unref(fechaSugerida) !== unref(formulario).fecha) {
-          _push(`<div class="flex items-center gap-2" data-v-75e79c96><button type="button" class="text-xs px-2 py-1 bg-green-50 text-green-700 border border-green-200 rounded hover:bg-green-100 transition-colors" data-v-75e79c96> \u{1F4A1} Usar fecha sugerida: ${ssrInterpolate(formatearFechaLegible(unref(fechaSugerida)))}</button></div>`);
+          _push(`<div class="flex items-center gap-2" data-v-75e79c96><button type="button" class="text-xs px-2 py-1 bg-green-50 text-green-700 border border-green-200 rounded hover:bg-green-100 transition-colors" data-v-75e79c96> 💡 Usar fecha sugerida: ${ssrInterpolate(formatearFechaLegible(unref(fechaSugerida)))}</button></div>`);
         } else {
           _push(`<!---->`);
         }
@@ -697,11 +693,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         } else {
           _push(`<!---->`);
         }
-        _push(`</div></div><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-1" data-v-75e79c96> Duraci\xF3n <span class="text-red-500" data-v-75e79c96>*</span></label><select required class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white" data-v-75e79c96><option value="30" data-v-75e79c96${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).duracion) ? ssrLooseContain(unref(formulario).duracion, "30") : ssrLooseEqual(unref(formulario).duracion, "30")) ? " selected" : ""}>30 minutos</option><option value="60" selected data-v-75e79c96>60 minutos (1 hora)</option><option value="90" data-v-75e79c96${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).duracion) ? ssrLooseContain(unref(formulario).duracion, "90") : ssrLooseEqual(unref(formulario).duracion, "90")) ? " selected" : ""}>90 minutos (1.5 horas)</option><option value="120" data-v-75e79c96${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).duracion) ? ssrLooseContain(unref(formulario).duracion, "120") : ssrLooseEqual(unref(formulario).duracion, "120")) ? " selected" : ""}>120 minutos (2 horas)</option></select></div><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-1" data-v-75e79c96> Hora de Fin </label><input${ssrRenderAttr("value", unref(formulario).hora_fin)} type="text" readonly class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg bg-gray-100 text-[#5D4A44]/60" placeholder="Se calcular\xE1 autom\xE1ticamente" data-v-75e79c96></div></div></div><div class="p-5 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl shadow-sm space-y-4" data-v-75e79c96><h4 class="text-sm font-bold text-purple-900 flex items-center gap-2" data-v-75e79c96>`);
+        _push(`</div></div><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-1" data-v-75e79c96> Duración <span class="text-red-500" data-v-75e79c96>*</span></label><select required class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white" data-v-75e79c96><option value="30" data-v-75e79c96${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).duracion) ? ssrLooseContain(unref(formulario).duracion, "30") : ssrLooseEqual(unref(formulario).duracion, "30")) ? " selected" : ""}>30 minutos</option><option value="60" selected data-v-75e79c96>60 minutos (1 hora)</option><option value="90" data-v-75e79c96${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).duracion) ? ssrLooseContain(unref(formulario).duracion, "90") : ssrLooseEqual(unref(formulario).duracion, "90")) ? " selected" : ""}>90 minutos (1.5 horas)</option><option value="120" data-v-75e79c96${ssrIncludeBooleanAttr(Array.isArray(unref(formulario).duracion) ? ssrLooseContain(unref(formulario).duracion, "120") : ssrLooseEqual(unref(formulario).duracion, "120")) ? " selected" : ""}>120 minutos (2 horas)</option></select></div><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-1" data-v-75e79c96> Hora de Fin </label><input${ssrRenderAttr("value", unref(formulario).hora_fin)} type="text" readonly class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg bg-gray-100 text-[#5D4A44]/60" placeholder="Se calculará automáticamente" data-v-75e79c96></div></div></div><div class="p-5 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl shadow-sm space-y-4" data-v-75e79c96><h4 class="text-sm font-bold text-purple-900 flex items-center gap-2" data-v-75e79c96>`);
         _push(ssrRenderComponent(unref(ComputerDesktopIcon), { class: "w-5 h-5 text-purple-600" }, null, _parent));
-        _push(`<span data-v-75e79c96>Tipo de Sesi\xF3n y Estado</span></h4><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2" data-v-75e79c96>`);
+        _push(`<span data-v-75e79c96>Tipo de Sesión y Estado</span></h4><div data-v-75e79c96><label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2" data-v-75e79c96>`);
         _push(ssrRenderComponent(unref(ComputerDesktopIcon), { class: "w-5 h-5" }, null, _parent));
-        _push(`<span data-v-75e79c96>Tipo de Sesi\xF3n</span><span class="text-red-500" data-v-75e79c96>*</span></label><div class="${ssrRenderClass([
+        _push(`<span data-v-75e79c96>Tipo de Sesión</span><span class="text-red-500" data-v-75e79c96>*</span></label><div class="${ssrRenderClass([
           "grid grid-cols-3 gap-3",
           unref(camposInvalidos).includes("tipo") ? "p-3 border-2 border-red-500 bg-red-50 rounded-lg" : ""
         ])}" data-v-75e79c96><!--[-->`);
@@ -761,7 +757,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             _push(`<!---->`);
           }
           if (!unref(formulario).tipo) {
-            _push(`<li class="flex items-center gap-2" data-v-75e79c96><span class="w-1.5 h-1.5 rounded-full bg-red-500" data-v-75e79c96></span><span data-v-75e79c96>Selecciona el tipo de sesi\xF3n</span></li>`);
+            _push(`<li class="flex items-center gap-2" data-v-75e79c96><span class="w-1.5 h-1.5 rounded-full bg-red-500" data-v-75e79c96></span><span data-v-75e79c96>Selecciona el tipo de sesión</span></li>`);
           } else {
             _push(`<!---->`);
           }
@@ -777,11 +773,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         if (unref(formularioValido) && !unref(conflictoHorario)) {
           _push(`<div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg shadow-sm" data-v-75e79c96><div class="flex items-start gap-3" data-v-75e79c96>`);
           _push(ssrRenderComponent(unref(InformationCircleIcon), { class: "w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" }, null, _parent));
-          _push(`<div class="flex-1" data-v-75e79c96><div class="font-semibold text-blue-900 mb-3" data-v-75e79c96> Resumen de la Cita </div><div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm" data-v-75e79c96><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Paciente:</span><div class="text-blue-900 font-semibold" data-v-75e79c96>${ssrInterpolate(unref(formulario).paciente_nombre)}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Fecha:</span><div class="text-blue-900" data-v-75e79c96>${ssrInterpolate(formatearFechaLegible(unref(formulario).fecha))}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Horario:</span><div class="text-blue-900 font-semibold" data-v-75e79c96>${ssrInterpolate(unref(formulario).hora_inicio)} - ${ssrInterpolate(unref(formulario).hora_fin)}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Duraci\xF3n:</span><div class="text-blue-900" data-v-75e79c96>${ssrInterpolate(unref(formulario).duracion)} minutos</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Tipo:</span><div class="text-blue-900 capitalize" data-v-75e79c96>${ssrInterpolate(unref(formulario).tipo)}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Estado:</span><div class="text-blue-900 capitalize" data-v-75e79c96>${ssrInterpolate(unref(formulario).estado)}</div></div>`);
+          _push(`<div class="flex-1" data-v-75e79c96><div class="font-semibold text-blue-900 mb-3" data-v-75e79c96> Resumen de la Cita </div><div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm" data-v-75e79c96><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Paciente:</span><div class="text-blue-900 font-semibold" data-v-75e79c96>${ssrInterpolate(unref(formulario).paciente_nombre)}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Fecha:</span><div class="text-blue-900" data-v-75e79c96>${ssrInterpolate(formatearFechaLegible(unref(formulario).fecha))}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Horario:</span><div class="text-blue-900 font-semibold" data-v-75e79c96>${ssrInterpolate(unref(formulario).hora_inicio)} - ${ssrInterpolate(unref(formulario).hora_fin)}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Duración:</span><div class="text-blue-900" data-v-75e79c96>${ssrInterpolate(unref(formulario).duracion)} minutos</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Tipo:</span><div class="text-blue-900 capitalize" data-v-75e79c96>${ssrInterpolate(unref(formulario).tipo)}</div></div><div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Estado:</span><div class="text-blue-900 capitalize" data-v-75e79c96>${ssrInterpolate(unref(formulario).estado)}</div></div>`);
           if (unref(formulario).descontar_de_bono) {
             _push(`<div class="md:col-span-2 flex items-center gap-2" data-v-75e79c96>`);
             _push(ssrRenderComponent(unref(TicketIcon), { class: "w-5 h-5 text-blue-600" }, null, _parent));
-            _push(`<div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Bono:</span><span class="text-blue-900 ml-2" data-v-75e79c96>Se descontar\xE1 1 sesi\xF3n del bono activo</span></div></div>`);
+            _push(`<div data-v-75e79c96><span class="text-blue-600 font-medium" data-v-75e79c96>Bono:</span><span class="text-blue-900 ml-2" data-v-75e79c96>Se descontará 1 sesión del bono activo</span></div></div>`);
           } else {
             _push(`<!---->`);
           }
@@ -789,10 +785,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         } else {
           _push(`<!---->`);
         }
-        _push(`<div class="sticky bottom-0 bg-[#F9F7F3] pt-4 border-t border-[#D8AFA0]/30 flex gap-3 mt-6" data-v-75e79c96><button type="button" class="flex-1 px-6 py-3 border-2 border-[#D8AFA0] text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors font-medium" aria-label="Cancelar creaci\xF3n de cita" data-v-75e79c96> Cancelar </button><div class="relative flex-1" data-v-75e79c96><button type="submit"${ssrIncludeBooleanAttr(!unref(formularioValido) || unref(guardando) || unref(conflictoHorario)) ? " disabled" : ""} class="${ssrRenderClass([
+        _push(`<div class="sticky bottom-0 bg-[#F9F7F3] pt-4 border-t border-[#D8AFA0]/30 flex gap-3 mt-6" data-v-75e79c96><button type="button" class="flex-1 px-6 py-3 border-2 border-[#D8AFA0] text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors font-medium" aria-label="Cancelar creación de cita" data-v-75e79c96> Cancelar </button><div class="relative flex-1" data-v-75e79c96><button type="submit"${ssrIncludeBooleanAttr(!unref(formularioValido) || unref(guardando) || unref(conflictoHorario)) ? " disabled" : ""} class="${ssrRenderClass([
           "w-full px-6 py-3 rounded-lg transition-all font-medium text-white",
           unref(formularioValido) && !unref(guardando) && !unref(conflictoHorario) ? "bg-[#D8AFA0] hover:bg-[#D8AFA0]/90 hover:shadow-lg cursor-pointer" : "bg-gray-400 cursor-not-allowed opacity-60"
-        ])}"${ssrRenderAttr("aria-label", unref(formularioValido) ? "Guardar cita" : "Completa todos los campos requeridos para guardar")} data-v-75e79c96>${ssrInterpolate(unref(guardando) ? "Guardando..." : "\u2713 Guardar Cita")}</button>`);
+        ])}"${ssrRenderAttr("aria-label", unref(formularioValido) ? "Guardar cita" : "Completa todos los campos requeridos para guardar")} data-v-75e79c96>${ssrInterpolate(unref(guardando) ? "Guardando..." : "✓ Guardar Cita")}</button>`);
         if (!unref(formularioValido) && !unref(guardando)) {
           _push(`<div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-2 rounded shadow-lg whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none" data-v-75e79c96> Completa todos los campos obligatorios (*) </div>`);
         } else {
@@ -803,7 +799,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           _push(`<div class="${ssrRenderClass([
             "fixed bottom-6 right-6 max-w-md rounded-lg shadow-2xl p-4 z-[60]",
             unref(toastTipo) === "exito" ? "bg-gradient-to-r from-green-500 to-emerald-500" : unref(toastTipo) === "error" ? "bg-gradient-to-r from-red-500 to-rose-500" : "bg-gradient-to-r from-blue-500 to-indigo-500"
-          ])}" data-v-75e79c96><div class="flex items-start gap-3 text-white" data-v-75e79c96><div class="text-3xl" data-v-75e79c96>${ssrInterpolate(unref(toastTipo) === "exito" ? "\u2705" : unref(toastTipo) === "error" ? "\u274C" : "\u2139\uFE0F")}</div><div class="flex-1" data-v-75e79c96><div class="font-bold text-lg mb-1" data-v-75e79c96>${ssrInterpolate(unref(toastTitulo))}</div><div class="text-sm opacity-90 mb-3" data-v-75e79c96>${ssrInterpolate(unref(toastMensaje))}</div>`);
+          ])}" data-v-75e79c96><div class="flex items-start gap-3 text-white" data-v-75e79c96><div class="text-3xl" data-v-75e79c96>${ssrInterpolate(unref(toastTipo) === "exito" ? "✅" : unref(toastTipo) === "error" ? "❌" : "ℹ️")}</div><div class="flex-1" data-v-75e79c96><div class="font-bold text-lg mb-1" data-v-75e79c96>${ssrInterpolate(unref(toastTitulo))}</div><div class="text-sm opacity-90 mb-3" data-v-75e79c96>${ssrInterpolate(unref(toastMensaje))}</div>`);
           if (unref(toastAcciones).length > 0) {
             _push(`<div class="flex gap-2" data-v-75e79c96><!--[-->`);
             ssrRenderList(unref(toastAcciones), (accion, index) => {
@@ -813,7 +809,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           } else {
             _push(`<!---->`);
           }
-          _push(`</div><button class="text-white/80 hover:text-white transition-colors" data-v-75e79c96> \u2715 </button></div></div>`);
+          _push(`</div><button class="text-white/80 hover:text-white transition-colors" data-v-75e79c96> ✕ </button></div></div>`);
         } else {
           _push(`<!---->`);
         }

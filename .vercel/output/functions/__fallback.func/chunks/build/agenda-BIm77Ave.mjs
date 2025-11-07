@@ -42,9 +42,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const fechaModalCita = ref("");
     const horaModalCita = ref("");
     const vistas = [
-      { id: "dia", nombre: "D\xEDa", icono: "\u{1F4C5}" },
-      { id: "semana", nombre: "Semana", icono: "\u{1F4C6}" },
-      { id: "mes", nombre: "Mes", icono: "\u{1F5D3}\uFE0F" }
+      { id: "dia", nombre: "Día", icono: "📅" },
+      { id: "semana", nombre: "Semana", icono: "📆" },
+      { id: "mes", nombre: "Mes", icono: "🗓️" }
     ];
     async function cargarCitasDelDia() {
       cargando.value = true;
@@ -113,11 +113,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     }
     function obtenerIconoTipo(tipo) {
       const iconos = {
-        presencial: "\u{1F3E5}",
-        online: "\u{1F4BB}",
-        telefonica: "\u{1F4DE}"
+        presencial: "🏥",
+        online: "💻",
+        telefonica: "📞"
       };
-      return iconos[tipo] || "\u{1F4C5}";
+      return iconos[tipo] || "📅";
     }
     function obtenerColorEstado(estado) {
       const colores = {
@@ -147,7 +147,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       _push(ssrRenderComponent(_component_NuxtLayout, { name: "coordinacion" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<div class="mb-8"${_scopeId}><h1 class="text-4xl font-serif font-bold text-cafe mb-2"${_scopeId}> Agenda Global </h1><p class="text-lg text-cafe/70"${_scopeId}> Gesti\xF3n y coordinaci\xF3n de todas las sesiones de terapeutas </p></div><div class="mb-6 flex flex-wrap gap-3"${_scopeId}><select class="px-4 py-2 rounded-lg border border-[#EAD5D3]/40 bg-white text-cafe focus:ring-2 focus:ring-terracota focus:border-transparent"${_scopeId}><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(terapeutaFiltro)) ? ssrLooseContain(unref(terapeutaFiltro), "") : ssrLooseEqual(unref(terapeutaFiltro), "")) ? " selected" : ""}${_scopeId}>Todos los terapeutas</option><!--[-->`);
+            _push2(`<div class="mb-8"${_scopeId}><h1 class="text-4xl font-serif font-bold text-cafe mb-2"${_scopeId}> Agenda Global </h1><p class="text-lg text-cafe/70"${_scopeId}> Gestión y coordinación de todas las sesiones de terapeutas </p></div><div class="mb-6 flex flex-wrap gap-3"${_scopeId}><select class="px-4 py-2 rounded-lg border border-[#EAD5D3]/40 bg-white text-cafe focus:ring-2 focus:ring-terracota focus:border-transparent"${_scopeId}><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(terapeutaFiltro)) ? ssrLooseContain(unref(terapeutaFiltro), "") : ssrLooseEqual(unref(terapeutaFiltro), "")) ? " selected" : ""}${_scopeId}>Todos los terapeutas</option><!--[-->`);
             ssrRenderList(unref(terapeutas), (terapeuta) => {
               _push2(`<option${ssrRenderAttr("value", terapeuta.id)}${ssrIncludeBooleanAttr(Array.isArray(unref(terapeutaFiltro)) ? ssrLooseContain(unref(terapeutaFiltro), terapeuta.id) : ssrLooseEqual(unref(terapeutaFiltro), terapeuta.id)) ? " selected" : ""}${_scopeId}>${ssrInterpolate(terapeuta.nombre_completo)}</option>`);
             });
@@ -160,15 +160,15 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             });
             _push2(`<!--]--><button class="ml-auto px-5 py-2.5 rounded-lg font-medium bg-gradient-to-r from-terracota to-rosa text-white hover:from-terracota/90 hover:to-rosa/90 shadow-md transition-all"${_scopeId}><span class="mr-2"${_scopeId}>+</span> Nueva Cita </button></div>`);
             if (unref(vistaActual) === "dia") {
-              _push2(`<div class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6"${_scopeId}><div class="mb-6 flex items-center gap-4"${_scopeId}><button class="p-2 hover:bg-terracota/10 rounded-lg transition-colors"${_scopeId}> \u2190 Anterior </button><input${ssrRenderAttr("value", unref(fechaSeleccionada))} type="date" class="flex-1 px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20"${_scopeId}><button class="px-4 py-2 bg-terracota/10 text-terracota rounded-lg hover:bg-terracota/20 transition-colors font-medium"${_scopeId}> Hoy </button><button class="p-2 hover:bg-terracota/10 rounded-lg transition-colors"${_scopeId}> Siguiente \u2192 </button></div><div class="mb-6"${_scopeId}><h2 class="text-2xl font-serif font-semibold text-cafe mb-1"${_scopeId}>${ssrInterpolate(formatearFechaLegible(unref(fechaSeleccionada)))}</h2><p class="text-cafe/60"${_scopeId}>${ssrInterpolate(unref(citasDelDia).length)} cita${ssrInterpolate(unref(citasDelDia).length !== 1 ? "s" : "")} programada${ssrInterpolate(unref(citasDelDia).length !== 1 ? "s" : "")}</p></div>`);
+              _push2(`<div class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6"${_scopeId}><div class="mb-6 flex items-center gap-4"${_scopeId}><button class="p-2 hover:bg-terracota/10 rounded-lg transition-colors"${_scopeId}> ← Anterior </button><input${ssrRenderAttr("value", unref(fechaSeleccionada))} type="date" class="flex-1 px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20"${_scopeId}><button class="px-4 py-2 bg-terracota/10 text-terracota rounded-lg hover:bg-terracota/20 transition-colors font-medium"${_scopeId}> Hoy </button><button class="p-2 hover:bg-terracota/10 rounded-lg transition-colors"${_scopeId}> Siguiente → </button></div><div class="mb-6"${_scopeId}><h2 class="text-2xl font-serif font-semibold text-cafe mb-1"${_scopeId}>${ssrInterpolate(formatearFechaLegible(unref(fechaSeleccionada)))}</h2><p class="text-cafe/60"${_scopeId}>${ssrInterpolate(unref(citasDelDia).length)} cita${ssrInterpolate(unref(citasDelDia).length !== 1 ? "s" : "")} programada${ssrInterpolate(unref(citasDelDia).length !== 1 ? "s" : "")}</p></div>`);
               if (unref(cargando)) {
                 _push2(`<div class="text-center py-12"${_scopeId}><div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-terracota"${_scopeId}></div></div>`);
               } else if (unref(citasDelDia).length === 0) {
-                _push2(`<div class="text-center py-12"${_scopeId}><span class="text-6xl mb-4 block"${_scopeId}>\u{1F4C5}</span><p class="text-lg text-cafe font-medium mb-2"${_scopeId}>Sin citas programadas</p><p class="text-cafe/60"${_scopeId}>No hay citas para ${ssrInterpolate(formatearFechaLegible(unref(fechaSeleccionada)))}</p></div>`);
+                _push2(`<div class="text-center py-12"${_scopeId}><span class="text-6xl mb-4 block"${_scopeId}>📅</span><p class="text-lg text-cafe font-medium mb-2"${_scopeId}>Sin citas programadas</p><p class="text-cafe/60"${_scopeId}>No hay citas para ${ssrInterpolate(formatearFechaLegible(unref(fechaSeleccionada)))}</p></div>`);
               } else {
                 _push2(`<div class="space-y-4"${_scopeId}><!--[-->`);
                 ssrRenderList(unref(citasDelDia), (cita) => {
-                  _push2(`<div class="${ssrRenderClass([obtenerColorEstado(cita.estado), "bg-gradient-to-r from-base-bg to-white rounded-lg p-5 border-l-4 hover:shadow-md transition-all"])}"${_scopeId}><div class="flex items-start justify-between"${_scopeId}><div class="flex-1"${_scopeId}><div class="flex items-center gap-3 mb-2"${_scopeId}><span class="text-3xl"${_scopeId}>${ssrInterpolate(obtenerIconoTipo(cita.modalidad))}</span><div${_scopeId}><h3 class="text-lg font-semibold text-cafe"${_scopeId}>${ssrInterpolate(cita.paciente_nombre)}</h3><p class="text-sm text-cafe/60"${_scopeId}>${ssrInterpolate(cita.hora_inicio)} - ${ssrInterpolate(cita.hora_fin)} \xB7 ${ssrInterpolate(cita.terapeuta_nombre)}</p></div></div>`);
+                  _push2(`<div class="${ssrRenderClass([obtenerColorEstado(cita.estado), "bg-gradient-to-r from-base-bg to-white rounded-lg p-5 border-l-4 hover:shadow-md transition-all"])}"${_scopeId}><div class="flex items-start justify-between"${_scopeId}><div class="flex-1"${_scopeId}><div class="flex items-center gap-3 mb-2"${_scopeId}><span class="text-3xl"${_scopeId}>${ssrInterpolate(obtenerIconoTipo(cita.modalidad))}</span><div${_scopeId}><h3 class="text-lg font-semibold text-cafe"${_scopeId}>${ssrInterpolate(cita.paciente_nombre)}</h3><p class="text-sm text-cafe/60"${_scopeId}>${ssrInterpolate(cita.hora_inicio)} - ${ssrInterpolate(cita.hora_fin)} · ${ssrInterpolate(cita.terapeuta_nombre)}</p></div></div>`);
                   if (cita.observaciones) {
                     _push2(`<div class="mt-3 p-3 bg-white/50 rounded-lg"${_scopeId}><p class="text-sm text-cafe/70"${_scopeId}><span class="font-medium"${_scopeId}>Notas:</span> ${ssrInterpolate(cita.observaciones)}</p></div>`);
                   } else {
@@ -183,7 +183,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
               }
               _push2(`</div>`);
             } else {
-              _push2(`<div class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6"${_scopeId}><div class="text-center py-12"${_scopeId}><span class="text-6xl mb-4 block"${_scopeId}>\u{1F5D3}\uFE0F</span><p class="text-lg text-cafe font-medium mb-2"${_scopeId}>Vista en desarrollo</p><p class="text-cafe/60"${_scopeId}>La vista ${ssrInterpolate(unref(vistaActual))} estar\xE1 disponible pronto</p></div></div>`);
+              _push2(`<div class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6"${_scopeId}><div class="text-center py-12"${_scopeId}><span class="text-6xl mb-4 block"${_scopeId}>🗓️</span><p class="text-lg text-cafe font-medium mb-2"${_scopeId}>Vista en desarrollo</p><p class="text-cafe/60"${_scopeId}>La vista ${ssrInterpolate(unref(vistaActual))} estará disponible pronto</p></div></div>`);
             }
             _push2(ssrRenderComponent(_component_ModalNuevaCita, {
               mostrar: unref(modalNuevaCitaAbierto),
@@ -196,7 +196,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             return [
               createVNode("div", { class: "mb-8" }, [
                 createVNode("h1", { class: "text-4xl font-serif font-bold text-cafe mb-2" }, " Agenda Global "),
-                createVNode("p", { class: "text-lg text-cafe/70" }, " Gesti\xF3n y coordinaci\xF3n de todas las sesiones de terapeutas ")
+                createVNode("p", { class: "text-lg text-cafe/70" }, " Gestión y coordinación de todas las sesiones de terapeutas ")
               ]),
               createVNode("div", { class: "mb-6 flex flex-wrap gap-3" }, [
                 withDirectives(createVNode("select", {
@@ -243,7 +243,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                   createVNode("button", {
                     onClick: ($event) => cambiarDia(-1),
                     class: "p-2 hover:bg-terracota/10 rounded-lg transition-colors"
-                  }, " \u2190 Anterior ", 8, ["onClick"]),
+                  }, " ← Anterior ", 8, ["onClick"]),
                   withDirectives(createVNode("input", {
                     "onUpdate:modelValue": ($event) => isRef(fechaSeleccionada) ? fechaSeleccionada.value = $event : null,
                     type: "date",
@@ -258,7 +258,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                   createVNode("button", {
                     onClick: ($event) => cambiarDia(1),
                     class: "p-2 hover:bg-terracota/10 rounded-lg transition-colors"
-                  }, " Siguiente \u2192 ", 8, ["onClick"])
+                  }, " Siguiente → ", 8, ["onClick"])
                 ]),
                 createVNode("div", { class: "mb-6" }, [
                   createVNode("h2", { class: "text-2xl font-serif font-semibold text-cafe mb-1" }, toDisplayString(formatearFechaLegible(unref(fechaSeleccionada))), 1),
@@ -273,7 +273,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                   key: 1,
                   class: "text-center py-12"
                 }, [
-                  createVNode("span", { class: "text-6xl mb-4 block" }, "\u{1F4C5}"),
+                  createVNode("span", { class: "text-6xl mb-4 block" }, "📅"),
                   createVNode("p", { class: "text-lg text-cafe font-medium mb-2" }, "Sin citas programadas"),
                   createVNode("p", { class: "text-cafe/60" }, "No hay citas para " + toDisplayString(formatearFechaLegible(unref(fechaSeleccionada))), 1)
                 ])) : (openBlock(), createBlock("div", {
@@ -291,7 +291,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                             createVNode("span", { class: "text-3xl" }, toDisplayString(obtenerIconoTipo(cita.modalidad)), 1),
                             createVNode("div", null, [
                               createVNode("h3", { class: "text-lg font-semibold text-cafe" }, toDisplayString(cita.paciente_nombre), 1),
-                              createVNode("p", { class: "text-sm text-cafe/60" }, toDisplayString(cita.hora_inicio) + " - " + toDisplayString(cita.hora_fin) + " \xB7 " + toDisplayString(cita.terapeuta_nombre), 1)
+                              createVNode("p", { class: "text-sm text-cafe/60" }, toDisplayString(cita.hora_inicio) + " - " + toDisplayString(cita.hora_fin) + " · " + toDisplayString(cita.terapeuta_nombre), 1)
                             ])
                           ]),
                           cita.observaciones ? (openBlock(), createBlock("div", {
@@ -321,9 +321,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                 class: "bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6"
               }, [
                 createVNode("div", { class: "text-center py-12" }, [
-                  createVNode("span", { class: "text-6xl mb-4 block" }, "\u{1F5D3}\uFE0F"),
+                  createVNode("span", { class: "text-6xl mb-4 block" }, "🗓️"),
                   createVNode("p", { class: "text-lg text-cafe font-medium mb-2" }, "Vista en desarrollo"),
-                  createVNode("p", { class: "text-cafe/60" }, "La vista " + toDisplayString(unref(vistaActual)) + " estar\xE1 disponible pronto", 1)
+                  createVNode("p", { class: "text-cafe/60" }, "La vista " + toDisplayString(unref(vistaActual)) + " estará disponible pronto", 1)
                 ])
               ])),
               createVNode(_component_ModalNuevaCita, {

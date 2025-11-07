@@ -10,9 +10,6 @@
       "nitropack": [
         "../node_modules/nitropack"
       ],
-      "defu": [
-        "../node_modules/defu"
-      ],
       "h3": [
         "../node_modules/h3"
       ],
@@ -85,6 +82,21 @@
       "vue-demi": [
         "../node_modules/nuxt/dist/app/compat/vue-demi"
       ],
+      "#content/components": [
+        "./content/components.ts"
+      ],
+      "#content/manifest": [
+        "./content/manifest.ts"
+      ],
+      "#mdc-configs": [
+        "./mdc-configs.mjs"
+      ],
+      "#mdc-highlighter": [
+        "./mdc-highlighter.mjs"
+      ],
+      "#mdc-imports": [
+        "./mdc-imports.mjs"
+      ],
       "#pwa": [
         "../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index"
       ],
@@ -100,8 +112,11 @@
       "#tailwind-config": [
         "./tailwind/expose"
       ],
+      "#tailwind-config/*": [
+        "./tailwind/expose/*"
+      ],
       "#app-manifest": [
-        "./manifest/meta/31dc6f6d-8245-4790-bf9a-53afb25a79e9.json"
+        "./manifest/meta/dev.json"
       ],
       "#build": [
         "."

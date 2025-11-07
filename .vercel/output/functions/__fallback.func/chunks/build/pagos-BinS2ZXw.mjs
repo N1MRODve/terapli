@@ -65,10 +65,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const totalDelMes = computed(() => {
       const hoy = /* @__PURE__ */ new Date();
       const mesActual = hoy.getMonth();
-      const a\u00F1oActual = hoy.getFullYear();
+      const añoActual = hoy.getFullYear();
       return pagos.value.filter((p) => {
         const fecha = new Date(p.created_at);
-        return fecha.getMonth() === mesActual && fecha.getFullYear() === a\u00F1oActual;
+        return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
       }).reduce((sum, p) => sum + parseFloat(p.monto), 0);
     });
     const formatearFecha = (fecha) => {
@@ -114,7 +114,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       try {
         const userId = getUserId();
         if (!userId) {
-          alert("\u274C No est\xE1s autenticado");
+          alert("❌ No estás autenticado");
           return;
         }
         const { error } = await supabase.from("pagos").update({
@@ -123,15 +123,15 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           updated_at: (/* @__PURE__ */ new Date()).toISOString()
         }).eq("id", pago.id);
         if (error) throw error;
-        alert("\u2705 Pago confirmado exitosamente");
+        alert("✅ Pago confirmado exitosamente");
         cargarPagos();
       } catch (error) {
         console.error("Error:", error);
-        alert("\u274C Error al confirmar pago");
+        alert("❌ Error al confirmar pago");
       }
     };
     const enviarAAdministracion = async (pago) => {
-      alert("Esta funcionalidad requiere configurar notificaciones a administraci\xF3n");
+      alert("Esta funcionalidad requiere configurar notificaciones a administración");
     };
     const verDetalles = (pago) => {
       alert(`Detalles del pago:
@@ -153,14 +153,11 @@ Estado: ${pago.estado}
       `).order("created_at", { ascending: false });
         if (error) throw error;
         if (data) {
-          pagos.value = data.map((p) => {
-            var _a, _b;
-            return {
-              ...p,
-              paciente_nombre: ((_a = p.paciente) == null ? void 0 : _a.nombre) || "Sin paciente",
-              terapeuta_nombre: ((_b = p.terapeuta) == null ? void 0 : _b.nombre) || "Sin terapeuta"
-            };
-          });
+          pagos.value = data.map((p) => ({
+            ...p,
+            paciente_nombre: p.paciente?.nombre || "Sin paciente",
+            terapeuta_nombre: p.terapeuta?.nombre || "Sin terapeuta"
+          }));
         }
       } catch (error) {
         console.error("Error al cargar pagos:", error);
@@ -175,12 +172,12 @@ Estado: ${pago.estado}
       _push(ssrRenderComponent(_component_NuxtLayout, { name: "coordinacion" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<div class="mb-10 flex items-center justify-between"${_scopeId}><div${_scopeId}><div class="flex items-center gap-4 mb-3"${_scopeId}><div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center"${_scopeId}><span class="text-2xl"${_scopeId}>\u{1F4B0}</span></div><h1 class="text-4xl font-[&#39;Elms_Sans&#39;] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent"${_scopeId}> Gesti\xF3n de Pagos </h1></div><p class="font-[&#39;Lato&#39;] text-gray-600 ml-18"${_scopeId}> Registro y confirmaci\xF3n de pagos de sesiones con Terapl\xED </p></div><button class="group px-8 py-4 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center space-x-3 hover:scale-105 backdrop-blur-sm border border-white/20"${_scopeId}>`);
+            _push2(`<div class="mb-10 flex items-center justify-between"${_scopeId}><div${_scopeId}><div class="flex items-center gap-4 mb-3"${_scopeId}><div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center"${_scopeId}><span class="text-2xl"${_scopeId}>💰</span></div><h1 class="text-4xl font-[&#39;Elms_Sans&#39;] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent"${_scopeId}> Gestión de Pagos </h1></div><p class="font-[&#39;Lato&#39;] text-gray-600 ml-18"${_scopeId}> Registro y confirmación de pagos de sesiones con Teraplí </p></div><button class="group px-8 py-4 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center space-x-3 hover:scale-105 backdrop-blur-sm border border-white/20"${_scopeId}>`);
             _push2(ssrRenderComponent(_component_Icon, {
               name: "heroicons:plus",
               class: "w-6 h-6 group-hover:scale-110 transition-transform duration-300"
             }, null, _parent2, _scopeId));
-            _push2(`<span class="font-[&#39;Lato&#39;] font-semibold"${_scopeId}>Registrar pago</span></button></div><div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden"${_scopeId}><div class="absolute inset-0 bg-gradient-to-br from-[#5550F2]/5 via-transparent to-[#04BF9D]/5"${_scopeId}></div><div class="relative grid grid-cols-1 md:grid-cols-4 gap-6"${_scopeId}><div${_scopeId}><label class="block text-sm font-[&#39;Lato&#39;] font-semibold text-gray-700 mb-3"${_scopeId}>Estado</label><select class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-[&#39;Lato&#39;] hover:bg-white shadow-sm hover:shadow-md"${_scopeId}><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "") : ssrLooseEqual(unref(filtroEstado), "")) ? " selected" : ""}${_scopeId}>Todos</option><option value="pendiente"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "pendiente") : ssrLooseEqual(unref(filtroEstado), "pendiente")) ? " selected" : ""}${_scopeId}>Pendiente</option><option value="confirmado_paciente"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "confirmado_paciente") : ssrLooseEqual(unref(filtroEstado), "confirmado_paciente")) ? " selected" : ""}${_scopeId}>Confirmado por paciente</option><option value="confirmado_admin"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "confirmado_admin") : ssrLooseEqual(unref(filtroEstado), "confirmado_admin")) ? " selected" : ""}${_scopeId}>Confirmado</option><option value="rechazado"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "rechazado") : ssrLooseEqual(unref(filtroEstado), "rechazado")) ? " selected" : ""}${_scopeId}>Rechazado</option></select></div><div${_scopeId}><label class="block text-sm font-[&#39;Lato&#39;] font-semibold text-gray-700 mb-3"${_scopeId}>B\xFAsqueda</label><input${ssrRenderAttr("value", unref(busqueda))} type="text" placeholder="Nombre del paciente..." class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-[&#39;Lato&#39;] hover:bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"${_scopeId}></div><div${_scopeId}><label class="block text-sm font-medium text-[#5D4A44] mb-2"${_scopeId}>Fecha desde</label><input${ssrRenderAttr("value", unref(fechaDesde))} type="date" class="w-full px-4 py-2 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"${_scopeId}></div><div${_scopeId}><label class="block text-sm font-medium text-[#5D4A44] mb-2"${_scopeId}>Fecha hasta</label><input${ssrRenderAttr("value", unref(fechaHasta))} type="date" class="w-full px-4 py-2 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"${_scopeId}></div></div></div><div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] overflow-hidden"${_scopeId}><div class="overflow-x-auto"${_scopeId}><table class="w-full"${_scopeId}><thead class="bg-[#F9F7F3] border-b border-[#E8DFD8]"${_scopeId}><tr${_scopeId}><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Fecha </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Paciente </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Terapeuta </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Monto </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Estado </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> M\xE9todo </th><th class="px-6 py-4 text-right text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Acciones </th></tr></thead><tbody class="divide-y divide-[#E8DFD8]"${_scopeId}><!--[-->`);
+            _push2(`<span class="font-[&#39;Lato&#39;] font-semibold"${_scopeId}>Registrar pago</span></button></div><div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden"${_scopeId}><div class="absolute inset-0 bg-gradient-to-br from-[#5550F2]/5 via-transparent to-[#04BF9D]/5"${_scopeId}></div><div class="relative grid grid-cols-1 md:grid-cols-4 gap-6"${_scopeId}><div${_scopeId}><label class="block text-sm font-[&#39;Lato&#39;] font-semibold text-gray-700 mb-3"${_scopeId}>Estado</label><select class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-[&#39;Lato&#39;] hover:bg-white shadow-sm hover:shadow-md"${_scopeId}><option value=""${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "") : ssrLooseEqual(unref(filtroEstado), "")) ? " selected" : ""}${_scopeId}>Todos</option><option value="pendiente"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "pendiente") : ssrLooseEqual(unref(filtroEstado), "pendiente")) ? " selected" : ""}${_scopeId}>Pendiente</option><option value="confirmado_paciente"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "confirmado_paciente") : ssrLooseEqual(unref(filtroEstado), "confirmado_paciente")) ? " selected" : ""}${_scopeId}>Confirmado por paciente</option><option value="confirmado_admin"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "confirmado_admin") : ssrLooseEqual(unref(filtroEstado), "confirmado_admin")) ? " selected" : ""}${_scopeId}>Confirmado</option><option value="rechazado"${ssrIncludeBooleanAttr(Array.isArray(unref(filtroEstado)) ? ssrLooseContain(unref(filtroEstado), "rechazado") : ssrLooseEqual(unref(filtroEstado), "rechazado")) ? " selected" : ""}${_scopeId}>Rechazado</option></select></div><div${_scopeId}><label class="block text-sm font-[&#39;Lato&#39;] font-semibold text-gray-700 mb-3"${_scopeId}>Búsqueda</label><input${ssrRenderAttr("value", unref(busqueda))} type="text" placeholder="Nombre del paciente..." class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-[&#39;Lato&#39;] hover:bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"${_scopeId}></div><div${_scopeId}><label class="block text-sm font-medium text-[#5D4A44] mb-2"${_scopeId}>Fecha desde</label><input${ssrRenderAttr("value", unref(fechaDesde))} type="date" class="w-full px-4 py-2 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"${_scopeId}></div><div${_scopeId}><label class="block text-sm font-medium text-[#5D4A44] mb-2"${_scopeId}>Fecha hasta</label><input${ssrRenderAttr("value", unref(fechaHasta))} type="date" class="w-full px-4 py-2 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent"${_scopeId}></div></div></div><div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] overflow-hidden"${_scopeId}><div class="overflow-x-auto"${_scopeId}><table class="w-full"${_scopeId}><thead class="bg-[#F9F7F3] border-b border-[#E8DFD8]"${_scopeId}><tr${_scopeId}><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Fecha </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Paciente </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Terapeuta </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Monto </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Estado </th><th class="px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Método </th><th class="px-6 py-4 text-right text-xs font-medium text-[#5D4A44] uppercase tracking-wider"${_scopeId}> Acciones </th></tr></thead><tbody class="divide-y divide-[#E8DFD8]"${_scopeId}><!--[-->`);
             ssrRenderList(unref(pagosFiltrados), (pago) => {
               _push2(`<tr class="hover:bg-[#F9F7F3] transition-colors"${_scopeId}><td class="px-6 py-4 whitespace-nowrap text-sm text-[#5D4A44]"${_scopeId}>${ssrInterpolate(formatearFecha(pago.created_at))}</td><td class="px-6 py-4 whitespace-nowrap"${_scopeId}><div class="flex items-center space-x-3"${_scopeId}><div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#D8AFA0] to-[#C49484] flex items-center justify-center flex-shrink-0"${_scopeId}><span class="text-white text-xs font-semibold"${_scopeId}>${ssrInterpolate(obtenerIniciales(pago.paciente_nombre))}</span></div><div${_scopeId}><p class="text-sm font-medium text-[#5D4A44]"${_scopeId}>${ssrInterpolate(pago.paciente_nombre)}</p></div></div></td><td class="px-6 py-4 whitespace-nowrap text-sm text-[#8B7470]"${_scopeId}>${ssrInterpolate(pago.terapeuta_nombre)}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#5D4A44]"${_scopeId}>${ssrInterpolate(formatNumber(parseFloat(pago.monto)))}</td><td class="px-6 py-4 whitespace-nowrap"${_scopeId}><span class="${ssrRenderClass([getEstadoClass(pago.estado), "px-3 py-1 rounded-full text-xs font-medium"])}"${_scopeId}>${ssrInterpolate(getEstadoTexto(pago.estado))}</span></td><td class="px-6 py-4 whitespace-nowrap text-sm text-[#8B7470]"${_scopeId}>${ssrInterpolate(pago.metodo_pago || "No especificado")}</td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2"${_scopeId}>`);
               if (pago.estado === "pendiente") {
@@ -194,7 +191,7 @@ Estado: ${pago.estado}
                 _push2(`<!---->`);
               }
               if (pago.estado === "confirmado_paciente") {
-                _push2(`<button class="px-3 py-1 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors" title="Enviar a administraci\xF3n"${_scopeId}>`);
+                _push2(`<button class="px-3 py-1 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors" title="Enviar a administración"${_scopeId}>`);
                 _push2(ssrRenderComponent(_component_Icon, {
                   name: "heroicons:arrow-right-circle",
                   class: "w-4 h-4 inline"
@@ -228,11 +225,11 @@ Estado: ${pago.estado}
                 createVNode("div", null, [
                   createVNode("div", { class: "flex items-center gap-4 mb-3" }, [
                     createVNode("div", { class: "w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center" }, [
-                      createVNode("span", { class: "text-2xl" }, "\u{1F4B0}")
+                      createVNode("span", { class: "text-2xl" }, "💰")
                     ]),
-                    createVNode("h1", { class: "text-4xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent" }, " Gesti\xF3n de Pagos ")
+                    createVNode("h1", { class: "text-4xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent" }, " Gestión de Pagos ")
                   ]),
-                  createVNode("p", { class: "font-['Lato'] text-gray-600 ml-18" }, " Registro y confirmaci\xF3n de pagos de sesiones con Terapl\xED ")
+                  createVNode("p", { class: "font-['Lato'] text-gray-600 ml-18" }, " Registro y confirmación de pagos de sesiones con Teraplí ")
                 ]),
                 createVNode("button", {
                   onClick: ($event) => mostrarModalNuevoPago.value = true,
@@ -264,7 +261,7 @@ Estado: ${pago.estado}
                     ])
                   ]),
                   createVNode("div", null, [
-                    createVNode("label", { class: "block text-sm font-['Lato'] font-semibold text-gray-700 mb-3" }, "B\xFAsqueda"),
+                    createVNode("label", { class: "block text-sm font-['Lato'] font-semibold text-gray-700 mb-3" }, "Búsqueda"),
                     withDirectives(createVNode("input", {
                       "onUpdate:modelValue": ($event) => isRef(busqueda) ? busqueda.value = $event : null,
                       type: "text",
@@ -306,7 +303,7 @@ Estado: ${pago.estado}
                         createVNode("th", { class: "px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider" }, " Terapeuta "),
                         createVNode("th", { class: "px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider" }, " Monto "),
                         createVNode("th", { class: "px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider" }, " Estado "),
-                        createVNode("th", { class: "px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider" }, " M\xE9todo "),
+                        createVNode("th", { class: "px-6 py-4 text-left text-xs font-medium text-[#5D4A44] uppercase tracking-wider" }, " Método "),
                         createVNode("th", { class: "px-6 py-4 text-right text-xs font-medium text-[#5D4A44] uppercase tracking-wider" }, " Acciones ")
                       ])
                     ]),
@@ -351,7 +348,7 @@ Estado: ${pago.estado}
                               key: 1,
                               onClick: ($event) => enviarAAdministracion(),
                               class: "px-3 py-1 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors",
-                              title: "Enviar a administraci\xF3n"
+                              title: "Enviar a administración"
                             }, [
                               createVNode(_component_Icon, {
                                 name: "heroicons:arrow-right-circle",

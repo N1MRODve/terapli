@@ -247,14 +247,14 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       _push(ssrRenderComponent(_component_NuxtLayout, { name: "coordinacion" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<div class="mb-8" data-v-833d468f${_scopeId}><h1 class="text-3xl font-lora font-bold text-[#5D4A44] mb-2" data-v-833d468f${_scopeId}> Dashboard de Coordinaci\xF3n </h1><p class="text-[#8B7470]" data-v-833d468f${_scopeId}>${ssrInterpolate(unref(fechaActual))} \xB7 Resumen general del d\xEDa </p></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" data-v-833d468f${_scopeId}>`);
+            _push2(`<div class="mb-8" data-v-833d468f${_scopeId}><h1 class="text-3xl font-lora font-bold text-[#5D4A44] mb-2" data-v-833d468f${_scopeId}> Dashboard de Coordinación </h1><p class="text-[#8B7470]" data-v-833d468f${_scopeId}>${ssrInterpolate(unref(fechaActual))} · Resumen general del día </p></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" data-v-833d468f${_scopeId}>`);
             _push2(ssrRenderComponent(DashboardCard, {
               title: "Sesiones de hoy",
               count: unref(sesionesHoy).length,
               icon: "heroicons:calendar",
               to: "/coordinacion/agenda",
               subtitle: `${unref(sesionesConfirmadas)} confirmadas`,
-              badge: unref(sesionesHoy).length > 0 ? `Pr\xF3xima: ${unref(proximaSesion)}` : "Sin sesiones",
+              badge: unref(sesionesHoy).length > 0 ? `Próxima: ${unref(proximaSesion)}` : "Sin sesiones",
               variant: unref(sesionesHoy).length > 0 ? "success" : "default"
             }, null, _parent2, _scopeId));
             _push2(ssrRenderComponent(DashboardCard, {
@@ -263,7 +263,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
               icon: "heroicons:credit-card",
               to: "/coordinacion/pagos",
               subtitle: `$${unref(totalPendiente).toFixed(2)} en total`,
-              badge: unref(pagosPendientes).length > 0 ? "Requiere atenci\xF3n" : "Todo al d\xEDa",
+              badge: unref(pagosPendientes).length > 0 ? "Requiere atención" : "Todo al día",
               variant: unref(pagosPendientes).length > 0 ? "warning" : "success"
             }, null, _parent2, _scopeId));
             _push2(ssrRenderComponent(DashboardCard, {
@@ -281,7 +281,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
               icon: "heroicons:bell-alert",
               to: "/coordinacion/agenda",
               subtitle: "Programados para hoy",
-              badge: "Autom\xE1ticos",
+              badge: "Automáticos",
               variant: "default"
             }, null, _parent2, _scopeId));
             _push2(`</div><div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6 mb-8" data-v-833d468f${_scopeId}><div class="flex items-center justify-between mb-6" data-v-833d468f${_scopeId}><h2 class="text-xl font-lora font-semibold text-[#5D4A44]" data-v-833d468f${_scopeId}> Sesiones de hoy </h2>`);
@@ -334,10 +334,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                 }, {
                   default: withCtx((_2, _push3, _parent3, _scopeId2) => {
                     if (_push3) {
-                      _push3(` Ver todas las ${ssrInterpolate(unref(sesionesHoy).length)} sesiones \u2192 `);
+                      _push3(` Ver todas las ${ssrInterpolate(unref(sesionesHoy).length)} sesiones → `);
                     } else {
                       return [
-                        createTextVNode(" Ver todas las " + toDisplayString(unref(sesionesHoy).length) + " sesiones \u2192 ", 1)
+                        createTextVNode(" Ver todas las " + toDisplayString(unref(sesionesHoy).length) + " sesiones → ", 1)
                       ];
                     }
                   }),
@@ -365,14 +365,14 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                       name: "heroicons:plus",
                       class: "w-4 h-4 mr-2"
                     }, null, _parent3, _scopeId2));
-                    _push3(` Programar sesi\xF3n `);
+                    _push3(` Programar sesión `);
                   } else {
                     return [
                       createVNode(_component_Icon, {
                         name: "heroicons:plus",
                         class: "w-4 h-4 mr-2"
                       }),
-                      createTextVNode(" Programar sesi\xF3n ")
+                      createTextVNode(" Programar sesión ")
                     ];
                   }
                 }),
@@ -419,12 +419,12 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
               }, null, _parent2, _scopeId));
               _push2(`<p class="text-sm" data-v-833d468f${_scopeId}>No hay pagos recientes</p></div>`);
             }
-            _push2(`</div><div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6" data-v-833d468f${_scopeId}><h2 class="text-xl font-lora font-semibold text-[#5D4A44] mb-6" data-v-833d468f${_scopeId}> Acciones r\xE1pidas </h2><div class="space-y-3" data-v-833d468f${_scopeId}><button class="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-[#D8AFA0] to-[#C49484] text-white rounded-lg hover:shadow-lg transition-all" data-v-833d468f${_scopeId}>`);
+            _push2(`</div><div class="bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6" data-v-833d468f${_scopeId}><h2 class="text-xl font-lora font-semibold text-[#5D4A44] mb-6" data-v-833d468f${_scopeId}> Acciones rápidas </h2><div class="space-y-3" data-v-833d468f${_scopeId}><button class="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-[#D8AFA0] to-[#C49484] text-white rounded-lg hover:shadow-lg transition-all" data-v-833d468f${_scopeId}>`);
             _push2(ssrRenderComponent(_component_Icon, {
               name: "heroicons:plus-circle",
               class: "w-6 h-6"
             }, null, _parent2, _scopeId));
-            _push2(`<span class="font-medium" data-v-833d468f${_scopeId}>Programar nueva sesi\xF3n</span></button><button class="w-full flex items-center space-x-3 p-4 bg-white border-2 border-[#D8AFA0] text-[#5D4A44] rounded-lg hover:bg-[#F9F7F3] transition-all" data-v-833d468f${_scopeId}>`);
+            _push2(`<span class="font-medium" data-v-833d468f${_scopeId}>Programar nueva sesión</span></button><button class="w-full flex items-center space-x-3 p-4 bg-white border-2 border-[#D8AFA0] text-[#5D4A44] rounded-lg hover:bg-[#F9F7F3] transition-all" data-v-833d468f${_scopeId}>`);
             _push2(ssrRenderComponent(_component_Icon, {
               name: "heroicons:chat-bubble-left",
               class: "w-6 h-6 text-[#D8AFA0]"
@@ -438,8 +438,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           } else {
             return [
               createVNode("div", { class: "mb-8" }, [
-                createVNode("h1", { class: "text-3xl font-lora font-bold text-[#5D4A44] mb-2" }, " Dashboard de Coordinaci\xF3n "),
-                createVNode("p", { class: "text-[#8B7470]" }, toDisplayString(unref(fechaActual)) + " \xB7 Resumen general del d\xEDa ", 1)
+                createVNode("h1", { class: "text-3xl font-lora font-bold text-[#5D4A44] mb-2" }, " Dashboard de Coordinación "),
+                createVNode("p", { class: "text-[#8B7470]" }, toDisplayString(unref(fechaActual)) + " · Resumen general del día ", 1)
               ]),
               createVNode("div", { class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" }, [
                 createVNode(DashboardCard, {
@@ -448,7 +448,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                   icon: "heroicons:calendar",
                   to: "/coordinacion/agenda",
                   subtitle: `${unref(sesionesConfirmadas)} confirmadas`,
-                  badge: unref(sesionesHoy).length > 0 ? `Pr\xF3xima: ${unref(proximaSesion)}` : "Sin sesiones",
+                  badge: unref(sesionesHoy).length > 0 ? `Próxima: ${unref(proximaSesion)}` : "Sin sesiones",
                   variant: unref(sesionesHoy).length > 0 ? "success" : "default"
                 }, null, 8, ["count", "subtitle", "badge", "variant"]),
                 createVNode(DashboardCard, {
@@ -457,7 +457,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                   icon: "heroicons:credit-card",
                   to: "/coordinacion/pagos",
                   subtitle: `$${unref(totalPendiente).toFixed(2)} en total`,
-                  badge: unref(pagosPendientes).length > 0 ? "Requiere atenci\xF3n" : "Todo al d\xEDa",
+                  badge: unref(pagosPendientes).length > 0 ? "Requiere atención" : "Todo al día",
                   variant: unref(pagosPendientes).length > 0 ? "warning" : "success"
                 }, null, 8, ["count", "subtitle", "badge", "variant"]),
                 createVNode(DashboardCard, {
@@ -475,7 +475,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                   icon: "heroicons:bell-alert",
                   to: "/coordinacion/agenda",
                   subtitle: "Programados para hoy",
-                  badge: "Autom\xE1ticos",
+                  badge: "Automáticos",
                   variant: "default"
                 }, null, 8, ["count"])
               ]),
@@ -545,7 +545,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                       class: "text-sm text-[#D8AFA0] hover:text-[#C49484] font-medium"
                     }, {
                       default: withCtx(() => [
-                        createTextVNode(" Ver todas las " + toDisplayString(unref(sesionesHoy).length) + " sesiones \u2192 ", 1)
+                        createTextVNode(" Ver todas las " + toDisplayString(unref(sesionesHoy).length) + " sesiones → ", 1)
                       ]),
                       _: 1
                     })
@@ -568,7 +568,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                         name: "heroicons:plus",
                         class: "w-4 h-4 mr-2"
                       }),
-                      createTextVNode(" Programar sesi\xF3n ")
+                      createTextVNode(" Programar sesión ")
                     ]),
                     _: 1
                   })
@@ -625,7 +625,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                   ]))
                 ]),
                 createVNode("div", { class: "bg-white rounded-xl shadow-md border border-[#E8DFD8] p-6" }, [
-                  createVNode("h2", { class: "text-xl font-lora font-semibold text-[#5D4A44] mb-6" }, " Acciones r\xE1pidas "),
+                  createVNode("h2", { class: "text-xl font-lora font-semibold text-[#5D4A44] mb-6" }, " Acciones rápidas "),
                   createVNode("div", { class: "space-y-3" }, [
                     createVNode("button", {
                       onClick: ($event) => _ctx.$router.push("/coordinacion/agenda?action=nueva-sesion"),
@@ -635,7 +635,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                         name: "heroicons:plus-circle",
                         class: "w-6 h-6"
                       }),
-                      createVNode("span", { class: "font-medium" }, "Programar nueva sesi\xF3n")
+                      createVNode("span", { class: "font-medium" }, "Programar nueva sesión")
                     ], 8, ["onClick"]),
                     createVNode("button", {
                       onClick: ($event) => _ctx.$router.push("/coordinacion/mensajes?action=nuevo-mensaje"),

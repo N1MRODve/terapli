@@ -21,7 +21,6 @@ import '@supabase/ssr';
 import '@vercel/analytics/nuxt';
 
 const authTerapeuta = defineNuxtRouteMiddleware(async (to, from) => {
-  var _a, _b;
   let __temp, __restore;
   if (!to.path.startsWith("/terapeuta") || to.path === "/terapeuta/login") {
     return;
@@ -33,7 +32,7 @@ const authTerapeuta = defineNuxtRouteMiddleware(async (to, from) => {
     return navigateTo("/terapeuta/login", { replace: true });
   }
   try {
-    const userId = ((_a = user.value) == null ? void 0 : _a.id) || ((_b = user.value) == null ? void 0 : _b.sub);
+    const userId = user.value?.id || user.value?.sub;
     if (!userId) {
       console.error("[Middleware] No se pudo obtener el ID del usuario:", user.value);
       return navigateTo("/terapeuta/login", { replace: true });
@@ -43,13 +42,13 @@ const authTerapeuta = defineNuxtRouteMiddleware(async (to, from) => {
       console.error("[Middleware] Error al obtener perfil:", profileError);
       return navigateTo("/terapeuta/login", { replace: true });
     }
-    const userRole = profileData == null ? void 0 : profileData.rol;
+    const userRole = profileData?.rol;
     const rolesPermitidos = ["terapeuta", "psicologa", "admin", "coordinadora"];
     if (!userRole || !rolesPermitidos.includes(userRole)) {
       console.log(`[Middleware] Usuario con rol '${userRole}' sin acceso, redirigiendo a home`);
       return navigateTo("/", { replace: true });
     }
-    console.log(`[Middleware] Acceso autorizado para: ${(profileData == null ? void 0 : profileData.nombre) || "profesional"} (${userRole})`);
+    console.log(`[Middleware] Acceso autorizado para: ${profileData?.nombre || "profesional"} (${userRole})`);
   } catch (err) {
     console.error("[Middleware] Error inesperado:", err);
     return navigateTo("/terapeuta/login", { replace: true });

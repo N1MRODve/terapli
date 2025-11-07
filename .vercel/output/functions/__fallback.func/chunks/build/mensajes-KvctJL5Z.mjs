@@ -77,7 +77,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   __ssrInlineRender: true,
   props: {
     destinatarioId: {},
-    placeholder: { default: "Escribe tu mensaje aqu\xED..." }
+    placeholder: { default: "Escribe tu mensaje aquí..." }
   },
   emits: ["mensajeEnviado"],
   setup(__props, { emit: __emit }) {
@@ -143,7 +143,7 @@ const useMensajes = () => {
       mensajes2.value = data || [];
       return data || [];
     } catch (e) {
-      error.value = e.message || "Error al cargar conversaci\xF3n";
+      error.value = e.message || "Error al cargar conversación";
       console.error("Error en listarConversacion:", e);
       return [];
     } finally {
@@ -156,7 +156,7 @@ const useMensajes = () => {
       return null;
     }
     if (!contenido.trim()) {
-      error.value = "El mensaje no puede estar vac\xEDo";
+      error.value = "El mensaje no puede estar vacío";
       return null;
     }
     loading.value = true;
@@ -216,7 +216,7 @@ const useMensajes = () => {
       conversaciones.value = data || [];
       return data || [];
     } catch (e) {
-      console.warn("Usando m\xE9todo alternativo para conversaciones:", e);
+      console.warn("Usando método alternativo para conversaciones:", e);
       return await listarConversacionesAlternativo();
     } finally {
       loading.value = false;
@@ -232,15 +232,15 @@ const useMensajes = () => {
         `).or(`remitente_id.eq.${user.value.id},destinatario_id.eq.${user.value.id}`).order("created_at", { ascending: false });
       if (fetchError) throw fetchError;
       const conversacionesMap = /* @__PURE__ */ new Map();
-      data == null ? void 0 : data.forEach((m) => {
+      data?.forEach((m) => {
         const esRemitente = m.remitente_id === user.value.id;
         const otroUsuarioId = esRemitente ? m.destinatario_id : m.remitente_id;
         const otroUsuario = esRemitente ? m.destinatario : m.remitente;
         if (!conversacionesMap.has(otroUsuarioId)) {
           conversacionesMap.set(otroUsuarioId, {
             otro_usuario_id: otroUsuarioId,
-            otro_usuario_nombre: (otroUsuario == null ? void 0 : otroUsuario.nombre) || "Usuario",
-            otro_usuario_avatar: otroUsuario == null ? void 0 : otroUsuario.avatar_url,
+            otro_usuario_nombre: otroUsuario?.nombre || "Usuario",
+            otro_usuario_avatar: otroUsuario?.avatar_url,
             ultimo_mensaje: m.mensaje,
             ultimo_mensaje_fecha: m.created_at,
             mensajes_no_vistos: 0
@@ -371,9 +371,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       }
       _push(`<!--[-->`);
       ssrRenderList(unref(conversaciones), (conv) => {
-        var _a;
         _push(`<button class="${ssrRenderClass([{
-          "bg-[#EAD5D3]/20 hover:bg-[#EAD5D3]/30": ((_a = unref(pacienteSeleccionado)) == null ? void 0 : _a.otro_usuario_id) === conv.otro_usuario_id
+          "bg-[#EAD5D3]/20 hover:bg-[#EAD5D3]/30": unref(pacienteSeleccionado)?.otro_usuario_id === conv.otro_usuario_id
         }, "w-full px-4 py-4 hover:bg-[#F9F7F3] transition-colors border-b border-[#EAD5D3]/20 text-left group"])}" data-v-130b4f21><div class="flex items-start gap-3" data-v-130b4f21><div class="flex-shrink-0" data-v-130b4f21>`);
         if (conv.otro_usuario_avatar) {
           _push(`<div class="w-12 h-12 rounded-full overflow-hidden" data-v-130b4f21><img${ssrRenderAttr("src", conv.otro_usuario_avatar)}${ssrRenderAttr("alt", conv.otro_usuario_nombre)} class="w-full h-full object-cover" data-v-130b4f21></div>`);
@@ -390,7 +389,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       });
       _push(`<!--]--></div></aside><main class="flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-[#EAD5D3]/30 overflow-hidden" data-v-130b4f21>`);
       if (!unref(pacienteSeleccionado)) {
-        _push(`<div class="flex-1 flex flex-col items-center justify-center p-8 text-center" data-v-130b4f21><div class="w-24 h-24 rounded-full bg-[#EAD5D3]/30 flex items-center justify-center mb-6" data-v-130b4f21><svg class="w-12 h-12 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-130b4f21><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" data-v-130b4f21></path></svg></div><h3 class="text-xl font-lora font-medium text-[#5D4A44] mb-2" data-v-130b4f21> Selecciona una conversaci\xF3n </h3><p class="text-sm text-[#5D4A44]/60 font-lato max-w-md" data-v-130b4f21> Elige un paciente de la lista para ver su conversaci\xF3n y responder sus mensajes. </p></div>`);
+        _push(`<div class="flex-1 flex flex-col items-center justify-center p-8 text-center" data-v-130b4f21><div class="w-24 h-24 rounded-full bg-[#EAD5D3]/30 flex items-center justify-center mb-6" data-v-130b4f21><svg class="w-12 h-12 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-130b4f21><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" data-v-130b4f21></path></svg></div><h3 class="text-xl font-lora font-medium text-[#5D4A44] mb-2" data-v-130b4f21> Selecciona una conversación </h3><p class="text-sm text-[#5D4A44]/60 font-lato max-w-md" data-v-130b4f21> Elige un paciente de la lista para ver su conversación y responder sus mensajes. </p></div>`);
       } else {
         _push(`<div class="flex-1 flex flex-col" data-v-130b4f21><header class="px-6 py-4 border-b border-[#EAD5D3]/30 bg-[#F9F7F3] flex items-center gap-4" data-v-130b4f21><button class="lg:hidden p-2 -ml-2 rounded-lg hover:bg-white/50 transition-colors" data-v-130b4f21><svg class="w-5 h-5 text-[#5D4A44]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-130b4f21><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" data-v-130b4f21></path></svg></button><div class="flex items-center gap-3 flex-1" data-v-130b4f21>`);
         if (unref(pacienteSeleccionado).otro_usuario_avatar) {

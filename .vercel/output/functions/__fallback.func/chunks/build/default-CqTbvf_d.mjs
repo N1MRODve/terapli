@@ -35,10 +35,10 @@ const _sfc_main$5 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<span class="text-2xl md:text-3xl font-[&#39;Elms_Sans&#39;] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent" data-v-d5df1b11${_scopeId}> Terapl\xED </span>`);
+            _push2(`<span class="text-2xl md:text-3xl font-[&#39;Elms_Sans&#39;] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent" data-v-d5df1b11${_scopeId}> Teraplí </span>`);
           } else {
             return [
-              createVNode("span", { class: "text-2xl md:text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent" }, " Terapl\xED ")
+              createVNode("span", { class: "text-2xl md:text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent" }, " Teraplí ")
             ];
           }
         }),
@@ -66,10 +66,10 @@ const _sfc_main$5 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(` C\xF3mo te sientes `);
+            _push2(` Cómo te sientes `);
           } else {
             return [
-              createTextVNode(" C\xF3mo te sientes ")
+              createTextVNode(" Cómo te sientes ")
             ];
           }
         }),
@@ -81,10 +81,10 @@ const _sfc_main$5 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(` Con\xF3ceme `);
+            _push2(` Conóceme `);
           } else {
             return [
-              createTextVNode(" Con\xF3ceme ")
+              createTextVNode(" Conóceme ")
             ];
           }
         }),
@@ -96,10 +96,10 @@ const _sfc_main$5 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(` C\xF3mo empezar `);
+            _push2(` Cómo empezar `);
           } else {
             return [
-              createTextVNode(" C\xF3mo empezar ")
+              createTextVNode(" Cómo empezar ")
             ];
           }
         }),
@@ -196,10 +196,10 @@ const _sfc_main$5 = {
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(` C\xF3mo te sientes `);
+              _push2(` Cómo te sientes `);
             } else {
               return [
-                createTextVNode(" C\xF3mo te sientes ")
+                createTextVNode(" Cómo te sientes ")
               ];
             }
           }),
@@ -212,10 +212,10 @@ const _sfc_main$5 = {
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(` Con\xF3ceme `);
+              _push2(` Conóceme `);
             } else {
               return [
-                createTextVNode(" Con\xF3ceme ")
+                createTextVNode(" Conóceme ")
               ];
             }
           }),
@@ -228,10 +228,10 @@ const _sfc_main$5 = {
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(` C\xF3mo empezar `);
+              _push2(` Cómo empezar `);
             } else {
               return [
-                createTextVNode(" C\xF3mo empezar ")
+                createTextVNode(" Cómo empezar ")
               ];
             }
           }),
@@ -261,7 +261,7 @@ const _sfc_main$5 = {
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-d5df1b11${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-d5df1b11${_scopeId}></path></svg><span data-v-d5df1b11${_scopeId}>Tu espacio terap\xE9utico</span>`);
+              _push2(`<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-d5df1b11${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-d5df1b11${_scopeId}></path></svg><span data-v-d5df1b11${_scopeId}>Tu espacio terapéutico</span>`);
             } else {
               return [
                 (openBlock(), createBlock("svg", {
@@ -277,7 +277,7 @@ const _sfc_main$5 = {
                     d: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   })
                 ])),
-                createVNode("span", null, "Tu espacio terap\xE9utico")
+                createVNode("span", null, "Tu espacio terapéutico")
               ];
             }
           }),
@@ -345,18 +345,18 @@ function useVisitorContext() {
     const name = visitorName.value;
     let greetingText = "";
     if (!name) {
-      greetingText = "Me alegra que est\xE9s aqu\xED";
+      greetingText = "Me alegra que estés aquí";
     } else if (isReturning) {
-      greetingText = `Qu\xE9 alegr\xEDa verte de nuevo, ${name}`;
+      greetingText = `Qué alegría verte de nuevo, ${name}`;
     } else if (timeOfDay === "morning") {
-      greetingText = `${name}, espero que tu ma\xF1ana est\xE9 siendo tranquila`;
+      greetingText = `${name}, espero que tu mañana esté siendo tranquila`;
     } else if (timeOfDay === "afternoon") {
-      greetingText = `${name}, me alegra que est\xE9s aqu\xED`;
+      greetingText = `${name}, me alegra que estés aquí`;
     } else {
-      greetingText = `${name}, espero que tu d\xEDa haya ido bien`;
+      greetingText = `${name}, espero que tu día haya ido bien`;
     }
     if (deviceType.value === "mobile" && name) {
-      greeting.value = `${greetingText}. Si lo prefieres, puedes escribirme directamente por WhatsApp \u{1F4F1}`;
+      greeting.value = `${greetingText}. Si lo prefieres, puedes escribirme directamente por WhatsApp 📱`;
     } else {
       greeting.value = greetingText;
     }
@@ -385,17 +385,17 @@ const _sfc_main$4 = {
     const { personalized } = useVisitorContext();
     return (_ctx, _push, _parent, _attrs) => {
       const _component_NuxtLink = __nuxt_component_0$2;
-      _push(`<footer${ssrRenderAttrs(mergeProps({ class: "bg-terracota text-fondo" }, _attrs))}><div class="max-w-7xl mx-auto px-6 py-12"><div class="grid md:grid-cols-3 gap-8 text-center md:text-left"><div><h3 class="text-xl font-serif text-white mb-4">Karem Pe\xF1a</h3><p class="text-sm leading-relaxed text-fondo/90">Psic\xF3loga colegiada especializada en terapia individual con enfoque humanista e integrador.</p></div><div><h4 class="text-white font-semibold mb-4">Enlaces</h4><ul class="space-y-2 text-sm"><li>`);
+      _push(`<footer${ssrRenderAttrs(mergeProps({ class: "bg-terracota text-fondo" }, _attrs))}><div class="max-w-7xl mx-auto px-6 py-12"><div class="grid md:grid-cols-3 gap-8 text-center md:text-left"><div><h3 class="text-xl font-serif text-white mb-4">Karem Peña</h3><p class="text-sm leading-relaxed text-fondo/90">Psicóloga colegiada especializada en terapia individual con enfoque humanista e integrador.</p></div><div><h4 class="text-white font-semibold mb-4">Enlaces</h4><ul class="space-y-2 text-sm"><li>`);
       _push(ssrRenderComponent(_component_NuxtLink, {
         to: "/conoceme",
         class: "text-fondo/90 hover:text-white transition"
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`Con\xF3ceme`);
+            _push2(`Conóceme`);
           } else {
             return [
-              createTextVNode("Con\xF3ceme")
+              createTextVNode("Conóceme")
             ];
           }
         }),
@@ -408,10 +408,10 @@ const _sfc_main$4 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`C\xF3mo empezar`);
+            _push2(`Cómo empezar`);
           } else {
             return [
-              createTextVNode("C\xF3mo empezar")
+              createTextVNode("Cómo empezar")
             ];
           }
         }),
@@ -472,10 +472,10 @@ const _sfc_main$4 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`Pol\xEDtica de privacidad`);
+            _push2(`Política de privacidad`);
           } else {
             return [
-              createTextVNode("Pol\xEDtica de privacidad")
+              createTextVNode("Política de privacidad")
             ];
           }
         }),
@@ -504,19 +504,19 @@ const _sfc_main$4 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`Pol\xEDtica de cancelaci\xF3n`);
+            _push2(`Política de cancelación`);
           } else {
             return [
-              createTextVNode("Pol\xEDtica de cancelaci\xF3n")
+              createTextVNode("Política de cancelación")
             ];
           }
         }),
         _: 1
       }, _parent));
-      _push(`</li><li><button class="text-fondo/90 hover:text-white transition text-left"> \u2699\uFE0F Configurar cookies </button></li></ul></div></div><div class="mt-8 pt-8 border-t border-fondo/20 text-center text-sm text-fondo/80"><p class="mb-2">${ssrInterpolate(unref(personalized)(
-        "Gracias por visitar este espacio. Espero que te acompa\xF1e en tu camino.",
-        "Gracias por visitar este espacio, {name}. Espero que te acompa\xF1e en tu camino."
-      ))}</p><p>\xA9 ${ssrInterpolate((/* @__PURE__ */ new Date()).getFullYear())} Karem Pe\xF1a - Psic\xF3loga. Todos los derechos reservados.</p></div></div></footer>`);
+      _push(`</li><li><button class="text-fondo/90 hover:text-white transition text-left"> ⚙️ Configurar cookies </button></li></ul></div></div><div class="mt-8 pt-8 border-t border-fondo/20 text-center text-sm text-fondo/80"><p class="mb-2">${ssrInterpolate(unref(personalized)(
+        "Gracias por visitar este espacio. Espero que te acompañe en tu camino.",
+        "Gracias por visitar este espacio, {name}. Espero que te acompañe en tu camino."
+      ))}</p><p>© ${ssrInterpolate((/* @__PURE__ */ new Date()).getFullYear())} Karem Peña - Psicóloga. Todos los derechos reservados.</p></div></div></footer>`);
     };
   }
 };
@@ -602,20 +602,20 @@ const _sfc_main$2 = {
     const { personalized } = useVisitorContext();
     const title = computed(() => {
       return personalized(
-        "\xBFSigues ah\xED?",
-        "\xBFSigues ah\xED, {name}?"
+        "¿Sigues ahí?",
+        "¿Sigues ahí, {name}?"
       );
     });
     const message = computed(() => {
       return personalized(
-        "He notado que llevas un momento sin moverte. \xBFTodo est\xE1 bien? Si necesitas un descanso, est\xE1 bien. Aqu\xED estar\xE9 cuando est\xE9s listo/a.",
-        "{name}, he notado que llevas un momento sin moverte. \xBFTodo est\xE1 bien? Si necesitas un descanso, est\xE1 bien. Aqu\xED estar\xE9 cuando est\xE9s listo/a."
+        "He notado que llevas un momento sin moverte. ¿Todo está bien? Si necesitas un descanso, está bien. Aquí estaré cuando estés listo/a.",
+        "{name}, he notado que llevas un momento sin moverte. ¿Todo está bien? Si necesitas un descanso, está bien. Aquí estaré cuando estés listo/a."
       );
     });
     const buttonText = computed(() => {
       return personalized(
-        "S\xED, sigo aqu\xED",
-        "S\xED, aqu\xED estoy"
+        "Sí, sigo aquí",
+        "Sí, aquí estoy"
       );
     });
     const handleConfirm = () => {
@@ -624,7 +624,7 @@ const _sfc_main$2 = {
     return (_ctx, _push, _parent, _attrs) => {
       const _component_CalmButton = __nuxt_component_0;
       if (__props.show) {
-        _push(`<div${ssrRenderAttrs(mergeProps({ class: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm" }, _attrs))} data-v-c1106993><div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 md:p-10 animate-fade-in-up border border-[#EAD5D3]/30" role="dialog" aria-labelledby="inactivity-title" aria-modal="true" data-v-c1106993><div class="text-center" data-v-c1106993><div class="text-6xl mb-4 animate-pulse-slow" data-v-c1106993>\u{1F4AD}</div><h2 id="inactivity-title" class="text-2xl md:text-3xl font-serif text-[#5D4A44] mb-4" data-v-c1106993>${ssrInterpolate(title.value)}</h2><p class="text-[#5D4A44]/80 leading-relaxed mb-6" data-v-c1106993>${ssrInterpolate(message.value)}</p>`);
+        _push(`<div${ssrRenderAttrs(mergeProps({ class: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm" }, _attrs))} data-v-c1106993><div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 md:p-10 animate-fade-in-up border border-[#EAD5D3]/30" role="dialog" aria-labelledby="inactivity-title" aria-modal="true" data-v-c1106993><div class="text-center" data-v-c1106993><div class="text-6xl mb-4 animate-pulse-slow" data-v-c1106993>💭</div><h2 id="inactivity-title" class="text-2xl md:text-3xl font-serif text-[#5D4A44] mb-4" data-v-c1106993>${ssrInterpolate(title.value)}</h2><p class="text-[#5D4A44]/80 leading-relaxed mb-6" data-v-c1106993>${ssrInterpolate(message.value)}</p>`);
         _push(ssrRenderComponent(_component_CalmButton, {
           onClick: handleConfirm,
           size: "lg",
@@ -641,7 +641,7 @@ const _sfc_main$2 = {
           }),
           _: 1
         }, _parent));
-        _push(`<p class="text-xs text-[#5D4A44]/50 mt-4 leading-relaxed" data-v-c1106993> T\xF3mate el tiempo que necesites. Este espacio estar\xE1 aqu\xED cuando lo necesites. </p></div></div></div>`);
+        _push(`<p class="text-xs text-[#5D4A44]/50 mt-4 leading-relaxed" data-v-c1106993> Tómate el tiempo que necesites. Este espacio estará aquí cuando lo necesites. </p></div></div></div>`);
       } else {
         _push(`<!---->`);
       }
@@ -676,22 +676,22 @@ const _sfc_main$1 = {
       const _component_NuxtLink = __nuxt_component_0$2;
       _push(`<!--[-->`);
       if (showBanner.value) {
-        _push(`<div class="fixed bottom-4 left-4 right-4 md:left-8 md:right-8 bg-[#F9F7F3] text-[#5D4A44] border border-[#EAD5D3] rounded-2xl shadow-2xl p-6 z-50 max-w-3xl mx-auto backdrop-blur-sm" data-v-2e8c3cfe><div class="flex items-start gap-4" data-v-2e8c3cfe><div class="flex-shrink-0 w-12 h-12 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center" data-v-2e8c3cfe><svg class="w-6 h-6 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-2e8c3cfe><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" data-v-2e8c3cfe></path></svg></div><div class="flex-1" data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold mb-2 text-[#5D4A44]" data-v-2e8c3cfe> \u{1F36A} Uso de cookies </h3><p class="font-sans text-sm leading-relaxed mb-4" data-v-2e8c3cfe> Utilizamos cookies propias y de terceros para mejorar tu experiencia y analizar el uso del sitio. Puedes aceptar todas las cookies o configurarlas seg\xFAn tus preferencias. </p><div class="flex flex-wrap gap-3 items-center" data-v-2e8c3cfe><button class="bg-[#D8AFA0] text-white px-5 py-2.5 rounded-xl font-sans font-medium hover:bg-[#EFA08B] transition-all shadow-md hover:shadow-lg" data-v-2e8c3cfe> Aceptar todas </button><button class="bg-transparent border border-[#D8AFA0] text-[#5D4A44] px-5 py-2.5 rounded-xl font-sans hover:bg-[#EAD5D3] transition-all" data-v-2e8c3cfe> Configurar </button><button class="text-sm text-[#5D4A44]/70 hover:text-[#5D4A44] underline font-sans" data-v-2e8c3cfe> Rechazar no esenciales </button></div></div></div></div>`);
+        _push(`<div class="fixed bottom-4 left-4 right-4 md:left-8 md:right-8 bg-[#F9F7F3] text-[#5D4A44] border border-[#EAD5D3] rounded-2xl shadow-2xl p-6 z-50 max-w-3xl mx-auto backdrop-blur-sm" data-v-2e8c3cfe><div class="flex items-start gap-4" data-v-2e8c3cfe><div class="flex-shrink-0 w-12 h-12 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center" data-v-2e8c3cfe><svg class="w-6 h-6 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-2e8c3cfe><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" data-v-2e8c3cfe></path></svg></div><div class="flex-1" data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold mb-2 text-[#5D4A44]" data-v-2e8c3cfe> 🍪 Uso de cookies </h3><p class="font-sans text-sm leading-relaxed mb-4" data-v-2e8c3cfe> Utilizamos cookies propias y de terceros para mejorar tu experiencia y analizar el uso del sitio. Puedes aceptar todas las cookies o configurarlas según tus preferencias. </p><div class="flex flex-wrap gap-3 items-center" data-v-2e8c3cfe><button class="bg-[#D8AFA0] text-white px-5 py-2.5 rounded-xl font-sans font-medium hover:bg-[#EFA08B] transition-all shadow-md hover:shadow-lg" data-v-2e8c3cfe> Aceptar todas </button><button class="bg-transparent border border-[#D8AFA0] text-[#5D4A44] px-5 py-2.5 rounded-xl font-sans hover:bg-[#EAD5D3] transition-all" data-v-2e8c3cfe> Configurar </button><button class="text-sm text-[#5D4A44]/70 hover:text-[#5D4A44] underline font-sans" data-v-2e8c3cfe> Rechazar no esenciales </button></div></div></div></div>`);
       } else {
         _push(`<!---->`);
       }
       if (showSettings.value) {
-        _push(`<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4" data-v-2e8c3cfe><div class="bg-[#F9F7F3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto" data-v-2e8c3cfe><div class="sticky top-0 bg-[#F9F7F3] border-b border-[#EAD5D3] p-6" data-v-2e8c3cfe><div class="flex items-center justify-between" data-v-2e8c3cfe><h2 class="font-serif text-2xl font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Configuraci\xF3n de Cookies </h2><button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#EAD5D3] transition-colors" data-v-2e8c3cfe><svg class="w-5 h-5 text-[#5D4A44]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-2e8c3cfe><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" data-v-2e8c3cfe></path></svg></button></div></div><div class="p-6 space-y-6" data-v-2e8c3cfe><p class="font-sans text-sm text-[#5D4A44]/80 leading-relaxed" data-v-2e8c3cfe> Aqu\xED puedes gestionar tus preferencias de cookies. Las cookies t\xE9cnicas son necesarias para el funcionamiento del sitio y no pueden desactivarse. </p><div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]" data-v-2e8c3cfe><div class="flex items-center justify-between mb-3" data-v-2e8c3cfe><div data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Cookies necesarias </h3><p class="font-sans text-sm text-[#5D4A44]/70 mt-1" data-v-2e8c3cfe> Esenciales para el funcionamiento del sitio </p></div><div class="bg-[#D8AFA0]/20 px-4 py-1.5 rounded-full" data-v-2e8c3cfe><span class="font-sans text-sm font-medium text-[#5D4A44]" data-v-2e8c3cfe>Siempre activas</span></div></div><p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed" data-v-2e8c3cfe> Permiten la navegaci\xF3n b\xE1sica y el acceso a \xE1reas seguras. Sin estas cookies, el sitio no puede funcionar correctamente. </p></div><div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]" data-v-2e8c3cfe><div class="flex items-center justify-between mb-3" data-v-2e8c3cfe><div class="flex-1" data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Cookies de an\xE1lisis </h3><p class="font-sans text-sm text-[#5D4A44]/70 mt-1" data-v-2e8c3cfe> Nos ayudan a mejorar el rendimiento del sitio </p></div><label class="relative inline-flex items-center cursor-pointer" data-v-2e8c3cfe><input type="checkbox"${ssrIncludeBooleanAttr(Array.isArray(preferences.value.analytics) ? ssrLooseContain(preferences.value.analytics, null) : preferences.value.analytics) ? " checked" : ""} class="sr-only peer" data-v-2e8c3cfe><div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#D8AFA0]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D8AFA0]" data-v-2e8c3cfe></div></label></div><p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed" data-v-2e8c3cfe> Recopilan informaci\xF3n an\xF3nima sobre c\xF3mo utilizas el sitio para ayudarnos a mejorarlo (ej. Google Analytics). </p></div><div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]" data-v-2e8c3cfe><div class="flex items-center justify-between mb-3" data-v-2e8c3cfe><div class="flex-1" data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Cookies de personalizaci\xF3n </h3><p class="font-sans text-sm text-[#5D4A44]/70 mt-1" data-v-2e8c3cfe> Adaptan la experiencia a tus preferencias </p></div><label class="relative inline-flex items-center cursor-pointer" data-v-2e8c3cfe><input type="checkbox"${ssrIncludeBooleanAttr(Array.isArray(preferences.value.personalization) ? ssrLooseContain(preferences.value.personalization, null) : preferences.value.personalization) ? " checked" : ""} class="sr-only peer" data-v-2e8c3cfe><div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#D8AFA0]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D8AFA0]" data-v-2e8c3cfe></div></label></div><p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed" data-v-2e8c3cfe> Recuerdan tus elecciones y preferencias para ofrecerte una experiencia m\xE1s personalizada. </p></div><div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-4 rounded-r-xl" data-v-2e8c3cfe><p class="font-sans text-sm text-[#5D4A44]/80" data-v-2e8c3cfe> Puedes cambiar estas preferencias en cualquier momento desde el pie de p\xE1gina del sitio. `);
+        _push(`<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4" data-v-2e8c3cfe><div class="bg-[#F9F7F3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto" data-v-2e8c3cfe><div class="sticky top-0 bg-[#F9F7F3] border-b border-[#EAD5D3] p-6" data-v-2e8c3cfe><div class="flex items-center justify-between" data-v-2e8c3cfe><h2 class="font-serif text-2xl font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Configuración de Cookies </h2><button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#EAD5D3] transition-colors" data-v-2e8c3cfe><svg class="w-5 h-5 text-[#5D4A44]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-2e8c3cfe><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" data-v-2e8c3cfe></path></svg></button></div></div><div class="p-6 space-y-6" data-v-2e8c3cfe><p class="font-sans text-sm text-[#5D4A44]/80 leading-relaxed" data-v-2e8c3cfe> Aquí puedes gestionar tus preferencias de cookies. Las cookies técnicas son necesarias para el funcionamiento del sitio y no pueden desactivarse. </p><div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]" data-v-2e8c3cfe><div class="flex items-center justify-between mb-3" data-v-2e8c3cfe><div data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Cookies necesarias </h3><p class="font-sans text-sm text-[#5D4A44]/70 mt-1" data-v-2e8c3cfe> Esenciales para el funcionamiento del sitio </p></div><div class="bg-[#D8AFA0]/20 px-4 py-1.5 rounded-full" data-v-2e8c3cfe><span class="font-sans text-sm font-medium text-[#5D4A44]" data-v-2e8c3cfe>Siempre activas</span></div></div><p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed" data-v-2e8c3cfe> Permiten la navegación básica y el acceso a áreas seguras. Sin estas cookies, el sitio no puede funcionar correctamente. </p></div><div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]" data-v-2e8c3cfe><div class="flex items-center justify-between mb-3" data-v-2e8c3cfe><div class="flex-1" data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Cookies de análisis </h3><p class="font-sans text-sm text-[#5D4A44]/70 mt-1" data-v-2e8c3cfe> Nos ayudan a mejorar el rendimiento del sitio </p></div><label class="relative inline-flex items-center cursor-pointer" data-v-2e8c3cfe><input type="checkbox"${ssrIncludeBooleanAttr(Array.isArray(preferences.value.analytics) ? ssrLooseContain(preferences.value.analytics, null) : preferences.value.analytics) ? " checked" : ""} class="sr-only peer" data-v-2e8c3cfe><div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#D8AFA0]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D8AFA0]" data-v-2e8c3cfe></div></label></div><p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed" data-v-2e8c3cfe> Recopilan información anónima sobre cómo utilizas el sitio para ayudarnos a mejorarlo (ej. Google Analytics). </p></div><div class="bg-white/40 p-5 rounded-2xl border border-[#EAD5D3]" data-v-2e8c3cfe><div class="flex items-center justify-between mb-3" data-v-2e8c3cfe><div class="flex-1" data-v-2e8c3cfe><h3 class="font-serif text-lg font-semibold text-[#5D4A44]" data-v-2e8c3cfe> Cookies de personalización </h3><p class="font-sans text-sm text-[#5D4A44]/70 mt-1" data-v-2e8c3cfe> Adaptan la experiencia a tus preferencias </p></div><label class="relative inline-flex items-center cursor-pointer" data-v-2e8c3cfe><input type="checkbox"${ssrIncludeBooleanAttr(Array.isArray(preferences.value.personalization) ? ssrLooseContain(preferences.value.personalization, null) : preferences.value.personalization) ? " checked" : ""} class="sr-only peer" data-v-2e8c3cfe><div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#D8AFA0]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D8AFA0]" data-v-2e8c3cfe></div></label></div><p class="font-sans text-sm text-[#5D4A44]/70 leading-relaxed" data-v-2e8c3cfe> Recuerdan tus elecciones y preferencias para ofrecerte una experiencia más personalizada. </p></div><div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-4 rounded-r-xl" data-v-2e8c3cfe><p class="font-sans text-sm text-[#5D4A44]/80" data-v-2e8c3cfe> Puedes cambiar estas preferencias en cualquier momento desde el pie de página del sitio. `);
         _push(ssrRenderComponent(_component_NuxtLink, {
           to: "/legal/cookies",
           class: "text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold"
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(` Ver pol\xEDtica completa \u2192 `);
+              _push2(` Ver política completa → `);
             } else {
               return [
-                createTextVNode(" Ver pol\xEDtica completa \u2192 ")
+                createTextVNode(" Ver política completa → ")
               ];
             }
           }),

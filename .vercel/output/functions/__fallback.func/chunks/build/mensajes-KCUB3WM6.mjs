@@ -6,7 +6,7 @@ const _sfc_main = {
   __ssrInlineRender: true,
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(_attrs)}><div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8"><div class="text-center text-gray-400"><span class="text-6xl mb-4 block">\u{1F4AC}</span><h3 class="text-xl font-semibold text-cafe mb-2"> Mensajer\xEDa con Pacientes </h3><p class="text-gray-600"> Aqu\xED se mostrar\xE1 el sistema de mensajes con pacientes </p></div></div></div>`);
+      _push(`<div${ssrRenderAttrs(_attrs)}><div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8"><div class="text-center text-gray-400"><span class="text-6xl mb-4 block">💬</span><h3 class="text-xl font-semibold text-cafe mb-2"> Mensajería con Pacientes </h3><p class="text-gray-600"> Aquí se mostrará el sistema de mensajes con pacientes </p></div></div></div>`);
     };
   }
 };

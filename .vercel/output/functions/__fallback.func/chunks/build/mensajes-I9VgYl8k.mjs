@@ -37,19 +37,18 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       });
     };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "flex flex-col h-[calc(100vh-8rem)] max-w-4xl mx-auto px-4 py-8" }, _attrs))} data-v-4f363c8b><header class="mb-6 flex-shrink-0" data-v-4f363c8b><h1 class="text-2xl sm:text-3xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44]" data-v-4f363c8b> Mensajes </h1><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] mt-1" data-v-4f363c8b> Conversaci\xF3n con tu coordinadora </p></header>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "flex flex-col h-[calc(100vh-8rem)] max-w-4xl mx-auto px-4 py-8" }, _attrs))} data-v-4f363c8b><header class="mb-6 flex-shrink-0" data-v-4f363c8b><h1 class="text-2xl sm:text-3xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44]" data-v-4f363c8b> Mensajes </h1><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] mt-1" data-v-4f363c8b> Conversación con tu coordinadora </p></header>`);
       if (unref(loading)) {
         _push(`<div class="flex-1 flex flex-col items-center justify-center" data-v-4f363c8b><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D8AFA0]" data-v-4f363c8b></div><p class="mt-4 text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;]" data-v-4f363c8b>Cargando mensajes...</p></div>`);
       } else {
         _push(`<div class="flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-[#EAD5D3]/30 overflow-hidden" data-v-4f363c8b><div class="flex-1 overflow-y-auto p-6 space-y-4" data-v-4f363c8b>`);
         if (unref(mensajes2).length === 0) {
-          _push(`<div class="flex flex-col items-center justify-center h-full text-center py-12" data-v-4f363c8b><div class="w-20 h-20 rounded-full bg-[#EAD5D3]/30 flex items-center justify-center mb-4" data-v-4f363c8b><svg class="w-10 h-10 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-4f363c8b><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" data-v-4f363c8b></path></svg></div><h3 class="text-xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44] mb-2" data-v-4f363c8b>No hay mensajes</h3><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] max-w-md" data-v-4f363c8b> Inicia la conversaci\xF3n enviando un mensaje a tu coordinadora. </p></div>`);
+          _push(`<div class="flex flex-col items-center justify-center h-full text-center py-12" data-v-4f363c8b><div class="w-20 h-20 rounded-full bg-[#EAD5D3]/30 flex items-center justify-center mb-4" data-v-4f363c8b><svg class="w-10 h-10 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-4f363c8b><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" data-v-4f363c8b></path></svg></div><h3 class="text-xl font-[&#39;Lora&#39;] font-medium text-[#5D4A44] mb-2" data-v-4f363c8b>No hay mensajes</h3><p class="text-sm text-[#5D4A44] opacity-70 font-[&#39;Lato&#39;] max-w-md" data-v-4f363c8b> Inicia la conversación enviando un mensaje a tu coordinadora. </p></div>`);
         } else {
           _push(`<!---->`);
         }
         _push(`<!--[-->`);
         ssrRenderList(unref(mensajes2), (mensaje) => {
-          var _a;
           _push(`<div class="${ssrRenderClass([
             "flex",
             esMensajeMio(mensaje) ? "justify-end" : "justify-start"
@@ -58,7 +57,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             esMensajeMio(mensaje) ? "bg-[#D8AFA0] text-white rounded-br-sm" : "bg-[#F9F7F3] text-[#5D4A44] rounded-bl-sm"
           ])}" data-v-4f363c8b>`);
           if (!esMensajeMio(mensaje)) {
-            _push(`<p class="text-xs font-[&#39;Lato&#39;] font-medium mb-1 opacity-70" data-v-4f363c8b>${ssrInterpolate(((_a = mensaje.autor) == null ? void 0 : _a.nombre_completo) || "Coordinadora")}</p>`);
+            _push(`<p class="text-xs font-[&#39;Lato&#39;] font-medium mb-1 opacity-70" data-v-4f363c8b>${ssrInterpolate(mensaje.autor?.nombre_completo || "Coordinadora")}</p>`);
           } else {
             _push(`<!---->`);
           }

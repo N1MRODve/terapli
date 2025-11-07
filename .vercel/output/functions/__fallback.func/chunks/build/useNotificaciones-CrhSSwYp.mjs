@@ -15,15 +15,11 @@ const useNotificaciones = () => {
   const noLeidas = computed(() => notificaciones.value.filter((n) => !n.leido));
   const urgentes = computed(
     () => noLeidas.value.filter(
-      (n) => {
-        var _a, _b;
-        return n.tipo === "bono" && (((_a = n.metadata) == null ? void 0 : _a.urgencia) === "alta" || ((_b = n.metadata) == null ? void 0 : _b.sesiones_restantes) === 0);
-      }
+      (n) => n.tipo === "bono" && (n.metadata?.urgencia === "alta" || n.metadata?.sesiones_restantes === 0)
     )
   );
   const tieneUrgentes = computed(() => urgentes.value.length > 0);
   const listar = async (limite = 20) => {
-    var _a;
     const userId = getUserId();
     if (!userId) {
       console.warn("Usuario no autenticado o ID no disponible");
@@ -36,7 +32,7 @@ const useNotificaciones = () => {
       const { data, error: fetchError } = await supabase.from("notificaciones").select("*").eq("usuario_id", userId).order("created_at", { ascending: false }).limit(limite);
       if (fetchError) {
         if (fetchError.code === "PGRST116" || fetchError.message.includes("does not exist")) {
-          console.warn("\u26A0\uFE0F Tabla notificaciones no existe a\xFAn. Retornando vac\xEDo.");
+          console.warn("⚠️ Tabla notificaciones no existe aún. Retornando vacío.");
           notificaciones.value = [];
           totalNoVistas.value = 0;
           return [];
@@ -47,7 +43,7 @@ const useNotificaciones = () => {
       totalNoVistas.value = (data || []).filter((n) => !n.visto && !n.leido).length;
       return data || [];
     } catch (e) {
-      if (!((_a = e.message) == null ? void 0 : _a.includes("does not exist"))) {
+      if (!e.message?.includes("does not exist")) {
         error.value = e.message || "Error al cargar notificaciones";
         console.error("Error en listar notificaciones:", e);
       }
@@ -75,8 +71,8 @@ const useNotificaciones = () => {
       if (insertError) throw insertError;
       return data;
     } catch (e) {
-      error.value = e.message || "Error al crear notificaci\xF3n";
-      console.error("Error en crear notificaci\xF3n:", e);
+      error.value = e.message || "Error al crear notificación";
+      console.error("Error en crear notificación:", e);
       return null;
     } finally {
       loading.value = false;
@@ -94,7 +90,7 @@ const useNotificaciones = () => {
       );
       totalNoVistas.value = Math.max(0, totalNoVistas.value - 1);
     } catch (e) {
-      console.error("Error al marcar notificaci\xF3n como le\xEDda:", e);
+      console.error("Error al marcar notificación como leída:", e);
     }
   };
   const marcarComoLeida = marcarVista;
@@ -109,9 +105,9 @@ const useNotificaciones = () => {
         leido_at: n.leido_at || (/* @__PURE__ */ new Date()).toISOString()
       }));
       totalNoVistas.value = 0;
-      return { success: true, marcadas: (data == null ? void 0 : data.marcadas) || 0 };
+      return { success: true, marcadas: data?.marcadas || 0 };
     } catch (e) {
-      console.error("Error al marcar todas las notificaciones como le\xEDdas:", e);
+      console.error("Error al marcar todas las notificaciones como leídas:", e);
       return { success: false, error: e.message };
     }
   };
@@ -124,7 +120,7 @@ const useNotificaciones = () => {
       totalNoVistas.value = data || 0;
       return data || 0;
     } catch (e) {
-      console.error("Error al contar notificaciones no le\xEDdas:", e);
+      console.error("Error al contar notificaciones no leídas:", e);
       return 0;
     }
   };
@@ -140,7 +136,7 @@ const useNotificaciones = () => {
       }
       notificaciones.value = notificaciones.value.filter((n) => n.id !== notificacionId);
     } catch (e) {
-      console.error("Error al eliminar notificaci\xF3n:", e);
+      console.error("Error al eliminar notificación:", e);
     }
   };
   const eliminarVistas = async () => {
@@ -164,7 +160,6 @@ const useNotificaciones = () => {
         filter: `usuario_id=eq.${user.value.id}`
       },
       (payload) => {
-        var _a;
         const nuevaNotificacion = payload.new;
         notificaciones.value.unshift(nuevaNotificacion);
         totalNoVistas.value++;
@@ -172,7 +167,7 @@ const useNotificaciones = () => {
           new Notification(nuevaNotificacion.titulo, {
             body: nuevaNotificacion.mensaje,
             icon: "/icon-notification.png",
-            badge: nuevaNotificacion.tipo === "bono" && ((_a = nuevaNotificacion.metadata) == null ? void 0 : _a.urgencia) === "alta" ? "\u{1F534}" : "\u{1F514}"
+            badge: nuevaNotificacion.tipo === "bono" && nuevaNotificacion.metadata?.urgencia === "alta" ? "🔴" : "🔔"
           });
         }
       }

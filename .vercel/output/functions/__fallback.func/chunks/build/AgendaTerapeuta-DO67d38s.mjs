@@ -34,11 +34,10 @@ function useAgenda() {
     );
   });
   const getCitasDelTerapeuta = async (opciones) => {
-    var _a;
     try {
       loading.value = true;
       error.value = null;
-      if (!((_a = user.value) == null ? void 0 : _a.id)) {
+      if (!user.value?.id) {
         throw new Error("Usuario no autenticado");
       }
       let query = supabase.from("citas").select(`
@@ -67,23 +66,23 @@ function useAgenda() {
             estado
           )
         `).eq("terapeuta_id", user.value.id);
-      if (opciones == null ? void 0 : opciones.fechaInicio) {
+      if (opciones?.fechaInicio) {
         query = query.gte("fecha_cita", opciones.fechaInicio);
       }
-      if (opciones == null ? void 0 : opciones.fechaFin) {
+      if (opciones?.fechaFin) {
         query = query.lte("fecha_cita", opciones.fechaFin);
       }
-      if (!(opciones == null ? void 0 : opciones.incluirCompletadas)) {
+      if (!opciones?.incluirCompletadas) {
         query = query.in("estado", ["pendiente", "confirmada"]);
       }
       query = query.order("fecha_cita", { ascending: true }).order("hora_inicio", { ascending: true });
       const { data, error: fetchError } = await query;
       if (fetchError) throw fetchError;
       citas.value = data || [];
-      console.log(`\u2705 [Agenda] Cargadas ${citas.value.length} citas`);
+      console.log(`✅ [Agenda] Cargadas ${citas.value.length} citas`);
       return citas.value;
     } catch (err) {
-      console.error("\u274C [Agenda] Error al cargar citas:", err);
+      console.error("❌ [Agenda] Error al cargar citas:", err);
       error.value = err.message || "Error al cargar citas";
       throw err;
     } finally {
@@ -92,17 +91,17 @@ function useAgenda() {
   };
   const completarCita = async (citaId) => {
     try {
-      console.log(`\u{1F504} [Agenda] Completando cita: ${citaId}`);
+      console.log(`🔄 [Agenda] Completando cita: ${citaId}`);
       const { data, error: rpcError } = await supabase.rpc("completar_cita", {
         p_cita_id: citaId
       });
       if (rpcError) {
-        console.error("\u274C [Agenda] Error en RPC:", rpcError);
+        console.error("❌ [Agenda] Error en RPC:", rpcError);
         throw rpcError;
       }
       const resultado = data;
       if (resultado.success) {
-        console.log("\u2705 [Agenda] Cita completada exitosamente");
+        console.log("✅ [Agenda] Cita completada exitosamente");
         const index = citas.value.findIndex((c) => c.id === citaId);
         if (index !== -1) {
           const cita = citas.value[index];
@@ -127,16 +126,16 @@ function useAgenda() {
         return resultado;
       } else {
         if (resultado.warning) {
-          console.warn("\u26A0\uFE0F [Agenda] Advertencia:", resultado.message);
+          console.warn("⚠️ [Agenda] Advertencia:", resultado.message);
           mostrarNotificacion("warning", resultado.message);
         } else {
-          console.error("\u274C [Agenda] Error:", resultado.message);
+          console.error("❌ [Agenda] Error:", resultado.message);
           mostrarNotificacion("error", resultado.message || "No se pudo completar la cita");
         }
         return resultado;
       }
     } catch (err) {
-      console.error("\u274C [Agenda] Error al completar cita:", err);
+      console.error("❌ [Agenda] Error al completar cita:", err);
       const errorMsg = err.message || "Error desconocido al completar cita";
       mostrarNotificacion("error", errorMsg);
       return {
@@ -152,10 +151,10 @@ function useAgenda() {
         p_bono_id: bonoId
       });
       if (rpcError) throw rpcError;
-      console.log(`\u2705 [Agenda] Historial de bono obtenido: ${(data == null ? void 0 : data.length) || 0} movimientos`);
+      console.log(`✅ [Agenda] Historial de bono obtenido: ${data?.length || 0} movimientos`);
       return data || [];
     } catch (err) {
-      console.error("\u274C [Agenda] Error al obtener historial:", err);
+      console.error("❌ [Agenda] Error al obtener historial:", err);
       throw err;
     }
   };
@@ -165,21 +164,20 @@ function useAgenda() {
         p_bono_id: bonoId
       });
       if (rpcError) throw rpcError;
-      console.log("\u2705 [Agenda] Verificaci\xF3n de bono:", data);
-      if (data == null ? void 0 : data.alerta) {
-        console.warn("\u26A0\uFE0F [Agenda] Alerta en bono:", data.mensaje_alerta);
+      console.log("✅ [Agenda] Verificación de bono:", data);
+      if (data?.alerta) {
+        console.warn("⚠️ [Agenda] Alerta en bono:", data.mensaje_alerta);
       }
       return data;
     } catch (err) {
-      console.error("\u274C [Agenda] Error al verificar bono:", err);
+      console.error("❌ [Agenda] Error al verificar bono:", err);
       throw err;
     }
   };
   const citasPendientesSync = ref([]);
   const detectarInconsistencias = async () => {
-    var _a;
     try {
-      console.log("\u{1F50D} [Agenda] Detectando inconsistencias...");
+      console.log("🔍 [Agenda] Detectando inconsistencias...");
       const { data, error: error2 } = await supabase.from("citas").select(`
           id,
           fecha_cita,
@@ -205,35 +203,35 @@ function useAgenda() {
             sesiones_totales,
             estado
           )
-        `).in("estado", ["completada", "realizada"]).not("bono_id", "is", null).or("sesion_descontada.eq.false,consumo_registrado.eq.false").eq("terapeuta_id", ((_a = user.value) == null ? void 0 : _a.id) || "");
+        `).in("estado", ["completada", "realizada"]).not("bono_id", "is", null).or("sesion_descontada.eq.false,consumo_registrado.eq.false").eq("terapeuta_id", user.value?.id || "");
       if (error2) throw error2;
       citasPendientesSync.value = data || [];
       if (citasPendientesSync.value.length > 0) {
         console.warn(
-          `\u26A0\uFE0F [Agenda] ${citasPendientesSync.value.length} cita(s) con inconsistencias detectadas`
+          `⚠️ [Agenda] ${citasPendientesSync.value.length} cita(s) con inconsistencias detectadas`
         );
       } else {
-        console.log("\u2705 [Agenda] No se detectaron inconsistencias");
+        console.log("✅ [Agenda] No se detectaron inconsistencias");
       }
       return citasPendientesSync.value;
     } catch (err) {
-      console.error("\u274C [Agenda] Error al detectar inconsistencias:", err);
+      console.error("❌ [Agenda] Error al detectar inconsistencias:", err);
       citasPendientesSync.value = [];
       return [];
     }
   };
   const resincronizarBono = async (citaId) => {
     try {
-      console.log(`\u{1F504} [Agenda] Re-sincronizando bono para cita: ${citaId}`);
+      console.log(`🔄 [Agenda] Re-sincronizando bono para cita: ${citaId}`);
       const { data, error: error2 } = await supabase.rpc("actualizar_bono_por_cita", {
         p_cita_id: citaId
       });
       if (error2) throw error2;
       const resultado = data;
       if (resultado.success) {
-        console.log("\u2705 [Agenda] Bono re-sincronizado exitosamente");
+        console.log("✅ [Agenda] Bono re-sincronizado exitosamente");
         if (resultado.warning === "ya_descontada") {
-          mostrarNotificacion("info", "Esta sesi\xF3n ya estaba descontada");
+          mostrarNotificacion("info", "Esta sesión ya estaba descontada");
         } else {
           mostrarNotificacion("success", "Bono re-sincronizado correctamente");
           if (resultado.alerta && resultado.mensaje_alerta) {
@@ -248,23 +246,23 @@ function useAgenda() {
         ]);
         return resultado;
       } else {
-        console.warn("\u26A0\uFE0F [Agenda] No se pudo re-sincronizar:", resultado.message);
+        console.warn("⚠️ [Agenda] No se pudo re-sincronizar:", resultado.message);
         mostrarNotificacion("warning", resultado.message || "No se pudo re-sincronizar");
         return resultado;
       }
     } catch (err) {
-      console.error("\u274C [Agenda] Error al re-sincronizar bono:", err);
+      console.error("❌ [Agenda] Error al re-sincronizar bono:", err);
       mostrarNotificacion("error", "Error al re-sincronizar el bono");
       throw err;
     }
   };
   const resincronizarTodos = async () => {
     if (citasPendientesSync.value.length === 0) {
-      mostrarNotificacion("info", "No hay citas pendientes de sincronizaci\xF3n");
+      mostrarNotificacion("info", "No hay citas pendientes de sincronización");
       return;
     }
     try {
-      console.log(`\u{1F504} [Agenda] Re-sincronizando ${citasPendientesSync.value.length} citas...`);
+      console.log(`🔄 [Agenda] Re-sincronizando ${citasPendientesSync.value.length} citas...`);
       let exitosos = 0;
       let fallidos = 0;
       let yaDescontados = 0;
@@ -289,32 +287,31 @@ function useAgenda() {
       if (exitosos > 0) mensajes.push(`${exitosos} sincronizada(s)`);
       if (yaDescontados > 0) mensajes.push(`${yaDescontados} ya estaba(n) descontada(s)`);
       if (fallidos > 0) mensajes.push(`${fallidos} fallida(s)`);
-      const mensaje = `\u2705 Re-sincronizaci\xF3n completa: ${mensajes.join(", ")}`;
+      const mensaje = `✅ Re-sincronización completa: ${mensajes.join(", ")}`;
       if (fallidos === 0) {
         mostrarNotificacion("success", mensaje);
       } else {
         mostrarNotificacion("warning", mensaje);
       }
-      console.log("\u2705 [Agenda] Re-sincronizaci\xF3n masiva completada:", {
+      console.log("✅ [Agenda] Re-sincronización masiva completada:", {
         exitosos,
         yaDescontados,
         fallidos
       });
     } catch (err) {
-      console.error("\u274C [Agenda] Error en re-sincronizaci\xF3n masiva:", err);
+      console.error("❌ [Agenda] Error en re-sincronización masiva:", err);
       mostrarNotificacion("error", "Error al re-sincronizar todas las citas");
     }
   };
   const suscribirCitasRealtime = () => {
-    var _a;
-    if (!((_a = user.value) == null ? void 0 : _a.id)) {
-      console.warn("\u26A0\uFE0F [Agenda] No se puede suscribir sin usuario autenticado");
+    if (!user.value?.id) {
+      console.warn("⚠️ [Agenda] No se puede suscribir sin usuario autenticado");
       return;
     }
     if (realtimeChannel.value) {
       supabase.removeChannel(realtimeChannel.value);
     }
-    console.log("\u{1F4E1} [Agenda] Iniciando suscripci\xF3n Realtime...");
+    console.log("📡 [Agenda] Iniciando suscripción Realtime...");
     realtimeChannel.value = supabase.channel(`citas_terapeuta_${user.value.id}`).on(
       "postgres_changes",
       {
@@ -325,7 +322,7 @@ function useAgenda() {
         filter: `terapeuta_id=eq.${user.value.id}`
       },
       async (payload) => {
-        console.log("\u{1F4E1} [Realtime] Cambio detectado en citas:", payload.eventType);
+        console.log("📡 [Realtime] Cambio detectado en citas:", payload.eventType);
         await getCitasDelTerapeuta();
         if (payload.eventType === "INSERT") {
           mostrarNotificacion("info", "Nueva cita agregada a tu agenda");
@@ -337,17 +334,17 @@ function useAgenda() {
       }
     ).subscribe((status) => {
       if (status === "SUBSCRIBED") {
-        console.log("\u2705 [Realtime] Suscripci\xF3n activa");
+        console.log("✅ [Realtime] Suscripción activa");
       } else if (status === "CHANNEL_ERROR") {
-        console.error("\u274C [Realtime] Error en suscripci\xF3n");
+        console.error("❌ [Realtime] Error en suscripción");
       } else if (status === "TIMED_OUT") {
-        console.warn("\u26A0\uFE0F [Realtime] Tiempo de espera agotado");
+        console.warn("⚠️ [Realtime] Tiempo de espera agotado");
       }
     });
   };
   const desuscribirCitasRealtime = () => {
     if (realtimeChannel.value) {
-      console.log("\u{1F4E1} [Realtime] Cerrando suscripci\xF3n...");
+      console.log("📡 [Realtime] Cerrando suscripción...");
       supabase.removeChannel(realtimeChannel.value);
       realtimeChannel.value = null;
     }
@@ -355,10 +352,10 @@ function useAgenda() {
   const mostrarNotificacion = (tipo, mensaje) => {
     {
       const emoji = {
-        success: "\u2705",
-        error: "\u274C",
-        warning: "\u26A0\uFE0F",
-        info: "\u2139\uFE0F"
+        success: "✅",
+        error: "❌",
+        warning: "⚠️",
+        info: "ℹ️"
       };
       console.log(`${emoji[tipo]} [Agenda] ${mensaje}`);
     }
@@ -369,8 +366,7 @@ function useAgenda() {
     mostrarNotificacion(tipoNotificacion, resultado.mensaje_alerta);
   };
   watchEffect(() => {
-    var _a;
-    if ((_a = user.value) == null ? void 0 : _a.id) {
+    if (user.value?.id) {
       getCitasDelTerapeuta();
       suscribirCitasRealtime();
     }
@@ -379,19 +375,13 @@ function useAgenda() {
     let resultado = citas.value;
     if (filtros.value.paciente) {
       resultado = resultado.filter(
-        (c) => {
-          var _a;
-          return (_a = c.paciente) == null ? void 0 : _a.nombre_completo.toLowerCase().includes(filtros.value.paciente.toLowerCase());
-        }
+        (c) => c.paciente?.nombre_completo.toLowerCase().includes(filtros.value.paciente.toLowerCase())
       );
     }
     if (filtros.value.busqueda) {
       const busq = filtros.value.busqueda.toLowerCase();
       resultado = resultado.filter(
-        (c) => {
-          var _a, _b;
-          return ((_a = c.paciente) == null ? void 0 : _a.nombre_completo.toLowerCase().includes(busq)) || ((_b = c.observaciones) == null ? void 0 : _b.toLowerCase().includes(busq)) || c.fecha_cita.includes(busq);
-        }
+        (c) => c.paciente?.nombre_completo.toLowerCase().includes(busq) || c.observaciones?.toLowerCase().includes(busq) || c.fecha_cita.includes(busq)
       );
     }
     if (filtros.value.estado && filtros.value.estado.length > 0) {
@@ -460,13 +450,12 @@ function useAgenda() {
     }
   };
   const obtenerDisponibilidad = async (terapeutaId) => {
-    var _a;
     try {
-      const id = terapeutaId || ((_a = user.value) == null ? void 0 : _a.id);
+      const id = terapeutaId || user.value?.id;
       if (!id) throw new Error("ID de terapeuta requerido");
       const { data, error: err } = await supabase.from("terapeutas").select("disponibilidad").eq("id", id).single();
       if (err) throw err;
-      return (data == null ? void 0 : data.disponibilidad) || [];
+      return data?.disponibilidad || [];
     } catch (e) {
       console.error("Error al obtener disponibilidad:", e);
       return [];
@@ -501,8 +490,8 @@ function useAgenda() {
         await supabase.from("notificaciones").insert({
           usuario_id: cita.paciente_id,
           tipo: "cita",
-          titulo: "\u{1F4C5} Recordatorio: Cita ma\xF1ana",
-          mensaje: `Tu cita est\xE1 programada para ma\xF1ana ${cita.fecha_cita} a las ${cita.hora_inicio}`,
+          titulo: "📅 Recordatorio: Cita mañana",
+          mensaje: `Tu cita está programada para mañana ${cita.fecha_cita} a las ${cita.hora_inicio}`,
           metadata: {
             cita_id: citaId,
             tipo_recordatorio: "24h",
@@ -517,8 +506,8 @@ function useAgenda() {
         await supabase.from("notificaciones").insert({
           usuario_id: cita.paciente_id,
           tipo: "cita",
-          titulo: "\u23F0 Recordatorio: Cita en 4 horas",
-          mensaje: `Tu cita est\xE1 programada para hoy ${cita.fecha_cita} a las ${cita.hora_inicio}`,
+          titulo: "⏰ Recordatorio: Cita en 4 horas",
+          mensaje: `Tu cita está programada para hoy ${cita.fecha_cita} a las ${cita.hora_inicio}`,
           metadata: {
             cita_id: citaId,
             tipo_recordatorio: "4h",
@@ -653,7 +642,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       if (estado === "completado" || sesiones === 0) {
         return {
           color: "text-red-600",
-          icono: "\u{1F6AB}",
+          icono: "🚫",
           alerta: true,
           mensajeAlerta: "Bono agotado",
           clase: "bg-red-50 border-red-200"
@@ -661,15 +650,15 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       } else if (sesiones === 1) {
         return {
           color: "text-orange-600",
-          icono: "\u26A0\uFE0F",
+          icono: "⚠️",
           alerta: true,
-          mensajeAlerta: "\xDAltima sesi\xF3n del bono",
+          mensajeAlerta: "Última sesión del bono",
           clase: "bg-orange-50 border-orange-200"
         };
       } else if (sesiones <= 2) {
         return {
           color: "text-yellow-600",
-          icono: "\u26A0\uFE0F",
+          icono: "⚠️",
           alerta: true,
           mensajeAlerta: "Pocas sesiones restantes",
           clase: "bg-yellow-50 border-yellow-200"
@@ -677,7 +666,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       } else if (estado === "activo") {
         return {
           color: "text-green-600",
-          icono: "\u2713",
+          icono: "✓",
           alerta: false,
           mensajeAlerta: null,
           clase: "bg-green-50 border-green-200"
@@ -685,7 +674,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       }
       return {
         color: "text-gray-600",
-        icono: "\u2139\uFE0F",
+        icono: "ℹ️",
         alerta: false,
         mensajeAlerta: null,
         clase: "bg-gray-50 border-gray-200"
@@ -695,18 +684,17 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       return props.cita.estado === "pendiente" || props.cita.estado === "confirmada";
     });
     return (_ctx, _push, _parent, _attrs) => {
-      var _a, _b, _c, _d, _e, _f;
       _push(`<div${ssrRenderAttrs(mergeProps({
         class: [
           "border rounded-xl shadow-sm hover:shadow-md transition-all duration-200 bg-white overflow-hidden",
           __props.compact ? "p-3" : "p-5"
         ]
-      }, _attrs))} data-v-3085384e><div class="flex items-start justify-between gap-4" data-v-3085384e><div class="flex-1 min-w-0" data-v-3085384e><div class="flex items-center gap-3 mb-2 flex-wrap" data-v-3085384e><h3 class="${ssrRenderClass([__props.compact ? "text-base" : "text-lg", "font-semibold text-gray-900 truncate"])}" data-v-3085384e>${ssrInterpolate(((_a = __props.cita.paciente) == null ? void 0 : _a.nombre_completo) || "Paciente")}</h3><span class="${ssrRenderClass([
+      }, _attrs))} data-v-3085384e><div class="flex items-start justify-between gap-4" data-v-3085384e><div class="flex-1 min-w-0" data-v-3085384e><div class="flex items-center gap-3 mb-2 flex-wrap" data-v-3085384e><h3 class="${ssrRenderClass([__props.compact ? "text-base" : "text-lg", "font-semibold text-gray-900 truncate"])}" data-v-3085384e>${ssrInterpolate(__props.cita.paciente?.nombre_completo || "Paciente")}</h3><span class="${ssrRenderClass([
         "px-3 py-1 text-xs font-medium rounded-full border",
         unref(claseEstadoCita)
       ])}" data-v-3085384e>${ssrInterpolate(__props.cita.estado.toUpperCase())}</span></div><div class="${ssrRenderClass(["space-y-1", __props.compact ? "text-xs" : "text-sm", "text-gray-600"])}" data-v-3085384e><div class="flex items-center gap-2" data-v-3085384e><svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-3085384e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" data-v-3085384e></path></svg><span class="truncate" data-v-3085384e>${ssrInterpolate(formatearHora(__props.cita.hora_inicio))} - ${ssrInterpolate(formatearHora(__props.cita.hora_fin))}</span>`);
       if (__props.cita.modalidad) {
-        _push(`<span class="text-gray-400" data-v-3085384e>\u2022</span>`);
+        _push(`<span class="text-gray-400" data-v-3085384e>•</span>`);
       } else {
         _push(`<!---->`);
       }
@@ -716,22 +704,22 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         _push(`<!---->`);
       }
       _push(`</div>`);
-      if (((_b = __props.cita.paciente) == null ? void 0 : _b.telefono) && !__props.compact) {
+      if (__props.cita.paciente?.telefono && !__props.compact) {
         _push(`<div class="flex items-center gap-2" data-v-3085384e><svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-3085384e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" data-v-3085384e></path></svg><span class="truncate" data-v-3085384e>${ssrInterpolate(__props.cita.paciente.telefono)}</span></div>`);
       } else {
         _push(`<!---->`);
       }
       _push(`</div>`);
       if (__props.cita.bono) {
-        _push(`<div class="${ssrRenderClass(["mt-3 p-3 rounded-lg border", ((_c = unref(estadoBono)) == null ? void 0 : _c.clase) || "bg-gray-50 border-gray-200"])}" data-v-3085384e><div class="flex items-center justify-between gap-2" data-v-3085384e><div class="flex-1 min-w-0" data-v-3085384e><p class="text-xs font-medium text-gray-700 mb-1" data-v-3085384e>${ssrInterpolate((_d = unref(estadoBono)) == null ? void 0 : _d.icono)} Bono de Sesiones </p><div class="flex items-center gap-2 flex-wrap" data-v-3085384e><p class="${ssrRenderClass(["text-sm font-semibold", ((_e = unref(estadoBono)) == null ? void 0 : _e.color) || "text-gray-900"])}" data-v-3085384e>${ssrInterpolate(__props.cita.bono.sesiones_restantes)} / ${ssrInterpolate(__props.cita.bono.sesiones_totales)} sesiones </p><span class="text-xs text-gray-500 capitalize" data-v-3085384e> (${ssrInterpolate(__props.cita.bono.estado)}) </span></div>`);
-        if ((_f = unref(estadoBono)) == null ? void 0 : _f.alerta) {
+        _push(`<div class="${ssrRenderClass(["mt-3 p-3 rounded-lg border", unref(estadoBono)?.clase || "bg-gray-50 border-gray-200"])}" data-v-3085384e><div class="flex items-center justify-between gap-2" data-v-3085384e><div class="flex-1 min-w-0" data-v-3085384e><p class="text-xs font-medium text-gray-700 mb-1" data-v-3085384e>${ssrInterpolate(unref(estadoBono)?.icono)} Bono de Sesiones </p><div class="flex items-center gap-2 flex-wrap" data-v-3085384e><p class="${ssrRenderClass(["text-sm font-semibold", unref(estadoBono)?.color || "text-gray-900"])}" data-v-3085384e>${ssrInterpolate(__props.cita.bono.sesiones_restantes)} / ${ssrInterpolate(__props.cita.bono.sesiones_totales)} sesiones </p><span class="text-xs text-gray-500 capitalize" data-v-3085384e> (${ssrInterpolate(__props.cita.bono.estado)}) </span></div>`);
+        if (unref(estadoBono)?.alerta) {
           _push(`<p class="${ssrRenderClass(["mt-2 text-xs font-medium", unref(estadoBono).color])}" data-v-3085384e>${ssrInterpolate(unref(estadoBono).mensajeAlerta)}</p>`);
         } else {
           _push(`<!---->`);
         }
         _push(`</div>`);
         if (!__props.compact) {
-          _push(`<button class="text-xs text-blue-600 hover:text-blue-800 font-medium whitespace-nowrap px-2 py-1 hover:bg-blue-50 rounded transition-colors" type="button" data-v-3085384e> \u{1F4CA} Historial </button>`);
+          _push(`<button class="text-xs text-blue-600 hover:text-blue-800 font-medium whitespace-nowrap px-2 py-1 hover:bg-blue-50 rounded transition-colors" type="button" data-v-3085384e> 📊 Historial </button>`);
         } else {
           _push(`<!---->`);
         }
@@ -749,12 +737,12 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         _push(`<button class="${ssrRenderClass([
           "px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors",
           __props.compact ? "text-xs" : "text-sm"
-        ])}" type="button" data-v-3085384e> \u2705 Completar </button>`);
+        ])}" type="button" data-v-3085384e> ✅ Completar </button>`);
       } else if (__props.cita.estado === "completada" || __props.cita.estado === "realizada") {
         _push(`<span class="${ssrRenderClass([
           "px-4 py-2 bg-green-100 text-green-800 font-medium rounded-lg text-center",
           __props.compact ? "text-xs" : "text-sm"
-        ])}" data-v-3085384e> \u2713 Completada </span>`);
+        ])}" data-v-3085384e> ✓ Completada </span>`);
       } else {
         _push(`<!---->`);
       }
@@ -876,10 +864,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const citasPorHora = (hora) => {
       const fechaStr = fechaSeleccionada.value.toISOString().split("T")[0];
       return citas.value.filter(
-        (c) => {
-          var _a;
-          return c.fecha_cita === fechaStr && ((_a = c.hora_inicio) == null ? void 0 : _a.startsWith(hora));
-        }
+        (c) => c.fecha_cita === fechaStr && c.hora_inicio?.startsWith(hora)
       );
     };
     const getClasesCita = (estado) => {
@@ -910,18 +895,14 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     };
     const citasPorDiaHora = (fecha, hora) => {
       return citas.value.filter(
-        (c) => {
-          var _a;
-          return c.fecha_cita === fecha && ((_a = c.hora_inicio) == null ? void 0 : _a.startsWith(hora));
-        }
+        (c) => c.fecha_cita === fecha && c.hora_inicio?.startsWith(hora)
       );
     };
     const esCeldaObjetivo = (fecha, hora) => {
-      var _a, _b;
-      return ((_a = celdaObjetivo.value) == null ? void 0 : _a.fecha) === fecha && ((_b = celdaObjetivo.value) == null ? void 0 : _b.hora) === hora;
+      return celdaObjetivo.value?.fecha === fecha && celdaObjetivo.value?.hora === hora;
     };
     const handleCompletarCita = async (citaId) => {
-      if (!confirm("\xBFEst\xE1s seguro de marcar esta cita como completada?")) return;
+      if (!confirm("¿Estás seguro de marcar esta cita como completada?")) return;
       try {
         const resultado = await completarCita(citaId);
         if (resultado.success) {
@@ -950,11 +931,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     };
     return (_ctx, _push, _parent, _attrs) => {
       const _component_TarjetaCita = __nuxt_component_1;
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "space-y-3" }, _attrs))} data-v-040d0550><div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-4" data-v-040d0550><div class="flex items-center justify-between gap-3 mb-3" data-v-040d0550><div class="flex items-center gap-3" data-v-040d0550><h1 class="text-xl font-[&#39;Elms_Sans&#39;] font-bold text-neutral-800" data-v-040d0550>Mi Agenda</h1><span class="text-sm text-neutral-600" data-v-040d0550>${ssrInterpolate(formatearFechaLarga(fechaSeleccionada.value))}</span></div><div class="flex items-center gap-2" data-v-040d0550><div class="flex bg-neutral-100 rounded-xl p-1" data-v-040d0550><button class="${ssrRenderClass([vista.value === "dia" ? "bg-white text-neutral-800 shadow-sm" : "text-neutral-600 hover:text-neutral-800", "px-3 py-1.5 rounded-lg text-sm font-medium transition-all"])}" data-v-040d0550> D\xEDa </button><button class="${ssrRenderClass([vista.value === "calendario" ? "bg-white text-neutral-800 shadow-sm" : "text-neutral-600 hover:text-neutral-800", "px-3 py-1.5 rounded-lg text-sm font-medium transition-all"])}" data-v-040d0550> Semana </button><button class="${ssrRenderClass([vista.value === "lista" ? "bg-white text-neutral-800 shadow-sm" : "text-neutral-600 hover:text-neutral-800", "px-3 py-1.5 rounded-lg text-sm font-medium transition-all"])}" data-v-040d0550> Lista </button></div><div class="flex items-center gap-1" data-v-040d0550><button class="p-2 rounded-lg hover:bg-neutral-100 text-neutral-700 transition-all" title="Anterior" data-v-040d0550> \u2190 </button><button class="px-3 py-1.5 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white hover:from-[#027368] hover:to-[#04BF9D] rounded-lg text-sm font-medium transition-all" data-v-040d0550> Hoy </button><button class="p-2 rounded-lg hover:bg-neutral-100 text-neutral-700 transition-all" title="Siguiente" data-v-040d0550> \u2192 </button></div><button class="px-4 py-2 bg-white/80 backdrop-blur-sm border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all text-sm font-medium shadow-sm"${ssrIncludeBooleanAttr(unref(loading)) ? " disabled" : ""} data-v-040d0550>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "space-y-3" }, _attrs))} data-v-040d0550><div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-4" data-v-040d0550><div class="flex items-center justify-between gap-3 mb-3" data-v-040d0550><div class="flex items-center gap-3" data-v-040d0550><h1 class="text-xl font-[&#39;Elms_Sans&#39;] font-bold text-neutral-800" data-v-040d0550>Mi Agenda</h1><span class="text-sm text-neutral-600" data-v-040d0550>${ssrInterpolate(formatearFechaLarga(fechaSeleccionada.value))}</span></div><div class="flex items-center gap-2" data-v-040d0550><div class="flex bg-neutral-100 rounded-xl p-1" data-v-040d0550><button class="${ssrRenderClass([vista.value === "dia" ? "bg-white text-neutral-800 shadow-sm" : "text-neutral-600 hover:text-neutral-800", "px-3 py-1.5 rounded-lg text-sm font-medium transition-all"])}" data-v-040d0550> Día </button><button class="${ssrRenderClass([vista.value === "calendario" ? "bg-white text-neutral-800 shadow-sm" : "text-neutral-600 hover:text-neutral-800", "px-3 py-1.5 rounded-lg text-sm font-medium transition-all"])}" data-v-040d0550> Semana </button><button class="${ssrRenderClass([vista.value === "lista" ? "bg-white text-neutral-800 shadow-sm" : "text-neutral-600 hover:text-neutral-800", "px-3 py-1.5 rounded-lg text-sm font-medium transition-all"])}" data-v-040d0550> Lista </button></div><div class="flex items-center gap-1" data-v-040d0550><button class="p-2 rounded-lg hover:bg-neutral-100 text-neutral-700 transition-all" title="Anterior" data-v-040d0550> ← </button><button class="px-3 py-1.5 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white hover:from-[#027368] hover:to-[#04BF9D] rounded-lg text-sm font-medium transition-all" data-v-040d0550> Hoy </button><button class="p-2 rounded-lg hover:bg-neutral-100 text-neutral-700 transition-all" title="Siguiente" data-v-040d0550> → </button></div><button class="px-4 py-2 bg-white/80 backdrop-blur-sm border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all text-sm font-medium shadow-sm"${ssrIncludeBooleanAttr(unref(loading)) ? " disabled" : ""} data-v-040d0550>`);
       if (unref(loading)) {
         _push(`<span data-v-040d0550>Actualizando...</span>`);
       } else {
-        _push(`<span data-v-040d0550>\u21BB Actualizar</span>`);
+        _push(`<span data-v-040d0550>↻ Actualizar</span>`);
       }
       _push(`</button></div></div>`);
       if (vista.value === "lista") {
@@ -976,14 +957,14 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       }
       _push(`</div>`);
       if (unref(citasConBonoProximoAgotar).length > 0) {
-        _push(`<div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 mb-4 shadow-sm" data-v-040d0550><div class="flex items-center gap-3" data-v-040d0550><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F2B33D] to-[#F2B33D]/70 flex items-center justify-center flex-shrink-0" data-v-040d0550><svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20" data-v-040d0550><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" data-v-040d0550></path></svg></div><div class="flex-1" data-v-040d0550><p class="text-sm font-medium text-amber-900" data-v-040d0550> Atenci\xF3n: ${ssrInterpolate(unref(citasConBonoProximoAgotar).length)} paciente(s) con pocas sesiones restantes </p><p class="text-xs text-amber-700 mt-1" data-v-040d0550> Considera informar a estos pacientes para renovar sus bonos </p></div></div></div>`);
+        _push(`<div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 mb-4 shadow-sm" data-v-040d0550><div class="flex items-center gap-3" data-v-040d0550><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F2B33D] to-[#F2B33D]/70 flex items-center justify-center flex-shrink-0" data-v-040d0550><svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20" data-v-040d0550><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" data-v-040d0550></path></svg></div><div class="flex-1" data-v-040d0550><p class="text-sm font-medium text-amber-900" data-v-040d0550> Atención: ${ssrInterpolate(unref(citasConBonoProximoAgotar).length)} paciente(s) con pocas sesiones restantes </p><p class="text-xs text-amber-700 mt-1" data-v-040d0550> Considera informar a estos pacientes para renovar sus bonos </p></div></div></div>`);
       } else {
         _push(`<!---->`);
       }
       if (vista.value === "dia") {
         _push(`<div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 overflow-hidden flex flex-col" style="${ssrRenderStyle({ "height": "calc(100vh - 200px)" })}" data-v-040d0550><div class="sticky top-0 z-10 bg-gradient-to-r from-white/95 via-white/90 to-white/95 backdrop-blur-md border-b border-neutral-200 shadow-sm p-4" data-v-040d0550><div class="flex items-center justify-between" data-v-040d0550><div data-v-040d0550><h3 class="font-[&#39;Elms_Sans&#39;] font-semibold text-lg text-neutral-800" data-v-040d0550>${ssrInterpolate(formatearFechaCompleta(fechaSeleccionada.value))}</h3><p class="text-sm text-neutral-600 mt-1" data-v-040d0550>${ssrInterpolate(citasPorHora ? Object.values(horasDelDia).reduce((total, hora) => total + citasPorHora(hora).length, 0) : 0)} citas programadas </p></div></div></div><div class="flex-1 overflow-y-auto" data-v-040d0550>`);
         if (citasFiltradas.value.length === 0) {
-          _push(`<div class="flex items-center justify-center py-16" data-v-040d0550><div class="text-center" data-v-040d0550><div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#027368]/10 to-[#04BF9D]/10 flex items-center justify-center" data-v-040d0550><svg class="w-8 h-8 text-[#027368]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-040d0550><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-040d0550></path></svg></div><h3 class="font-[&#39;Elms_Sans&#39;] font-medium text-neutral-800 mb-2" data-v-040d0550>No hay citas programadas</h3><p class="text-neutral-600 text-sm" data-v-040d0550>${ssrInterpolate(formatearFechaCompleta(fechaSeleccionada.value))} est\xE1 libre</p></div></div>`);
+          _push(`<div class="flex items-center justify-center py-16" data-v-040d0550><div class="text-center" data-v-040d0550><div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#027368]/10 to-[#04BF9D]/10 flex items-center justify-center" data-v-040d0550><svg class="w-8 h-8 text-[#027368]" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-040d0550><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-040d0550></path></svg></div><h3 class="font-[&#39;Elms_Sans&#39;] font-medium text-neutral-800 mb-2" data-v-040d0550>No hay citas programadas</h3><p class="text-neutral-600 text-sm" data-v-040d0550>${ssrInterpolate(formatearFechaCompleta(fechaSeleccionada.value))} está libre</p></div></div>`);
         } else {
           _push(`<div class="divide-y divide-neutral-100" data-v-040d0550><!--[-->`);
           ssrRenderList(horasDelDia, (hora, index) => {
@@ -995,10 +976,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             }
             _push(`<!--[-->`);
             ssrRenderList(citasPorHora(hora), (cita) => {
-              var _a;
               _push(`<div draggable="true" class="${ssrRenderClass([getClasesCita(cita.estado), "mb-2 p-3 rounded-xl transition-all hover:shadow-md hover:ring-2 hover:ring-[#027368]/30 group relative cursor-move backdrop-blur-sm"])}" title="Arrastra para mover a otra hora" data-v-040d0550><div class="flex items-start justify-between gap-3" data-v-040d0550><div class="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" data-v-040d0550>`);
               _push(ssrRenderComponent(unref(ArrowsPointingOutIcon), { class: "w-4 h-4 text-neutral-500" }, null, _parent));
-              _push(`</div><div class="flex-1" data-v-040d0550><p class="font-medium text-sm text-neutral-800" data-v-040d0550>${ssrInterpolate(((_a = cita.paciente) == null ? void 0 : _a.nombre_completo) || "Sin nombre")}</p><div class="flex items-center gap-2 mt-1" data-v-040d0550><span class="text-xs text-neutral-600 font-medium" data-v-040d0550>${ssrInterpolate(formatearHora(cita.hora_inicio))} - ${ssrInterpolate(formatearHora(cita.hora_fin))}</span><span class="text-xs px-2 py-1 rounded-lg bg-white/60 text-neutral-700" data-v-040d0550>${ssrInterpolate(cita.modalidad)}</span></div></div><div class="flex items-center gap-2" data-v-040d0550><span class="${ssrRenderClass([getBadgeEstado(cita.estado), "text-xs px-2 py-1 rounded-lg font-medium whitespace-nowrap"])}" data-v-040d0550>${ssrInterpolate(getEstadoLabel(cita.estado))}</span></div></div></div>`);
+              _push(`</div><div class="flex-1" data-v-040d0550><p class="font-medium text-sm text-neutral-800" data-v-040d0550>${ssrInterpolate(cita.paciente?.nombre_completo || "Sin nombre")}</p><div class="flex items-center gap-2 mt-1" data-v-040d0550><span class="text-xs text-neutral-600 font-medium" data-v-040d0550>${ssrInterpolate(formatearHora(cita.hora_inicio))} - ${ssrInterpolate(formatearHora(cita.hora_fin))}</span><span class="text-xs px-2 py-1 rounded-lg bg-white/60 text-neutral-700" data-v-040d0550>${ssrInterpolate(cita.modalidad)}</span></div></div><div class="flex items-center gap-2" data-v-040d0550><span class="${ssrRenderClass([getBadgeEstado(cita.estado), "text-xs px-2 py-1 rounded-lg font-medium whitespace-nowrap"])}" data-v-040d0550>${ssrInterpolate(getEstadoLabel(cita.estado))}</span></div></div></div>`);
             });
             _push(`<!--]-->`);
             if (citasPorHora(hora).length === 0) {
@@ -1031,10 +1011,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             }
             _push(`<!--[-->`);
             ssrRenderList(citasPorDiaHora(dia.fecha, hora), (cita) => {
-              var _a;
               _push(`<div draggable="true" class="${ssrRenderClass([getClasesCita(cita.estado), "text-xs p-2 rounded-lg mb-1.5 hover:shadow-lg hover:ring-2 hover:ring-blue-400 transition-all group relative cursor-move"])}" title="Arrastra para mover" data-v-040d0550><div class="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1 left-1" data-v-040d0550>`);
               _push(ssrRenderComponent(unref(ArrowsPointingOutIcon), { class: "w-3 h-3 text-gray-500" }, null, _parent));
-              _push(`</div><div class="pl-5" data-v-040d0550><p class="font-semibold truncate text-sm" data-v-040d0550>${ssrInterpolate(((_a = cita.paciente) == null ? void 0 : _a.nombre_completo) || "Sin nombre")}</p><p class="text-xs text-gray-600 mt-0.5" data-v-040d0550>${ssrInterpolate(formatearHora(cita.hora_inicio))} - ${ssrInterpolate(formatearHora(cita.hora_fin))}</p><div class="flex items-center gap-1 mt-1" data-v-040d0550><span class="text-xs px-1.5 py-0.5 rounded-full bg-white/60" data-v-040d0550>${ssrInterpolate(cita.modalidad)}</span>`);
+              _push(`</div><div class="pl-5" data-v-040d0550><p class="font-semibold truncate text-sm" data-v-040d0550>${ssrInterpolate(cita.paciente?.nombre_completo || "Sin nombre")}</p><p class="text-xs text-gray-600 mt-0.5" data-v-040d0550>${ssrInterpolate(formatearHora(cita.hora_inicio))} - ${ssrInterpolate(formatearHora(cita.hora_fin))}</p><div class="flex items-center gap-1 mt-1" data-v-040d0550><span class="text-xs px-1.5 py-0.5 rounded-full bg-white/60" data-v-040d0550>${ssrInterpolate(cita.modalidad)}</span>`);
               if (cita.bono) {
                 _push(`<span class="text-xs text-green-700" data-v-040d0550> Bono </span>`);
               } else {
@@ -1069,7 +1048,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         if (unref(loading) && unref(citas).length === 0) {
           _push(`<div class="text-center py-12" data-v-040d0550><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" data-v-040d0550></div><p class="text-gray-600" data-v-040d0550>Cargando citas...</p></div>`);
         } else if (citasFiltradas.value.length === 0) {
-          _push(`<div class="text-center py-12 bg-gray-50 rounded-lg" data-v-040d0550><svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-040d0550><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-040d0550></path></svg><h3 class="mt-2 text-sm font-medium text-gray-900" data-v-040d0550>No hay citas</h3><p class="mt-1 text-sm text-gray-500" data-v-040d0550>${ssrInterpolate(filtroActivo.value === "hoy" ? "No tienes citas programadas para hoy." : "No hay citas en esta categor\xEDa.")}</p></div>`);
+          _push(`<div class="text-center py-12 bg-gray-50 rounded-lg" data-v-040d0550><svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-040d0550><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-040d0550></path></svg><h3 class="mt-2 text-sm font-medium text-gray-900" data-v-040d0550>No hay citas</h3><p class="mt-1 text-sm text-gray-500" data-v-040d0550>${ssrInterpolate(filtroActivo.value === "hoy" ? "No tienes citas programadas para hoy." : "No hay citas en esta categoría.")}</p></div>`);
         } else {
           _push(`<div class="space-y-4" data-v-040d0550><!--[-->`);
           ssrRenderList(citasFiltradas.value, (cita) => {
@@ -1111,7 +1090,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
                 _push2(`<div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors" data-v-040d0550><div class="flex items-start justify-between" data-v-040d0550><div class="flex-1" data-v-040d0550><div class="flex items-center gap-2 mb-1" data-v-040d0550><span class="${ssrRenderClass([
                   "px-2 py-1 text-xs font-medium rounded",
                   mov.tipo_movimiento === "descuento" ? "bg-red-100 text-red-700" : mov.tipo_movimiento === "reembolso" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
-                ])}" data-v-040d0550>${ssrInterpolate(mov.tipo_movimiento)}</span><span class="text-xs text-gray-500" data-v-040d0550>${ssrInterpolate(new Date(mov.fecha).toLocaleString("es-ES"))}</span></div><p class="text-sm text-gray-700" data-v-040d0550>${ssrInterpolate(mov.motivo)}</p></div><div class="text-right ml-4" data-v-040d0550><p class="text-sm font-semibold text-gray-900" data-v-040d0550>${ssrInterpolate(mov.sesiones_antes)} \u2192 ${ssrInterpolate(mov.sesiones_despues)}</p><p class="${ssrRenderClass([
+                ])}" data-v-040d0550>${ssrInterpolate(mov.tipo_movimiento)}</span><span class="text-xs text-gray-500" data-v-040d0550>${ssrInterpolate(new Date(mov.fecha).toLocaleString("es-ES"))}</span></div><p class="text-sm text-gray-700" data-v-040d0550>${ssrInterpolate(mov.motivo)}</p></div><div class="text-right ml-4" data-v-040d0550><p class="text-sm font-semibold text-gray-900" data-v-040d0550>${ssrInterpolate(mov.sesiones_antes)} → ${ssrInterpolate(mov.sesiones_despues)}</p><p class="${ssrRenderClass([
                   "text-xs font-medium",
                   mov.sesiones_modificadas > 0 ? "text-red-600" : "text-green-600"
                 ])}" data-v-040d0550>${ssrInterpolate(mov.sesiones_modificadas > 0 ? "-" : "+")}${ssrInterpolate(Math.abs(mov.sesiones_modificadas))}</p></div></div></div>`);

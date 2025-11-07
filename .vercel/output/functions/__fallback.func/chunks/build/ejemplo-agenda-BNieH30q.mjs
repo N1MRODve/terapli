@@ -71,7 +71,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       ])}" data-v-44ce82a9><div class="flex items-center justify-between" data-v-44ce82a9><div data-v-44ce82a9><p class="text-sm font-medium text-gray-600" data-v-44ce82a9>Bonos por Renovar</p><p class="${ssrRenderClass([
         "text-3xl font-bold mt-1",
         estadisticas.value.bonosConPocasSesiones > 0 ? "text-yellow-600" : "text-gray-400"
-      ])}" data-v-44ce82a9>${ssrInterpolate(estadisticas.value.bonosConPocasSesiones)}</p><p class="text-xs text-gray-500 mt-1" data-v-44ce82a9>\u22642 sesiones restantes</p></div><div class="${ssrRenderClass([
+      ])}" data-v-44ce82a9>${ssrInterpolate(estadisticas.value.bonosConPocasSesiones)}</p><p class="text-xs text-gray-500 mt-1" data-v-44ce82a9>≤2 sesiones restantes</p></div><div class="${ssrRenderClass([
         "h-12 w-12 rounded-full flex items-center justify-center",
         estadisticas.value.bonosConPocasSesiones > 0 ? "bg-yellow-200" : "bg-gray-100"
       ])}" data-v-44ce82a9><svg class="${ssrRenderClass([
@@ -88,14 +88,14 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       }
       _push(`</div>`);
       if (hayAlertas.value) {
-        _push(`<div class="mt-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 rounded-r-lg" data-v-44ce82a9><div class="flex items-start" data-v-44ce82a9><div class="flex-shrink-0" data-v-44ce82a9><svg class="h-5 w-5 text-yellow-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20" data-v-44ce82a9><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" data-v-44ce82a9></path></svg></div><div class="ml-3 flex-1" data-v-44ce82a9><h3 class="text-sm font-medium text-yellow-800" data-v-44ce82a9> Acci\xF3n Requerida </h3><div class="mt-2 text-sm text-yellow-700" data-v-44ce82a9><p data-v-44ce82a9>`);
+        _push(`<div class="mt-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 rounded-r-lg" data-v-44ce82a9><div class="flex items-start" data-v-44ce82a9><div class="flex-shrink-0" data-v-44ce82a9><svg class="h-5 w-5 text-yellow-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20" data-v-44ce82a9><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" data-v-44ce82a9></path></svg></div><div class="ml-3 flex-1" data-v-44ce82a9><h3 class="text-sm font-medium text-yellow-800" data-v-44ce82a9> Acción Requerida </h3><div class="mt-2 text-sm text-yellow-700" data-v-44ce82a9><p data-v-44ce82a9>`);
         if (estadisticas.value.bonosConPocasSesiones > 0) {
           _push(`<strong data-v-44ce82a9>${ssrInterpolate(estadisticas.value.bonosConPocasSesiones)} bono${ssrInterpolate(estadisticas.value.bonosConPocasSesiones > 1 ? "s" : "")}</strong>`);
         } else {
           _push(`<!---->`);
         }
         if (estadisticas.value.bonosConPocasSesiones > 0) {
-          _push(`<span data-v-44ce82a9>${ssrInterpolate(estadisticas.value.bonosConPocasSesiones > 1 ? " necesitan" : " necesita")} renovaci\xF3n pronto. </span>`);
+          _push(`<span data-v-44ce82a9>${ssrInterpolate(estadisticas.value.bonosConPocasSesiones > 1 ? " necesitan" : " necesita")} renovación pronto. </span>`);
         } else {
           _push(`<!---->`);
         }
@@ -104,7 +104,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         } else {
           _push(`<!---->`);
         }
-        _push(`</p><p class="mt-1 text-xs" data-v-44ce82a9> \u{1F4A1} Contacta a los pacientes para ofrecer renovaci\xF3n de bonos </p></div></div></div></div>`);
+        _push(`</p><p class="mt-1 text-xs" data-v-44ce82a9> 💡 Contacta a los pacientes para ofrecer renovación de bonos </p></div></div></div></div>`);
       } else {
         _push(`<!---->`);
       }

@@ -70,43 +70,43 @@ const _sfc_main$1 = {
       });
     };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6" }, _attrs))} data-v-a439e157><div class="flex items-center justify-between mb-4" data-v-a439e157><h3 class="font-serif text-lg font-semibold text-cafe flex items-center gap-2" data-v-a439e157><span class="text-xl" data-v-a439e157>\u{1F4DD}</span> Notas Cl\xEDnicas Privadas </h3>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6" }, _attrs))} data-v-a439e157><div class="flex items-center justify-between mb-4" data-v-a439e157><h3 class="font-serif text-lg font-semibold text-cafe flex items-center gap-2" data-v-a439e157><span class="text-xl" data-v-a439e157>📝</span> Notas Clínicas Privadas </h3>`);
       if (!unref(editando)) {
-        _push(`<button class="px-3 py-1.5 text-sm bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors" data-v-a439e157> \u270F\uFE0F Editar </button>`);
+        _push(`<button class="px-3 py-1.5 text-sm bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors" data-v-a439e157> ✏️ Editar </button>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`</div><div class="mb-4 p-3 bg-rosa/20 border border-rosa rounded-lg" data-v-a439e157><p class="text-xs text-cafe/70 flex items-start gap-2" data-v-a439e157><span class="text-terracota" data-v-a439e157>\u{1F512}</span><span data-v-a439e157> Esta informaci\xF3n es estrictamente confidencial y solo visible para ti como terapeuta. Cumple con los est\xE1ndares de protecci\xF3n de datos cl\xEDnicos. </span></p></div>`);
+      _push(`</div><div class="mb-4 p-3 bg-rosa/20 border border-rosa rounded-lg" data-v-a439e157><p class="text-xs text-cafe/70 flex items-start gap-2" data-v-a439e157><span class="text-terracota" data-v-a439e157>🔒</span><span data-v-a439e157> Esta información es estrictamente confidencial y solo visible para ti como terapeuta. Cumple con los estándares de protección de datos clínicos. </span></p></div>`);
       if (!unref(editando)) {
         _push(`<div class="min-h-[200px]" data-v-a439e157>`);
         if (unref(contenidoLocal)) {
           _push(`<div class="prose prose-sm max-w-none text-cafe/80 whitespace-pre-wrap" data-v-a439e157>${ssrInterpolate(unref(contenidoLocal))}</div>`);
         } else {
-          _push(`<div class="text-center py-8" data-v-a439e157><span class="text-5xl mb-3 block opacity-40" data-v-a439e157>\u{1F4CB}</span><p class="text-cafe/50 italic" data-v-a439e157> A\xFAn no hay notas registradas para este paciente </p><button class="mt-4 px-4 py-2 text-sm bg-terracota/10 text-terracota rounded-lg hover:bg-terracota/20 transition-colors" data-v-a439e157> A\xF1adir primera nota </button></div>`);
+          _push(`<div class="text-center py-8" data-v-a439e157><span class="text-5xl mb-3 block opacity-40" data-v-a439e157>📋</span><p class="text-cafe/50 italic" data-v-a439e157> Aún no hay notas registradas para este paciente </p><button class="mt-4 px-4 py-2 text-sm bg-terracota/10 text-terracota rounded-lg hover:bg-terracota/20 transition-colors" data-v-a439e157> Añadir primera nota </button></div>`);
         }
         _push(`</div>`);
       } else {
         _push(`<div data-v-a439e157><textarea placeholder="Anota observaciones, reflexiones o aspectos a seguir trabajando...
 
-\u2022 Progreso observado en la sesi\xF3n
-\u2022 Temas pendientes de abordar
-\u2022 Estrategias que funcionan
-\u2022 Aspectos que requieren atenci\xF3n" class="w-full min-h-[300px] px-4 py-3 bg-base-bg rounded-lg border border-terracota/30 focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all text-cafe resize-y" data-v-a439e157>${ssrInterpolate(unref(contenidoLocal))}</textarea><div class="mt-2 flex items-center justify-between text-xs text-cafe/60" data-v-a439e157><span data-v-a439e157> \u{1F4A1} Presiona Cmd/Ctrl + Enter para guardar r\xE1pidamente </span>`);
+• Progreso observado en la sesión
+• Temas pendientes de abordar
+• Estrategias que funcionan
+• Aspectos que requieren atención" class="w-full min-h-[300px] px-4 py-3 bg-base-bg rounded-lg border border-terracota/30 focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all text-cafe resize-y" data-v-a439e157>${ssrInterpolate(unref(contenidoLocal))}</textarea><div class="mt-2 flex items-center justify-between text-xs text-cafe/60" data-v-a439e157><span data-v-a439e157> 💡 Presiona Cmd/Ctrl + Enter para guardar rápidamente </span>`);
         if (__props.ultimaActualizacion) {
-          _push(`<span data-v-a439e157> \xDAltima actualizaci\xF3n: ${ssrInterpolate(formatearFecha(__props.ultimaActualizacion))}</span>`);
+          _push(`<span data-v-a439e157> Última actualización: ${ssrInterpolate(formatearFecha(__props.ultimaActualizacion))}</span>`);
         } else {
           _push(`<!---->`);
         }
         _push(`</div><div class="mt-4 flex items-center gap-3" data-v-a439e157><button${ssrIncludeBooleanAttr(unref(guardando)) ? " disabled" : ""} class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2" data-v-a439e157>`);
         if (unref(guardando)) {
-          _push(`<span data-v-a439e157>\u23F3</span>`);
+          _push(`<span data-v-a439e157>⏳</span>`);
         } else {
-          _push(`<span data-v-a439e157>\u{1F4BE}</span>`);
+          _push(`<span data-v-a439e157>💾</span>`);
         }
         _push(`<span data-v-a439e157>${ssrInterpolate(unref(guardando) ? "Guardando..." : "Guardar cambios")}</span></button><button${ssrIncludeBooleanAttr(unref(guardando)) ? " disabled" : ""} class="px-4 py-2 bg-white border border-cafe/20 text-cafe rounded-lg hover:bg-gray-50 transition-colors" data-v-a439e157> Cancelar </button></div></div>`);
       }
       if (!unref(editando) && __props.ultimaActualizacion) {
-        _push(`<div class="mt-4 pt-4 border-t border-gray-100" data-v-a439e157><p class="text-xs text-cafe/50" data-v-a439e157> \xDAltima modificaci\xF3n: ${ssrInterpolate(formatearFecha(__props.ultimaActualizacion))}</p></div>`);
+        _push(`<div class="mt-4 pt-4 border-t border-gray-100" data-v-a439e157><p class="text-xs text-cafe/50" data-v-a439e157> Última modificación: ${ssrInterpolate(formatearFecha(__props.ultimaActualizacion))}</p></div>`);
       } else {
         _push(`<!---->`);
       }
@@ -146,26 +146,26 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const tabs = computed(() => [
       {
         id: "proximas",
-        nombre: "Pr\xF3ximas Sesiones",
-        icono: "\u{1F4C5}",
+        nombre: "Próximas Sesiones",
+        icono: "📅",
         badge: estadisticas.value.proximas || null
       },
       {
         id: "completadas",
         nombre: "Completadas",
-        icono: "\u2705",
+        icono: "✅",
         badge: estadisticas.value.completadas || null
       },
       {
         id: "pendientes",
         nombre: "Pendientes",
-        icono: "\u23F3",
+        icono: "⏳",
         badge: estadisticas.value.pendientes || null
       },
       {
         id: "anteriores",
         nombre: "Historial",
-        icono: "\u{1F4DA}",
+        icono: "📚",
         badge: null
       }
     ]);
@@ -219,9 +219,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       }
     };
     const cargarNotas = async () => {
-      var _a;
       try {
-        const { data } = await supabase.from("notas_terapeuticas").select("contenido, updated_at").eq("paciente_id", pacienteId.value).eq("terapeuta_id", (_a = user.value) == null ? void 0 : _a.id).order("updated_at", { ascending: false }).limit(1).maybeSingle();
+        const { data } = await supabase.from("notas_terapeuticas").select("contenido, updated_at").eq("paciente_id", pacienteId.value).eq("terapeuta_id", user.value?.id).order("updated_at", { ascending: false }).limit(1).maybeSingle();
         if (data) {
           notasClinicas.value = data.contenido || "";
           notasActualizacion.value = data.updated_at;
@@ -231,15 +230,14 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       }
     };
     const guardarNotas = async ({ pacienteId: pacienteId2, contenido }) => {
-      var _a, _b;
       try {
-        const { data: existing } = await supabase.from("notas_terapeuticas").select("id").eq("paciente_id", pacienteId2).eq("terapeuta_id", (_a = user.value) == null ? void 0 : _a.id).maybeSingle();
+        const { data: existing } = await supabase.from("notas_terapeuticas").select("id").eq("paciente_id", pacienteId2).eq("terapeuta_id", user.value?.id).maybeSingle();
         if (existing) {
           await supabase.from("notas_terapeuticas").update({ contenido, updated_at: (/* @__PURE__ */ new Date()).toISOString() }).eq("id", existing.id);
         } else {
           await supabase.from("notas_terapeuticas").insert({
             paciente_id: pacienteId2,
-            terapeuta_id: (_b = user.value) == null ? void 0 : _b.id,
+            terapeuta_id: user.value?.id,
             contenido
           });
         }
@@ -282,10 +280,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const proximaSesion = computed(() => {
       return sesionesProximas.value.length > 0 ? sesionesProximas.value[0] : null;
     });
-    const nombreCompleto = computed(() => {
-      var _a;
-      return ((_a = pacienteData.value) == null ? void 0 : _a.nombre_completo) || "Sin nombre";
-    });
+    const nombreCompleto = computed(() => pacienteData.value?.nombre_completo || "Sin nombre");
     const iniciales = computed(() => {
       if (!nombreCompleto.value) return "?";
       const partes = nombreCompleto.value.split(" ");
@@ -300,24 +295,21 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       return colors[index];
     });
     const estadoTexto = computed(() => {
-      var _a;
       if (!pacienteData.value) return "";
       if (!pacienteData.value.activo) return "Finalizado";
-      if ((_a = pacienteData.value.metadata) == null ? void 0 : _a.en_pausa) return "En pausa";
+      if (pacienteData.value.metadata?.en_pausa) return "En pausa";
       return "En proceso";
     });
     const estadoClasses = computed(() => {
-      var _a;
       if (!pacienteData.value) return "";
       if (!pacienteData.value.activo) return "bg-gray-100 text-gray-600";
-      if ((_a = pacienteData.value.metadata) == null ? void 0 : _a.en_pausa) return "bg-yellow-100 text-yellow-700";
+      if (pacienteData.value.metadata?.en_pausa) return "bg-yellow-100 text-yellow-700";
       return "bg-green-100 text-green-700";
     });
     const tipoBono = computed(() => {
-      var _a;
-      if (!((_a = pacienteData.value) == null ? void 0 : _a.tipo_bono)) return "";
+      if (!pacienteData.value?.tipo_bono) return "";
       const nombres = {
-        "a_demanda": "A Demanda (1 sesi\xF3n)",
+        "a_demanda": "A Demanda (1 sesión)",
         "quincenal": "Quincenal (2 sesiones/mes)",
         "semanal": "Semanal (4 sesiones/mes)"
       };
@@ -364,17 +356,17 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       const inicio = new Date(fechaInicio);
       const ahora = /* @__PURE__ */ new Date();
       const dias = Math.floor((ahora.getTime() - inicio.getTime()) / (1e3 * 60 * 60 * 24));
-      if (dias < 30) return `${dias} d\xEDas`;
+      if (dias < 30) return `${dias} días`;
       if (dias < 365) return `${Math.floor(dias / 30)} meses`;
-      return `${Math.floor(dias / 365)} a\xF1os`;
+      return `${Math.floor(dias / 365)} años`;
     };
     const obtenerIconoModalidad = (modalidad) => {
       const iconos = {
-        "presencial": "\u{1F3E5}",
-        "online": "\u{1F4BB}",
-        "telefonica": "\u{1F4DE}"
+        "presencial": "🏥",
+        "online": "💻",
+        "telefonica": "📞"
       };
-      return iconos[modalidad] || "\u{1F4CB}";
+      return iconos[modalidad] || "📋";
     };
     const obtenerEstiloModalidad = (modalidad) => {
       const estilos = {
@@ -397,14 +389,13 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       router.push(`/terapeuta/pacientes/${pacienteId.value}/bonos`);
     };
     const abrirWhatsApp = () => {
-      var _a;
-      const telefono = (_a = pacienteData.value) == null ? void 0 : _a.telefono;
+      const telefono = pacienteData.value?.telefono;
       if (!telefono) {
-        alert("Este paciente no tiene tel\xE9fono registrado");
+        alert("Este paciente no tiene teléfono registrado");
         return;
       }
       const numeroLimpio = telefono.replace(/\D/g, "");
-      const mensaje = encodeURIComponent(`Hola ${nombreCompleto.value}, \xBFc\xF3mo est\xE1s?`);
+      const mensaje = encodeURIComponent(`Hola ${nombreCompleto.value}, ¿cómo estás?`);
       const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
       (void 0).open(url, "_blank");
     };
@@ -442,7 +433,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         });
         if (error2) throw error2;
         if (!data.success) {
-          console.error("Error en la confirmaci\xF3n:", data.error);
+          console.error("Error en la confirmación:", data.error);
           alert(data.error || "Error al confirmar la cita");
           return;
         }
@@ -451,9 +442,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           mensaje += `
 Sesiones restantes en bono: ${data.sesiones_restantes}`;
           if (data.bono_agotado) {
-            mensaje += "\n\u26A0\uFE0F BONO AGOTADO";
+            mensaje += "\n⚠️ BONO AGOTADO";
           } else if (data.sesiones_restantes <= 2) {
-            mensaje += "\n\u26A0\uFE0F Pocas sesiones restantes";
+            mensaje += "\n⚠️ Pocas sesiones restantes";
           }
         }
         alert(mensaje);
@@ -464,7 +455,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
       }
     };
     const editarPaciente = () => {
-      alert("Funci\xF3n de editar en desarrollo");
+      alert("Función de editar en desarrollo");
     };
     watch(() => route.params.id, () => {
       if (route.params.id) {
@@ -476,19 +467,19 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
       const _component_NotasPrivadas = __nuxt_component_1;
       const _component_ModalNuevaCita = __nuxt_component_2;
       const _component_ModalDetallesCita = ModalDetallesCita;
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "pb-20" }, _attrs))} data-v-cc632d3a><button class="mb-6 flex items-center gap-2 text-cafe hover:text-terracota transition-colors" data-v-cc632d3a><span data-v-cc632d3a>\u2190</span><span data-v-cc632d3a>Volver a lista de pacientes</span></button>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "pb-20" }, _attrs))} data-v-cc632d3a><button class="mb-6 flex items-center gap-2 text-cafe hover:text-terracota transition-colors" data-v-cc632d3a><span data-v-cc632d3a>←</span><span data-v-cc632d3a>Volver a lista de pacientes</span></button>`);
       if (unref(cargando)) {
-        _push(`<div class="text-center py-12" data-v-cc632d3a><div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mx-auto mb-4" data-v-cc632d3a></div><p class="text-cafe/60" data-v-cc632d3a>Cargando informaci\xF3n del paciente...</p></div>`);
+        _push(`<div class="text-center py-12" data-v-cc632d3a><div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mx-auto mb-4" data-v-cc632d3a></div><p class="text-cafe/60" data-v-cc632d3a>Cargando información del paciente...</p></div>`);
       } else if (unref(error)) {
         _push(`<div class="text-center py-12" data-v-cc632d3a>`);
         _push(ssrRenderComponent(_component_DashboardCard, null, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<span class="text-6xl mb-4 block" data-v-cc632d3a${_scopeId}>\u274C</span><h3 class="text-xl font-serif font-semibold text-cafe mb-2" data-v-cc632d3a${_scopeId}> No se pudo cargar la informaci\xF3n </h3><p class="text-cafe/60 mb-4" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(error))}</p><button class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors" data-v-cc632d3a${_scopeId}> Volver a la lista </button>`);
+              _push2(`<span class="text-6xl mb-4 block" data-v-cc632d3a${_scopeId}>❌</span><h3 class="text-xl font-serif font-semibold text-cafe mb-2" data-v-cc632d3a${_scopeId}> No se pudo cargar la información </h3><p class="text-cafe/60 mb-4" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(error))}</p><button class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors" data-v-cc632d3a${_scopeId}> Volver a la lista </button>`);
             } else {
               return [
-                createVNode("span", { class: "text-6xl mb-4 block" }, "\u274C"),
-                createVNode("h3", { class: "text-xl font-serif font-semibold text-cafe mb-2" }, " No se pudo cargar la informaci\xF3n "),
+                createVNode("span", { class: "text-6xl mb-4 block" }, "❌"),
+                createVNode("h3", { class: "text-xl font-serif font-semibold text-cafe mb-2" }, " No se pudo cargar la información "),
                 createVNode("p", { class: "text-cafe/60 mb-4" }, toDisplayString(unref(error)), 1),
                 createVNode("button", {
                   onClick: ($event) => _ctx.$router.push("/terapeuta/pacientes"),
@@ -505,23 +496,23 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
         _push(ssrRenderComponent(_component_DashboardCard, { class: "mb-6" }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6" data-v-cc632d3a${_scopeId}><div class="flex items-start gap-4" data-v-cc632d3a${_scopeId}><div class="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0" style="${ssrRenderStyle({ backgroundColor: unref(avatarColor) })}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(iniciales))}</div><div data-v-cc632d3a${_scopeId}><h1 class="text-3xl font-serif font-bold text-cafe mb-2" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(nombreCompleto))}</h1><div class="flex flex-wrap items-center gap-3 mb-3" data-v-cc632d3a${_scopeId}><span class="${ssrRenderClass([unref(estadoClasses), "px-3 py-1 text-sm font-medium rounded-full"])}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadoTexto))}</span><span class="text-cafe/60 text-sm flex items-center gap-1" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F4E7}</span><span data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(pacienteData).email)}</span></span></div><div class="space-y-1 text-sm" data-v-cc632d3a${_scopeId}>`);
+              _push2(`<div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6" data-v-cc632d3a${_scopeId}><div class="flex items-start gap-4" data-v-cc632d3a${_scopeId}><div class="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0" style="${ssrRenderStyle({ backgroundColor: unref(avatarColor) })}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(iniciales))}</div><div data-v-cc632d3a${_scopeId}><h1 class="text-3xl font-serif font-bold text-cafe mb-2" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(nombreCompleto))}</h1><div class="flex flex-wrap items-center gap-3 mb-3" data-v-cc632d3a${_scopeId}><span class="${ssrRenderClass([unref(estadoClasses), "px-3 py-1 text-sm font-medium rounded-full"])}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadoTexto))}</span><span class="text-cafe/60 text-sm flex items-center gap-1" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>📧</span><span data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(pacienteData).email)}</span></span></div><div class="space-y-1 text-sm" data-v-cc632d3a${_scopeId}>`);
               if (unref(pacienteData).telefono) {
-                _push2(`<div class="text-cafe/70 flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F4F1}</span><span data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(pacienteData).telefono)}</span></div>`);
+                _push2(`<div class="text-cafe/70 flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>📱</span><span data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(pacienteData).telefono)}</span></div>`);
               } else {
                 _push2(`<!---->`);
               }
               if (unref(pacienteData).area_de_acompanamiento) {
-                _push2(`<div class="text-cafe/70 flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F3AF}</span><span data-v-cc632d3a${_scopeId}><strong data-v-cc632d3a${_scopeId}>\xC1rea:</strong> ${ssrInterpolate(unref(pacienteData).area_de_acompanamiento)}</span></div>`);
+                _push2(`<div class="text-cafe/70 flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>🎯</span><span data-v-cc632d3a${_scopeId}><strong data-v-cc632d3a${_scopeId}>Área:</strong> ${ssrInterpolate(unref(pacienteData).area_de_acompanamiento)}</span></div>`);
               } else {
                 _push2(`<!---->`);
               }
               if (unref(pacienteData).tipo_bono) {
-                _push2(`<div class="text-cafe/70 flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F3AB}</span><span data-v-cc632d3a${_scopeId}><strong data-v-cc632d3a${_scopeId}>Tipo de Bono:</strong> ${ssrInterpolate(unref(tipoBono))}</span></div>`);
+                _push2(`<div class="text-cafe/70 flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>🎫</span><span data-v-cc632d3a${_scopeId}><strong data-v-cc632d3a${_scopeId}>Tipo de Bono:</strong> ${ssrInterpolate(unref(tipoBono))}</span></div>`);
               } else {
                 _push2(`<!---->`);
               }
-              _push2(`</div></div></div><div class="flex flex-wrap gap-2" data-v-cc632d3a${_scopeId}><button class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F3AB}</span><span data-v-cc632d3a${_scopeId}>Gestionar Bonos</span></button><button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F4AC}</span><span data-v-cc632d3a${_scopeId}>WhatsApp</span></button><button class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F4C5}</span><span data-v-cc632d3a${_scopeId}>Agendar sesi\xF3n</span></button><button class="px-4 py-2 bg-white border border-terracota/30 text-terracota rounded-lg hover:bg-terracota/5 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u270F\uFE0F</span><span data-v-cc632d3a${_scopeId}>Editar</span></button></div></div>`);
+              _push2(`</div></div></div><div class="flex flex-wrap gap-2" data-v-cc632d3a${_scopeId}><button class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>🎫</span><span data-v-cc632d3a${_scopeId}>Gestionar Bonos</span></button><button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>💬</span><span data-v-cc632d3a${_scopeId}>WhatsApp</span></button><button class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>📅</span><span data-v-cc632d3a${_scopeId}>Agendar sesión</span></button><button class="px-4 py-2 bg-white border border-terracota/30 text-terracota rounded-lg hover:bg-terracota/5 transition-colors text-sm flex items-center gap-2" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>✏️</span><span data-v-cc632d3a${_scopeId}>Editar</span></button></div></div>`);
             } else {
               return [
                 createVNode("div", { class: "flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6" }, [
@@ -537,7 +528,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                           class: ["px-3 py-1 text-sm font-medium rounded-full", unref(estadoClasses)]
                         }, toDisplayString(unref(estadoTexto)), 3),
                         createVNode("span", { class: "text-cafe/60 text-sm flex items-center gap-1" }, [
-                          createVNode("span", null, "\u{1F4E7}"),
+                          createVNode("span", null, "📧"),
                           createVNode("span", null, toDisplayString(unref(pacienteData).email), 1)
                         ])
                       ]),
@@ -546,16 +537,16 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                           key: 0,
                           class: "text-cafe/70 flex items-center gap-2"
                         }, [
-                          createVNode("span", null, "\u{1F4F1}"),
+                          createVNode("span", null, "📱"),
                           createVNode("span", null, toDisplayString(unref(pacienteData).telefono), 1)
                         ])) : createCommentVNode("", true),
                         unref(pacienteData).area_de_acompanamiento ? (openBlock(), createBlock("div", {
                           key: 1,
                           class: "text-cafe/70 flex items-center gap-2"
                         }, [
-                          createVNode("span", null, "\u{1F3AF}"),
+                          createVNode("span", null, "🎯"),
                           createVNode("span", null, [
-                            createVNode("strong", null, "\xC1rea:"),
+                            createVNode("strong", null, "Área:"),
                             createTextVNode(" " + toDisplayString(unref(pacienteData).area_de_acompanamiento), 1)
                           ])
                         ])) : createCommentVNode("", true),
@@ -563,7 +554,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                           key: 2,
                           class: "text-cafe/70 flex items-center gap-2"
                         }, [
-                          createVNode("span", null, "\u{1F3AB}"),
+                          createVNode("span", null, "🎫"),
                           createVNode("span", null, [
                             createVNode("strong", null, "Tipo de Bono:"),
                             createTextVNode(" " + toDisplayString(unref(tipoBono)), 1)
@@ -577,28 +568,28 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                       onClick: irABonos,
                       class: "px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm flex items-center gap-2"
                     }, [
-                      createVNode("span", null, "\u{1F3AB}"),
+                      createVNode("span", null, "🎫"),
                       createVNode("span", null, "Gestionar Bonos")
                     ]),
                     createVNode("button", {
                       onClick: abrirWhatsApp,
                       class: "px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm flex items-center gap-2"
                     }, [
-                      createVNode("span", null, "\u{1F4AC}"),
+                      createVNode("span", null, "💬"),
                       createVNode("span", null, "WhatsApp")
                     ]),
                     createVNode("button", {
                       onClick: agendarSesion,
                       class: "px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm flex items-center gap-2"
                     }, [
-                      createVNode("span", null, "\u{1F4C5}"),
-                      createVNode("span", null, "Agendar sesi\xF3n")
+                      createVNode("span", null, "📅"),
+                      createVNode("span", null, "Agendar sesión")
                     ]),
                     createVNode("button", {
                       onClick: editarPaciente,
                       class: "px-4 py-2 bg-white border border-terracota/30 text-terracota rounded-lg hover:bg-terracota/5 transition-colors text-sm flex items-center gap-2"
                     }, [
-                      createVNode("span", null, "\u270F\uFE0F"),
+                      createVNode("span", null, "✏️"),
                       createVNode("span", null, "Editar")
                     ])
                   ])
@@ -612,11 +603,11 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
         _push(ssrRenderComponent(_component_DashboardCard, null, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>\u{1F4CA}</span> Resumen </h2><div class="space-y-3" data-v-cc632d3a${_scopeId}><div class="flex items-center justify-between p-3 bg-base-bg rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Total sesiones</span><span class="font-bold text-cafe text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).total)}</span></div><div class="flex items-center justify-between p-3 bg-green-50 rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Completadas</span><span class="font-bold text-green-600 text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).completadas)}</span></div><div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Pendientes</span><span class="font-bold text-yellow-600 text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).pendientes)}</span></div><div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Pr\xF3ximas</span><span class="font-bold text-blue-600 text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).proximas)}</span></div></div>`);
+              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>📊</span> Resumen </h2><div class="space-y-3" data-v-cc632d3a${_scopeId}><div class="flex items-center justify-between p-3 bg-base-bg rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Total sesiones</span><span class="font-bold text-cafe text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).total)}</span></div><div class="flex items-center justify-between p-3 bg-green-50 rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Completadas</span><span class="font-bold text-green-600 text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).completadas)}</span></div><div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Pendientes</span><span class="font-bold text-yellow-600 text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).pendientes)}</span></div><div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg" data-v-cc632d3a${_scopeId}><span class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}>Próximas</span><span class="font-bold text-blue-600 text-lg" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(estadisticas).proximas)}</span></div></div>`);
             } else {
               return [
                 createVNode("h2", { class: "font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" }, [
-                  createVNode("span", { class: "text-2xl" }, "\u{1F4CA}"),
+                  createVNode("span", { class: "text-2xl" }, "📊"),
                   createTextVNode(" Resumen ")
                 ]),
                 createVNode("div", { class: "space-y-3" }, [
@@ -633,7 +624,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                     createVNode("span", { class: "font-bold text-yellow-600 text-lg" }, toDisplayString(unref(estadisticas).pendientes), 1)
                   ]),
                   createVNode("div", { class: "flex items-center justify-between p-3 bg-blue-50 rounded-lg" }, [
-                    createVNode("span", { class: "text-sm text-cafe/70" }, "Pr\xF3ximas"),
+                    createVNode("span", { class: "text-sm text-cafe/70" }, "Próximas"),
                     createVNode("span", { class: "font-bold text-blue-600 text-lg" }, toDisplayString(unref(estadisticas).proximas), 1)
                   ])
                 ])
@@ -645,20 +636,20 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
         _push(ssrRenderComponent(_component_DashboardCard, null, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>\u{1F3AB}</span> Bono Contratado </h2>`);
+              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>🎫</span> Bono Contratado </h2>`);
               if (unref(bonoActivo)) {
-                _push2(`<div class="space-y-4" data-v-cc632d3a${_scopeId}><div class="p-3 bg-gradient-to-r from-purple-100 to-purple-50 border border-purple-200 rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs text-purple-700 font-medium mb-1" data-v-cc632d3a${_scopeId}>Tipo de Bono</div><div class="text-sm font-bold text-purple-900" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(tipoBono))}</div></div><div class="text-center p-4 bg-gradient-to-br from-terracota/10 to-rosa/20 rounded-xl" data-v-cc632d3a${_scopeId}><div class="text-4xl font-bold text-terracota mb-1" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(bonoActivo).sesiones_disponibles)}</div><div class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}> de ${ssrInterpolate(unref(bonoActivo).sesiones_totales)} sesiones disponibles </div></div><div class="space-y-2" data-v-cc632d3a${_scopeId}><div class="flex justify-between text-sm" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Progreso</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(bonoActivo).porcentaje_uso)}%</span></div><div class="w-full bg-gray-200 rounded-full h-2.5" data-v-cc632d3a${_scopeId}><div class="h-2.5 rounded-full bg-gradient-to-r from-terracota to-rosa transition-all" style="${ssrRenderStyle({ width: `${unref(bonoActivo).porcentaje_uso}%` })}" data-v-cc632d3a${_scopeId}></div></div></div><div class="pt-3 border-t space-y-2 text-sm" data-v-cc632d3a${_scopeId}><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Sesiones usadas:</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(bonoActivo).sesiones_usadas)}</span></div><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Monto total:</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearPrecio(unref(bonoActivo).monto_total || unref(bonoActivo).precio))}</span></div><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Precio por sesi\xF3n:</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearPrecio((unref(bonoActivo).monto_total || unref(bonoActivo).precio) / unref(bonoActivo).sesiones_totales))}</span></div><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Estado:</span><span class="${ssrRenderClass([{
+                _push2(`<div class="space-y-4" data-v-cc632d3a${_scopeId}><div class="p-3 bg-gradient-to-r from-purple-100 to-purple-50 border border-purple-200 rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs text-purple-700 font-medium mb-1" data-v-cc632d3a${_scopeId}>Tipo de Bono</div><div class="text-sm font-bold text-purple-900" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(tipoBono))}</div></div><div class="text-center p-4 bg-gradient-to-br from-terracota/10 to-rosa/20 rounded-xl" data-v-cc632d3a${_scopeId}><div class="text-4xl font-bold text-terracota mb-1" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(bonoActivo).sesiones_disponibles)}</div><div class="text-sm text-cafe/70" data-v-cc632d3a${_scopeId}> de ${ssrInterpolate(unref(bonoActivo).sesiones_totales)} sesiones disponibles </div></div><div class="space-y-2" data-v-cc632d3a${_scopeId}><div class="flex justify-between text-sm" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Progreso</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(bonoActivo).porcentaje_uso)}%</span></div><div class="w-full bg-gray-200 rounded-full h-2.5" data-v-cc632d3a${_scopeId}><div class="h-2.5 rounded-full bg-gradient-to-r from-terracota to-rosa transition-all" style="${ssrRenderStyle({ width: `${unref(bonoActivo).porcentaje_uso}%` })}" data-v-cc632d3a${_scopeId}></div></div></div><div class="pt-3 border-t space-y-2 text-sm" data-v-cc632d3a${_scopeId}><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Sesiones usadas:</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(bonoActivo).sesiones_usadas)}</span></div><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Monto total:</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearPrecio(unref(bonoActivo).monto_total || unref(bonoActivo).precio))}</span></div><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Precio por sesión:</span><span class="font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearPrecio((unref(bonoActivo).monto_total || unref(bonoActivo).precio) / unref(bonoActivo).sesiones_totales))}</span></div><div class="flex justify-between" data-v-cc632d3a${_scopeId}><span class="text-cafe/70" data-v-cc632d3a${_scopeId}>Estado:</span><span class="${ssrRenderClass([{
                   "text-green-600": unref(bonoActivo).estado === "activo",
                   "text-yellow-600": unref(bonoActivo).estado === "pendiente",
                   "text-gray-600": unref(bonoActivo).estado === "vencido"
                 }, "font-medium capitalize"])}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(bonoActivo).estado)}</span></div></div></div>`);
               } else {
-                _push2(`<div class="text-center py-8" data-v-cc632d3a${_scopeId}><span class="text-5xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>\u{1F3AB}</span><p class="text-sm text-cafe/50 mb-2" data-v-cc632d3a${_scopeId}>No hay bono activo</p><p class="text-xs text-cafe/40 mb-4" data-v-cc632d3a${_scopeId}> Tipo de bono del paciente: <strong data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(tipoBono) || "No definido")}</strong></p><button class="mt-2 text-sm text-terracota hover:text-cafe transition-colors font-medium" data-v-cc632d3a${_scopeId}> Gestionar bonos \u2192 </button></div>`);
+                _push2(`<div class="text-center py-8" data-v-cc632d3a${_scopeId}><span class="text-5xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>🎫</span><p class="text-sm text-cafe/50 mb-2" data-v-cc632d3a${_scopeId}>No hay bono activo</p><p class="text-xs text-cafe/40 mb-4" data-v-cc632d3a${_scopeId}> Tipo de bono del paciente: <strong data-v-cc632d3a${_scopeId}>${ssrInterpolate(unref(tipoBono) || "No definido")}</strong></p><button class="mt-2 text-sm text-terracota hover:text-cafe transition-colors font-medium" data-v-cc632d3a${_scopeId}> Gestionar bonos → </button></div>`);
               }
             } else {
               return [
                 createVNode("h2", { class: "font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" }, [
-                  createVNode("span", { class: "text-2xl" }, "\u{1F3AB}"),
+                  createVNode("span", { class: "text-2xl" }, "🎫"),
                   createTextVNode(" Bono Contratado ")
                 ]),
                 unref(bonoActivo) ? (openBlock(), createBlock("div", {
@@ -695,7 +686,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                       createVNode("span", { class: "font-medium text-cafe" }, toDisplayString(formatearPrecio(unref(bonoActivo).monto_total || unref(bonoActivo).precio)), 1)
                     ]),
                     createVNode("div", { class: "flex justify-between" }, [
-                      createVNode("span", { class: "text-cafe/70" }, "Precio por sesi\xF3n:"),
+                      createVNode("span", { class: "text-cafe/70" }, "Precio por sesión:"),
                       createVNode("span", { class: "font-medium text-cafe" }, toDisplayString(formatearPrecio((unref(bonoActivo).monto_total || unref(bonoActivo).precio) / unref(bonoActivo).sesiones_totales)), 1)
                     ]),
                     createVNode("div", { class: "flex justify-between" }, [
@@ -713,7 +704,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                   key: 1,
                   class: "text-center py-8"
                 }, [
-                  createVNode("span", { class: "text-5xl mb-3 block opacity-40" }, "\u{1F3AB}"),
+                  createVNode("span", { class: "text-5xl mb-3 block opacity-40" }, "🎫"),
                   createVNode("p", { class: "text-sm text-cafe/50 mb-2" }, "No hay bono activo"),
                   createVNode("p", { class: "text-xs text-cafe/40 mb-4" }, [
                     createTextVNode(" Tipo de bono del paciente: "),
@@ -722,7 +713,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                   createVNode("button", {
                     onClick: irABonos,
                     class: "mt-2 text-sm text-terracota hover:text-cafe transition-colors font-medium"
-                  }, " Gestionar bonos \u2192 ")
+                  }, " Gestionar bonos → ")
                 ]))
               ];
             }
@@ -732,9 +723,9 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
         _push(ssrRenderComponent(_component_DashboardCard, null, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>\u{1F4CB}</span> Datos del Proceso </h2><div class="space-y-3" data-v-cc632d3a${_scopeId}><div class="p-3 bg-base-bg rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs text-cafe/60 mb-1" data-v-cc632d3a${_scopeId}>Primera sesi\xF3n</div><div class="text-sm font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(unref(primeraSesion)) || "Sin registro")}</div></div><div class="p-3 bg-base-bg rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs text-cafe/60 mb-1" data-v-cc632d3a${_scopeId}>\xDAltima sesi\xF3n</div><div class="text-sm font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(unref(ultimaSesion)) || "Sin registro")}</div></div>`);
+              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>📋</span> Datos del Proceso </h2><div class="space-y-3" data-v-cc632d3a${_scopeId}><div class="p-3 bg-base-bg rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs text-cafe/60 mb-1" data-v-cc632d3a${_scopeId}>Primera sesión</div><div class="text-sm font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(unref(primeraSesion)) || "Sin registro")}</div></div><div class="p-3 bg-base-bg rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs text-cafe/60 mb-1" data-v-cc632d3a${_scopeId}>Última sesión</div><div class="text-sm font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(unref(ultimaSesion)) || "Sin registro")}</div></div>`);
               if (unref(proximaSesion)) {
-                _push2(`<div class="p-4 bg-gradient-to-br from-terracota/20 to-rosa/20 border-2 border-terracota/40 rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs font-medium text-terracota mb-2 flex items-center gap-1" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>\u{1F4C5}</span><span data-v-cc632d3a${_scopeId}>Pr\xF3xima sesi\xF3n agendada</span></div><div class="text-base font-bold text-cafe mb-3" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFechaCompleta(unref(proximaSesion).fecha_cita, unref(proximaSesion).hora_inicio))}</div><div class="flex items-center gap-2 flex-wrap" data-v-cc632d3a${_scopeId}><span class="text-xs px-3 py-1.5 bg-white border border-terracota/30 rounded-full font-medium flex items-center gap-1" data-v-cc632d3a${_scopeId}>${ssrInterpolate(obtenerIconoModalidad(unref(proximaSesion).modalidad))} ${ssrInterpolate(unref(proximaSesion).modalidad)}</span><span class="${ssrRenderClass([{
+                _push2(`<div class="p-4 bg-gradient-to-br from-terracota/20 to-rosa/20 border-2 border-terracota/40 rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs font-medium text-terracota mb-2 flex items-center gap-1" data-v-cc632d3a${_scopeId}><span data-v-cc632d3a${_scopeId}>📅</span><span data-v-cc632d3a${_scopeId}>Próxima sesión agendada</span></div><div class="text-base font-bold text-cafe mb-3" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFechaCompleta(unref(proximaSesion).fecha_cita, unref(proximaSesion).hora_inicio))}</div><div class="flex items-center gap-2 flex-wrap" data-v-cc632d3a${_scopeId}><span class="text-xs px-3 py-1.5 bg-white border border-terracota/30 rounded-full font-medium flex items-center gap-1" data-v-cc632d3a${_scopeId}>${ssrInterpolate(obtenerIconoModalidad(unref(proximaSesion).modalidad))} ${ssrInterpolate(unref(proximaSesion).modalidad)}</span><span class="${ssrRenderClass([{
                   "text-green-600 border-green-300": unref(proximaSesion).estado === "confirmada",
                   "text-yellow-600 border-yellow-300": unref(proximaSesion).estado === "pendiente",
                   "text-blue-600 border-blue-300": unref(proximaSesion).estado === "programada"
@@ -746,22 +737,22 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                 }
                 _push2(`</div>`);
               } else {
-                _push2(`<div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-center" data-v-cc632d3a${_scopeId}><span class="text-3xl mb-2 block" data-v-cc632d3a${_scopeId}>\u23F0</span><div class="text-sm font-medium text-yellow-800 mb-1" data-v-cc632d3a${_scopeId}>No hay sesi\xF3n agendada</div><div class="text-xs text-yellow-700" data-v-cc632d3a${_scopeId}>Recuerda agendar la pr\xF3xima sesi\xF3n</div><button class="mt-3 px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium" data-v-cc632d3a${_scopeId}> Agendar ahora </button></div></div>`);
+                _push2(`<div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-center" data-v-cc632d3a${_scopeId}><span class="text-3xl mb-2 block" data-v-cc632d3a${_scopeId}>⏰</span><div class="text-sm font-medium text-yellow-800 mb-1" data-v-cc632d3a${_scopeId}>No hay sesión agendada</div><div class="text-xs text-yellow-700" data-v-cc632d3a${_scopeId}>Recuerda agendar la próxima sesión</div><button class="mt-3 px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium" data-v-cc632d3a${_scopeId}> Agendar ahora </button></div></div>`);
               }
               _push2(`<div class="p-3 bg-base-bg rounded-lg" data-v-cc632d3a${_scopeId}><div class="text-xs text-cafe/60 mb-1" data-v-cc632d3a${_scopeId}>En proceso desde</div><div class="text-sm font-medium text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(calcularTiempoProceso(unref(pacienteData).created_at))}</div></div></div>`);
             } else {
               return [
                 createVNode("h2", { class: "font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" }, [
-                  createVNode("span", { class: "text-2xl" }, "\u{1F4CB}"),
+                  createVNode("span", { class: "text-2xl" }, "📋"),
                   createTextVNode(" Datos del Proceso ")
                 ]),
                 createVNode("div", { class: "space-y-3" }, [
                   createVNode("div", { class: "p-3 bg-base-bg rounded-lg" }, [
-                    createVNode("div", { class: "text-xs text-cafe/60 mb-1" }, "Primera sesi\xF3n"),
+                    createVNode("div", { class: "text-xs text-cafe/60 mb-1" }, "Primera sesión"),
                     createVNode("div", { class: "text-sm font-medium text-cafe" }, toDisplayString(formatearFecha(unref(primeraSesion)) || "Sin registro"), 1)
                   ]),
                   createVNode("div", { class: "p-3 bg-base-bg rounded-lg" }, [
-                    createVNode("div", { class: "text-xs text-cafe/60 mb-1" }, "\xDAltima sesi\xF3n"),
+                    createVNode("div", { class: "text-xs text-cafe/60 mb-1" }, "Última sesión"),
                     createVNode("div", { class: "text-sm font-medium text-cafe" }, toDisplayString(formatearFecha(unref(ultimaSesion)) || "Sin registro"), 1)
                   ]),
                   unref(proximaSesion) ? (openBlock(), createBlock("div", {
@@ -769,8 +760,8 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                     class: "p-4 bg-gradient-to-br from-terracota/20 to-rosa/20 border-2 border-terracota/40 rounded-lg"
                   }, [
                     createVNode("div", { class: "text-xs font-medium text-terracota mb-2 flex items-center gap-1" }, [
-                      createVNode("span", null, "\u{1F4C5}"),
-                      createVNode("span", null, "Pr\xF3xima sesi\xF3n agendada")
+                      createVNode("span", null, "📅"),
+                      createVNode("span", null, "Próxima sesión agendada")
                     ]),
                     createVNode("div", { class: "text-base font-bold text-cafe mb-3" }, toDisplayString(formatearFechaCompleta(unref(proximaSesion).fecha_cita, unref(proximaSesion).hora_inicio)), 1),
                     createVNode("div", { class: "flex items-center gap-2 flex-wrap" }, [
@@ -795,9 +786,9 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                     class: "p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
                   }, [
                     createVNode("div", { class: "text-center" }, [
-                      createVNode("span", { class: "text-3xl mb-2 block" }, "\u23F0"),
-                      createVNode("div", { class: "text-sm font-medium text-yellow-800 mb-1" }, "No hay sesi\xF3n agendada"),
-                      createVNode("div", { class: "text-xs text-yellow-700" }, "Recuerda agendar la pr\xF3xima sesi\xF3n"),
+                      createVNode("span", { class: "text-3xl mb-2 block" }, "⏰"),
+                      createVNode("div", { class: "text-sm font-medium text-yellow-800 mb-1" }, "No hay sesión agendada"),
+                      createVNode("div", { class: "text-xs text-yellow-700" }, "Recuerda agendar la próxima sesión"),
                       createVNode("button", {
                         onClick: agendarSesion,
                         class: "mt-3 px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium"
@@ -830,7 +821,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
           _push(ssrRenderComponent(_component_DashboardCard, null, {
             default: withCtx((_, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<div class="flex items-center justify-between mb-4" data-v-cc632d3a${_scopeId}><h3 class="text-lg font-serif font-semibold text-cafe" data-v-cc632d3a${_scopeId}>Pr\xF3ximas Sesiones Agendadas</h3><button class="text-sm text-terracota hover:text-cafe transition-colors" data-v-cc632d3a${_scopeId}> + Nueva sesi\xF3n </button></div>`);
+                _push2(`<div class="flex items-center justify-between mb-4" data-v-cc632d3a${_scopeId}><h3 class="text-lg font-serif font-semibold text-cafe" data-v-cc632d3a${_scopeId}>Próximas Sesiones Agendadas</h3><button class="text-sm text-terracota hover:text-cafe transition-colors" data-v-cc632d3a${_scopeId}> + Nueva sesión </button></div>`);
                 if (unref(sesionesProximas).length > 0) {
                   _push2(`<div class="space-y-3" data-v-cc632d3a${_scopeId}><!--[-->`);
                   ssrRenderList(unref(sesionesProximas), (sesion) => {
@@ -844,16 +835,16 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                   });
                   _push2(`<!--]--></div>`);
                 } else {
-                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>\u{1F4C5}</span><p class="text-cafe/60 mb-4" data-v-cc632d3a${_scopeId}>No hay sesiones pr\xF3ximas agendadas</p><button class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors" data-v-cc632d3a${_scopeId}> Agendar primera sesi\xF3n </button></div>`);
+                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>📅</span><p class="text-cafe/60 mb-4" data-v-cc632d3a${_scopeId}>No hay sesiones próximas agendadas</p><button class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors" data-v-cc632d3a${_scopeId}> Agendar primera sesión </button></div>`);
                 }
               } else {
                 return [
                   createVNode("div", { class: "flex items-center justify-between mb-4" }, [
-                    createVNode("h3", { class: "text-lg font-serif font-semibold text-cafe" }, "Pr\xF3ximas Sesiones Agendadas"),
+                    createVNode("h3", { class: "text-lg font-serif font-semibold text-cafe" }, "Próximas Sesiones Agendadas"),
                     createVNode("button", {
                       onClick: agendarSesion,
                       class: "text-sm text-terracota hover:text-cafe transition-colors"
-                    }, " + Nueva sesi\xF3n ")
+                    }, " + Nueva sesión ")
                   ]),
                   unref(sesionesProximas).length > 0 ? (openBlock(), createBlock("div", {
                     key: 0,
@@ -894,12 +885,12 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                     key: 1,
                     class: "text-center py-12"
                   }, [
-                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "\u{1F4C5}"),
-                    createVNode("p", { class: "text-cafe/60 mb-4" }, "No hay sesiones pr\xF3ximas agendadas"),
+                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "📅"),
+                    createVNode("p", { class: "text-cafe/60 mb-4" }, "No hay sesiones próximas agendadas"),
                     createVNode("button", {
                       onClick: agendarSesion,
                       class: "px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
-                    }, " Agendar primera sesi\xF3n ")
+                    }, " Agendar primera sesión ")
                   ]))
                 ];
               }
@@ -919,7 +910,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                 if (unref(sesionesCompletadas).length > 0) {
                   _push2(`<div class="space-y-3" data-v-cc632d3a${_scopeId}><!--[-->`);
                   ssrRenderList(unref(sesionesCompletadas), (sesion) => {
-                    _push2(`<div class="p-4 bg-base-bg rounded-lg hover:bg-rosa/20 transition-colors" data-v-cc632d3a${_scopeId}><div class="flex items-start justify-between gap-4" data-v-cc632d3a${_scopeId}><div class="flex-1" data-v-cc632d3a${_scopeId}><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="text-base font-semibold text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(sesion.fecha_cita))}</span><span class="text-sm text-cafe/60" data-v-cc632d3a${_scopeId}>${ssrInterpolate(sesion.hora_inicio)} - ${ssrInterpolate(sesion.hora_fin)}</span><span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700" data-v-cc632d3a${_scopeId}> \u2713 Realizada </span></div><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="${ssrRenderClass([obtenerEstiloModalidad(sesion.modalidad), "px-2 py-0.5 text-xs rounded-full"])}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(obtenerIconoModalidad(sesion.modalidad))} ${ssrInterpolate(sesion.modalidad)}</span></div>`);
+                    _push2(`<div class="p-4 bg-base-bg rounded-lg hover:bg-rosa/20 transition-colors" data-v-cc632d3a${_scopeId}><div class="flex items-start justify-between gap-4" data-v-cc632d3a${_scopeId}><div class="flex-1" data-v-cc632d3a${_scopeId}><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="text-base font-semibold text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(sesion.fecha_cita))}</span><span class="text-sm text-cafe/60" data-v-cc632d3a${_scopeId}>${ssrInterpolate(sesion.hora_inicio)} - ${ssrInterpolate(sesion.hora_fin)}</span><span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700" data-v-cc632d3a${_scopeId}> ✓ Realizada </span></div><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="${ssrRenderClass([obtenerEstiloModalidad(sesion.modalidad), "px-2 py-0.5 text-xs rounded-full"])}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(obtenerIconoModalidad(sesion.modalidad))} ${ssrInterpolate(sesion.modalidad)}</span></div>`);
                     if (sesion.notas_terapeuta) {
                       _push2(`<p class="text-sm text-cafe/70 mt-2 bg-white p-3 rounded-lg border border-gray-100" data-v-cc632d3a${_scopeId}><strong class="text-cafe" data-v-cc632d3a${_scopeId}>Notas:</strong> ${ssrInterpolate(sesion.notas_terapeuta)}</p>`);
                     } else if (sesion.observaciones) {
@@ -931,7 +922,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                   });
                   _push2(`<!--]--></div>`);
                 } else {
-                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>\u{1F4DD}</span><p class="text-cafe/60" data-v-cc632d3a${_scopeId}>A\xFAn no hay sesiones completadas</p></div>`);
+                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>📝</span><p class="text-cafe/60" data-v-cc632d3a${_scopeId}>Aún no hay sesiones completadas</p></div>`);
                 }
               } else {
                 return [
@@ -950,7 +941,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                             createVNode("div", { class: "flex items-center gap-2 mb-2" }, [
                               createVNode("span", { class: "text-base font-semibold text-cafe" }, toDisplayString(formatearFecha(sesion.fecha_cita)), 1),
                               createVNode("span", { class: "text-sm text-cafe/60" }, toDisplayString(sesion.hora_inicio) + " - " + toDisplayString(sesion.hora_fin), 1),
-                              createVNode("span", { class: "px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700" }, " \u2713 Realizada ")
+                              createVNode("span", { class: "px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700" }, " ✓ Realizada ")
                             ]),
                             createVNode("div", { class: "flex items-center gap-2 mb-2" }, [
                               createVNode("span", {
@@ -975,8 +966,8 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                     key: 1,
                     class: "text-center py-12"
                   }, [
-                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "\u{1F4DD}"),
-                    createVNode("p", { class: "text-cafe/60" }, "A\xFAn no hay sesiones completadas")
+                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "📝"),
+                    createVNode("p", { class: "text-cafe/60" }, "Aún no hay sesiones completadas")
                   ]))
                 ];
               }
@@ -992,25 +983,25 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
           _push(ssrRenderComponent(_component_DashboardCard, null, {
             default: withCtx((_, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<h3 class="text-lg font-serif font-semibold text-cafe mb-4" data-v-cc632d3a${_scopeId}>Sesiones Pendientes de Confirmaci\xF3n</h3>`);
+                _push2(`<h3 class="text-lg font-serif font-semibold text-cafe mb-4" data-v-cc632d3a${_scopeId}>Sesiones Pendientes de Confirmación</h3>`);
                 if (unref(sesionesPendientes).length > 0) {
                   _push2(`<div class="space-y-3" data-v-cc632d3a${_scopeId}><!--[-->`);
                   ssrRenderList(unref(sesionesPendientes), (sesion) => {
-                    _push2(`<div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg" data-v-cc632d3a${_scopeId}><div class="flex items-start justify-between gap-4" data-v-cc632d3a${_scopeId}><div class="flex-1" data-v-cc632d3a${_scopeId}><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="text-lg" data-v-cc632d3a${_scopeId}>\u23F3</span><span class="text-base font-semibold text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(sesion.fecha_cita))}</span><span class="text-base font-medium text-terracota" data-v-cc632d3a${_scopeId}>${ssrInterpolate(sesion.hora_inicio)} - ${ssrInterpolate(sesion.hora_fin)}</span></div><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="${ssrRenderClass([obtenerEstiloModalidad(sesion.modalidad), "px-2 py-0.5 text-xs rounded-full"])}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(obtenerIconoModalidad(sesion.modalidad))} ${ssrInterpolate(sesion.modalidad)}</span><span class="px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700" data-v-cc632d3a${_scopeId}> Pendiente de confirmar </span></div>`);
+                    _push2(`<div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg" data-v-cc632d3a${_scopeId}><div class="flex items-start justify-between gap-4" data-v-cc632d3a${_scopeId}><div class="flex-1" data-v-cc632d3a${_scopeId}><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="text-lg" data-v-cc632d3a${_scopeId}>⏳</span><span class="text-base font-semibold text-cafe" data-v-cc632d3a${_scopeId}>${ssrInterpolate(formatearFecha(sesion.fecha_cita))}</span><span class="text-base font-medium text-terracota" data-v-cc632d3a${_scopeId}>${ssrInterpolate(sesion.hora_inicio)} - ${ssrInterpolate(sesion.hora_fin)}</span></div><div class="flex items-center gap-2 mb-2" data-v-cc632d3a${_scopeId}><span class="${ssrRenderClass([obtenerEstiloModalidad(sesion.modalidad), "px-2 py-0.5 text-xs rounded-full"])}" data-v-cc632d3a${_scopeId}>${ssrInterpolate(obtenerIconoModalidad(sesion.modalidad))} ${ssrInterpolate(sesion.modalidad)}</span><span class="px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700" data-v-cc632d3a${_scopeId}> Pendiente de confirmar </span></div>`);
                     if (sesion.observaciones) {
                       _push2(`<p class="text-sm text-cafe/60 mt-2" data-v-cc632d3a${_scopeId}>${ssrInterpolate(sesion.observaciones)}</p>`);
                     } else {
                       _push2(`<!---->`);
                     }
-                    _push2(`</div><div class="flex gap-2" data-v-cc632d3a${_scopeId}><button class="px-3 py-1.5 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors" data-v-cc632d3a${_scopeId}> \u2713 Confirmar </button><button class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors" data-v-cc632d3a${_scopeId}> Ver </button></div></div></div>`);
+                    _push2(`</div><div class="flex gap-2" data-v-cc632d3a${_scopeId}><button class="px-3 py-1.5 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors" data-v-cc632d3a${_scopeId}> ✓ Confirmar </button><button class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors" data-v-cc632d3a${_scopeId}> Ver </button></div></div></div>`);
                   });
                   _push2(`<!--]--></div>`);
                 } else {
-                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>\u2705</span><p class="text-cafe/60" data-v-cc632d3a${_scopeId}>No hay sesiones pendientes de confirmaci\xF3n</p></div>`);
+                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>✅</span><p class="text-cafe/60" data-v-cc632d3a${_scopeId}>No hay sesiones pendientes de confirmación</p></div>`);
                 }
               } else {
                 return [
-                  createVNode("h3", { class: "text-lg font-serif font-semibold text-cafe mb-4" }, "Sesiones Pendientes de Confirmaci\xF3n"),
+                  createVNode("h3", { class: "text-lg font-serif font-semibold text-cafe mb-4" }, "Sesiones Pendientes de Confirmación"),
                   unref(sesionesPendientes).length > 0 ? (openBlock(), createBlock("div", {
                     key: 0,
                     class: "space-y-3"
@@ -1023,7 +1014,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                         createVNode("div", { class: "flex items-start justify-between gap-4" }, [
                           createVNode("div", { class: "flex-1" }, [
                             createVNode("div", { class: "flex items-center gap-2 mb-2" }, [
-                              createVNode("span", { class: "text-lg" }, "\u23F3"),
+                              createVNode("span", { class: "text-lg" }, "⏳"),
                               createVNode("span", { class: "text-base font-semibold text-cafe" }, toDisplayString(formatearFecha(sesion.fecha_cita)), 1),
                               createVNode("span", { class: "text-base font-medium text-terracota" }, toDisplayString(sesion.hora_inicio) + " - " + toDisplayString(sesion.hora_fin), 1)
                             ]),
@@ -1042,7 +1033,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                             createVNode("button", {
                               onClick: ($event) => confirmarCita(sesion.id),
                               class: "px-3 py-1.5 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                            }, " \u2713 Confirmar ", 8, ["onClick"]),
+                            }, " ✓ Confirmar ", 8, ["onClick"]),
                             createVNode("button", {
                               onClick: ($event) => verDetallesCita(sesion.id),
                               class: "px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors"
@@ -1055,8 +1046,8 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                     key: 1,
                     class: "text-center py-12"
                   }, [
-                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "\u2705"),
-                    createVNode("p", { class: "text-cafe/60" }, "No hay sesiones pendientes de confirmaci\xF3n")
+                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "✅"),
+                    createVNode("p", { class: "text-cafe/60" }, "No hay sesiones pendientes de confirmación")
                   ]))
                 ];
               }
@@ -1080,7 +1071,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                   });
                   _push2(`<!--]--></div>`);
                 } else {
-                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>\u{1F4DA}</span><p class="text-cafe/60" data-v-cc632d3a${_scopeId}>No hay sesiones registradas</p></div>`);
+                  _push2(`<div class="text-center py-12" data-v-cc632d3a${_scopeId}><span class="text-6xl mb-3 block opacity-40" data-v-cc632d3a${_scopeId}>📚</span><p class="text-cafe/60" data-v-cc632d3a${_scopeId}>No hay sesiones registradas</p></div>`);
                 }
               } else {
                 return [
@@ -1116,7 +1107,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
                     key: 1,
                     class: "text-center py-12"
                   }, [
-                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "\u{1F4DA}"),
+                    createVNode("span", { class: "text-6xl mb-3 block opacity-40" }, "📚"),
                     createVNode("p", { class: "text-cafe/60" }, "No hay sesiones registradas")
                   ]))
                 ];
@@ -1132,7 +1123,7 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
         _push(ssrRenderComponent(_component_DashboardCard, null, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>\u{1F4DD}</span> Notas Cl\xEDnicas Privadas </h2>`);
+              _push2(`<h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" data-v-cc632d3a${_scopeId}><span class="text-2xl" data-v-cc632d3a${_scopeId}>📝</span> Notas Clínicas Privadas </h2>`);
               _push2(ssrRenderComponent(_component_NotasPrivadas, {
                 "paciente-id": unref(pacienteId),
                 contenido: unref(notasClinicas),
@@ -1142,8 +1133,8 @@ Sesiones restantes en bono: ${data.sesiones_restantes}`;
             } else {
               return [
                 createVNode("h2", { class: "font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4" }, [
-                  createVNode("span", { class: "text-2xl" }, "\u{1F4DD}"),
-                  createTextVNode(" Notas Cl\xEDnicas Privadas ")
+                  createVNode("span", { class: "text-2xl" }, "📝"),
+                  createTextVNode(" Notas Clínicas Privadas ")
                 ]),
                 createVNode(_component_NotasPrivadas, {
                   "paciente-id": unref(pacienteId),

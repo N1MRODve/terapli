@@ -52,10 +52,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       const manana = new Date(hoy);
       manana.setDate(manana.getDate() + 1);
       opciones.push({
-        label: "Ma\xF1ana",
+        label: "Mañana",
         fecha: formatearFecha(manana)
       });
-      const diasLaborables = ["Lun", "Mar", "Mi\xE9", "Jue", "Vie"];
+      const diasLaborables = ["Lun", "Mar", "Mié", "Jue", "Vie"];
       let fecha = new Date(hoy);
       let contadorDias = 0;
       while (contadorDias < 5) {
@@ -103,10 +103,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       "22:00"
     ];
     const cargarCita = async () => {
-      var _a, _b;
-      console.log("\u{1F50D} [ModalEditarCita] Cargando cita con ID:", props.citaId);
+      console.log("🔍 [ModalEditarCita] Cargando cita con ID:", props.citaId);
       if (!props.citaId) {
-        console.warn("\u26A0\uFE0F [ModalEditarCita] No hay citaId proporcionado");
+        console.warn("⚠️ [ModalEditarCita] No hay citaId proporcionado");
         return;
       }
       try {
@@ -121,25 +120,25 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         )
       `).eq("id", props.citaId).single();
         if (error) {
-          console.error("\u274C [ModalEditarCita] Error en query:", error);
+          console.error("❌ [ModalEditarCita] Error en query:", error);
           throw error;
         }
-        console.log("\u2705 [ModalEditarCita] Cita cargada:", data);
+        console.log("✅ [ModalEditarCita] Cita cargada:", data);
         if (data) {
           cita.value = data;
           formulario.value = {
             fecha_cita: data.fecha_cita,
-            hora_inicio: ((_a = data.hora_inicio) == null ? void 0 : _a.substring(0, 5)) || "",
-            hora_fin: ((_b = data.hora_fin) == null ? void 0 : _b.substring(0, 5)) || "",
+            hora_inicio: data.hora_inicio?.substring(0, 5) || "",
+            hora_fin: data.hora_fin?.substring(0, 5) || "",
             duracion: data.duracion || 60,
             modalidad: data.modalidad || "presencial",
             estado: data.estado || "pendiente",
             observaciones: data.observaciones || ""
           };
-          console.log("\u{1F4DD} [ModalEditarCita] Formulario llenado:", formulario.value);
+          console.log("📝 [ModalEditarCita] Formulario llenado:", formulario.value);
         }
       } catch (error) {
-        console.error("\u{1F4A5} [ModalEditarCita] Error al cargar cita:", error);
+        console.error("💥 [ModalEditarCita] Error al cargar cita:", error);
       } finally {
         cargando.value = false;
       }
@@ -158,9 +157,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         const inicioNueva = formulario.value.hora_inicio;
         const finNueva = formulario.value.hora_fin;
         conflictoHorario.value = citasActivas.some((c) => {
-          var _a, _b;
-          const inicioExistente = (_a = c.hora_inicio) == null ? void 0 : _a.substring(0, 5);
-          const finExistente = (_b = c.hora_fin) == null ? void 0 : _b.substring(0, 5);
+          const inicioExistente = c.hora_inicio?.substring(0, 5);
+          const finExistente = c.hora_fin?.substring(0, 5);
           const minNuevaInicio = horaAMinutos(inicioNueva);
           const minNuevaFin = horaAMinutos(finNueva);
           const minExistenteInicio = horaAMinutos(inicioExistente);
@@ -199,24 +197,23 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       verificarConflicto();
     });
     watch(() => props.isOpen, (isOpen) => {
-      console.log("\u{1F441}\uFE0F [ModalEditarCita] Modal abierto:", isOpen, "citaId:", props.citaId);
+      console.log("👁️ [ModalEditarCita] Modal abierto:", isOpen, "citaId:", props.citaId);
       if (isOpen && props.citaId) {
         cargarCita();
       }
     });
     watch(() => props.citaId, (nuevoCitaId) => {
-      console.log("\u{1F504} [ModalEditarCita] citaId cambi\xF3 a:", nuevoCitaId);
+      console.log("🔄 [ModalEditarCita] citaId cambió a:", nuevoCitaId);
       if (props.isOpen && nuevoCitaId) {
         cargarCita();
       }
     });
     return (_ctx, _push, _parent, _attrs) => {
       ssrRenderTeleport(_push, (_push2) => {
-        var _a;
         if (__props.isOpen) {
-          _push2(`<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" data-v-90d0f873><div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden" data-v-90d0f873><div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20" data-v-90d0f873><div data-v-90d0f873><h2 class="text-2xl font-bold text-gray-900 dark:text-white" data-v-90d0f873>\u270F\uFE0F Editar Cita</h2>`);
+          _push2(`<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" data-v-90d0f873><div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden" data-v-90d0f873><div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20" data-v-90d0f873><div data-v-90d0f873><h2 class="text-2xl font-bold text-gray-900 dark:text-white" data-v-90d0f873>✏️ Editar Cita</h2>`);
           if (cita.value) {
-            _push2(`<p class="text-sm text-gray-600 dark:text-gray-400 mt-1" data-v-90d0f873>${ssrInterpolate(((_a = cita.value.paciente) == null ? void 0 : _a.nombre_completo) || cita.value.paciente_nombre)}</p>`);
+            _push2(`<p class="text-sm text-gray-600 dark:text-gray-400 mt-1" data-v-90d0f873>${ssrInterpolate(cita.value.paciente?.nombre_completo || cita.value.paciente_nombre)}</p>`);
           } else {
             _push2(`<!---->`);
           }
@@ -224,50 +221,50 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           if (cargando.value) {
             _push2(`<div class="p-12 flex flex-col items-center justify-center" data-v-90d0f873><div class="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4" data-v-90d0f873></div><p class="text-gray-600 dark:text-gray-400" data-v-90d0f873>Cargando...</p></div>`);
           } else if (cita.value) {
-            _push2(`<form class="px-6 py-4 overflow-y-auto max-h-[calc(90vh-200px)]" data-v-90d0f873><div class="space-y-6" data-v-90d0f873><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> \u{1F4C5} Fecha </label><div class="space-y-2" data-v-90d0f873><input${ssrRenderAttr("value", formulario.value.fecha_cita)} type="date" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white cursor-pointer" data-v-90d0f873><div class="flex gap-2 flex-wrap" data-v-90d0f873><!--[-->`);
+            _push2(`<form class="px-6 py-4 overflow-y-auto max-h-[calc(90vh-200px)]" data-v-90d0f873><div class="space-y-6" data-v-90d0f873><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> 📅 Fecha </label><div class="space-y-2" data-v-90d0f873><input${ssrRenderAttr("value", formulario.value.fecha_cita)} type="date" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white cursor-pointer" data-v-90d0f873><div class="flex gap-2 flex-wrap" data-v-90d0f873><!--[-->`);
             ssrRenderList(opcionesFechaRapida.value, (opcion, index) => {
               _push2(`<button type="button" class="${ssrRenderClass([
                 "text-xs px-3 py-1.5 rounded-lg border transition-all",
                 formulario.value.fecha_cita === opcion.fecha ? "bg-purple-600 text-white border-purple-600 font-semibold" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
               ])}" data-v-90d0f873>${ssrInterpolate(opcion.label)}</button>`);
             });
-            _push2(`<!--]--></div><p class="text-xs text-gray-500 dark:text-gray-400 capitalize" data-v-90d0f873>${ssrInterpolate(fechaFormateada.value)}</p></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4" data-v-90d0f873><div class="md:col-span-2" data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> \u{1F550} Hora Inicio </label><div class="space-y-3" data-v-90d0f873><div class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700" data-v-90d0f873><!--[-->`);
+            _push2(`<!--]--></div><p class="text-xs text-gray-500 dark:text-gray-400 capitalize" data-v-90d0f873>${ssrInterpolate(fechaFormateada.value)}</p></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4" data-v-90d0f873><div class="md:col-span-2" data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> 🕐 Hora Inicio </label><div class="space-y-3" data-v-90d0f873><div class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700" data-v-90d0f873><!--[-->`);
             ssrRenderList(horasDisponibles, (hora) => {
               _push2(`<button type="button" class="${ssrRenderClass([
                 "px-3 py-2 text-sm font-medium rounded-lg transition-all border-2",
                 formulario.value.hora_inicio === hora ? "bg-purple-600 text-white border-purple-600 shadow-md transform scale-105" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:shadow"
               ])}" data-v-90d0f873>${ssrInterpolate(hora)}</button>`);
             });
-            _push2(`<!--]--></div><details class="text-xs" data-v-90d0f873><summary class="cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 select-none flex items-center gap-1" data-v-90d0f873><span data-v-90d0f873>\u2328\uFE0F</span><span data-v-90d0f873>Ingresar hora manualmente</span></summary><div class="mt-2" data-v-90d0f873><input${ssrRenderAttr("value", formulario.value.hora_inicio)} type="time" required step="1800" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white" data-v-90d0f873></div></details></div></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> \u23F1\uFE0F Duraci\xF3n (min) </label><select class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white" data-v-90d0f873><option${ssrRenderAttr("value", 30)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 30) : ssrLooseEqual(formulario.value.duracion, 30)) ? " selected" : ""}>30 min</option><option${ssrRenderAttr("value", 45)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 45) : ssrLooseEqual(formulario.value.duracion, 45)) ? " selected" : ""}>45 min</option><option${ssrRenderAttr("value", 60)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 60) : ssrLooseEqual(formulario.value.duracion, 60)) ? " selected" : ""}>60 min</option><option${ssrRenderAttr("value", 90)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 90) : ssrLooseEqual(formulario.value.duracion, 90)) ? " selected" : ""}>90 min</option></select></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> \u{1F551} Hora Fin </label><input${ssrRenderAttr("value", formulario.value.hora_fin)} type="time" required readonly step="1800" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" data-v-90d0f873></div></div>`);
+            _push2(`<!--]--></div><details class="text-xs" data-v-90d0f873><summary class="cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 select-none flex items-center gap-1" data-v-90d0f873><span data-v-90d0f873>⌨️</span><span data-v-90d0f873>Ingresar hora manualmente</span></summary><div class="mt-2" data-v-90d0f873><input${ssrRenderAttr("value", formulario.value.hora_inicio)} type="time" required step="1800" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white" data-v-90d0f873></div></details></div></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> ⏱️ Duración (min) </label><select class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white" data-v-90d0f873><option${ssrRenderAttr("value", 30)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 30) : ssrLooseEqual(formulario.value.duracion, 30)) ? " selected" : ""}>30 min</option><option${ssrRenderAttr("value", 45)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 45) : ssrLooseEqual(formulario.value.duracion, 45)) ? " selected" : ""}>45 min</option><option${ssrRenderAttr("value", 60)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 60) : ssrLooseEqual(formulario.value.duracion, 60)) ? " selected" : ""}>60 min</option><option${ssrRenderAttr("value", 90)} data-v-90d0f873${ssrIncludeBooleanAttr(Array.isArray(formulario.value.duracion) ? ssrLooseContain(formulario.value.duracion, 90) : ssrLooseEqual(formulario.value.duracion, 90)) ? " selected" : ""}>90 min</option></select></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> 🕑 Hora Fin </label><input${ssrRenderAttr("value", formulario.value.hora_fin)} type="time" required readonly step="1800" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" data-v-90d0f873></div></div>`);
             if (conflictoHorario.value) {
-              _push2(`<div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-300 dark:border-yellow-700 rounded-lg" data-v-90d0f873><div class="flex items-start gap-3" data-v-90d0f873><span class="text-2xl" data-v-90d0f873>\u26A0\uFE0F</span><div data-v-90d0f873><div class="font-semibold text-yellow-800 dark:text-yellow-300 mb-1" data-v-90d0f873> Conflicto de Horario </div><div class="text-sm text-yellow-700 dark:text-yellow-400" data-v-90d0f873> Ya existe otra cita en este horario. Por favor, selecciona otro horario. </div></div></div></div>`);
+              _push2(`<div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-300 dark:border-yellow-700 rounded-lg" data-v-90d0f873><div class="flex items-start gap-3" data-v-90d0f873><span class="text-2xl" data-v-90d0f873>⚠️</span><div data-v-90d0f873><div class="font-semibold text-yellow-800 dark:text-yellow-300 mb-1" data-v-90d0f873> Conflicto de Horario </div><div class="text-sm text-yellow-700 dark:text-yellow-400" data-v-90d0f873> Ya existe otra cita en este horario. Por favor, selecciona otro horario. </div></div></div></div>`);
             } else {
               _push2(`<!---->`);
             }
-            _push2(`<div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> \u{1F4BB} Modalidad </label><div class="grid grid-cols-3 gap-3" data-v-90d0f873><!--[-->`);
+            _push2(`<div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> 💻 Modalidad </label><div class="grid grid-cols-3 gap-3" data-v-90d0f873><!--[-->`);
             ssrRenderList([
-              { valor: "presencial", icono: "\u{1F3E5}", nombre: "Presencial" },
-              { valor: "online", icono: "\u{1F4BB}", nombre: "Online" },
-              { valor: "telefonica", icono: "\u{1F4DE}", nombre: "Tel\xE9fono" }
+              { valor: "presencial", icono: "🏥", nombre: "Presencial" },
+              { valor: "online", icono: "💻", nombre: "Online" },
+              { valor: "telefonica", icono: "📞", nombre: "Teléfono" }
             ], (tipo) => {
               _push2(`<button type="button" class="${ssrRenderClass([
                 "p-3 border-2 rounded-lg transition-all",
                 formulario.value.modalidad === tipo.valor ? "border-purple-600 bg-purple-50 dark:bg-purple-900/20" : "border-gray-300 dark:border-gray-700 hover:border-purple-400"
               ])}" data-v-90d0f873><div class="text-2xl mb-1" data-v-90d0f873>${ssrInterpolate(tipo.icono)}</div><div class="text-sm font-medium text-gray-900 dark:text-white" data-v-90d0f873>${ssrInterpolate(tipo.nombre)}</div></button>`);
             });
-            _push2(`<!--]--></div></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> \u{1F4CA} Estado </label><div class="grid grid-cols-2 md:grid-cols-4 gap-3" data-v-90d0f873><!--[-->`);
+            _push2(`<!--]--></div></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> 📊 Estado </label><div class="grid grid-cols-2 md:grid-cols-4 gap-3" data-v-90d0f873><!--[-->`);
             ssrRenderList([
-              { valor: "pendiente", icono: "\u23F3", nombre: "Pendiente" },
-              { valor: "confirmada", icono: "\u2705", nombre: "Confirmada" },
-              { valor: "realizada", icono: "\u2713", nombre: "Realizada" },
-              { valor: "cancelada", icono: "\u274C", nombre: "Cancelada" }
+              { valor: "pendiente", icono: "⏳", nombre: "Pendiente" },
+              { valor: "confirmada", icono: "✅", nombre: "Confirmada" },
+              { valor: "realizada", icono: "✓", nombre: "Realizada" },
+              { valor: "cancelada", icono: "❌", nombre: "Cancelada" }
             ], (estado) => {
               _push2(`<button type="button" class="${ssrRenderClass([
                 "p-2 border-2 rounded-lg transition-all",
                 formulario.value.estado === estado.valor ? "border-purple-600 bg-purple-50 dark:bg-purple-900/20" : "border-gray-300 dark:border-gray-700 hover:border-purple-400"
               ])}" data-v-90d0f873><div class="text-xl mb-1" data-v-90d0f873>${ssrInterpolate(estado.icono)}</div><div class="text-xs font-medium text-gray-900 dark:text-white" data-v-90d0f873>${ssrInterpolate(estado.nombre)}</div></button>`);
             });
-            _push2(`<!--]--></div></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> \u{1F4DD} Observaciones </label><textarea rows="3" placeholder="Notas adicionales sobre la cita..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white" data-v-90d0f873>${ssrInterpolate(formulario.value.observaciones)}</textarea></div></div></form>`);
+            _push2(`<!--]--></div></div><div data-v-90d0f873><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-v-90d0f873> 📝 Observaciones </label><textarea rows="3" placeholder="Notas adicionales sobre la cita..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white" data-v-90d0f873>${ssrInterpolate(formulario.value.observaciones)}</textarea></div></div></form>`);
           } else {
             _push2(`<!---->`);
           }
@@ -278,7 +275,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           if (guardando.value) {
             _push2(`<span data-v-90d0f873>Guardando...</span>`);
           } else {
-            _push2(`<span data-v-90d0f873>\u{1F4BE} Guardar Cambios</span>`);
+            _push2(`<span data-v-90d0f873>💾 Guardar Cambios</span>`);
           }
           _push2(`</button></div></div></div>`);
         } else {

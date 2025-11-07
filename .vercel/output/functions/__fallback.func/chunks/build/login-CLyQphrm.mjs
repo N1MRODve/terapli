@@ -41,17 +41,17 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         name: "heroicons:calendar-days",
         class: "w-10 h-10 text-white"
       }, null, _parent));
-      _push(`</div><h1 class="text-3xl font-lora font-bold text-[#5D4A44] mb-2" data-v-1de7f2fa> Panel de Coordinaci\xF3n </h1><p class="text-[#8B7470]" data-v-1de7f2fa> Gesti\xF3n de citas y comunicaci\xF3n con pacientes </p></div><div class="bg-white rounded-2xl shadow-xl p-8 border border-[#E8DFD8]" data-v-1de7f2fa><form class="space-y-6" data-v-1de7f2fa><div data-v-1de7f2fa><label for="email" class="block text-sm font-medium text-[#5D4A44] mb-2" data-v-1de7f2fa> Correo electr\xF3nico </label><div class="relative" data-v-1de7f2fa><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" data-v-1de7f2fa>`);
+      _push(`</div><h1 class="text-3xl font-lora font-bold text-[#5D4A44] mb-2" data-v-1de7f2fa> Panel de Coordinación </h1><p class="text-[#8B7470]" data-v-1de7f2fa> Gestión de citas y comunicación con pacientes </p></div><div class="bg-white rounded-2xl shadow-xl p-8 border border-[#E8DFD8]" data-v-1de7f2fa><form class="space-y-6" data-v-1de7f2fa><div data-v-1de7f2fa><label for="email" class="block text-sm font-medium text-[#5D4A44] mb-2" data-v-1de7f2fa> Correo electrónico </label><div class="relative" data-v-1de7f2fa><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" data-v-1de7f2fa>`);
       _push(ssrRenderComponent(_component_Icon, {
         name: "heroicons:envelope",
         class: "w-5 h-5 text-[#8B7470]"
       }, null, _parent));
-      _push(`</div><input id="email"${ssrRenderAttr("value", unref(email))} type="email" required placeholder="tu-email@ejemplo.com" class="w-full pl-10 pr-4 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent transition-all"${ssrIncludeBooleanAttr(unref(cargando)) ? " disabled" : ""} data-v-1de7f2fa></div></div><div data-v-1de7f2fa><label for="password" class="block text-sm font-medium text-[#5D4A44] mb-2" data-v-1de7f2fa> Contrase\xF1a </label><div class="relative" data-v-1de7f2fa><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" data-v-1de7f2fa>`);
+      _push(`</div><input id="email"${ssrRenderAttr("value", unref(email))} type="email" required placeholder="tu-email@ejemplo.com" class="w-full pl-10 pr-4 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent transition-all"${ssrIncludeBooleanAttr(unref(cargando)) ? " disabled" : ""} data-v-1de7f2fa></div></div><div data-v-1de7f2fa><label for="password" class="block text-sm font-medium text-[#5D4A44] mb-2" data-v-1de7f2fa> Contraseña </label><div class="relative" data-v-1de7f2fa><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" data-v-1de7f2fa>`);
       _push(ssrRenderComponent(_component_Icon, {
         name: "heroicons:lock-closed",
         class: "w-5 h-5 text-[#8B7470]"
       }, null, _parent));
-      _push(`</div><input id="password"${ssrRenderDynamicModel(unref(mostrarPassword) ? "text" : "password", unref(password), null)}${ssrRenderAttr("type", unref(mostrarPassword) ? "text" : "password")} required placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" class="w-full pl-10 pr-12 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent transition-all"${ssrIncludeBooleanAttr(unref(cargando)) ? " disabled" : ""} data-v-1de7f2fa><button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center"${ssrIncludeBooleanAttr(unref(cargando)) ? " disabled" : ""} data-v-1de7f2fa>`);
+      _push(`</div><input id="password"${ssrRenderDynamicModel(unref(mostrarPassword) ? "text" : "password", unref(password), null)}${ssrRenderAttr("type", unref(mostrarPassword) ? "text" : "password")} required placeholder="••••••••" class="w-full pl-10 pr-12 py-3 border border-[#E8DFD8] rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent transition-all"${ssrIncludeBooleanAttr(unref(cargando)) ? " disabled" : ""} data-v-1de7f2fa><button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center"${ssrIncludeBooleanAttr(unref(cargando)) ? " disabled" : ""} data-v-1de7f2fa>`);
       _push(ssrRenderComponent(_component_Icon, {
         name: unref(mostrarPassword) ? "heroicons:eye-slash" : "heroicons:eye",
         class: "w-5 h-5 text-[#8B7470] hover:text-[#5D4A44] transition-colors"
@@ -79,7 +79,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
           class: "w-5 h-5"
         }, null, _parent));
       }
-      _push(`<span data-v-1de7f2fa>${ssrInterpolate(unref(cargando) ? "Verificando..." : "Iniciar sesi\xF3n")}</span></button></form><div class="mt-6 pt-6 border-t border-[#E8DFD8]" data-v-1de7f2fa><p class="text-xs text-center text-[#8B7470]" data-v-1de7f2fa> Este panel es exclusivo para personal de coordinaci\xF3n. </p><p class="text-xs text-center text-[#8B7470] mt-2" data-v-1de7f2fa> Si necesitas ayuda, contacta a tu administrador. </p></div></div><div class="mt-8 text-center text-sm text-[#8B7470]" data-v-1de7f2fa><p data-v-1de7f2fa>Psic\xF3loga Karem \xB7 Sistema de gesti\xF3n cl\xEDnica</p></div></div></div>`);
+      _push(`<span data-v-1de7f2fa>${ssrInterpolate(unref(cargando) ? "Verificando..." : "Iniciar sesión")}</span></button></form><div class="mt-6 pt-6 border-t border-[#E8DFD8]" data-v-1de7f2fa><p class="text-xs text-center text-[#8B7470]" data-v-1de7f2fa> Este panel es exclusivo para personal de coordinación. </p><p class="text-xs text-center text-[#8B7470] mt-2" data-v-1de7f2fa> Si necesitas ayuda, contacta a tu administrador. </p></div></div><div class="mt-8 text-center text-sm text-[#8B7470]" data-v-1de7f2fa><p data-v-1de7f2fa>Psicóloga Karem · Sistema de gestión clínica</p></div></div></div>`);
     };
   }
 });
