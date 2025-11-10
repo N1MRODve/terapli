@@ -1,1 +1,0 @@
-{"version":3,"file":"auth-DxfWzZiu.mjs","sources":["../../../../../../middleware/auth.ts"],"sourcesContent":null,"names":["auth","defineNuxtRouteMiddleware","async","to","from"],"mappings":"+YAOE,MAAAA,EAAoBC,EAAAC,MAAAC,EAAAC"}
