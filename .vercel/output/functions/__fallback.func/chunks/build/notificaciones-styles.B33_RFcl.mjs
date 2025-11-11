@@ -1,2 +1,0 @@
-const a=["@keyframes spin-7459c3a8{to{transform:rotate(1turn)}}.animate-spin[data-v-7459c3a8]{animation:spin-7459c3a8 1s linear infinite}"];export{a as default};
-//# sourceMappingURL=notificaciones-styles.B33_RFcl.mjs.map

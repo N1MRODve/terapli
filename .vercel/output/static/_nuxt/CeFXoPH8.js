@@ -1,1 +1,0 @@
-import{ad as u,J as n,ae as r,n as i}from"#entry";import{u as c}from"./Cy0_MzJF.js";const m=u(async(p,d)=>{let e,a;const s=c(),t=n(),{data:{session:o}}=([e,a]=r(()=>s.auth.getSession()),e=await e,a(),e);if(!t.value&&!o)return i("/login")});export{m as default};

@@ -1,1 +1,0 @@
-import{_ as o}from"./MsYoDEnI.js";import{e as a,c as t,b as n,o as _}from"#entry";import{_ as c}from"./DlAUqK2U.js";import"./Cy0_MzJF.js";import"./BqC9m6KG.js";const s={class:"agenda-page"},r=a({__name:"agenda",setup(p){return(m,d)=>{const e=o;return _(),t("div",s,[n(e)])}}}),x=c(r,[["__scopeId","data-v-e9c5b3bd"]]);export{x as default};
