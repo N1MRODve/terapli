@@ -3,7 +3,7 @@
     <button
       v-if="showButton"
       @click="handleClick"
-      class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-terracota to-terracota/80 text-white shadow-2xl shadow-terracota/40 hover:shadow-terracota/60 hover:scale-110 transition-all duration-300 flex items-center justify-center group"
+      class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-purple-600 to-purple-600/80 text-white shadow-2xl shadow-purple-500/40 hover:shadow-purple-500/60 hover:scale-110 transition-all duration-300 flex items-center justify-center group"
       aria-label="Instalar aplicación"
     >
       <!-- Ícono de descarga/instalación -->
@@ -22,7 +22,7 @@
       </svg>
       
       <!-- Pulso animado -->
-      <span class="absolute inset-0 rounded-full bg-terracota animate-ping opacity-20"></span>
+      <span class="absolute inset-0 rounded-full bg-purple-600 animate-ping opacity-20"></span>
       
       <!-- Badge de notificación (opcional) -->
       <span 

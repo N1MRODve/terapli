@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
     <!-- Header de la tabla con filtros -->
-    <div class="bg-gradient-to-r from-terracota to-terracota-light p-6">
+    <div class="bg-gradient-to-r from-purple-600 to-purple-600-light p-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <h3 class="text-2xl font-serif font-bold text-white">
           📋 Historial de Sesiones
@@ -189,7 +189,7 @@
             <p class="text-xs text-gray-500 font-sans uppercase tracking-wide mb-1">
               Tu parte (70%)
             </p>
-            <p class="text-lg font-serif font-bold text-terracota">
+            <p class="text-lg font-serif font-bold text-purple-600">
               {{ formatearMonto(calcularTotalTerapeutaVisible()) }}
             </p>
           </div>

@@ -92,7 +92,7 @@ const onBusquedaInput = () => {
             @input="onBusquedaInput"
             type="text"
             placeholder="Buscar por paciente, terapeuta, notas..."
-            class="w-full px-3 py-1.5 pl-9 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-terracota focus:border-terracota bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all"
+            class="w-full px-3 py-1.5 pl-9 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all"
           />
           <svg 
             class="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cafe/50 dark:text-gray-400"
@@ -107,14 +107,14 @@ const onBusquedaInput = () => {
         <!-- Botón filtros avanzados -->
         <button
           @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
-          class="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200"
-          :class="{ 'bg-terracota/10 border-terracota text-terracota': contadorFiltrosActivos > 0 }"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-purple-600/10 dark:hover:bg-gray-800 hover:border-purple-600 transition-all duration-200"
+          :class="{ 'bg-purple-600/10 border-purple-600 text-purple-600': contadorFiltrosActivos > 0 }"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
           <span>Filtros</span>
-          <span v-if="contadorFiltrosActivos > 0" class="px-1.5 py-0.5 bg-terracota text-white text-xs rounded-full">
+          <span v-if="contadorFiltrosActivos > 0" class="px-1.5 py-0.5 bg-purple-600 text-white text-xs rounded-full">
             {{ contadorFiltrosActivos }}
           </span>
         </button>
@@ -147,7 +147,7 @@ const onBusquedaInput = () => {
             </label>
             <select
               v-model="pacienteSeleccionado"
-              class="w-full px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-terracota focus:border-terracota bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+              class="w-full px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             >
               <option value="">Todos los pacientes</option>
               <option v-for="p in pacientes" :key="p.id" :value="p.id">
@@ -163,7 +163,7 @@ const onBusquedaInput = () => {
             </label>
             <select
               v-model="modalidadSeleccionada"
-              class="w-full px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-terracota focus:border-terracota bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+              class="w-full px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             >
               <option value="">Todas las modalidades</option>
               <option v-for="m in modalidadesDisponibles" :key="m.value" :value="m.value">
@@ -181,12 +181,12 @@ const onBusquedaInput = () => {
               <input
                 v-model="fechaDesde"
                 type="date"
-                class="flex-1 px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-terracota focus:border-terracota bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                class="flex-1 px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
               />
               <input
                 v-model="fechaHasta"
                 type="date"
-                class="flex-1 px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-terracota focus:border-terracota bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                class="flex-1 px-3 py-1.5 text-sm border border-cafe/20 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
               />
             </div>
           </div>

@@ -8,7 +8,7 @@
       <button
         v-if="!editando"
         @click="iniciarEdicion"
-        class="px-3 py-1.5 text-sm bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
+        class="px-3 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors"
       >
         ✏️ Editar
       </button>
@@ -17,7 +17,7 @@
     <!-- Info de confidencialidad -->
     <div class="mb-4 p-3 bg-rosa/20 border border-rosa rounded-lg">
       <p class="text-xs text-cafe/70 flex items-start gap-2">
-        <span class="text-terracota">🔒</span>
+        <span class="text-purple-600">🔒</span>
         <span>
           Esta información es estrictamente confidencial y solo visible para ti como terapeuta.
           Cumple con los estándares de protección de datos clínicos.
@@ -37,7 +37,7 @@
         </p>
         <button
           @click="iniciarEdicion"
-          class="mt-4 px-4 py-2 text-sm bg-terracota/10 text-terracota rounded-lg hover:bg-terracota/20 transition-colors"
+          class="mt-4 px-4 py-2 text-sm bg-purple-600/10 text-purple-600 rounded-lg hover:bg-purple-600/20 transition-colors"
         >
           Añadir primera nota
         </button>
@@ -50,7 +50,7 @@
         ref="textareaRef"
         v-model="contenidoLocal"
         placeholder="Anota observaciones, reflexiones o aspectos a seguir trabajando...&#10;&#10;• Progreso observado en la sesión&#10;• Temas pendientes de abordar&#10;• Estrategias que funcionan&#10;• Aspectos que requieren atención"
-        class="w-full min-h-[300px] px-4 py-3 bg-base-bg rounded-lg border border-terracota/30 focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all text-cafe resize-y"
+        class="w-full min-h-[300px] px-4 py-3 bg-base-bg rounded-lg border border-purple-600/30 focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all text-cafe resize-y"
         @keydown.meta.enter="guardarNotas"
         @keydown.ctrl.enter="guardarNotas"
       ></textarea>
@@ -70,7 +70,7 @@
         <button
           @click="guardarNotas"
           :disabled="guardando"
-          class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <span v-if="guardando">⏳</span>
           <span v-else>💾</span>

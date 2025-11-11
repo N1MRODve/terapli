@@ -1,17 +1,23 @@
 import type { User, Session } from '@supabase/supabase-js'
-import type { Database, UserRole } from '~/types/database.types'
+
+// Tipo para el rol del usuario
+export type UserRole = 'admin' | 'coordinadora' | 'psicologa' | 'paciente'
 
 // Tipo para el perfil del usuario
-export type UserProfile = Database['public']['Tables']['profiles']['Row']
-
-// Re-exportar UserRole para facilitar su uso
-export type { UserRole }
+export interface UserProfile {
+  id: string
+  email: string
+  nombre?: string
+  rol: UserRole
+  created_at?: string
+  updated_at?: string
+}
 
 // Flag global para evitar múltiples cargas simultáneas
 let isLoadingProfile = false
 
 export const useSupabase = () => {
-  const supabase = useSupabaseClient<Database>()
+  const supabase = useSupabaseClient()
   const user = useSupabaseUser()
 
   // Estado global compartido (singleton) - ahora dentro de la función
@@ -34,29 +40,65 @@ export const useSupabase = () => {
   // Escuchar cambios en la autenticación
   const setupAuthListener = () => {
     if (process.client) {
+      let lastEventTime = 0
+      let lastEventType = ''
+      let lastUserId = ''
+      
       supabase.auth.onAuthStateChange(async (event, newSession) => {
-        console.log('🔐 [Auth State Change]', event, {
-          hasSession: !!newSession,
-          userId: newSession?.user?.id,
-          email: newSession?.user?.email
-        })
+        const now = Date.now()
+        const currentUserId = newSession?.user?.id || ''
         
-        session.value = newSession
-        
-        // Solo limpiar perfil en eventos de cierre de sesión
-        if (event === 'SIGNED_OUT') {
-          console.warn('⚠️ [Auth] Sesión cerrada, limpiando perfil')
-          userProfile.value = null
-          isLoadingProfile = false
+        // Throttle eventos duplicados (debounce de 100ms)
+        if (event === lastEventType && 
+            currentUserId === lastUserId && 
+            (now - lastEventTime) < 100) {
           return
         }
         
-        // Cargar perfil cuando cambia la sesión (login, token refresh, etc.)
-        if (newSession?.user && !userProfile.value) {
+        lastEventTime = now
+        lastEventType = event
+        lastUserId = currentUserId
+        
+        // Solo log si es un evento significativo
+        if (['SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED'].includes(event)) {
+          console.log('🔐 [Auth State Change]', event, {
+            hasSession: !!newSession,
+            userId: newSession?.user?.id,
+            email: newSession?.user?.email
+          })
+        }
+        
+        session.value = newSession
+        
+        // Manejar eventos de cierre de sesión
+        if (event === 'SIGNED_OUT') {
+          console.warn('⚠️ [Auth] Sesión cerrada, limpiando perfil y estado')
+          userProfile.value = null
+          isLoadingProfile = false
+          
+          // Limpiar también el estado de Nuxt para evitar persistencia
+          if (process.client) {
+            // Limpiar estados reactivos de Nuxt
+            await nextTick()
+            
+            // Forzar limpieza de estado compartido
+            const userState = useState('user-profile')
+            const sessionState = useState('supabase-session')
+            userState.value = null
+            sessionState.value = null
+          }
+          return
+        }
+        
+        // Cargar perfil cuando cambia la sesión (solo para eventos significativos y si no hay perfil)
+        if (['SIGNED_IN', 'TOKEN_REFRESHED'].includes(event) && 
+            newSession?.user && 
+            !userProfile.value && 
+            !isLoadingProfile) {
           console.log('✅ [Auth] Usuario autenticado sin perfil, cargando...')
           await loadUserProfile()
-        } else if (newSession?.user && userProfile.value) {
-          console.log('✅ [Auth] Usuario autenticado, perfil ya cargado')
+        } else if (newSession?.user && userProfile.value && event === 'SIGNED_IN') {
+          console.log('✅ [Auth] Usuario autenticado, perfil ya cargado:', userProfile.value.email)
         }
       })
     }
@@ -66,30 +108,34 @@ export const useSupabase = () => {
   const loadUserProfile = async () => {
     // Si ya tenemos el perfil cargado, retornarlo sin hacer nueva petición
     if (userProfile.value) {
+      console.log('[useSupabase] Perfil ya cargado, retornando cache:', userProfile.value.email)
       return userProfile.value
     }
 
-    // Evitar llamadas múltiples simultáneas
+    // Evitar llamadas múltiples simultáneas con Promise singleton
     if (isLoadingProfile) {
-      // Esperar a que termine la carga actual (máximo 5 segundos)
+      console.log('[useSupabase] Esperando carga en progreso...')
+      // Esperar a que termine la carga actual (máximo 10 segundos)
       let attempts = 0
-      while (isLoadingProfile && attempts < 50) {
+      while (isLoadingProfile && attempts < 100) {
         await new Promise(resolve => setTimeout(resolve, 100))
         attempts++
       }
       // Si ya se cargó el perfil mientras esperábamos, retornarlo
       if (userProfile.value) {
+        console.log('[useSupabase] Perfil cargado durante espera:', userProfile.value.email)
         return userProfile.value
       }
     }
 
     isLoadingProfile = true
+    console.log('[useSupabase] Iniciando carga de perfil...')
 
     try {
       // Esperar a que el usuario esté disponible (fix para race condition)
       let attempts = 0
-      while (!user.value && attempts < 10) {
-        await new Promise(resolve => setTimeout(resolve, 100))
+      while (!user.value && attempts < 20) {
+        await new Promise(resolve => setTimeout(resolve, 50))
         attempts++
       }
 
@@ -99,7 +145,6 @@ export const useSupabase = () => {
       // Validar que hay usuario y tiene ID
       if (!userId) {
         console.warn('[useSupabase] No hay usuario autenticado o ID inválido después de esperar')
-        console.warn('[useSupabase] user.value:', user.value)
         userProfile.value = null
         return null
       }
@@ -114,17 +159,12 @@ export const useSupabase = () => {
 
       if (error) {
         console.error('[useSupabase] Error al cargar perfil:', error)
-        console.error('[useSupabase] Error code:', error.code)
-        console.error('[useSupabase] Error message:', error.message)
-        console.error('[useSupabase] Error details:', error.details)
-        console.error('[useSupabase] User ID:', userId)
         userProfile.value = null
         return null
       }
 
       if (!data) {
         console.warn('[useSupabase] No se encontró perfil para el usuario:', userId)
-        console.warn('[useSupabase] El usuario existe en auth pero no tiene perfil en la tabla profiles')
         userProfile.value = null
         return null
       }
@@ -285,6 +325,14 @@ export const useSupabase = () => {
     session.value = null
     isLoadingProfile = false
     
+    // También limpiar estados de Nuxt
+    if (process.client) {
+      const userState = useState('user-profile')
+      const sessionState = useState('supabase-session')
+      userState.value = null
+      sessionState.value = null
+    }
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -293,6 +341,12 @@ export const useSupabase = () => {
     if (!error && data.session) {
       console.log('✅ [Auth] Login exitoso, estableciendo nueva sesión')
       session.value = data.session
+      
+      // Asegurar que el estado de Nuxt también se actualice
+      if (process.client) {
+        const sessionState = useState('supabase-session')
+        sessionState.value = data.session
+      }
     }
     
     return { data, error }
@@ -325,23 +379,27 @@ export const useSupabase = () => {
       // Limpiar estado de Nuxt (importante para evitar persistencia)
       if (process.client) {
         try {
-          // Limpiar Nuxt state
-          await $fetch('/api/clear-state', { method: 'POST' }).catch(() => {})
-          
           // Limpiar localStorage y sessionStorage
           localStorage.clear()
           sessionStorage.clear()
           
-          // Force refresh para limpiar completamente el estado
-          setTimeout(() => {
-            window.location.href = '/login'
-          }, 100)
+          // Limpiar cookies relacionadas con Supabase
+          const cookiesToClear = ['sb-access-token', 'sb-refresh-token', 'supabase-auth-token']
+          cookiesToClear.forEach(cookieName => {
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+          })
+          
+          console.log('🧹 [Auth] Estado local completamente limpiado')
         } catch (e) {
           console.warn('[Auth] Error limpiando storage:', e)
         }
       }
       
-      console.log('🧹 [Auth] Estado completamente limpiado')
+      // Usar navigateTo de Nuxt en lugar de window.location.href
+      console.log('🔄 [Auth] Redirigiendo a login...')
+      await navigateTo('/login', { replace: true, external: false })
+      
     } else {
       console.error('❌ [Auth] Error al cerrar sesión:', error)
     }

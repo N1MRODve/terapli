@@ -3,7 +3,7 @@
     <!-- Navegación de regreso -->
     <button
       @click="$router.push('/coordinadora/pacientes')"
-      class="mb-6 flex items-center gap-2 text-cafe hover:text-terracota transition-colors"
+      class="mb-6 flex items-center gap-2 text-cafe hover:text-purple-600 transition-colors"
     >
       <span>←</span>
       <span>Volver a lista de pacientes</span>
@@ -32,7 +32,7 @@
             type="text"
             required
             placeholder="Ej: María García López"
-            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota focus:border-transparent"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent"
           />
         </div>
 
@@ -46,7 +46,7 @@
             type="email"
             required
             placeholder="ejemplo@correo.com"
-            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota focus:border-transparent"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent"
           />
         </div>
 
@@ -59,7 +59,7 @@
             v-model="form.telefono"
             type="tel"
             placeholder="+34 600 000 000"
-            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota focus:border-transparent"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent"
           />
           <p class="text-xs text-gray-500 mt-1">
             Incluye el código de país para WhatsApp
@@ -73,7 +73,7 @@
           </label>
           <select
             v-model="form.area_de_acompanamiento"
-            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota focus:border-transparent"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent"
           >
             <option value="">Selecciona un área</option>
             <option value="Ansiedad">Ansiedad</option>
@@ -96,7 +96,7 @@
           </label>
           <select
             v-model="form.frecuencia"
-            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota focus:border-transparent"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent"
           >
             <option value="">Selecciona una frecuencia</option>
             <option value="semanal">Semanal</option>
@@ -115,7 +115,7 @@
             v-model="form.notas_iniciales"
             rows="4"
             placeholder="Información relevante sobre el paciente..."
-            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota focus:border-transparent resize-none"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent resize-none"
           ></textarea>
         </div>
 
@@ -125,7 +125,7 @@
             v-model="form.activo"
             type="checkbox"
             id="activo"
-            class="w-5 h-5 text-terracota border-gray-300 rounded focus:ring-2 focus:ring-terracota"
+            class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 focus:ring-purple-300"
           />
           <label for="activo" class="text-sm font-medium text-cafe cursor-pointer">
             Paciente activo
@@ -157,7 +157,7 @@
           <button
             type="submit"
             :disabled="guardando || !formularioValido"
-            class="flex-1 px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <span v-if="guardando" class="animate-spin">⏳</span>
             <span>{{ guardando ? 'Guardando...' : 'Guardar Paciente' }}</span>

@@ -53,8 +53,8 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: 'terracota', // 'terracota', 'rosa', 'success', 'warning'
-    validator: (value) => ['terracota', 'rosa', 'success', 'warning'].includes(value)
+    default: 'primary', // 'primary', 'rosa', 'success', 'warning'
+    validator: (value) => ['primary', 'rosa', 'success', 'warning'].includes(value)
   }
 })
 
@@ -72,7 +72,7 @@ const progressColorClass = computed(() => {
     case 'warning':
       return 'bg-yellow-400'
     default:
-      return 'bg-[#D8AFA0]'
+      return 'bg-purple-600'
   }
 })
 </script>

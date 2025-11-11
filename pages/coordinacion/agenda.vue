@@ -16,7 +16,7 @@
         <!-- Selector de terapeuta -->
         <select
           v-model="terapeutaFiltro"
-          class="px-4 py-2 rounded-lg border border-[#EAD5D3]/40 bg-white text-cafe focus:ring-2 focus:ring-terracota focus:border-transparent"
+          class="px-4 py-2 rounded-lg border border-[#EAD5D3]/40 bg-white text-cafe focus:ring-2 focus:ring-purple-300 focus:border-transparent"
           @change="cargarCitasSegunVista"
         >
           <option value="">Todos los terapeutas</option>
@@ -37,8 +37,8 @@
           :class="[
             'px-5 py-2.5 rounded-lg font-medium transition-all',
             vistaActual === vista.id
-              ? 'bg-terracota text-white shadow-md'
-              : 'bg-white text-cafe hover:bg-terracota/10 border border-[#EAD5D3]/40'
+              ? 'bg-purple-600 text-white shadow-md'
+              : 'bg-white text-cafe hover:bg-purple-600/10 border border-[#EAD5D3]/40'
           ]"
         >
           <span class="mr-2">{{ vista.icono }}</span>
@@ -48,7 +48,7 @@
         <!-- Botón Nueva Cita -->
         <button
           @click="abrirModalNuevaCita()"
-          class="ml-auto px-5 py-2.5 rounded-lg font-medium bg-gradient-to-r from-terracota to-rosa text-white hover:from-terracota/90 hover:to-rosa/90 shadow-md transition-all"
+          class="ml-auto px-5 py-2.5 rounded-lg font-medium bg-gradient-to-r from-purple-600 to-rosa text-white hover:from-purple-600/90 hover:to-rosa/90 shadow-md transition-all"
         >
           <span class="mr-2">+</span>
           Nueva Cita
@@ -60,7 +60,7 @@
         <div class="mb-6 flex items-center gap-4">
           <button
             @click="cambiarDia(-1)"
-            class="p-2 hover:bg-terracota/10 rounded-lg transition-colors"
+            class="p-2 hover:bg-purple-600/10 rounded-lg transition-colors"
           >
             ← Anterior
           </button>
@@ -68,19 +68,19 @@
           <input
             v-model="fechaSeleccionada"
             type="date"
-            class="flex-1 px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20"
+            class="flex-1 px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20"
           />
           
           <button
             @click="irHoy"
-            class="px-4 py-2 bg-terracota/10 text-terracota rounded-lg hover:bg-terracota/20 transition-colors font-medium"
+            class="px-4 py-2 bg-purple-600/10 text-purple-600 rounded-lg hover:bg-purple-600/20 transition-colors font-medium"
           >
             Hoy
           </button>
           
           <button
             @click="cambiarDia(1)"
-            class="p-2 hover:bg-terracota/10 rounded-lg transition-colors"
+            class="p-2 hover:bg-purple-600/10 rounded-lg transition-colors"
           >
             Siguiente →
           </button>
@@ -96,7 +96,7 @@
         </div>
 
         <div v-if="cargando" class="text-center py-12">
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-terracota"></div>
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
         </div>
 
         <div v-else-if="citasDelDia.length === 0" class="text-center py-12">

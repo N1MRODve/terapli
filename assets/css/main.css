@@ -3,27 +3,18 @@
    ============================================================================
    Orden de importación:
    1. Design Tokens (variables CSS)
-   2. Tailwind Base
-   3. Componentes reutilizables
-   4. Tipografía
-   5. Tailwind Components
-   6. Tailwind Utilities
-   7. Personalizaciones globales
+   2. Componentes reutilizables
+   3. Tipografía
+   4. Tailwind Base, Components y Utilities
    ============================================================================ */
 
-/* 1️⃣ Design Tokens - Variables CSS globales */
+/* 1️⃣ IMPORTS - Deben ir PRIMERO */
 @import '~/assets/css/design-tokens.css';
-
-/* 2️⃣ Tailwind Base */
-@tailwind base;
-
-/* 3️⃣ Componentes reutilizables */
 @import '~/assets/css/components.css';
-
-/* 4️⃣ Tipografía */
 @import '~/assets/css/typography.css';
 
-/* 5️⃣ Tailwind Components y Utilities */
+/* 2️⃣ Tailwind directives */
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -70,17 +61,17 @@
 
   /* Mejora de accesibilidad */
   *:focus-visible {
-    @apply outline-none ring-2 ring-terracota/50 ring-offset-2;
+    @apply outline-none ring-2 ring-purple-300 ring-offset-2;
   }
 
   /* Selección de texto personalizada */
   ::selection {
-    background-color: rgba(201, 124, 93, 0.2);
+    background-color: rgba(85, 80, 242, 0.2);
     color: var(--color-text-primary);
   }
 
   ::-moz-selection {
-    background-color: rgba(201, 124, 93, 0.2);
+    background-color: rgba(85, 80, 242, 0.2);
     color: var(--color-text-primary);
   }
 }
@@ -221,8 +212,8 @@
     background: linear-gradient(135deg, #FDFBF9 0%, #F9F7F3 100%);
   }
 
-  .gradient-terracota {
-    background: linear-gradient(135deg, #C97C5D 0%, #E8BAAA 100%);
+  .gradient-violeta {
+    background: linear-gradient(135deg, #5550F2 0%, #7B72F7 100%);
   }
 
   .gradient-soft {
@@ -230,8 +221,8 @@
   }
 
   /* Text gradient */
-  .text-gradient-terracota {
-    @apply bg-gradient-to-r from-terracota to-terracota-light bg-clip-text text-transparent;
+  .text-gradient-violeta {
+    @apply bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent;
   }
 
   /* ========================================================================
@@ -318,7 +309,7 @@
   }
 
   .progress-fill {
-    @apply h-full bg-terracota rounded-full transition-all duration-300;
+    @apply h-full bg-purple-600 rounded-full transition-all duration-300;
   }
 }
 

@@ -3,7 +3,7 @@
     <!-- Navegación de regreso -->
     <button
       @click="$router.push('/terapeuta/pacientes')"
-      class="mb-6 flex items-center gap-2 text-cafe hover:text-terracota transition-colors"
+      class="mb-6 flex items-center gap-2 text-cafe hover:text-purple-600 transition-colors"
     >
       <span>←</span>
       <span>Volver a lista de pacientes</span>
@@ -11,7 +11,7 @@
 
     <!-- Estado de carga -->
     <div v-if="cargando" class="text-center py-12">
-      <div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mx-auto mb-4"></div>
+      <div class="animate-spin w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full mx-auto mb-4"></div>
       <p class="text-cafe/60">Cargando información del paciente...</p>
     </div>
 
@@ -25,7 +25,7 @@
         <p class="text-cafe/60 mb-4">{{ error }}</p>
         <button
           @click="$router.push('/terapeuta/pacientes')"
-          class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
+          class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors"
         >
           Volver a la lista
         </button>
@@ -99,14 +99,14 @@
             </button>
             <button
               @click="agendarSesion"
-              class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm flex items-center gap-2"
+              class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors text-sm flex items-center gap-2"
             >
               <span>📅</span>
               <span>Agendar sesión</span>
             </button>
             <button
               @click="editarPaciente"
-              class="px-4 py-2 bg-white border border-terracota/30 text-terracota rounded-lg hover:bg-terracota/5 transition-colors text-sm flex items-center gap-2"
+              class="px-4 py-2 bg-white border border-purple-600/30 text-purple-600 rounded-lg hover:bg-purple-600/5 transition-colors text-sm flex items-center gap-2"
             >
               <span>✏️</span>
               <span>Editar</span>
@@ -161,8 +161,8 @@
             </div>
 
             <!-- Sesiones disponibles -->
-            <div class="text-center p-4 bg-gradient-to-br from-terracota/10 to-rosa/20 rounded-xl">
-              <div class="text-4xl font-bold text-terracota mb-1">
+            <div class="text-center p-4 bg-gradient-to-br from-purple-600/10 to-rosa/20 rounded-xl">
+              <div class="text-4xl font-bold text-purple-600 mb-1">
                 {{ bonoActivo.sesiones_disponibles }}
               </div>
               <div class="text-sm text-cafe/70">
@@ -178,7 +178,7 @@
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  class="h-2.5 rounded-full bg-gradient-to-r from-terracota to-rosa transition-all"
+                  class="h-2.5 rounded-full bg-gradient-to-r from-purple-600 to-rosa transition-all"
                   :style="{ width: `${bonoActivo.porcentaje_uso}%` }"
                 ></div>
               </div>
@@ -219,7 +219,7 @@
             </p>
             <button 
               @click="irABonos"
-              class="mt-2 text-sm text-terracota hover:text-cafe transition-colors font-medium"
+              class="mt-2 text-sm text-purple-600 hover:text-cafe transition-colors font-medium"
             >
               Gestionar bonos →
             </button>
@@ -248,8 +248,8 @@
               </div>
             </div>
 
-            <div v-if="proximaSesion" class="p-4 bg-gradient-to-br from-terracota/20 to-rosa/20 border-2 border-terracota/40 rounded-lg">
-              <div class="text-xs font-medium text-terracota mb-2 flex items-center gap-1">
+            <div v-if="proximaSesion" class="p-4 bg-gradient-to-br from-purple-600/20 to-rosa/20 border-2 border-purple-600/40 rounded-lg">
+              <div class="text-xs font-medium text-purple-600 mb-2 flex items-center gap-1">
                 <span>📅</span>
                 <span>Próxima sesión agendada</span>
               </div>
@@ -257,11 +257,11 @@
                 {{ formatearFechaCompleta(proximaSesion.fecha_cita, proximaSesion.hora_inicio) }}
               </div>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs px-3 py-1.5 bg-white border border-terracota/30 rounded-full font-medium flex items-center gap-1">
+                <span class="text-xs px-3 py-1.5 bg-white border border-purple-600/30 rounded-full font-medium flex items-center gap-1">
                   {{ obtenerIconoModalidad(proximaSesion.modalidad) }}
                   {{ proximaSesion.modalidad }}
                 </span>
-                <span class="text-xs px-3 py-1.5 bg-white border border-terracota/30 rounded-full capitalize font-medium" :class="{
+                <span class="text-xs px-3 py-1.5 bg-white border border-purple-600/30 rounded-full capitalize font-medium" :class="{
                   'text-green-600 border-green-300': proximaSesion.estado === 'confirmada',
                   'text-yellow-600 border-yellow-300': proximaSesion.estado === 'pendiente',
                   'text-blue-600 border-blue-300': proximaSesion.estado === 'programada'
@@ -269,7 +269,7 @@
                   {{ proximaSesion.estado }}
                 </span>
               </div>
-              <div v-if="proximaSesion.notas" class="mt-3 pt-3 border-t border-terracota/20">
+              <div v-if="proximaSesion.notas" class="mt-3 pt-3 border-t border-purple-600/20">
                 <div class="text-xs text-cafe/70 mb-1">Notas:</div>
                 <div class="text-xs text-cafe">{{ proximaSesion.notas }}</div>
               </div>
@@ -282,7 +282,7 @@
                 <div class="text-xs text-yellow-700">Recuerda agendar la próxima sesión</div>
                 <button
                   @click="agendarSesion"
-                  class="mt-3 px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium"
+                  class="mt-3 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors text-xs font-medium"
                 >
                   Agendar ahora
                 </button>
@@ -309,12 +309,12 @@
               @click="tabActiva = tab.id"
               class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors"
               :class="tabActiva === tab.id
-                ? 'border-terracota text-terracota'
+                ? 'border-purple-600 text-purple-600'
                 : 'border-transparent text-cafe/60 hover:text-cafe hover:border-gray-300'"
             >
               <span class="mr-2">{{ tab.icono }}</span>
               <span>{{ tab.nombre }}</span>
-              <span v-if="tab.badge" class="ml-2 px-2 py-0.5 text-xs rounded-full bg-terracota text-white">
+              <span v-if="tab.badge" class="ml-2 px-2 py-0.5 text-xs rounded-full bg-purple-600 text-white">
                 {{ tab.badge }}
               </span>
             </button>
@@ -331,7 +331,7 @@
               <h3 class="text-lg font-serif font-semibold text-cafe">Próximas Sesiones Agendadas</h3>
               <button
                 @click="agendarSesion"
-                class="text-sm text-terracota hover:text-cafe transition-colors"
+                class="text-sm text-purple-600 hover:text-cafe transition-colors"
               >
                 + Nueva sesión
               </button>
@@ -349,7 +349,7 @@
                       <span class="text-lg font-semibold text-cafe">
                         {{ formatearFecha(sesion.fecha_cita) }}
                       </span>
-                      <span class="text-base font-medium text-terracota">
+                      <span class="text-base font-medium text-purple-600">
                         {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}
                       </span>
                     </div>
@@ -373,7 +373,7 @@
                   </div>
                   <button
                     @click="verDetallesCita(sesion.id)"
-                    class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors"
+                    class="px-3 py-1.5 text-sm bg-white border border-purple-600/30 text-purple-600 hover:bg-purple-600 hover:text-white rounded-lg transition-colors"
                   >
                     Ver detalles
                   </button>
@@ -386,7 +386,7 @@
               <p class="text-cafe/60 mb-4">No hay sesiones próximas agendadas</p>
               <button
                 @click="agendarSesion"
-                class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors"
+                class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors"
               >
                 Agendar primera sesión
               </button>
@@ -464,7 +464,7 @@
                       <span class="text-base font-semibold text-cafe">
                         {{ formatearFecha(sesion.fecha_cita) }}
                       </span>
-                      <span class="text-base font-medium text-terracota">
+                      <span class="text-base font-medium text-purple-600">
                         {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}
                       </span>
                     </div>
@@ -492,7 +492,7 @@
                     </button>
                     <button
                       @click="verDetallesCita(sesion.id)"
-                      class="px-3 py-1.5 text-sm bg-white border border-terracota/30 text-terracota hover:bg-terracota hover:text-white rounded-lg transition-colors"
+                      class="px-3 py-1.5 text-sm bg-white border border-purple-600/30 text-purple-600 hover:bg-purple-600 hover:text-white rounded-lg transition-colors"
                     >
                       Ver
                     </button>
@@ -600,16 +600,23 @@ definePageMeta({
   layout: 'terapeuta'
 })
 
-const route = useRoute()
-const router = useRouter()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
 // Composables
 const { getCitas } = useCitas()
 
-// ID del paciente
-const pacienteId = computed(() => route.params.id as string)
+// Variables de navegación - protegidas para SSR
+const route = computed(() => process.client ? useRoute() : null)
+const router = computed(() => process.client ? useRouter() : null)
+
+// ID del paciente - protegido para SSR
+const pacienteId = computed(() => {
+  if (process.client && route.value) {
+    return route.value.params.id as string
+  }
+  return ''
+})
 
 // Estado
 const cargando = ref(true)
@@ -945,7 +952,7 @@ const obtenerIconoModalidad = (modalidad: string) => {
 const obtenerEstiloModalidad = (modalidad: string) => {
   const estilos: Record<string, string> = {
     'presencial': 'bg-green-100 text-green-700',
-    'online': 'bg-terracota/20 text-terracota',
+    'online': 'bg-purple-600/20 text-purple-600',
     'telefonica': 'bg-blue-100 text-blue-700'
   }
   return estilos[modalidad] || 'bg-gray-100 text-gray-700'
@@ -963,7 +970,9 @@ const obtenerEstiloEstado = (estado: string) => {
 
 // Acciones
 const irABonos = () => {
-  router.push(`/terapeuta/pacientes/${pacienteId.value}/bonos`)
+  if (router.value) {
+    router.value.push(`/terapeuta/pacientes/${pacienteId.value}/bonos`)
+  }
 }
 
 const abrirWhatsApp = () => {
@@ -1068,8 +1077,8 @@ onMounted(() => {
   cargarDatosPaciente()
 })
 
-watch(() => route.params.id, () => {
-  if (route.params.id) {
+watch(() => route.value?.params.id, () => {
+  if (route.value?.params.id) {
     cargarDatosPaciente()
   }
 })

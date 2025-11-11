@@ -7,7 +7,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 bg-arena rounded-xl flex items-center justify-center">
-              <ClockIcon class="w-7 h-7 text-terracota" />
+              <ClockIcon class="w-7 h-7 text-purple-600" />
             </div>
             <div>
               <h2 class="text-xl font-semibold text-cafe">
@@ -20,7 +20,7 @@
           </div>
           <NuxtLink
             to="/coordinadora/agenda"
-            class="text-sm text-terracota hover:text-terracota/80 font-medium transition-colors flex items-center gap-1"
+            class="text-sm text-purple-600 hover:text-purple-600/80 font-medium transition-colors flex items-center gap-1"
           >
             <span>Ver agenda completa</span>
             <span>→</span>
@@ -34,8 +34,8 @@
           <!-- Pendientes -->
           <div class="bg-arena/30 rounded-xl p-4 hover:shadow-sm transition-shadow">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-terracota/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <ClockIcon class="w-6 h-6 text-terracota" />
+              <div class="w-10 h-10 bg-purple-600/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <ClockIcon class="w-6 h-6 text-purple-600" />
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-2xl font-semibold text-cafe">{{ citasPorConfirmar.length }}</p>
@@ -87,7 +87,7 @@
         <!-- Lista de Citas por Confirmar -->
         <div v-if="cargando" class="text-center py-12">
           <div class="inline-flex flex-col items-center gap-3">
-            <div class="w-12 h-12 border-3 border-terracota/20 border-t-terracota rounded-full animate-spin"></div>
+            <div class="w-12 h-12 border-3 border-purple-600/20 border-t-purple-600 rounded-full animate-spin"></div>
             <p class="text-cafe/60 font-medium text-sm">Cargando citas...</p>
           </div>
         </div>
@@ -104,7 +104,7 @@
               <div 
                 class="w-1 flex-shrink-0"
                 :class="{
-                  'bg-terracota': cita.esUrgente,
+                  'bg-purple-600': cita.esUrgente,
                   'bg-verde': !cita.esUrgente
                 }"
               ></div>
@@ -116,7 +116,7 @@
                     <div 
                       class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold shadow-sm"
                       :class="{
-                        'bg-terracota': cita.esUrgente,
+                        'bg-purple-600': cita.esUrgente,
                         'bg-cafe/80': !cita.esUrgente
                       }"
                     >
@@ -132,7 +132,7 @@
                         <h4 class="font-semibold text-cafe">{{ cita.paciente.nombre }}</h4>
                         <span 
                           v-if="cita.esUrgente" 
-                          class="px-2 py-0.5 bg-terracota/10 text-terracota text-xs font-medium rounded-full"
+                          class="px-2 py-0.5 bg-purple-600/10 text-purple-600 text-xs font-medium rounded-full"
                         >
                           Urgente
                         </span>
@@ -172,7 +172,7 @@
                       <p 
                         class="text-sm font-semibold"
                         :class="{
-                          'text-terracota': cita.esUrgente,
+                          'text-purple-600': cita.esUrgente,
                           'text-cafe/70': !cita.esUrgente
                         }"
                       >
@@ -249,7 +249,7 @@
             </div>
             <NuxtLink
               to="/coordinadora/agenda"
-              class="mt-2 px-5 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors font-medium text-sm"
+              class="mt-2 px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors font-medium text-sm"
             >
               Ver agenda
             </NuxtLink>

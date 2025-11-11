@@ -1,0 +1,479 @@
+/* ============================================================================
+   🧩 COMPONENTES BASE - SISTEMA DE DISEÑO TERAPLÍ
+   ============================================================================
+   Componentes reutilizables construidos sobre los design tokens.
+   Usa @apply de Tailwind para consistencia con la configuración extendida.
+   ============================================================================ */
+
+@layer components {
+  
+  /* ==========================================================================
+     📦 TARJETAS Y CONTENEDORES
+     ========================================================================== */
+  
+  /* Tarjeta base - Contenedor principal para secciones */
+  .card {
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm p-6 transition-all duration-200;
+  }
+  
+  .card:hover {
+    @apply shadow-md border-gray-300;
+  }
+  
+  /* Variantes de tarjetas */
+  .card-flat {
+    @apply bg-white rounded-xl border border-gray-200 p-6;
+  }
+  
+  .card-elevated {
+    @apply bg-white rounded-2xl shadow-lg p-6 border border-gray-200;
+  }
+  
+  .card-soft {
+    @apply bg-white/80 backdrop-blur-sm rounded-xl border border-gray-300 p-6;
+  }
+  
+  .card-interactive {
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm p-6 
+           transition-all duration-200 cursor-pointer
+           hover:shadow-md hover:border-purple-200 hover:scale-[1.01];
+  }
+  
+  /* Panel con título */
+  .panel {
+    @apply bg-white rounded-xl border border-gray-200 overflow-hidden;
+  }
+  
+  .panel-header {
+    @apply px-6 py-4 border-b border-neutral/5 bg-base-bg;
+  }
+  
+  .panel-body {
+    @apply p-6;
+  }
+  
+  .panel-footer {
+    @apply px-6 py-4 border-t border-neutral/5 bg-base-bg;
+  }
+
+  /* ==========================================================================
+     🔘 BOTONES
+     ========================================================================== */
+  
+  /* Botón primario */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 
+           px-4 py-2.5 rounded-xl font-medium
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply btn bg-violeta text-white 
+           hover:bg-violeta-dark hover:shadow-md
+           focus:ring-violeta/50
+           active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-white text-neutral border border-neutral/20
+           hover:bg-neutral/5 hover:border-neutral/30
+           focus:ring-neutral/30;
+  }
+  
+  .btn-outline {
+    @apply btn border border-neutral/20 text-neutral bg-transparent
+           hover:bg-neutral/5 hover:border-neutral/30
+           focus:ring-neutral/30;
+  }
+  
+  .btn-ghost {
+    @apply btn text-neutral bg-transparent
+           hover:bg-neutral/5
+           focus:ring-neutral/20;
+  }
+  
+  .btn-violeta-light {
+    @apply btn bg-violeta/10 text-violeta
+           hover:bg-violeta/20
+           focus:ring-violeta/30;
+  }
+  
+  .btn-success {
+    @apply btn bg-menta text-white
+           hover:bg-menta-dark
+           focus:ring-menta/40;
+  }
+  
+  .btn-danger {
+    @apply btn bg-error text-white
+           hover:bg-error/90
+           focus:ring-error/40;
+  }
+  
+  /* Tamaños de botones */
+  .btn-sm {
+    @apply text-sm px-3 py-1.5 rounded-lg;
+  }
+  
+  .btn-lg {
+    @apply text-lg px-6 py-3.5 rounded-xl;
+  }
+  
+  /* Botón con icono */
+  .btn-icon {
+    @apply p-2 rounded-lg;
+  }
+
+  /* ==========================================================================
+     📝 INPUTS Y FORMULARIOS
+     ========================================================================== */
+  
+  .input {
+    @apply w-full px-4 py-2.5 rounded-lg 
+           border border-neutral/10 bg-white
+           text-neutral placeholder:text-neutral/40
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-violeta/30 focus:border-violeta/50
+           disabled:bg-neutral/5 disabled:cursor-not-allowed;
+  }
+  
+  .input-error {
+    @apply border-red-300 focus:border-red-400 focus:ring-red-200;
+  }
+  
+  .textarea {
+    @apply input min-h-[100px] resize-y;
+  }
+  
+  .select {
+    @apply input appearance-none bg-no-repeat bg-right pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234A5568' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-size: 1.25rem 1.25rem;
+  }
+  
+  .checkbox {
+    @apply w-4 h-4 rounded border-neutral/30 
+           text-violeta focus:ring-violeta/30 focus:ring-offset-0
+           transition-colors;
+  }
+  
+  .radio {
+    @apply w-4 h-4 border-neutral/30
+           text-violeta focus:ring-violeta/30 focus:ring-offset-0
+           transition-colors;
+  }
+  
+  .label {
+    @apply block text-sm font-medium text-neutral/80 mb-1.5;
+  }
+  
+  .form-group {
+    @apply space-y-1.5;
+  }
+  
+  .form-error {
+    @apply text-xs text-red-500 mt-1;
+  }
+  
+  .form-hint {
+    @apply text-xs text-neutral/60 mt-1;
+  }
+
+  /* ==========================================================================
+     🏷️ BADGES Y ETIQUETAS
+     ========================================================================== */
+  
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 
+           text-xs font-medium rounded-full;
+  }
+  
+  .badge-primary {
+    @apply badge bg-violeta/10 text-violeta;
+  }
+  
+  .badge-secondary {
+    @apply badge bg-neutral/10 text-neutral;
+  }
+  
+  .badge-success {
+    @apply badge bg-menta/10 text-menta-dark;
+  }
+  
+  .badge-warning {
+    @apply badge bg-dorado/10 text-dorado-dark;
+  }
+  
+  .badge-error {
+    @apply badge bg-error/10 text-error;
+  }
+  
+  .badge-info {
+    @apply badge bg-violeta/10 text-violeta;
+  }
+  
+  /* Estados de citas - Nueva paleta Teraplí */
+  .badge-pendiente {
+    @apply badge bg-dorado/10 text-dorado-dark border border-dorado/20;
+  }
+  
+  .badge-confirmada {
+    @apply badge bg-menta/10 text-menta-dark border border-menta/20;
+  }
+  
+  .badge-realizada {
+    @apply badge bg-violeta/10 text-violeta border border-violeta/20;
+  }
+  
+  .badge-cancelada {
+    @apply badge bg-neutral/10 text-neutral/70 border border-neutral/20;
+  }
+
+  /* ==========================================================================
+     📊 ELEMENTOS DE ESTADO
+     ========================================================================== */
+  
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  
+  .status-dot-success {
+    @apply status-dot bg-menta;
+  }
+  
+  .status-dot-warning {
+    @apply status-dot bg-dorado;
+  }
+  
+  .status-dot-error {
+    @apply status-dot bg-error;
+  }
+  
+  .status-dot-info {
+    @apply status-dot bg-violeta;
+  }
+
+  /* ==========================================================================
+     💬 TOOLTIPS Y POPOVERS
+     ========================================================================== */
+  
+  .tooltip {
+    @apply absolute z-50 px-3 py-2 text-xs font-medium text-white 
+           bg-neutral/90 rounded-lg shadow-lg backdrop-blur-sm
+           pointer-events-none opacity-0 transition-opacity duration-200;
+  }
+  
+  .tooltip.show {
+    @apply opacity-100;
+  }
+
+  /* ==========================================================================
+     🔔 NOTIFICACIONES Y ALERTAS
+     ========================================================================== */
+  
+  .alert {
+    @apply flex items-start gap-3 p-4 rounded-xl border;
+  }
+  
+  .alert-success {
+    @apply alert bg-menta/10 border-menta/20 text-menta-dark;
+  }
+  
+  .alert-warning {
+    @apply alert bg-dorado/10 border-dorado/20 text-dorado-dark;
+  }
+  
+  .alert-error {
+    @apply alert bg-error/10 border-error/20 text-error;
+  }
+  
+  .alert-info {
+    @apply alert bg-violeta/10 border-violeta/20 text-violeta;
+  }
+
+  /* ==========================================================================
+     📋 LISTAS
+     ========================================================================== */
+  
+  .list-item {
+    @apply flex items-center gap-3 p-3 rounded-lg
+           transition-colors duration-150
+           hover:bg-neutral/5 cursor-pointer;
+  }
+  
+  .list-item-active {
+    @apply list-item bg-violeta/10 text-violeta;
+  }
+  
+  .divider {
+    @apply border-t border-neutral/10;
+  }
+
+  /* ==========================================================================
+     🖼️ AVATARES
+     ========================================================================== */
+  
+  .avatar {
+    @apply inline-flex items-center justify-center 
+           rounded-full bg-violeta/10 text-violeta 
+           font-medium overflow-hidden;
+  }
+  
+  .avatar-sm {
+    @apply avatar w-8 h-8 text-sm;
+  }
+  
+  .avatar-base {
+    @apply avatar w-10 h-10 text-base;
+  }
+  
+  .avatar-lg {
+    @apply avatar w-12 h-12 text-lg;
+  }
+  
+  .avatar-xl {
+    @apply avatar w-16 h-16 text-xl;
+  }
+
+  /* ==========================================================================
+     📱 MODAL Y OVERLAY
+     ========================================================================== */
+  
+  .modal-overlay {
+    @apply fixed inset-0 bg-neutral/50 backdrop-blur-sm z-40
+           transition-opacity duration-300;
+  }
+  
+  .modal {
+    @apply fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4;
+  }
+  
+  .modal-content {
+    @apply bg-white rounded-2xl shadow-2xl max-w-lg w-full
+           transform transition-all duration-300;
+  }
+  
+  .modal-header {
+    @apply px-6 py-4 border-b border-neutral/5;
+  }
+  
+  .modal-body {
+    @apply p-6;
+  }
+  
+  .modal-footer {
+    @apply px-6 py-4 border-t border-neutral/5 flex items-center justify-end gap-3;
+  }
+
+  /* ==========================================================================
+     🔗 ENLACES
+     ========================================================================== */
+  
+  .link {
+    @apply text-violeta hover:text-violeta/80 
+           transition-colors duration-150
+           underline-offset-2 hover:underline;
+  }
+  
+  .link-muted {
+    @apply text-neutral/70 hover:text-neutral
+           transition-colors duration-150;
+  }
+
+  /* ==========================================================================
+     📊 TABLAS
+     ========================================================================== */
+  
+  .table {
+    @apply w-full text-left;
+  }
+  
+  .table-header {
+    @apply text-xs font-semibold text-neutral/70 uppercase tracking-wider
+           bg-neutral/5 border-b border-neutral/10;
+  }
+  
+  .table-header th {
+    @apply px-4 py-3;
+  }
+  
+  .table-row {
+    @apply border-b border-neutral/5 hover:bg-neutral/5 transition-colors;
+  }
+  
+  .table-cell {
+    @apply px-4 py-3 text-sm;
+  }
+
+  /* ==========================================================================
+     ⚡ SKELETON LOADERS
+     ========================================================================== */
+  
+  .skeleton {
+    @apply animate-pulse bg-neutral/10 rounded;
+  }
+  
+  .skeleton-text {
+    @apply skeleton h-4 w-full;
+  }
+  
+  .skeleton-title {
+    @apply skeleton h-6 w-2/3;
+  }
+  
+  .skeleton-avatar {
+    @apply skeleton w-10 h-10 rounded-full;
+  }
+
+  /* ==========================================================================
+     🎯 ELEMENTOS INTERACTIVOS
+     ========================================================================== */
+  
+  .clickable {
+    @apply cursor-pointer transition-all duration-200
+           hover:scale-[1.01] active:scale-[0.99];
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-violeta/30 focus:ring-offset-2;
+  }
+
+  /* ==========================================================================
+     📐 LAYOUT HELPERS
+     ========================================================================== */
+  
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-4;
+  }
+  
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4;
+  }
+  
+  .section-spacing {
+    @apply py-12 md:py-16;
+  }
+  
+  .content-spacing {
+    @apply space-y-6;
+  }
+
+  /* ==========================================================================
+     🌊 EFECTOS HOVER SUTILES
+     ========================================================================== */
+  
+  .hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-1;
+  }
+  
+  .hover-glow {
+    @apply transition-shadow duration-200 hover:shadow-lg;
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+}

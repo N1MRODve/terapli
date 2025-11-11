@@ -18,12 +18,14 @@
           <h1 class="text-4xl font-serif font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent mb-3">
             Teraplí
           </h1>
+          <!-- NUEVO DISEÑO ACTIVO - Violeta #5550F2 -->
           <p class="font-sans text-[#4A5568] text-lg mb-2">
             Bienvenido de vuelta
           </p>
           <p class="font-sans text-sm text-[#718096] max-w-xs mx-auto">
             Sistema de gestión clínica moderna para terapeutas y bienestar para pacientes
           </p>
+          <!-- Cache buster para forzar recarga: 2024-11-07-19:32 -->
         </div>
 
         <!-- Formulario de Login -->

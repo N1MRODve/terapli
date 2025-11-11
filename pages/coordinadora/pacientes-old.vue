@@ -17,7 +17,7 @@
               v-model="busqueda"
               type="text"
               placeholder="Buscar por nombre, email, terapeuta o teléfono..."
-              class="w-full px-4 py-2 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all duration-200"
+              class="w-full px-4 py-2 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all duration-200"
             />
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               🔍
@@ -27,7 +27,7 @@
           <!-- Botón nuevo paciente -->
           <button
             @click="irANuevoPaciente"
-            class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-all duration-200 text-sm font-medium whitespace-nowrap flex items-center gap-2"
+            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-all duration-200 text-sm font-medium whitespace-nowrap flex items-center gap-2"
           >
             <span>➕</span>
             <span>Nuevo Paciente</span>
@@ -39,7 +39,7 @@
       <div class="flex flex-wrap gap-3 mt-4 pt-4 border-t border-gray-100">
         <select
           v-model="filtroEstado"
-          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all duration-200"
+          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all duration-200"
         >
           <option value="">Todos los estados</option>
           <option value="activo">✅ Activos</option>
@@ -49,7 +49,7 @@
 
         <select
           v-model="filtroTerapeuta"
-          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all duration-200"
+          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all duration-200"
         >
           <option value="">Todos los terapeutas</option>
           <option v-for="terapeuta in terapeutas" :key="terapeuta.id" :value="terapeuta.id">
@@ -59,7 +59,7 @@
 
         <select
           v-model="ordenarPor"
-          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all duration-200"
+          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all duration-200"
         >
           <option value="nombre">Ordenar por nombre</option>
           <option value="fecha">Fecha última sesión</option>
@@ -71,7 +71,7 @@
     <!-- KPI Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <!-- Total Pacientes -->
-      <div class="bg-terracota/5 rounded-xl p-4 border border-terracota/10 transition-all duration-300 hover:shadow-md">
+      <div class="bg-purple-600/5 rounded-xl p-4 border border-purple-600/10 transition-all duration-300 hover:shadow-md">
         <div class="flex items-center gap-3">
           <div class="text-3xl">👥</div>
           <div class="flex-1">
@@ -135,7 +135,7 @@
         <button
           v-if="!busqueda"
           @click="irANuevoPaciente"
-          class="inline-flex items-center px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-all duration-200"
+          class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-all duration-200"
         >
           + Crear Primer Paciente
         </button>
@@ -151,7 +151,7 @@
       >
         <!-- Avatar e información principal -->
         <div class="flex items-start gap-4 mb-4">
-          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-terracota to-cafe flex items-center justify-center flex-shrink-0 shadow-md">
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-cafe flex items-center justify-center flex-shrink-0 shadow-md">
             <span class="text-white text-xl font-semibold">
               {{ obtenerIniciales(paciente.nombre_completo) }}
             </span>
@@ -204,7 +204,7 @@
           <div class="flex gap-2">
             <button
               @click.stop="agendarCita(paciente)"
-              class="p-2 text-terracota hover:bg-terracota/10 rounded-lg transition-all duration-200"
+              class="p-2 text-purple-600 hover:bg-purple-600/10 rounded-lg transition-all duration-200"
               title="Ver agenda"
             >
               �
@@ -236,7 +236,7 @@
         @click="paginaActual = pagina"
         class="px-4 py-2 rounded-lg transition-all duration-200"
         :class="paginaActual === pagina 
-          ? 'bg-terracota text-white shadow-md' 
+          ? 'bg-purple-600 text-white shadow-md' 
           : 'bg-white border border-gray-200 text-cafe hover:bg-gray-50'"
       >
         {{ pagina }}
@@ -476,7 +476,7 @@
             </button>
             <button
               @click="verAgendaPaciente(pacienteSeleccionado)"
-              class="px-4 py-3 bg-terracota hover:bg-terracota/90 text-white rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+              class="px-4 py-3 bg-purple-600 hover:bg-purple-600/90 text-white rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
             >
               <span class="text-lg">📅</span>
               <span class="text-sm">Ver Agenda</span>

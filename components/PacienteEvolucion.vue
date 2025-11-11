@@ -20,7 +20,7 @@
 
       <!-- Estadísticas rápidas -->
       <div class="grid grid-cols-3 gap-4 mt-4">
-        <div class="text-center p-3 bg-gradient-to-br from-terracota/10 to-rosa/20 rounded-lg">
+        <div class="text-center p-3 bg-gradient-to-br from-purple-600/10 to-rosa/20 rounded-lg">
           <div class="text-2xl font-bold text-cafe">{{ promedioGeneral }}</div>
           <div class="text-xs text-cafe/60 mt-1">Promedio</div>
         </div>
@@ -37,7 +37,7 @@
 
     <!-- Estado de carga -->
     <div v-else-if="loading" class="text-center py-8">
-      <div class="animate-spin w-8 h-8 border-4 border-terracota border-t-transparent rounded-full mx-auto mb-3"></div>
+      <div class="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full mx-auto mb-3"></div>
       <p class="text-sm text-cafe/60">Cargando evolución emocional...</p>
     </div>
 

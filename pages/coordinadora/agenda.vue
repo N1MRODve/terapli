@@ -62,7 +62,7 @@
           <!-- Botón nueva cita -->
           <button
             @click="abrirModalNuevaCita"
-            class="px-3 py-1 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-xs font-medium whitespace-nowrap"
+            class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors text-xs font-medium whitespace-nowrap"
           >
             + Nueva
           </button>
@@ -73,7 +73,7 @@
       <div class="flex flex-wrap gap-2">
         <select
           v-model="filtroEstado"
-          class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20"
+          class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-purple-300/20"
         >
           <option value="">Todos estados</option>
           <option value="pendiente">Pendientes</option>
@@ -84,7 +84,7 @@
 
         <select
           v-model="filtroModalidad"
-          class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20"
+          class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-purple-300/20"
         >
           <option value="">Modalidades</option>
           <option value="presencial">Presencial</option>
@@ -95,7 +95,7 @@
           v-model="busqueda"
           type="text"
           placeholder="Buscar paciente..."
-          class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-terracota/20 flex-1 min-w-[150px]"
+          class="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-purple-300/20 flex-1 min-w-[150px]"
         />
       </div>
     </div>
@@ -140,19 +140,19 @@
               {{ hora }}
             </div>
             <div 
-              class="flex-1 p-2 cursor-pointer hover:bg-terracota/5 transition-colors relative group/cell" 
+              class="flex-1 p-2 cursor-pointer hover:bg-purple-600/5 transition-colors relative group/cell" 
               @click="citasPorHora(hora).length === 0 && abrirModalNuevaCita(fechaSeleccionada.toISOString().split('T')[0], hora)"
               @dragover="onDragOver($event, fechaSeleccionada.toISOString().split('T')[0], hora)"
               @dragleave="onDragLeave($event)"
               @drop="onDrop($event, fechaSeleccionada.toISOString().split('T')[0], hora)"
-              :class="{ 'bg-terracota/20 ring-2 ring-terracota': esCeldaObjetivo(fechaSeleccionada.toISOString().split('T')[0], hora) }"
+              :class="{ 'bg-purple-600/20 ring-2 ring-purple-300': esCeldaObjetivo(fechaSeleccionada.toISOString().split('T')[0], hora) }"
             >
               <!-- Indicador de celda vacía clicable -->
               <div 
                 v-if="citasPorHora(hora).length === 0" 
                 class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/cell:opacity-100 transition-opacity pointer-events-none"
               >
-                <span class="text-[10px] text-terracota font-medium bg-white px-2 py-1 rounded-full shadow-sm">
+                <span class="text-[10px] text-purple-600 font-medium bg-white px-2 py-1 rounded-full shadow-sm">
                   + Agregar cita
                 </span>
               </div>
@@ -162,7 +162,7 @@
                 draggable="true"
                 @dragstart="onDragStart($event, cita)"
                 @dragend="onDragEnd($event)"
-                class="mb-1.5 p-2 rounded-lg transition-all hover:shadow-md hover:ring-2 hover:ring-terracota/30 group relative cursor-move"
+                class="mb-1.5 p-2 rounded-lg transition-all hover:shadow-md hover:ring-2 hover:ring-purple-300/30 group relative cursor-move"
                 :class="getClasesCita(cita.estado)"
                 @click.stop
                 title="Arrastra para mover a otra hora/día"
@@ -227,11 +227,11 @@
               v-for="dia in diasSemana"
               :key="dia.fecha"
               class="p-1.5 text-center border-r border-gray-200 last:border-r-0"
-              :class="esHoy(dia.fecha) ? 'bg-terracota/10' : 'bg-white'"
+              :class="esHoy(dia.fecha) ? 'bg-purple-600/10' : 'bg-white'"
             >
               <div class="flex items-center justify-center gap-1">
                 <span class="text-[10px] font-medium text-gray-600 uppercase">{{ dia.nombreDia }}</span>
-                <span class="text-base font-bold text-cafe" :class="esHoy(dia.fecha) ? 'text-terracota' : ''">{{ dia.numeroDia }}</span>
+                <span class="text-base font-bold text-cafe" :class="esHoy(dia.fecha) ? 'text-purple-600' : ''">{{ dia.numeroDia }}</span>
               </div>
               <div class="text-[10px] text-gray-500">{{ dia.mes }}</div>
             </div>
@@ -253,10 +253,10 @@
               <div
                 v-for="dia in diasSemana"
                 :key="`${dia.fecha}-${hora}`"
-                class="p-1.5 border-r border-gray-100 last:border-r-0 hover:bg-terracota/5 transition-colors min-h-[60px] cursor-pointer relative group/cell"
+                class="p-1.5 border-r border-gray-100 last:border-r-0 hover:bg-purple-600/5 transition-colors min-h-[60px] cursor-pointer relative group/cell"
                 :class="[
-                  esHoy(dia.fecha) ? 'bg-terracota/5' : '',
-                  esCeldaObjetivo(dia.fecha, hora) ? 'bg-terracota/20 ring-2 ring-terracota ring-inset' : ''
+                  esHoy(dia.fecha) ? 'bg-purple-600/5' : '',
+                  esCeldaObjetivo(dia.fecha, hora) ? 'bg-purple-600/20 ring-2 ring-purple-300 ring-inset' : ''
                 ]"
                 @click="citasPorDiaHora(dia.fecha, hora).length === 0 && abrirModalNuevaCita(dia.fecha, hora)"
                 @dragover="onDragOver($event, dia.fecha, hora)"
@@ -268,7 +268,7 @@
                   v-if="citasPorDiaHora(dia.fecha, hora).length === 0" 
                   class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/cell:opacity-100 transition-opacity pointer-events-none"
                 >
-                  <span class="text-[9px] text-terracota font-medium bg-white px-1.5 py-0.5 rounded-full shadow-sm">
+                  <span class="text-[9px] text-purple-600 font-medium bg-white px-1.5 py-0.5 rounded-full shadow-sm">
                     +
                   </span>
                 </div>
@@ -278,7 +278,7 @@
                   draggable="true"
                   @dragstart="onDragStart($event, cita)"
                   @dragend="onDragEnd($event)"
-                  class="text-[10px] p-1.5 rounded mb-1 hover:shadow-md hover:ring-2 hover:ring-terracota/30 transition-all group relative cursor-move"
+                  class="text-[10px] p-1.5 rounded mb-1 hover:shadow-md hover:ring-2 hover:ring-purple-300/30 transition-all group relative cursor-move"
                   :class="getClasesCita(cita.estado)"
                   @click.stop
                   title="Arrastra para mover"
@@ -440,7 +440,7 @@
           <p class="text-gray-600">
             Se enviará un mensaje de WhatsApp a los pacientes con citas programadas para hoy.
           </p>
-          <p class="text-sm text-terracota mt-2">
+          <p class="text-sm text-purple-600 mt-2">
             {{ citasHoyParaRecordatorio.length }} citas pendientes de recordatorio
           </p>
         </div>
@@ -479,7 +479,7 @@
     <button
       v-if="vista !== 'mes'"
       @click="scrollToCurrentTime"
-      class="fixed bottom-8 right-8 w-12 h-12 bg-terracota text-white rounded-full shadow-lg hover:bg-terracota/90 transition-all hover:scale-110 flex items-center justify-center z-20 group"
+      class="fixed bottom-8 right-8 w-12 h-12 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-600/90 transition-all hover:scale-110 flex items-center justify-center z-20 group"
       title="Ir a hora actual"
     >
       <ClockIcon class="w-6 h-6" />

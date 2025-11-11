@@ -44,7 +44,7 @@ interface Props {
   title: string
   count: number
   amount: number
-  color: 'amber' | 'green' | 'red' | 'terracota' | 'blue'
+  color: 'amber' | 'green' | 'red' | 'primary' | 'blue'
   emoji?: string
   subtitle?: string
   badge?: string
@@ -83,11 +83,11 @@ const colorClasses = {
     text: 'text-red-700',
     badge: 'bg-red-100 text-red-700'
   },
-  terracota: {
-    border: 'border-terracota',
+  primary: {
+    border: 'border-purple-600',
     bg: 'bg-rosa',
-    text: 'text-terracota',
-    badge: 'bg-rosa text-terracota'
+    text: 'text-purple-600',
+    badge: 'bg-rosa text-purple-600'
   },
   blue: {
     border: 'border-blue-500',

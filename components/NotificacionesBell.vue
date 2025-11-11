@@ -182,9 +182,20 @@
 
 <script setup lang="ts">
 const { notificaciones, totalNoVistas, loading, listar, marcarVista, marcarTodasVistas, suscribirse, desuscribirse } = useNotificaciones()
-const router = useRouter()
+
+// Variables de navegación - solo disponibles en el cliente
+let router: ReturnType<typeof useRouter> | null = null
+let route: ReturnType<typeof useRoute> | null = null
 
 const mostrarDropdown = ref(false)
+
+// Inicializar router y route solo en el cliente
+onMounted(() => {
+  if (process.client) {
+    router = useRouter()
+    route = useRoute()
+  }
+})
 
 // Cargar notificaciones al montar
 onMounted(async () => {
@@ -218,10 +229,9 @@ const handleClickNotificacion = async (notif: any) => {
   // Cerrar dropdown
   mostrarDropdown.value = false
 
-  // Navegar según el tipo
-  if (notif.tipo === 'mensaje') {
+  // Navegar según el tipo (solo si router y route están disponibles)
+  if (notif.tipo === 'mensaje' && router && route) {
     // Intentar navegar según la ruta actual
-    const route = useRoute()
     if (route.path.includes('/paciente')) {
       router.push('/paciente/mensajes')
     } else if (route.path.includes('/terapeuta')) {

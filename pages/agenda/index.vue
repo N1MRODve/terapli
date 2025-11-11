@@ -10,7 +10,6 @@ definePageMeta({
 })
 
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import type { VistaAgenda, FiltrosAgenda, AgendaEvent, TimeSlot } from '@/components/agenda/types'
 import { hoy } from '@/components/agenda/types'
 import { useAgenda } from '@/composables/useAgenda'

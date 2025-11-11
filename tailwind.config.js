@@ -58,9 +58,8 @@ module.exports = {
           lightest: '#A0AEC0',
         },
         
-        // Alias para retrocompatibilidad
+        // Alias para retrocompatibilidad (sin terracota confuso)
         fondo: '#F2F2F2',
-        terracota: '#5550F2',   // Mapear a violeta
         cafe: '#2D3748',        // Mapear a neutral
         
         // Estados semánticos - Teraplí

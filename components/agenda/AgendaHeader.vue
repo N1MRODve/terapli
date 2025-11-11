@@ -88,7 +88,7 @@ const crearNuevaCita = () => {
           <div class="flex items-center gap-0.5">
             <button 
               @click="anterior"
-              class="px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200"
+              class="px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-purple-600/10 dark:hover:bg-gray-800 hover:border-purple-600 transition-all duration-200"
               aria-label="Periodo anterior"
             >
               <svg class="w-4 h-4 text-cafe dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,14 +98,14 @@ const crearNuevaCita = () => {
 
             <button
               @click="irHoy"
-              class="px-3.5 py-1.5 mx-1 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200 text-sm font-medium text-cafe dark:text-gray-300"
+              class="px-3.5 py-1.5 mx-1 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-purple-600/10 dark:hover:bg-gray-800 hover:border-purple-600 transition-all duration-200 text-sm font-medium text-cafe dark:text-gray-300"
             >
               Hoy
             </button>
 
             <button 
               @click="siguiente"
-              class="px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200"
+              class="px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-lg hover:bg-purple-600/10 dark:hover:bg-gray-800 hover:border-purple-600 transition-all duration-200"
               aria-label="Periodo siguiente"
             >
               <svg class="w-4 h-4 text-cafe dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,8 +130,8 @@ const crearNuevaCita = () => {
               :class="[
                 'px-3 py-1.5 text-sm font-medium transition-all duration-200',
                 vista === 'dia'
-                  ? 'bg-terracota text-white shadow-sm'
-                  : 'bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-terracota/10 dark:hover:bg-gray-800'
+                  ? 'bg-purple-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-purple-600/10 dark:hover:bg-gray-800'
               ]"
               aria-label="Vista de día"
             >
@@ -142,8 +142,8 @@ const crearNuevaCita = () => {
               :class="[
                 'px-3 py-1.5 text-sm font-medium transition-all duration-200 border-l border-cafe/10 dark:border-gray-700',
                 vista === 'semana'
-                  ? 'bg-terracota text-white shadow-sm'
-                  : 'bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-terracota/10 dark:hover:bg-gray-800'
+                  ? 'bg-purple-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-purple-600/10 dark:hover:bg-gray-800'
               ]"
               aria-label="Vista de semana"
             >
@@ -154,8 +154,8 @@ const crearNuevaCita = () => {
               :class="[
                 'px-3 py-1.5 text-sm font-medium transition-all duration-200 border-l border-cafe/10 dark:border-gray-700',
                 vista === 'mes'
-                  ? 'bg-terracota text-white shadow-sm'
-                  : 'bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-terracota/10 dark:hover:bg-gray-800'
+                  ? 'bg-purple-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-900 text-cafe dark:text-gray-300 hover:bg-purple-600/10 dark:hover:bg-gray-800'
               ]"
               aria-label="Vista de mes"
             >
@@ -166,7 +166,7 @@ const crearNuevaCita = () => {
           <!-- Dark Mode Toggle -->
           <button
             @click="toggleDarkMode"
-            class="flex items-center gap-2 px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-xl hover:bg-terracota/10 dark:hover:bg-gray-800 hover:border-terracota transition-all duration-200"
+            class="flex items-center gap-2 px-2.5 py-1.5 border border-cafe/20 dark:border-gray-700 rounded-xl hover:bg-purple-600/10 dark:hover:bg-gray-800 hover:border-purple-600 transition-all duration-200"
             :aria-label="darkMode ? 'Desactivar modo oscuro' : 'Activar modo oscuro'"
           >
             <span v-if="darkMode" class="text-lg">🌙</span>
@@ -176,7 +176,7 @@ const crearNuevaCita = () => {
           <!-- Botón Nueva Cita -->
           <button
             @click="crearNuevaCita"
-            class="flex items-center gap-2 px-4 py-1.5 bg-terracota hover:bg-terracota/90 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm"
+            class="flex items-center gap-2 px-4 py-1.5 bg-purple-600 hover:bg-purple-600/90 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -206,6 +206,6 @@ header * {
 
 /* Accesibilidad: Focus visible mejorado */
 button:focus-visible {
-  @apply outline-none ring-2 ring-terracota ring-offset-2 dark:ring-offset-gray-950;
+  @apply outline-none ring-2 ring-purple-300 ring-offset-2 dark:ring-offset-gray-950;
 }
 </style>

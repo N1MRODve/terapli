@@ -202,7 +202,7 @@ const handleMenu = (e: MouseEvent) => {
 
 /* Focus visible para accesibilidad */
 .agenda-event:focus-visible {
-  @apply outline-none ring-2 ring-terracota ring-offset-2 dark:ring-offset-gray-950;
+  @apply outline-none ring-2 ring-purple-300 ring-offset-2 dark:ring-offset-gray-950;
 }
 
 /* ============================================================================

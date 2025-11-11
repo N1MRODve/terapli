@@ -13,7 +13,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (process.server) return
 
   const supabase = useSupabaseClient()
-  const router = useRouter()
 
   try {
     // Verificar autenticación

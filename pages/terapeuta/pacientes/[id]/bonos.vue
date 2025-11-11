@@ -274,10 +274,12 @@ definePageMeta({
   layout: 'terapeuta'
 })
 
-const route = useRoute()
-const router = useRouter()
 const supabase = useSupabaseClient()
 const { userProfile } = useSupabase()
+
+// Variables de navegación - protegidas para SSR
+const route = computed(() => process.client ? useRoute() : null)
+const router = computed(() => process.client ? useRouter() : null)
 
 const { 
   getBonosPorPaciente, 
@@ -285,8 +287,13 @@ const {
   puedeGestionarBonos 
 } = useBonos()
 
-// IDs
-const pacienteId = computed(() => route.params.id as string)
+// IDs - protegidos para SSR
+const pacienteId = computed(() => {
+  if (process.client && route.value) {
+    return route.value.params.id as string
+  }
+  return ''
+})
 const psicologaId = computed(() => userProfile.value?.id || '')
 
 // Estado
@@ -387,7 +394,9 @@ const limpiarFiltros = () => {
 }
 
 const volverAFicha = () => {
-  router.push(`/terapeuta/pacientes/${pacienteId.value}`)
+  if (router.value) {
+    router.value.push(`/terapeuta/pacientes/${pacienteId.value}`)
+  }
 }
 
 // Modales

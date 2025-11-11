@@ -12,7 +12,8 @@
 // El middleware auth-role se encarga de la lógica de redirección
 
 definePageMeta({
-  middleware: ['auth', 'auth-role']
+  middleware: ['auth', 'auth-role'],
+  layout: false
 })
 
 // Si llegamos aquí es porque hay un problema con la redirección

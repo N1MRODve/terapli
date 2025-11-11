@@ -94,7 +94,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import {
   ChartBarIcon,
   UsersIcon,
@@ -103,14 +102,22 @@ import {
   ArrowRightOnRectangleIcon
 } from '@heroicons/vue/24/outline'
 
-const router = useRouter()
-const route = useRoute()
 const { signOut } = useSupabase()
 const usuario = ref<any>(null)
 
-const rutaActual = computed(() => route.path)
+// Variables de navegación - solo disponibles en el cliente
+let router: ReturnType<typeof useRouter> | null = null
+let route: ReturnType<typeof useRoute> | null = null
+
+const rutaActual = computed(() => route?.path || '')
 
 onMounted(async () => {
+  // Inicializar router y route solo en el cliente
+  if (process.client) {
+    router = useRouter()
+    route = useRoute()
+  }
+  
   const supabase = useSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   usuario.value = user

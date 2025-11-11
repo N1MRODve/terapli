@@ -20,14 +20,14 @@
               v-model="busqueda"
               type="text"
               placeholder="Buscar por nombre, email o teléfono..."
-              class="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all duration-200"
+              class="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all duration-200"
             />
           </div>
 
           <!-- Botón nuevo paciente -->
           <button
             @click="mostrarModalNuevoPaciente = true"
-            class="px-4 py-2.5 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-all duration-200 text-sm font-medium whitespace-nowrap flex items-center gap-2 shadow-sm"
+            class="px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-all duration-200 text-sm font-medium whitespace-nowrap flex items-center gap-2 shadow-sm"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -41,7 +41,7 @@
       <div class="flex flex-wrap gap-3 mt-4 pt-4 border-t border-gray-100">
         <select
           v-model="filtroEstado"
-          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all duration-200"
+          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all duration-200"
         >
           <option value="">Todos los estados</option>
           <option value="activo">Activos</option>
@@ -50,7 +50,7 @@
 
         <select
           v-model="filtroTerapeuta"
-          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all duration-200"
+          class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all duration-200"
         >
           <option value="">Todos los terapeutas</option>
           <option v-for="terapeuta in terapeutas" :key="terapeuta.id" :value="terapeuta.id">
@@ -72,8 +72,8 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center gap-3">
-          <div class="p-3 bg-terracota/10 rounded-lg">
-            <svg class="w-6 h-6 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-purple-600/10 rounded-lg">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
           </div>
@@ -190,7 +190,7 @@
               <!-- Paciente -->
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-terracota to-cafe flex items-center justify-center flex-shrink-0">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-cafe flex items-center justify-center flex-shrink-0">
                     <span class="text-white text-sm font-semibold">
                       {{ obtenerIniciales(paciente.nombre_completo) }}
                     </span>
@@ -332,7 +332,7 @@
         <!-- Header del Modal -->
         <div class="bg-white border-b border-gray-200 px-6 py-5 flex items-center justify-between">
           <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-terracota to-cafe flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-purple-600 to-cafe flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
               {{ obtenerIniciales(pacienteSeleccionado.nombre_completo) }}
             </div>
             <div>
@@ -344,7 +344,7 @@
             <button
               v-if="!modoEdicion"
               @click="activarEdicion"
-              class="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-terracota"
+              class="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-purple-600"
               title="Editar paciente"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -381,7 +381,7 @@
             <!-- Información Personal -->
             <div>
               <h3 class="text-base font-semibold text-cafe mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-                <svg class="w-5 h-5 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
                 Información Personal
@@ -395,7 +395,7 @@
                     v-model="datosEdicion.nombre_completo"
                     type="text"
                     required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                     placeholder="Nombre completo del paciente"
                   />
                 </div>
@@ -407,7 +407,7 @@
                     v-model="datosEdicion.email"
                     type="email"
                     required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                     placeholder="correo@ejemplo.com"
                   />
                 </div>
@@ -418,7 +418,7 @@
                   <input
                     v-model="datosEdicion.telefono"
                     type="tel"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                     placeholder="+34 600 000 000"
                   />
                 </div>
@@ -428,7 +428,7 @@
                   </label>
                   <select
                     v-model="datosEdicion.terapeuta_id"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   >
                     <option :value="null">Sin asignar</option>
                     <option v-for="terapeuta in terapeutas" :key="terapeuta.id" :value="terapeuta.id">
@@ -443,7 +443,7 @@
                   <input
                     v-model="datosEdicion.area_de_acompanamiento"
                     type="text"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                     placeholder="Ej: Ansiedad, Depresión, etc."
                   />
                 </div>
@@ -453,7 +453,7 @@
                   </label>
                   <select
                     v-model="datosEdicion.frecuencia"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   >
                     <option value="">Seleccionar...</option>
                     <option value="semanal">Semanal</option>
@@ -468,7 +468,7 @@
             <!-- Estado -->
             <div>
               <h3 class="text-base font-semibold text-cafe mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-                <svg class="w-5 h-5 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Estado del Paciente
@@ -478,7 +478,7 @@
                   v-model="datosEdicion.activo"
                   type="checkbox"
                   id="activo-edicion"
-                  class="w-5 h-5 text-terracota border-gray-300 rounded focus:ring-2 focus:ring-terracota"
+                  class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 focus:ring-purple-300"
                 />
                 <label for="activo-edicion" class="text-sm font-medium text-cafe cursor-pointer">
                   Paciente activo
@@ -501,7 +501,7 @@
               <button
                 @click="guardarEdicion"
                 :disabled="guardandoEdicion"
-                class="px-6 py-2.5 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors font-medium flex items-center gap-2 shadow-sm disabled:opacity-50"
+                class="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors font-medium flex items-center gap-2 shadow-sm disabled:opacity-50"
               >
                 <svg v-if="guardandoEdicion" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -549,7 +549,7 @@
               </button>
               <button
                 @click="() => { cerrarModalDetalle(); router.push(`/coordinadora/pacientes/${pacienteSeleccionado.id}`); }"
-                class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm flex items-center gap-2 shadow-sm"
+                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors text-sm flex items-center gap-2 shadow-sm"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -562,7 +562,7 @@
           <!-- Información Personal -->
           <div>
             <h3 class="text-base font-semibold text-cafe mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-              <svg class="w-5 h-5 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
               </svg>
               Información Personal
@@ -598,7 +598,7 @@
           <!-- Información de Sesiones -->
           <div>
             <h3 class="text-base font-semibold text-cafe mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-              <svg class="w-5 h-5 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
               </svg>
               Estadísticas de Sesiones
@@ -630,7 +630,7 @@
           <!-- Estado del Bono Actual -->
           <div v-if="pacienteSeleccionado.bono_activo">
             <h3 class="text-base font-semibold text-cafe mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-              <svg class="w-5 h-5 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
               </svg>
               Bono Activo
@@ -646,7 +646,7 @@
                 </div>
                 <div class="text-right">
                   <p class="text-xs text-gray-500 mb-1.5 font-medium uppercase tracking-wide">Consumido</p>
-                  <p class="text-3xl font-bold text-terracota">
+                  <p class="text-3xl font-bold text-purple-600">
                     {{ Math.round(((pacienteSeleccionado.bono_activo.sesiones_totales - pacienteSeleccionado.bono_activo.sesiones_restantes) / pacienteSeleccionado.bono_activo.sesiones_totales) * 100) }}%
                   </p>
                 </div>
@@ -713,7 +713,7 @@
           <!-- Metadata adicional (si existe) -->
           <div v-if="pacienteSeleccionado.metadata">
             <h3 class="text-base font-semibold text-cafe mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-              <svg class="w-5 h-5 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
               Información Adicional
@@ -726,7 +726,7 @@
           <!-- Fechas del Sistema -->
           <div>
             <h3 class="text-base font-semibold text-cafe mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-              <svg class="w-5 h-5 text-terracota" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
               </svg>
               Fechas del Sistema
@@ -768,7 +768,7 @@
           <button
             v-if="!modoEdicion"
             @click="() => { cerrarModalDetalle(); router.push(`/coordinadora/pacientes/${pacienteSeleccionado.id}`); }"
-            class="px-6 py-2.5 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors font-medium flex items-center gap-2 shadow-sm"
+            class="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors font-medium flex items-center gap-2 shadow-sm"
           >
             <span>Ver Historial Completo</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -814,7 +814,7 @@
                   v-model="nuevoPaciente.nombre_completo"
                   type="text"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   placeholder="Ej: Juan Pérez García"
                 />
               </div>
@@ -827,7 +827,7 @@
                   v-model="nuevoPaciente.email"
                   type="email"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   placeholder="correo@ejemplo.com"
                 />
               </div>
@@ -840,7 +840,7 @@
                   v-model="nuevoPaciente.telefono"
                   type="tel"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   placeholder="+34 612 345 678"
                 />
               </div>
@@ -857,7 +857,7 @@
               </label>
               <select
                 v-model="nuevoPaciente.terapeuta_id"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
               >
                 <option :value="null">Sin asignar</option>
                 <option v-for="terapeuta in terapeutas" :key="terapeuta.id" :value="terapeuta.id">
@@ -881,7 +881,7 @@
                 v-model="nuevoPaciente.tiene_bono_existente"
                 type="checkbox"
                 id="tiene_bono"
-                class="w-4 h-4 text-terracota border-amber-300 rounded focus:ring-terracota mt-0.5"
+                class="w-4 h-4 text-purple-600 border-amber-300 rounded focus:ring-purple-300 mt-0.5"
               />
             </div>
 
@@ -895,7 +895,7 @@
                     v-model="nuevoPaciente.bono.tipo"
                     @change="actualizarSesionesTotales"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   >
                     <option value="">Seleccionar...</option>
                     <option value="semanal">Semanal (4 sesiones/mes)</option>
@@ -929,7 +929,7 @@
                     :max="nuevoPaciente.bono.sesiones_totales || 0"
                     required
                     :disabled="!nuevoPaciente.bono.tipo"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="Ej: 2"
                   />
                   <p class="text-xs text-gray-500 mt-1">
@@ -944,7 +944,7 @@
                   <input
                     v-model="nuevoPaciente.bono.fecha_compra"
                     type="date"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   />
                 </div>
 
@@ -959,7 +959,7 @@
                       type="number"
                       min="0"
                       step="0.01"
-                      class="w-full px-3 py-2 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                      class="w-full px-3 py-2 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                       placeholder="0.00"
                     />
                   </div>
@@ -971,7 +971,7 @@
                   </label>
                   <select
                     v-model="nuevoPaciente.bono.estado_pago"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all"
                   >
                     <option value="pagado">Pagado</option>
                     <option value="pendiente">Pendiente</option>
@@ -991,7 +991,7 @@
                     </div>
                     <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div 
-                        class="h-full bg-terracota transition-all duration-300"
+                        class="h-full bg-purple-600 transition-all duration-300"
                         :style="{ 
                           width: `${nuevoPaciente.bono.sesiones_totales > 0 ? (nuevoPaciente.bono.sesiones_consumidas / nuevoPaciente.bono.sesiones_totales) * 100 : 0}%` 
                         }"
@@ -999,7 +999,7 @@
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="text-lg font-bold text-terracota">{{ (nuevoPaciente.bono.sesiones_totales || 0) - (nuevoPaciente.bono.sesiones_consumidas || 0) }}</p>
+                    <p class="text-lg font-bold text-purple-600">{{ (nuevoPaciente.bono.sesiones_totales || 0) - (nuevoPaciente.bono.sesiones_consumidas || 0) }}</p>
                     <p class="text-xs text-gray-500">de {{ nuevoPaciente.bono.sesiones_totales || 0 }}</p>
                   </div>
                 </div>
@@ -1018,7 +1018,7 @@
               <textarea
                 v-model="nuevoPaciente.notas"
                 rows="3"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota/20 focus:border-terracota transition-all resize-none"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300/20 focus:border-purple-600 transition-all resize-none"
                 placeholder="Notas adicionales sobre el paciente..."
               ></textarea>
             </div>
@@ -1028,7 +1028,7 @@
                 v-model="nuevoPaciente.activo"
                 type="checkbox"
                 id="activo"
-                class="w-4 h-4 text-terracota border-gray-300 rounded focus:ring-terracota"
+                class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-300"
               />
               <label for="activo" class="text-sm font-medium text-cafe cursor-pointer">
                 Paciente Activo
@@ -1048,7 +1048,7 @@
             <button
               type="submit"
               :disabled="guardando"
-              class="px-4 py-2 text-sm font-medium text-white bg-terracota rounded-lg hover:bg-terracota/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-600/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <svg v-if="guardando" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

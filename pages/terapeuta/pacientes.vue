@@ -21,7 +21,7 @@
                 v-model="busqueda"
                 type="text"
                 placeholder="Buscar paciente por nombre o email..."
-                class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-lg focus:border-terracota focus:ring-2 focus:ring-terracota/20 focus:bg-white transition-all text-cafe placeholder-gray-400"
+                class="w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-lg focus:border-purple-600 focus:ring-2 focus:ring-purple-300/20 focus:bg-white transition-all text-cafe placeholder-gray-400"
               />
               <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></MagnifyingGlassIcon>
             </div>
@@ -35,7 +35,7 @@
               @click="estadoSeleccionado = filtro.valor"
               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap"
               :class="estadoSeleccionado === filtro.valor 
-                ? 'bg-terracota text-white shadow-sm' 
+                ? 'bg-purple-600 text-white shadow-sm' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
             >
               {{ filtro.label }}
@@ -45,7 +45,7 @@
           <!-- Botón añadir paciente -->
           <button
             @click="abrirModalNuevoPaciente"
-            class="px-6 py-2.5 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-all flex items-center gap-2 whitespace-nowrap font-medium shadow-sm hover:shadow-md"
+            class="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-all flex items-center gap-2 whitespace-nowrap font-medium shadow-sm hover:shadow-md"
           >
             <span class="text-lg leading-none">+</span>
             <span>Nuevo Paciente</span>
@@ -58,7 +58,7 @@
     <section>
       <!-- Estado de carga -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-16">
-        <div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mb-6"></div>
+        <div class="animate-spin w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full mb-6"></div>
         <p class="text-gray-500 font-medium">Cargando pacientes...</p>
       </div>
 
@@ -78,7 +78,7 @@
         <button
           v-if="!busqueda && estadoSeleccionado === 'todos'"
           @click="abrirModalNuevoPaciente"
-          class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-all font-medium shadow-sm hover:shadow-md"
+          class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-all font-medium shadow-sm hover:shadow-md"
         >
           + Añadir Primer Paciente
         </button>
@@ -105,7 +105,7 @@
           <button
             v-if="paciente.activo && !paciente.en_pausa"
             @click.stop="abrirModalAsignarCita(paciente)"
-            class="hidden md:flex absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+            class="hidden md:flex absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-purple-600 to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
             title="Asignar nueva cita"
           >
             <CalendarDaysIcon class="w-4 h-4"></CalendarDaysIcon>
@@ -116,7 +116,7 @@
           <button
             v-if="paciente.activo && !paciente.en_pausa"
             @click.stop="abrirModalAsignarCita(paciente)"
-            class="md:hidden absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-terracota to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
+            class="md:hidden absolute bottom-4 right-4 px-3 py-2 bg-gradient-to-r from-purple-600 to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10"
             title="Asignar nueva cita"
           >
             <CalendarDaysIcon class="w-4 h-4"></CalendarDaysIcon>

@@ -5,6 +5,11 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:clean": "DISABLE_CONTENT=true nuxt dev",
+    "dev:no-pwa": "DISABLE_PWA=true nuxt dev",
+    "dev:minimal": "DISABLE_CONTENT=true DISABLE_PWA=true ENABLE_ANALYTICS=false nuxt dev",
+    "clean": "./scripts/clean-dev.sh",
+    "clean:win": "scripts/clean-dev.bat",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",

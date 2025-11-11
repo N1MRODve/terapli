@@ -13,39 +13,39 @@
   
   /* Tarjeta base - Contenedor principal para secciones */
   .card {
-    @apply bg-white rounded-xl border border-neutral/5 shadow-sm p-6 transition-all duration-200;
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm p-6 transition-all duration-200;
   }
   
   .card:hover {
-    @apply shadow-md border-neutral/8;
+    @apply shadow-md border-gray-300;
   }
   
   /* Variantes de tarjetas */
   .card-flat {
-    @apply bg-white rounded-xl border border-neutral/5 p-6;
+    @apply bg-white rounded-xl border border-gray-200 p-6;
   }
   
   .card-elevated {
-    @apply bg-white rounded-2xl shadow-lg p-6 border border-neutral/5;
+    @apply bg-white rounded-2xl shadow-lg p-6 border border-gray-200;
   }
   
   .card-soft {
-    @apply bg-white/80 backdrop-blur-sm rounded-xl border border-neutral/8 p-6;
+    @apply bg-white/80 backdrop-blur-sm rounded-xl border border-gray-300 p-6;
   }
   
   .card-interactive {
-    @apply bg-white rounded-xl border border-neutral/5 shadow-sm p-6 
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm p-6 
            transition-all duration-200 cursor-pointer
-           hover:shadow-md hover:border-violeta/30 hover:scale-[1.01];
+           hover:shadow-md hover:border-purple-200 hover:scale-[1.01];
   }
   
   /* Panel con título */
   .panel {
-    @apply bg-white rounded-xl border border-neutral/5 overflow-hidden;
+    @apply bg-white rounded-xl border border-gray-200 overflow-hidden;
   }
   
   .panel-header {
-    @apply px-6 py-4 border-b border-neutral/5 bg-base-bg;
+    @apply px-6 py-4 border-b border-gray-100 bg-base-bg;
   }
   
   .panel-body {
@@ -53,7 +53,7 @@
   }
   
   .panel-footer {
-    @apply px-6 py-4 border-t border-neutral/5 bg-base-bg;
+    @apply px-6 py-4 border-t border-gray-100 bg-base-bg;
   }
 
   /* ==========================================================================
@@ -72,32 +72,32 @@
   .btn-primary {
     @apply btn bg-violeta text-white 
            hover:bg-violeta-dark hover:shadow-md
-           focus:ring-violeta/50
+           focus:ring-purple-300
            active:scale-95;
   }
   
   .btn-secondary {
-    @apply btn bg-white text-neutral border border-neutral/20
-           hover:bg-neutral/5 hover:border-neutral/30
-           focus:ring-neutral/30;
+    @apply btn bg-white text-gray-700 border border-gray-300
+           hover:bg-gray-50 hover:border-gray-400
+           focus:ring-gray-300;
   }
   
   .btn-outline {
-    @apply btn border border-neutral/20 text-neutral bg-transparent
-           hover:bg-neutral/5 hover:border-neutral/30
-           focus:ring-neutral/30;
+    @apply btn border border-gray-300 text-gray-700 bg-transparent
+           hover:bg-gray-50 hover:border-gray-400
+           focus:ring-gray-300;
   }
   
   .btn-ghost {
-    @apply btn text-neutral bg-transparent
-           hover:bg-neutral/5
-           focus:ring-neutral/20;
+    @apply btn text-gray-700 bg-transparent
+           hover:bg-gray-50
+           focus:ring-gray-200;
   }
   
   .btn-violeta-light {
-    @apply btn bg-violeta/10 text-violeta
-           hover:bg-violeta/20
-           focus:ring-violeta/30;
+    @apply btn bg-purple-50 text-purple-600
+           hover:bg-purple-100
+           focus:ring-purple-200;
   }
   
   .btn-success {
@@ -132,11 +132,11 @@
   
   .input {
     @apply w-full px-4 py-2.5 rounded-lg 
-           border border-neutral/10 bg-white
-           text-neutral placeholder:text-neutral/40
+           border border-gray-200 bg-white
+           text-gray-700 placeholder:text-gray-700/40
            transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-violeta/30 focus:border-violeta/50
-           disabled:bg-neutral/5 disabled:cursor-not-allowed;
+           focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300
+           disabled:bg-gray-50 disabled:cursor-not-allowed;
   }
   
   .input-error {
@@ -155,19 +155,19 @@
   }
   
   .checkbox {
-    @apply w-4 h-4 rounded border-neutral/30 
-           text-violeta focus:ring-violeta/30 focus:ring-offset-0
+    @apply w-4 h-4 rounded border-gray-400 
+           text-purple-600 focus:ring-purple-200 focus:ring-offset-0
            transition-colors;
   }
   
   .radio {
-    @apply w-4 h-4 border-neutral/30
-           text-violeta focus:ring-violeta/30 focus:ring-offset-0
+    @apply w-4 h-4 border-gray-400
+           text-purple-600 focus:ring-purple-200 focus:ring-offset-0
            transition-colors;
   }
   
   .label {
-    @apply block text-sm font-medium text-neutral/80 mb-1.5;
+    @apply block text-sm font-medium text-gray-700/80 mb-1.5;
   }
   
   .form-group {
@@ -179,7 +179,7 @@
   }
   
   .form-hint {
-    @apply text-xs text-neutral/60 mt-1;
+    @apply text-xs text-gray-700/60 mt-1;
   }
 
   /* ==========================================================================
@@ -192,11 +192,11 @@
   }
   
   .badge-primary {
-    @apply badge bg-violeta/10 text-violeta;
+    @apply badge bg-purple-50 text-purple-600;
   }
   
   .badge-secondary {
-    @apply badge bg-neutral/10 text-neutral;
+    @apply badge bg-neutral/10 text-gray-700;
   }
   
   .badge-success {
@@ -212,7 +212,7 @@
   }
   
   .badge-info {
-    @apply badge bg-violeta/10 text-violeta;
+    @apply badge bg-purple-50 text-purple-600;
   }
   
   /* Estados de citas - Nueva paleta Teraplí */
@@ -225,11 +225,11 @@
   }
   
   .badge-realizada {
-    @apply badge bg-violeta/10 text-violeta border border-violeta/20;
+    @apply badge bg-purple-50 text-purple-600 border border-violeta/20;
   }
   
   .badge-cancelada {
-    @apply badge bg-neutral/10 text-neutral/70 border border-neutral/20;
+    @apply badge bg-neutral/10 text-gray-700/70 border border-gray-300;
   }
 
   /* ==========================================================================
@@ -291,7 +291,7 @@
   }
   
   .alert-info {
-    @apply alert bg-violeta/10 border-violeta/20 text-violeta;
+    @apply alert bg-purple-50 border-violeta/20 text-purple-600;
   }
 
   /* ==========================================================================
@@ -301,15 +301,15 @@
   .list-item {
     @apply flex items-center gap-3 p-3 rounded-lg
            transition-colors duration-150
-           hover:bg-neutral/5 cursor-pointer;
+           hover:bg-gray-50 cursor-pointer;
   }
   
   .list-item-active {
-    @apply list-item bg-violeta/10 text-violeta;
+    @apply list-item bg-purple-50 text-purple-600;
   }
   
   .divider {
-    @apply border-t border-neutral/10;
+    @apply border-t border-gray-200;
   }
 
   /* ==========================================================================
@@ -318,7 +318,7 @@
   
   .avatar {
     @apply inline-flex items-center justify-center 
-           rounded-full bg-violeta/10 text-violeta 
+           rounded-full bg-purple-50 text-purple-600 
            font-medium overflow-hidden;
   }
   
@@ -343,7 +343,7 @@
      ========================================================================== */
   
   .modal-overlay {
-    @apply fixed inset-0 bg-neutral/50 backdrop-blur-sm z-40
+    @apply fixed inset-0 bg-gray-500 backdrop-blur-sm z-40
            transition-opacity duration-300;
   }
   
@@ -357,7 +357,7 @@
   }
   
   .modal-header {
-    @apply px-6 py-4 border-b border-neutral/5;
+    @apply px-6 py-4 border-b border-gray-100;
   }
   
   .modal-body {
@@ -365,7 +365,7 @@
   }
   
   .modal-footer {
-    @apply px-6 py-4 border-t border-neutral/5 flex items-center justify-end gap-3;
+    @apply px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3;
   }
 
   /* ==========================================================================
@@ -373,13 +373,13 @@
      ========================================================================== */
   
   .link {
-    @apply text-violeta hover:text-violeta/80 
+    @apply text-purple-600 hover:text-purple-600/80 
            transition-colors duration-150
            underline-offset-2 hover:underline;
   }
   
   .link-muted {
-    @apply text-neutral/70 hover:text-neutral
+    @apply text-gray-700/70 hover:text-gray-700
            transition-colors duration-150;
   }
 
@@ -392,8 +392,8 @@
   }
   
   .table-header {
-    @apply text-xs font-semibold text-neutral/70 uppercase tracking-wider
-           bg-neutral/5 border-b border-neutral/10;
+    @apply text-xs font-semibold text-gray-700/70 uppercase tracking-wider
+           bg-gray-50 border-b border-gray-200;
   }
   
   .table-header th {
@@ -401,7 +401,7 @@
   }
   
   .table-row {
-    @apply border-b border-neutral/5 hover:bg-neutral/5 transition-colors;
+    @apply border-b border-gray-100 hover:bg-gray-50 transition-colors;
   }
   
   .table-cell {
@@ -438,7 +438,7 @@
   }
   
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-violeta/30 focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2;
   }
 
   /* ==========================================================================

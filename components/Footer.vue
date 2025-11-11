@@ -11,7 +11,7 @@ const openCookieSettings = () => {
 </script>
 
 <template>
-  <footer class="bg-terracota text-fondo">
+  <footer class="bg-purple-600 text-fondo">
     <div class="max-w-7xl mx-auto px-6 py-12">
       <div class="grid md:grid-cols-3 gap-8 text-center md:text-left">
         <div>

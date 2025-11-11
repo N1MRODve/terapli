@@ -5,7 +5,7 @@
       <h1 class="text-3xl font-serif font-bold text-cafe mb-2">
         Gestión de Sesiones
       </h1>
-      <p class="text-terracota">
+      <p class="text-purple-600">
         Visualiza y gestiona todas tus sesiones con información financiera
       </p>
     </div>
@@ -309,7 +309,7 @@
               v-model="filtros.busqueda"
               type="text"
               placeholder="Nombre del paciente..."
-              class="w-full px-4 py-2 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20"
+              class="w-full px-4 py-2 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20"
             />
             <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-cafe/50" />
           </div>
@@ -322,7 +322,7 @@
           </label>
           <select
             v-model="filtros.estado"
-            class="w-full px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 text-cafe"
+            class="w-full px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20 text-cafe"
           >
             <option value="">Todos los estados</option>
             <option value="pendiente">Pendiente</option>
@@ -339,7 +339,7 @@
           </label>
           <select
             v-model="filtros.periodo"
-            class="w-full px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 text-cafe"
+            class="w-full px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20 text-cafe"
           >
             <option value="mes-actual">Mes actual</option>
             <option value="mes-anterior">Mes anterior</option>
@@ -353,7 +353,7 @@
     <!-- Loading State -->
     <div v-if="cargando" class="flex items-center justify-center py-12">
       <div class="text-center">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-terracota mb-4"></div>
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
         <p class="text-cafe/60">Cargando sesiones...</p>
       </div>
     </div>
@@ -457,7 +457,7 @@
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   <div
-                    class="w-10 h-10 rounded-full bg-terracota/20 text-terracota flex items-center justify-center font-semibold text-sm flex-shrink-0"
+                    class="w-10 h-10 rounded-full bg-purple-600/20 text-purple-600 flex items-center justify-center font-semibold text-sm flex-shrink-0"
                   >
                     {{ obtenerIniciales(sesion.paciente?.nombre_completo || 'NN') }}
                   </div>
@@ -539,7 +539,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-center">
                 <button
                   @click="verDetalles(sesion)"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-terracota hover:bg-terracota/10 rounded-lg transition-colors duration-200"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-purple-600 hover:bg-purple-600/10 rounded-lg transition-colors duration-200"
                 >
                   <EyeIcon class="w-4 h-4" />
                   Ver detalles

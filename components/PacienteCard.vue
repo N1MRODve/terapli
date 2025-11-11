@@ -46,7 +46,7 @@
         
         <!-- Nombre y estado emocional -->
         <div>
-          <h3 class="font-serif text-lg font-semibold text-cafe group-hover:text-terracota transition-colors leading-tight">
+          <h3 class="font-serif text-lg font-semibold text-cafe group-hover:text-purple-600 transition-colors leading-tight">
             {{ nombreMostrar }}
           </h3>
           <div class="flex items-center gap-2 mt-1">
@@ -80,18 +80,18 @@
     <!-- Información de sesiones -->
     <div class="space-y-3 mb-5">
       <div class="flex items-center gap-2 text-sm text-gray-600">
-        <CalendarIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+        <CalendarIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
         <span>Última sesión: </span>
         <span class="font-medium">{{ ultimaSesion }}</span>
       </div>
       
       <div class="flex items-center gap-2 text-sm text-gray-600">
-        <ClockIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+        <ClockIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
         <span>Próxima: </span>
         <button
           v-if="proximaSesion"
           @click.stop="$emit('editar-cita', paciente.proxima_cita_id)"
-          class="text-terracota hover:text-cafe font-medium hover:underline transition-colors flex-shrink-0"
+          class="text-purple-600 hover:text-cafe font-medium hover:underline transition-colors flex-shrink-0"
           :title="`Editar cita del ${proximaSesion}`"
         >
           {{ proximaSesion }}
@@ -99,7 +99,7 @@
         <span v-else class="text-gray-400 font-medium">No programada</span>
         <button
           @click.stop="$emit('ver-citas', paciente)"
-          class="ml-auto text-xs text-terracota hover:text-cafe hover:underline transition-colors flex-shrink-0"
+          class="ml-auto text-xs text-purple-600 hover:text-cafe hover:underline transition-colors flex-shrink-0"
           title="Ver todas las citas"
         >
           Ver citas →
@@ -107,19 +107,19 @@
       </div>
 
       <div class="flex items-center gap-2 text-sm text-gray-600">
-        <CheckCircleIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+        <CheckCircleIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
         <span>{{ totalSesiones }} sesiones completadas</span>
       </div>
     </div>
 
     <!-- Sección de BONO ACTIVO (destacada) -->
         <!-- Sección de BONO ACTIVO (destacada) -->
-    <div v-if="bonoActivo" class="mb-5 p-4 bg-gradient-to-br from-terracota/8 to-rosa/12 rounded-xl border border-terracota/15">
+    <div v-if="bonoActivo" class="mb-5 p-4 bg-gradient-to-br from-purple-600/8 to-rosa/12 rounded-xl border border-purple-600/15">
       <div class="space-y-3">
         <!-- Header del Bono -->
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <TicketIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+            <TicketIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
             <span class="text-sm font-medium text-gray-700">Bono:</span>
             <span 
               class="px-2.5 py-1 rounded-lg text-xs font-semibold"
@@ -143,14 +143,14 @@
         <div class="grid grid-cols-1 gap-2">
           <!-- Fecha fin -->
           <div class="flex items-center gap-2 text-sm">
-            <CalendarIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+            <CalendarIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
             <span class="text-gray-600">Vigencia:</span>
             <span :class="fechaFinClases" class="font-medium">{{ fechaFinTexto }}</span>
           </div>
 
           <!-- Sesiones X/Y -->
           <div class="flex items-center gap-2 text-sm">
-            <ChartBarIcon class="w-4 h-4 text-terracota flex-shrink-0" />
+            <ChartBarIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
             <span class="text-gray-600">Sesiones:</span>
             <span :class="sesionesColorClass" class="font-semibold">
               {{ sesionesUsadas }}/{{ sesionesTotales }}
@@ -547,13 +547,13 @@ const sesionesTotales = computed(() => {
 })
 
 const sesionesColorClass = computed(() => {
-  if (!bonoActivo.value) return 'text-terracota'
+  if (!bonoActivo.value) return 'text-purple-600'
   
   const restantes = bonoActivo.value.sesiones_restantes
   if (restantes === 0) return 'text-red-600 font-bold'
   if (restantes === 1) return 'text-red-600 font-semibold'
   if (restantes === 2) return 'text-orange-600 font-semibold'
-  return 'text-terracota font-semibold'
+  return 'text-purple-600 font-semibold'
 })
 
 // Progreso del bono - cálculo y estilos

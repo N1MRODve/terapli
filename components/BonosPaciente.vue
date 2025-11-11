@@ -3,7 +3,7 @@
     <!-- Encabezado mejorado con icono -->
     <div class="border-b border-cafe/10 pb-5">
       <div class="flex items-center gap-3 mb-2">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-terracota/20 to-terracota/10 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-600/10 flex items-center justify-center">
           <span class="text-xl">🎫</span>
         </div>
         <h3 class="font-serif text-2xl font-bold text-cafe">Bonos del Paciente</h3>
@@ -13,8 +13,7 @@
 
     <!-- Loading con animación mejorada -->
     <div v-if="loading" class="text-center py-16">
-      <div class="relative inline-block">
-        <div class="w-12 h-12 border-4 border-terracota/20 border-t-terracota rounded-full animate-spin"></div>
+      <div class="relative inline-block">        <div class="w-12 h-12 border-4 border-purple-600/20 border-t-purple-600 rounded-full animate-spin"></div>
         <div class="absolute inset-0 w-12 h-12 border-4 border-transparent border-b-cafe/20 rounded-full animate-spin" style="animation-duration: 1.5s; animation-direction: reverse;"></div>
       </div>
       <p class="mt-4 text-sm text-cafe/60 font-medium">Cargando información de bonos...</p>
@@ -37,11 +36,11 @@
           class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-cafe/10 overflow-hidden"
         >
           <!-- Header card con gradiente sutil -->
-          <div class="bg-gradient-to-r from-terracota/5 via-white to-terracota/5 px-6 py-4 border-b border-cafe/5">
+          <div class="bg-gradient-to-r from-purple-600/5 via-white to-purple-600/5 px-6 py-4 border-b border-cafe/5">
             <div class="flex items-start justify-between gap-4">
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-terracota to-terracota/80 flex items-center justify-center shadow-sm">
+                  <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-600/80 flex items-center justify-center shadow-sm">
                     <span class="text-white text-lg">🎟️</span>
                   </div>
                   <div>
@@ -98,10 +97,10 @@
               
               <div class="flex justify-between items-center">
                 <span class="text-sm text-cafe/70 flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-lg bg-terracota/10 flex items-center justify-center text-xs">✓</span>
+                  <span class="w-6 h-6 rounded-lg bg-purple-600/10 flex items-center justify-center text-xs">✓</span>
                   Sesiones usadas
                 </span>
-                <span class="font-bold text-terracota text-lg">{{ (bono.sesiones_totales || 0) - (bono.sesiones_restantes || 0) }}</span>
+                <span class="font-bold text-purple-600 text-lg">{{ (bono.sesiones_totales || 0) - (bono.sesiones_restantes || 0) }}</span>
               </div>
               
               <div class="flex justify-between items-center">
@@ -199,7 +198,7 @@
                 <!-- Botón renovar -->
                 <button
                   @click="$emit('renovar-bono', bono)"
-                  class="group bg-gradient-to-r from-terracota to-orange-500 text-white hover:from-terracota/90 hover:to-orange-600 rounded-xl py-3 px-4 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                  class="group bg-gradient-to-r from-purple-600 to-orange-500 text-white hover:from-purple-600/90 hover:to-orange-600 rounded-xl py-3 px-4 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
                 >
                   <span class="text-base group-hover:rotate-180 transition-transform duration-500">🔄</span>
                   <span>Renovar</span>
@@ -234,7 +233,7 @@
 
     <!-- Estado vacío mejorado -->
     <div v-else class="text-center bg-gradient-to-br from-white to-gray-50 rounded-2xl py-16 px-6 border-2 border-dashed border-cafe/20">
-      <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-terracota/10 to-terracota/5 flex items-center justify-center">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-purple-600/10 to-purple-600/5 flex items-center justify-center">
         <span class="text-5xl">🎫</span>
       </div>
       <h4 class="text-xl font-bold text-cafe mb-3">No hay bonos activos</h4>
@@ -243,7 +242,7 @@
       </p>
       <button
         @click="$emit('crear-bono')"
-        class="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-terracota to-orange-500 text-white rounded-xl hover:from-terracota/90 hover:to-orange-600 transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-xl hover:-translate-y-1"
+        class="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-orange-500 text-white rounded-xl hover:from-purple-600/90 hover:to-orange-600 transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-xl hover:-translate-y-1"
       >
         <span class="group-hover:rotate-90 transition-transform duration-300">➕</span>
         <span>Crear Nuevo Bono</span>

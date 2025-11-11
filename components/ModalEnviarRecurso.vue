@@ -11,7 +11,7 @@
           @click.stop
         >
           <!-- Header -->
-          <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-terracota/10 to-rosa/20">
+          <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-purple-600/10 to-rosa/20">
             <div>
               <h2 class="text-2xl font-bold text-gray-900">
                 📤 Enviar Recurso
@@ -35,7 +35,7 @@
           <div class="flex-1 overflow-y-auto p-6">
             <!-- Loading state -->
             <div v-if="cargandoPacientes" class="flex items-center justify-center py-12">
-              <LoadingSpinner class="w-8 h-8 text-terracota" />
+              <LoadingSpinner class="w-8 h-8 text-purple-600" />
             </div>
 
             <!-- Sin pacientes -->
@@ -53,7 +53,7 @@
                   v-model="busqueda"
                   type="text"
                   placeholder="Buscar paciente por nombre..."
-                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota focus:border-transparent transition-all"
+                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all"
                 />
                 <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -68,7 +68,7 @@
                 <div class="flex gap-2">
                   <button
                     @click="seleccionarTodos"
-                    class="text-sm text-terracota hover:text-terracota/80 font-medium"
+                    class="text-sm text-purple-600 hover:text-purple-600/80 font-medium"
                   >
                     Seleccionar todos
                   </button>
@@ -87,14 +87,14 @@
                 <label
                   v-for="paciente in pacientesFiltrados"
                   :key="paciente.id"
-                  class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-terracota hover:bg-terracota/5 transition-all cursor-pointer"
-                  :class="{ 'border-terracota bg-terracota/10': pacientesSeleccionados.includes(paciente.id) }"
+                  class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-purple-600 hover:bg-purple-600/5 transition-all cursor-pointer"
+                  :class="{ 'border-purple-600 bg-purple-600/10': pacientesSeleccionados.includes(paciente.id) }"
                 >
                   <input
                     type="checkbox"
                     :value="paciente.id"
                     v-model="pacientesSeleccionados"
-                    class="w-5 h-5 text-terracota border-gray-300 rounded focus:ring-terracota"
+                    class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-300"
                   />
                   <div class="flex-1 min-w-0">
                     <div class="font-medium text-gray-900">
@@ -128,7 +128,7 @@
                   v-model="mensaje"
                   rows="3"
                   placeholder="Escribe un mensaje para acompañar este recurso..."
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracota focus:border-transparent transition-all resize-none"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all resize-none"
                 />
                 <p class="text-xs text-gray-500 mt-1">
                   Este mensaje aparecerá junto al recurso en el espacio del paciente
@@ -149,7 +149,7 @@
             <button
               @click="enviar"
               :disabled="pacientesSeleccionados.length === 0 || enviando"
-              class="px-5 py-2.5 bg-terracota text-white font-medium rounded-lg hover:bg-terracota/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              class="px-5 py-2.5 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-600/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <LoadingSpinner v-if="enviando" class="w-4 h-4" />
               <span>Enviar a {{ pacientesSeleccionados.length }} paciente{{ pacientesSeleccionados.length !== 1 ? 's' : '' }}</span>

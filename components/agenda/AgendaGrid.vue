@@ -372,7 +372,7 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
     <!-- Loading state -->
     <div v-if="cargando" class="flex items-center justify-center h-full">
       <div class="text-center space-y-3">
-        <div class="w-12 h-12 border-4 border-terracota/20 border-t-terracota rounded-full animate-spin mx-auto" />
+        <div class="w-12 h-12 border-4 border-purple-600/20 border-t-purple-600 rounded-full animate-spin mx-auto" />
         <p class="text-cafe/60 dark:text-gray-400">Cargando agenda...</p>
       </div>
     </div>
@@ -406,7 +406,7 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
           @click="setZoom('compact')"
           :class="[
             'px-2 py-1 rounded-md transition-all',
-            zoomLevel === 'compact' ? 'bg-terracota text-white' : 'hover:bg-terracota/10'
+            zoomLevel === 'compact' ? 'bg-purple-600 text-white' : 'hover:bg-purple-600/10'
           ]"
         >
           Compacto
@@ -415,7 +415,7 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
           @click="setZoom('normal')"
           :class="[
             'px-2 py-1 rounded-md transition-all',
-            zoomLevel === 'normal' ? 'bg-terracota text-white' : 'hover:bg-terracota/10'
+            zoomLevel === 'normal' ? 'bg-purple-600 text-white' : 'hover:bg-purple-600/10'
           ]"
         >
           Normal
@@ -424,7 +424,7 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
           @click="setZoom('comfortable')"
           :class="[
             'px-2 py-1 rounded-md transition-all',
-            zoomLevel === 'comfortable' ? 'bg-terracota text-white' : 'hover:bg-terracota/10'
+            zoomLevel === 'comfortable' ? 'bg-purple-600 text-white' : 'hover:bg-purple-600/10'
           ]"
         >
           Cómodo
@@ -507,7 +507,7 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
           v-for="fecha in fechas"
           :key="fecha"
           class="py-2 px-1"
-          :class="esFechaHoy(fecha) ? 'bg-terracota/5 border-b-2 border-terracota' : ''"
+          :class="esFechaHoy(fecha) ? 'bg-purple-600/5 border-b-2 border-purple-600' : ''"
         >
           <div class="text-xs font-medium text-cafe/70">
             {{ formatearDiaSemana(fecha).split(',')[0] }}
@@ -927,14 +927,14 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
 }
 
 .agenda-dia-mes:hover {
-  @apply bg-[#FFF8F4] dark:bg-zinc-900/80 shadow-md border-terracota/30 dark:border-terracota/40;
+  @apply bg-[#FFF8F4] dark:bg-zinc-900/80 shadow-md border-purple-600/30 dark:border-purple-600/40;
   transform: scale(1.005);
   z-index: 5;
 }
 
 /* Día del mes actual */
 .agenda-dia-mes.dia-hoy {
-  @apply ring-2 ring-terracota dark:ring-terracota/80 bg-terracota/5 dark:bg-terracota/10;
+  @apply ring-2 ring-purple-300 dark:ring-purple-300/80 bg-purple-600/5 dark:bg-purple-600/10;
   position: relative;
 }
 
@@ -966,7 +966,7 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
 
 .contador-citas {
   @apply text-[9px] font-bold text-white dark:text-zinc-900;
-  @apply bg-terracota dark:bg-terracota/90 rounded-full;
+  @apply bg-purple-600 dark:bg-purple-600/90 rounded-full;
   @apply flex items-center justify-center;
   min-width: 1rem;
   height: 1rem;
@@ -974,7 +974,7 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
 }
 
 .dia-hoy-badge {
-  @apply text-[9px] font-semibold text-terracota dark:text-terracota/90 bg-terracota/10 dark:bg-terracota/20 px-1.5 py-0.5 rounded-full;
+  @apply text-[9px] font-semibold text-purple-600 dark:text-purple-600/90 bg-purple-600/10 dark:bg-purple-600/20 px-1.5 py-0.5 rounded-full;
 }
 
 /* Contenedor de eventos del día */

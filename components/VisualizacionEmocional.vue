@@ -484,7 +484,7 @@ const insight = computed(() => {
 // Funciones de utilidad
 const obtenerColorEmocion = (indice) => {
   const colores = [
-    '#D8AFA0', // Terracota
+    '#D8AFA0', // Naranja claro
     '#EAD5D3', // Rosa empolvado
     '#B7C7A8', // Verde suave
     '#B4D4D3', // Azul sereno

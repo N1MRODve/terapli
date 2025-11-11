@@ -18,7 +18,7 @@
       <section class="card lg:col-span-2">
         <header class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-cafe">�️ Próximas Sesiones</h2>
-          <NuxtLink to="/agenda" class="text-terracota text-sm hover:underline">
+          <NuxtLink to="/agenda" class="text-purple-600 text-sm hover:underline">
             Ver agenda →
           </NuxtLink>
         </header>
@@ -28,7 +28,7 @@
           <div
             v-for="cita in proximasSesiones"
             :key="cita.id"
-            class="flex items-center justify-between bg-terracota/5 rounded-xl p-4 hover:bg-terracota/10 transition"
+            class="flex items-center justify-between bg-purple-600/5 rounded-xl p-4 hover:bg-purple-600/10 transition"
           >
             <div>
               <p class="text-lg font-semibold text-cafe">{{ cita.hora_inicio }} — {{ cita.paciente_nombre }}</p>
@@ -36,7 +36,7 @@
             </div>
             <button
               @click="abrirDetalles(cita.id)"
-              class="px-3 py-1 text-sm border border-terracota/30 rounded-lg text-terracota hover:bg-terracota hover:text-white transition"
+              class="px-3 py-1 text-sm border border-purple-600/30 rounded-lg text-purple-600 hover:bg-purple-600 hover:text-white transition"
             >
               Ver detalles
             </button>
@@ -48,7 +48,7 @@
       <section class="card">
         <header class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-cafe">🧍 Pacientes Activos</h2>
-          <NuxtLink to="/terapeuta/pacientes" class="text-terracota text-sm hover:underline">
+          <NuxtLink to="/terapeuta/pacientes" class="text-purple-600 text-sm hover:underline">
             Ver todos →
           </NuxtLink>
         </header>
@@ -89,15 +89,15 @@
           <h2 class="text-xl font-semibold text-cafe">📊 Analítica del Profesional</h2>
         </header>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div class="p-4 bg-terracota/5 rounded-xl">
+          <div class="p-4 bg-purple-600/5 rounded-xl">
             <p class="text-2xl font-bold text-cafe">{{ totalPacientes }}</p>
             <p class="text-sm text-cafe/60">Pacientes activos</p>
           </div>
-          <div class="p-4 bg-terracota/5 rounded-xl">
+          <div class="p-4 bg-purple-600/5 rounded-xl">
             <p class="text-2xl font-bold text-cafe">{{ totalSesionesMes }}</p>
             <p class="text-sm text-cafe/60">Sesiones este mes</p>
           </div>
-          <div class="p-4 bg-terracota/5 rounded-xl">
+          <div class="p-4 bg-purple-600/5 rounded-xl">
             <p class="text-2xl font-bold text-cafe">{{ porcentajeAsistencia }}%</p>
             <p class="text-sm text-cafe/60">Asistencia promedio</p>
           </div>
@@ -123,7 +123,7 @@
           <button
             v-if="!cargandoRecordatorios"
             @click="generarRecordatorios"
-            class="text-xs text-terracota hover:text-cafe transition"
+            class="text-xs text-purple-600 hover:text-cafe transition"
             title="Actualizar recordatorios"
           >
             🔄
@@ -138,7 +138,7 @@
           <li
             v-for="(msg, i) in recordatorios"
             :key="i"
-            class="flex items-start gap-2 bg-terracota/5 rounded-lg px-3 py-2 hover:bg-terracota/10 transition"
+            class="flex items-start gap-2 bg-purple-600/5 rounded-lg px-3 py-2 hover:bg-purple-600/10 transition"
           >
             <span class="flex-shrink-0 mt-0.5">🔔</span>
             <span class="flex-1">{{ msg }}</span>
@@ -572,7 +572,7 @@ function handleCitasActualizadas(event: Event) {
 }
 
 .btn-primary {
-  @apply bg-terracota text-white rounded-xl px-4 py-2 font-medium hover:bg-terracota/90 transition;
+  @apply bg-purple-600 text-white rounded-xl px-4 py-2 font-medium hover:bg-purple-600/90 transition;
 }
 
 .btn-outline {

@@ -23,14 +23,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useVisitorContext } from '@/composables/useVisitorContext'
 
-const router = useRouter()
 const { visitorName } = useVisitorContext()
 const show = ref(true)
 
 onMounted(() => {
+  const router = useRouter()
+  
   // Smooth transition after 2.5 seconds
   setTimeout(() => {
     show.value = false

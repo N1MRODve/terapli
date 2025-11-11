@@ -12,9 +12,9 @@
       >
         <!-- Header con ícono -->
         <div class="text-center pt-8 pb-6 px-6">
-          <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-terracota/20 to-terracota/10 flex items-center justify-center">
+          <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-600/20 to-purple-600/10 flex items-center justify-center">
             <!-- Ícono de corazón/hoja -->
-            <svg class="w-10 h-10 text-terracota" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="w-10 h-10 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
           </div>
@@ -24,7 +24,7 @@
           </h3>
           
           <p class="text-texto/70 leading-relaxed">
-            Agrega <span class="font-semibold text-terracota">Psicóloga Karem</span> 
+            Agrega <span class="font-semibold text-purple-600">Psicóloga Karem</span> 
             a tu pantalla de inicio y accede a tu bienestar emocional con un toque.
           </p>
         </div>
@@ -32,17 +32,17 @@
         <!-- Beneficios -->
         <div class="px-6 pb-6 space-y-3">
           <div class="flex items-start gap-3 text-sm text-texto/80">
-            <span class="text-terracota text-lg">✨</span>
+            <span class="text-purple-600 text-lg">✨</span>
             <p>Acceso rápido sin buscar en el navegador</p>
           </div>
           
           <div class="flex items-start gap-3 text-sm text-texto/80">
-            <span class="text-terracota text-lg">🔒</span>
+            <span class="text-purple-600 text-lg">🔒</span>
             <p>Modo privado y discreto, sin distracciones</p>
           </div>
           
           <div class="flex items-start gap-3 text-sm text-texto/80">
-            <span class="text-terracota text-lg">💾</span>
+            <span class="text-purple-600 text-lg">💾</span>
             <p>Funciona incluso con conexión limitada</p>
           </div>
         </div>
@@ -50,7 +50,7 @@
         <!-- Instrucciones específicas por plataforma -->
         <div 
           v-if="platformInfo.isIOS && !platformInfo.isStandalone" 
-          class="mx-6 mb-6 p-4 bg-terracota/10 rounded-2xl border border-terracota/20"
+          class="mx-6 mb-6 p-4 bg-purple-600/10 rounded-2xl border border-purple-600/20"
         >
           <p class="text-sm text-texto/90 mb-2 font-medium">
             📱 En Safari:
@@ -67,7 +67,7 @@
           <!-- Botón secundario: Ahora no -->
           <button
             @click="handleDismiss"
-            class="flex-1 px-4 py-3 rounded-xl border-2 border-terracota/30 text-texto/70 font-medium hover:bg-terracota/5 transition-colors"
+            class="flex-1 px-4 py-3 rounded-xl border-2 border-purple-600/30 text-texto/70 font-medium hover:bg-purple-600/5 transition-colors"
           >
             Ahora no
           </button>
@@ -76,7 +76,7 @@
           <button
             v-if="canInstallDirectly"
             @click="handleInstall"
-            class="flex-1 px-4 py-3 rounded-xl bg-terracota text-white font-semibold hover:bg-terracota/90 transition-all transform hover:scale-[1.02] shadow-lg shadow-terracota/30"
+            class="flex-1 px-4 py-3 rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-600/90 transition-all transform hover:scale-[1.02] shadow-lg shadow-purple-500/30"
           >
             Instalar App
           </button>
@@ -85,7 +85,7 @@
           <button
             v-else
             @click="handleDismiss"
-            class="flex-1 px-4 py-3 rounded-xl bg-terracota text-white font-semibold hover:bg-terracota/90 transition-all transform hover:scale-[1.02] shadow-lg shadow-terracota/30"
+            class="flex-1 px-4 py-3 rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-600/90 transition-all transform hover:scale-[1.02] shadow-lg shadow-purple-500/30"
           >
             Entendido
           </button>

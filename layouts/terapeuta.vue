@@ -9,7 +9,7 @@
         <h1 class="text-2xl font-serif font-bold text-cafe">
           Psicóloga Karem
         </h1>
-        <p class="text-sm text-terracota mt-1">
+        <p class="text-sm text-purple-600 mt-1">
           Espacio de gestión
         </p>
       </div>
@@ -21,7 +21,7 @@
             <NuxtLink
               to="/terapeuta/dashboard"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
             >
               <HomeIcon class="w-5 h-5" />
               <span class="font-medium">Inicio</span>
@@ -31,7 +31,7 @@
             <NuxtLink
               to="/terapeuta/pacientes"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
             >
               <UserGroupIcon class="w-5 h-5" />
               <span class="font-medium">Pacientes</span>
@@ -41,7 +41,7 @@
             <NuxtLink
               to="/agenda"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
             >
               <CalendarIcon class="w-5 h-5" />
               <span class="font-medium">Agenda</span>
@@ -51,7 +51,7 @@
             <NuxtLink
               to="/terapeuta/sesiones"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
             >
               <ChatBubbleLeftRightIcon class="w-5 h-5" />
               <span class="font-medium">Sesiones</span>
@@ -61,7 +61,7 @@
             <NuxtLink
               to="/terapeuta/mensajes"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
             >
               <EnvelopeIcon class="w-5 h-5" />
               <span class="font-medium">Mensajería</span>
@@ -71,7 +71,7 @@
             <NuxtLink
               to="/terapeuta/recursos"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
             >
               <BookOpenIcon class="w-5 h-5" />
               <span class="font-medium">Recursos</span>
@@ -85,7 +85,7 @@
         <NuxtLink
           to="/terapeuta/configuracion"
           class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-          active-class="bg-terracota text-white hover:bg-terracota"
+          active-class="bg-purple-600 text-white hover:bg-purple-600"
         >
           <Cog6ToothIcon class="w-5 h-5" />
           <span class="font-medium">Configuración</span>
@@ -120,13 +120,13 @@
           <h1 class="text-2xl font-serif font-bold text-cafe">
             Karem Peña
           </h1>
-          <p class="text-sm text-terracota mt-1">
+          <p class="text-sm text-purple-600 mt-1">
             Espacio Clínico
           </p>
         </div>
         <button
           @click="mobileMenuOpen = false"
-          class="text-cafe hover:text-terracota transition-colors"
+          class="text-cafe hover:text-purple-600 transition-colors"
         >
           <XMarkIcon class="w-6 h-6" />
         </button>
@@ -139,7 +139,7 @@
             <NuxtLink
               to="/terapeuta/dashboard"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
               @click="mobileMenuOpen = false"
             >
               <HomeIcon class="w-5 h-5" />
@@ -150,7 +150,7 @@
             <NuxtLink
               to="/terapeuta/pacientes"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
               @click="mobileMenuOpen = false"
             >
               <UserGroupIcon class="w-5 h-5" />
@@ -161,7 +161,7 @@
             <NuxtLink
               to="/agenda"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
               @click="mobileMenuOpen = false"
             >
               <CalendarIcon class="w-5 h-5" />
@@ -172,7 +172,7 @@
             <NuxtLink
               to="/terapeuta/sesiones"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
               @click="mobileMenuOpen = false"
             >
               <ChatBubbleLeftRightIcon class="w-5 h-5" />
@@ -183,7 +183,7 @@
             <NuxtLink
               to="/terapeuta/mensajes"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
               @click="mobileMenuOpen = false"
             >
               <EnvelopeIcon class="w-5 h-5" />
@@ -194,7 +194,7 @@
             <NuxtLink
               to="/terapeuta/recursos"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-terracota text-white hover:bg-terracota"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
               @click="mobileMenuOpen = false"
             >
               <BookOpenIcon class="w-5 h-5" />
@@ -209,7 +209,7 @@
         <NuxtLink
           to="/terapeuta/configuracion"
           class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-          active-class="bg-terracota text-white hover:bg-terracota"
+          active-class="bg-purple-600 text-white hover:bg-purple-600"
           @click="mobileMenuOpen = false"
         >
           <Cog6ToothIcon class="w-5 h-5" />
@@ -236,7 +236,7 @@
             <!-- Mobile Menu Button -->
             <button
               @click="mobileMenuOpen = !mobileMenuOpen"
-              class="lg:hidden text-cafe hover:text-terracota transition-colors"
+              class="lg:hidden text-cafe hover:text-purple-600 transition-colors"
             >
               <Bars3Icon class="w-6 h-6" />
             </button>
@@ -247,7 +247,7 @@
                 <h2 class="font-serif font-semibold text-cafe">
                   Karem Peña
                 </h2>
-                <p class="text-sm text-terracota flex items-center gap-1.5">
+                <p class="text-sm text-purple-600 flex items-center gap-1.5">
                   <span class="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
                   Online hoy
                 </p>
@@ -260,7 +260,7 @@
                 <input
                   type="text"
                   placeholder="Buscar paciente o sesión…"
-                  class="w-full px-4 py-2.5 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/20 transition-all text-cafe placeholder-cafe/50"
+                  class="w-full px-4 py-2.5 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20 transition-all text-cafe placeholder-cafe/50"
                 />
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-cafe/50">
                   🔍
@@ -275,7 +275,7 @@
 
               <!-- Avatar -->
               <div
-                class="w-10 h-10 rounded-full bg-terracota text-white flex items-center justify-center font-semibold text-sm"
+                class="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold text-sm"
               >
                 KP
               </div>

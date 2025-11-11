@@ -80,7 +80,7 @@
         <!-- Tarjeta elevada -->
         <div class="card-elevated">
           <div class="flex items-start gap-3 mb-3">
-            <div class="avatar-base bg-terracota/10 text-terracota">
+            <div class="avatar-base bg-purple-600/10 text-purple-600">
               <IconUser class="w-5 h-5" />
             </div>
             <div class="flex-1">
@@ -107,7 +107,7 @@
         <!-- Tarjeta interactiva -->
         <div class="card-interactive">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-12 h-12 rounded-full bg-gradient-terracota flex items-center justify-center text-white">
+            <div class="w-12 h-12 rounded-full bg-gradient-violeta flex items-center justify-center text-white">
               <IconCalendar class="w-6 h-6" />
             </div>
             <div>
@@ -150,7 +150,7 @@
           <button class="btn-secondary">Secundario</button>
           <button class="btn-outline">Outline</button>
           <button class="btn-ghost">Ghost</button>
-          <button class="btn-terracota-light">Terracota Light</button>
+          <button class="btn-primary-light">Terracota Light</button>
         </div>
         
         <!-- Tamaños -->
@@ -394,7 +394,7 @@
         <!-- Spinners -->
         <div class="flex items-center gap-4">
           <span class="spinner"></span>
-          <span class="spinner text-terracota"></span>
+          <span class="spinner text-purple-600"></span>
           <span class="spinner text-green-500"></span>
         </div>
         
@@ -426,7 +426,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="card hover-lift">
-          <IconArrowUp class="w-8 h-8 text-terracota mb-3" />
+          <IconArrowUp class="w-8 h-8 text-purple-600 mb-3" />
           <h3 class="font-serif font-semibold text-cafe mb-2">Hover Lift</h3>
           <p class="text-sm text-cafe/70">
             Se eleva suavemente al pasar el cursor
@@ -434,7 +434,7 @@
         </div>
         
         <div class="card hover-glow">
-          <IconStar class="w-8 h-8 text-terracota mb-3" />
+          <IconStar class="w-8 h-8 text-purple-600 mb-3" />
           <h3 class="font-serif font-semibold text-cafe mb-2">Hover Glow</h3>
           <p class="text-sm text-cafe/70">
             Genera un brillo sutil al interactuar
@@ -442,7 +442,7 @@
         </div>
         
         <div class="card hover-scale">
-          <IconZoomIn class="w-8 h-8 text-terracota mb-3" />
+          <IconZoomIn class="w-8 h-8 text-purple-600 mb-3" />
           <h3 class="font-serif font-semibold text-cafe mb-2">Hover Scale</h3>
           <p class="text-sm text-cafe/70">
             Crece ligeramente al hacer hover

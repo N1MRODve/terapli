@@ -33,7 +33,6 @@ export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
 export { COLORES_ESTADO, useAgenda, Cita, FiltrosAgenda, DisponibilidadTerapeuta, ResultadoCompletar } from '../composables/useAgenda';
 export { useBonos } from '../composables/useBonos';
 export { useCitas } from '../composables/useCitas';
-export { useConsulta } from '../composables/useConsulta';
 export { useInactivityDetector } from '../composables/useInactivityDetector';
 export { useMensajes, Mensaje, Conversacion } from '../composables/useMensajes';
 export { useNotificaciones, Notificacion } from '../composables/useNotificaciones';
@@ -43,7 +42,7 @@ export { useRecursos, TipoRecurso, Recurso, RecursoPaciente, CrearRecursoInput, 
 export { useRoles } from '../composables/useRoles';
 export { useSesiones, EstadoSesion, ModalidadSesion, Sesion, SesionDetallada, ResumenFinanciero } from '../composables/useSesiones';
 export { useSesionesDemo } from '../composables/useSesionesDemo';
-export { useSupabase, UserProfile, UserRole } from '../composables/useSupabase';
+export { useSupabase, UserRole, UserProfile } from '../composables/useSupabase';
 export { useTerapeuta } from '../composables/useTerapeuta';
 export { useVisitorContext } from '../composables/useVisitorContext';
 export { capitalizeName } from '../utils/formatName';
@@ -52,4 +51,9 @@ export { useSupabaseClient } from '../node_modules/@nuxtjs/supabase/dist/runtime
 export { useSupabaseCookieRedirect } from '../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseCookieRedirect';
 export { useSupabaseSession } from '../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseSession';
 export { useSupabaseUser } from '../node_modules/@nuxtjs/supabase/dist/runtime/composables/useSupabaseUser';
+export { queryCollection, queryCollectionSearchSections, queryCollectionNavigation, queryCollectionItemSurroundings } from '../node_modules/@nuxt/content/dist/runtime/app';
+export { flatUnwrap as unwrapSlot } from '../node_modules/@nuxtjs/mdc/dist/runtime/utils/node';
+export { parseMarkdown } from '../node_modules/@nuxtjs/mdc/dist/runtime/parser';
+export { stringifyMarkdown } from '../node_modules/@nuxtjs/mdc/dist/runtime/stringify';
 export { usePWA, useTransparentPwaIcon, useMaskablePwaIcon, useFaviconPwaIcon, useApplePwaIcon, useAppleSplashScreenPwaIcon } from '../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index';
+export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';

@@ -88,7 +88,7 @@
         <span
           v-for="etiqueta in recurso.etiquetas.slice(0, 5)"
           :key="etiqueta"
-          class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-terracota/10 text-terracota"
+          class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-600/10 text-purple-600"
         >
           #{{ etiqueta }}
         </span>
@@ -117,7 +117,7 @@
         <button
           v-if="mostrarBotonEnviar"
           @click="$emit('enviar', recurso)"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-terracota text-white text-sm font-medium rounded-lg hover:bg-terracota/90 transition-colors"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-600/90 transition-colors"
         >
           <span>📤</span>
           <span>Enviar</span>

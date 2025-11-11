@@ -5,10 +5,11 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/supabase', 
     '@nuxtjs/tailwindcss', 
-    // Solo incluir @nuxt/content en desarrollo
-    ...(process.env.NODE_ENV === 'development' ? ['@nuxt/content'] : []),
+    // Solo incluir @nuxt/content si no está deshabilitado
+    ...(process.env.DISABLE_CONTENT !== 'true' && process.env.NODE_ENV === 'development' ? ['@nuxt/content'] : []),
     '@nuxtjs/google-fonts', 
-    '@vite-pwa/nuxt'
+    // Solo incluir PWA si no está deshabilitado
+    ...(process.env.DISABLE_PWA !== 'true' ? ['@vite-pwa/nuxt'] : [])
   ],
 
   css: ['~/assets/css/main.css'],
@@ -28,6 +29,12 @@ export default defineNuxtConfig({
           isCustomElement: () => false
         }
       }
+    },
+    define: {
+      // Suprimir warnings experimentales de Vue
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+      __VUE_OPTIONS_API__: true,
+      __VUE_PROD_DEVTOOLS__: false
     }
   },
 
@@ -67,16 +74,27 @@ export default defineNuxtConfig({
     viewer: false
   },
 
-  // Content solo se configura si está disponible (desarrollo)
-  ...(process.env.NODE_ENV === 'development' && {
+  // Content solo se configura si está disponible y no deshabilitado
+  ...(process.env.DISABLE_CONTENT !== 'true' && process.env.NODE_ENV === 'development' && {
     content: {
-      // Configuración básica para desarrollo
+      // Configuración básica para desarrollo con puerto específico
+      watch: {
+        ws: {
+          port: 4000,
+          hostname: 'localhost',
+          showURL: false
+        }
+      },
+      // Deshabilitar en caso de error de conexión
+      experimental: {
+        clientDB: false
+      }
     }
   }),
 
   pwa: {
     registerType: 'prompt',
-    disable: process.env.NODE_ENV === 'development',
+    disable: process.env.NODE_ENV === 'development' || process.env.DISABLE_PWA === 'true',
     manifest: {
       name: 'Terapli',
       short_name: 'Agenda',
@@ -115,7 +133,14 @@ export default defineNuxtConfig({
       skipWaiting: false,
       globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg,ico}'],
       navigateFallback: null,
-      navigateFallbackDenylist: [/^\/api\//, /^\/_nuxt\//],
+      navigateFallbackDenylist: [
+        /^\/api\//, 
+        /^\/_nuxt\//, 
+        /^\/login/, 
+        /^\/terapeuta\/login/, 
+        /^\/coordinacion\/login/,
+        /^\/admin/
+      ],
       runtimeCaching: [
         {
           urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

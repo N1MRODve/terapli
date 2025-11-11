@@ -27,9 +27,19 @@ useHead({
   ]
 })
 
-// Atajos de teclado para activar/desactivar debug
+// Variable reactiva para manejar hydration
+const isClient = ref(false)
+
+// Router para el error handler
+let router = null
+
 onMounted(() => {
+  isClient.value = true
+  
+  // Inicializar router solo en el cliente
   if (process.client) {
+    router = useRouter()
+    
     window.addEventListener('keydown', (e) => {
       // Ctrl+Shift+D o Cmd+Shift+D para toggle debug
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
@@ -41,11 +51,14 @@ onMounted(() => {
   }
 })
 
-// Variable reactiva para manejar hydration
-const isClient = ref(false)
-onMounted(() => {
-  isClient.value = true
-})
+// Función para recargar la página
+const recargarPagina = () => {
+  if (router) {
+    router.go(0)
+  } else if (process.client) {
+    window.location.reload()
+  }
+}
 </script>
 
 <template>
@@ -64,7 +77,7 @@ onMounted(() => {
             <h1 class="text-2xl font-semibold text-cafe mb-4">Oops! Algo salió mal</h1>
             <p class="text-cafe/70 mb-6">Ha ocurrido un error inesperado. Por favor, recarga la página.</p>
             <button 
-              @click="$router.go(0)"
+              @click="recargarPagina"
               class="btn btn-primary"
             >
               Recargar página

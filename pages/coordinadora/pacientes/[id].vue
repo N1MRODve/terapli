@@ -3,7 +3,7 @@
     <!-- Navegación de regreso -->
     <button
       @click="$router.push('/coordinadora/pacientes')"
-      class="mb-6 flex items-center gap-2 text-cafe hover:text-terracota transition-colors"
+      class="mb-6 flex items-center gap-2 text-cafe hover:text-purple-600 transition-colors"
     >
       <span>←</span>
       <span>Volver a lista de pacientes</span>
@@ -11,7 +11,7 @@
 
     <!-- Estado de carga -->
     <div v-if="cargando" class="text-center py-12">
-      <div class="animate-spin w-12 h-12 border-4 border-terracota border-t-transparent rounded-full mx-auto mb-4"></div>
+      <div class="animate-spin w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full mx-auto mb-4"></div>
       <p class="text-cafe/60">Cargando información del paciente...</p>
     </div>
 
@@ -21,7 +21,7 @@
         <span class="text-6xl mb-4 block">❌</span>
         <h3 class="text-xl font-serif font-semibold text-cafe mb-2">No se pudo cargar la información</h3>
         <p class="text-cafe/60 mb-4">{{ error }}</p>
-        <button @click="$router.push('/coordinadora/pacientes')" class="px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors">
+        <button @click="$router.push('/coordinadora/pacientes')" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors">
           Volver a la lista
         </button>
       </div>
@@ -33,13 +33,13 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           <div class="flex items-start gap-4 flex-1">
-            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-terracota to-cafe flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-cafe flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
               {{ iniciales }}
             </div>
             <div class="flex-1">
               <div class="flex items-center gap-3 mb-2">
                 <h1 class="text-3xl font-serif font-bold text-cafe">{{ nombreCompleto }}</h1>
-                <button @click="abrirModalEdicion" class="text-gray-400 hover:text-terracota transition-colors" title="Editar información">
+                <button @click="abrirModalEdicion" class="text-gray-400 hover:text-purple-600 transition-colors" title="Editar información">
                   <span class="text-xl">✏️</span>
                 </button>
               </div>
@@ -73,7 +73,7 @@
               <span>💬</span>
               <span>WhatsApp</span>
             </button>
-            <button @click="agendarCita" class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm flex items-center gap-2 justify-center">
+            <button @click="agendarCita" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors text-sm flex items-center gap-2 justify-center">
               <span>📅</span>
               <span>Agendar Cita</span>
             </button>
@@ -115,7 +115,7 @@
             <span class="text-3xl">🎟️</span>
             <div>
               <p class="text-sm text-gray-600">Bonos Activos</p>
-              <p class="text-2xl font-bold text-terracota">{{ bonosActivos.length }}</p>
+              <p class="text-2xl font-bold text-purple-600">{{ bonosActivos.length }}</p>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@
             :key="tab.id"
             @click="tabActual = tab.id"
             class="px-6 py-4 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
-            :class="tabActual === tab.id ? 'text-terracota border-b-2 border-terracota' : 'text-gray-600 hover:text-cafe'"
+            :class="tabActual === tab.id ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-600 hover:text-cafe'"
           >
             <span>{{ tab.icon }}</span>
             <span>{{ tab.label }}</span>
@@ -178,7 +178,7 @@
           <div v-if="tabActual === 'citas'">
             <div class="flex items-center justify-between mb-6">
               <h3 class="text-lg font-semibold text-cafe">Historial de Citas ({{ totalCitas }})</h3>
-              <button @click="agendarCita" class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors text-sm">
+              <button @click="agendarCita" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors text-sm">
                 + Nueva Cita
               </button>
             </div>
@@ -190,7 +190,7 @@
             <div v-else-if="citas.length === 0" class="text-center py-12 text-gray-400">
               <span class="text-6xl block mb-4">📅</span>
               <p class="mb-4">No hay citas registradas</p>
-              <button @click="agendarCita" class="px-4 py-2 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors">
+              <button @click="agendarCita" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors">
                 Agendar Primera Cita
               </button>
             </div>
@@ -246,7 +246,7 @@
                     </span>
                   </div>
                   <div class="text-right">
-                    <p class="text-2xl font-bold text-terracota">{{ bono.sesiones_restantes }}</p>
+                    <p class="text-2xl font-bold text-purple-600">{{ bono.sesiones_restantes }}</p>
                     <p class="text-sm text-gray-600">sesiones restantes</p>
                   </div>
                 </div>
@@ -277,7 +277,7 @@
                 <!-- Barra de progreso -->
                 <div class="mt-4">
                   <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-terracota h-2 rounded-full" :style="{ width: `${((bono.sesiones_totales - bono.sesiones_restantes) / bono.sesiones_totales) * 100}%` }"></div>
+                    <div class="bg-purple-600 h-2 rounded-full" :style="{ width: `${((bono.sesiones_totales - bono.sesiones_restantes) / bono.sesiones_totales) * 100}%` }"></div>
                   </div>
                 </div>
               </div>
@@ -374,22 +374,22 @@
         <form @submit.prevent="guardarCambios" class="p-6 space-y-6">
           <div>
             <label class="block text-sm font-medium text-cafe mb-2">Nombre Completo *</label>
-            <input v-model="formEdicion.nombre_completo" type="text" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota" />
+            <input v-model="formEdicion.nombre_completo" type="text" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-cafe mb-2">Email *</label>
-            <input v-model="formEdicion.email" type="email" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota" />
+            <input v-model="formEdicion.email" type="email" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-cafe mb-2">Teléfono</label>
-            <input v-model="formEdicion.telefono" type="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota" />
+            <input v-model="formEdicion.telefono" type="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-cafe mb-2">Área de Acompañamiento</label>
-            <select v-model="formEdicion.area_de_acompanamiento" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota">
+            <select v-model="formEdicion.area_de_acompanamiento" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300">
               <option value="">Selecciona un área</option>
               <option value="Ansiedad">Ansiedad</option>
               <option value="Depresión">Depresión</option>
@@ -406,7 +406,7 @@
 
           <div>
             <label class="block text-sm font-medium text-cafe mb-2">Frecuencia de Sesiones</label>
-            <select v-model="formEdicion.frecuencia" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracota">
+            <select v-model="formEdicion.frecuencia" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300">
               <option value="">Selecciona una frecuencia</option>
               <option value="semanal">Semanal</option>
               <option value="quincenal">Quincenal</option>
@@ -416,7 +416,7 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <input v-model="formEdicion.activo" type="checkbox" id="activo-edit" class="w-5 h-5 text-terracota border-gray-300 rounded focus:ring-2 focus:ring-terracota" />
+            <input v-model="formEdicion.activo" type="checkbox" id="activo-edit" class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-2 focus:ring-purple-300" />
             <label for="activo-edit" class="text-sm font-medium text-cafe cursor-pointer">Paciente activo</label>
           </div>
 
@@ -428,7 +428,7 @@
             <button type="button" @click="cerrarModalEdicion" :disabled="guardandoCambios" class="flex-1 px-6 py-3 border border-gray-300 text-cafe rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50">
               Cancelar
             </button>
-            <button type="submit" :disabled="guardandoCambios" class="flex-1 px-6 py-3 bg-terracota text-white rounded-lg hover:bg-terracota/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="submit" :disabled="guardandoCambios" class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
               <span v-if="guardandoCambios" class="animate-spin">⏳</span>
               <span>{{ guardandoCambios ? 'Guardando...' : 'Guardar Cambios' }}</span>
             </button>

@@ -1,4 +1,15 @@
 export default defineNuxtPlugin(() => {
+  // Solo ejecutar en producción o si está explícitamente habilitado
+  if (process.dev && process.env.ENABLE_ANALYTICS !== 'true') {
+    console.log('📊 Analytics deshabilitado en desarrollo')
+    return {
+      provide: {
+        gtag: () => {},
+        trackEvent: () => {}
+      }
+    }
+  }
+
   const config = useRuntimeConfig()
   const GA_ID = 'G-423R3JT85S'
 
@@ -41,7 +52,10 @@ export default defineNuxtPlugin(() => {
         }
       }
     } catch (error) {
-      console.error('Error al verificar consentimiento:', error)
+      // Error silencioso en desarrollo
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Error al verificar consentimiento:', error)
+      }
     }
   }
 
@@ -51,10 +65,13 @@ export default defineNuxtPlugin(() => {
       'analytics_storage': granted ? 'granted' : 'denied'
     })
     
-    if (granted) {
-      console.log('✅ Google Analytics activado')
-    } else {
-      console.log('❌ Google Analytics desactivado')
+    // Solo mostrar logs en producción o si Analytics está habilitado
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_ANALYTICS === 'true') {
+      if (granted) {
+        console.log('✅ Google Analytics activado')
+      } else {
+        console.log('❌ Google Analytics desactivado')
+      }
     }
   }
 
