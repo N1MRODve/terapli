@@ -24,24 +24,36 @@ onMounted(async () => {
   setTimeout(async () => {
     try {
       const role = await getUserRole()
-      console.log('[Dashboard Fallback] Rol detectado:', role)
-      
+      console.log('[ROLE-REDIRECT] [Dashboard Fallback] Rol detectado:', role)
+
+      if (!role) {
+        console.error('[ROLE-REDIRECT] [Dashboard Fallback] No se pudo obtener el rol del usuario')
+        await navigateTo('/login', { replace: true })
+        return
+      }
+
       const roleRoutes: Record<string, string> = {
         psicologa: '/terapeuta/dashboard',
-        coordinadora: '/coordinadora/dashboard', 
+        terapeuta: '/terapeuta/dashboard',
+        coordinadora: '/coordinadora/dashboard',
         paciente: '/paciente/dashboard',
         admin: '/admin'
       }
-      
-      const redirectTo = roleRoutes[role || 'paciente']
-      console.log('[Dashboard Fallback] Redirigiendo a:', redirectTo)
-      
+
+      const redirectTo = roleRoutes[role]
+
+      if (!redirectTo) {
+        console.error(`[ROLE-REDIRECT] [Dashboard Fallback] Rol desconocido: '${role}'`)
+        await navigateTo('/acceso-denegado', { replace: true })
+        return
+      }
+
+      console.log(`[ROLE-REDIRECT] [Dashboard Fallback] Redirigiendo rol '${role}' a:`, redirectTo)
       await navigateTo(redirectTo, { replace: true })
     } catch (error) {
-      console.error('[Dashboard Fallback] Error:', error)
-      // Si hay error, redirigir a login
+      console.error('[ROLE-REDIRECT] [Dashboard Fallback] Error:', error)
       await navigateTo('/login', { replace: true })
     }
-  }, 2000) // Esperar 2 segundos antes del fallback
+  }, 1000) // Reducido a 1 segundo
 })
 </script>

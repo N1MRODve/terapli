@@ -324,20 +324,19 @@ const handleLogin = async () => {
   try {
     // Limpiar completamente la caché antes del login
     if (process.client) {
-      // Limpiar localStorage y sessionStorage
       localStorage.clear()
       sessionStorage.clear()
-      
-      // Limpiar cookies de Supabase si existen
+
       document.cookie.split(";").forEach(function(c) {
         document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
     }
 
+    console.log('[ROLE-REDIRECT] Iniciando login para:', email.value)
     const { data, error } = await signInWithEmail(email.value, password.value)
 
     if (error) {
-      console.error('[Login] Error de autenticación:', error)
+      console.error('[ROLE-REDIRECT] Error de autenticación:', error)
       errorMessage.value = 'Credenciales incorrectas. Por favor, verifica tu correo y contraseña.'
       isLoading.value = false
       return
@@ -349,13 +348,61 @@ const handleLogin = async () => {
       return
     }
 
-    console.log('[Login] Usuario autenticado:', data.user.email, 'ID:', data.user.id)
+    console.log('[ROLE-REDIRECT] Usuario autenticado:', data.user.email, 'ID:', data.user.id)
+
+    // CRÍTICO: Esperar a que el perfil se cargue ANTES de redirigir
+    const { loadUserProfile, userProfile } = useSupabase()
+
+    console.log('[ROLE-REDIRECT] Esperando carga de perfil...')
+    await loadUserProfile()
+
+    // Reintentar hasta 5 veces si el perfil no se carga
+    let attempts = 0
+    while (!userProfile.value && attempts < 5) {
+      console.log(`[ROLE-REDIRECT] Reintento ${attempts + 1} de carga de perfil...`)
+      await new Promise(resolve => setTimeout(resolve, 300))
+      await loadUserProfile()
+      attempts++
+    }
+
+    if (!userProfile.value) {
+      console.error('[ROLE-REDIRECT] No se pudo cargar el perfil después de todos los intentos')
+      errorMessage.value = 'Error al cargar tu perfil. Por favor, intenta de nuevo.'
+      isLoading.value = false
+      return
+    }
+
+    const userRole = userProfile.value.rol
+    console.log('[ROLE-REDIRECT] Perfil cargado correctamente. Email:', userProfile.value.email, 'Rol:', userRole)
+
+    // Mapeo de roles a rutas
+    const roleRoutes: Record<string, string> = {
+      psicologa: '/terapeuta/dashboard',
+      terapeuta: '/terapeuta/dashboard',
+      coordinadora: '/coordinadora/dashboard',
+      admin: '/admin',
+      paciente: '/paciente/dashboard'
+    }
+
+    const redirectTo = roleRoutes[userRole]
+
+    if (!redirectTo) {
+      console.error(`[ROLE-REDIRECT] Rol no reconocido: '${userRole}'`)
+      errorMessage.value = `Acceso no autorizado. Tu rol '${userRole}' no tiene permisos para acceder al sistema.`
+      const supabase = useSupabaseClient()
+      await supabase.auth.signOut()
+      isLoading.value = false
+      return
+    }
+
     successMessage.value = 'Inicio de sesión exitoso. Redirigiendo...'
-    
-    // Estrategia simplificada: redirigir a una página temporal y dejar que el middleware maneje la lógica
-    await navigateTo('/dashboard', { replace: true })
+    console.log(`[ROLE-REDIRECT] Redirigiendo usuario con rol '${userRole}' a ${redirectTo}`)
+
+    // Pequeño delay para que el usuario vea el mensaje de éxito
+    await new Promise(resolve => setTimeout(resolve, 500))
+    await navigateTo(redirectTo, { replace: true })
   } catch (err) {
-    console.error('[Login] Error en handleLogin:', err)
+    console.error('[ROLE-REDIRECT] Error en handleLogin:', err)
     errorMessage.value = 'Ocurrió un error. Por favor, intenta de nuevo.'
   } finally {
     isLoading.value = false
