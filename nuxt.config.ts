@@ -35,6 +35,18 @@ export default defineNuxtConfig({
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
       __VUE_OPTIONS_API__: true,
       __VUE_PROD_DEVTOOLS__: false
+    },
+    build: {
+      // Evitar rutas absolutas del filesystem en sourcemaps
+      sourcemap: process.env.NODE_ENV === 'development' ? 'inline' : false,
+      rollupOptions: {
+        output: {
+          // Sanitizar nombres de chunks para evitar paths absolutos
+          chunkFileNames: '_nuxt/[name]-[hash].js',
+          entryFileNames: '_nuxt/[name]-[hash].js',
+          assetFileNames: '_nuxt/[name]-[hash][extname]'
+        }
+      }
     }
   },
 
@@ -92,6 +104,7 @@ export default defineNuxtConfig({
     }
   }),
 
+  // @ts-expect-error - PWA configuration from @vite-pwa/nuxt module
   pwa: {
     registerType: 'prompt',
     disable: process.env.NODE_ENV === 'development' || process.env.DISABLE_PWA === 'true',
@@ -183,8 +196,10 @@ export default defineNuxtConfig({
         }
       ]
     },
+    // CRÍTICO: devOptions.enabled DEBE ser false en desarrollo
+    // De lo contrario sobrescribe el 'disable' de arriba
     devOptions: {
-      enabled: true,
+      enabled: false, // CAMBIADO: era true, causa bug de SW en dev
       type: 'module'
     }
   },
