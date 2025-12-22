@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0]/40 p-6">
     <h3 class="font-serif text-lg font-semibold text-cafe flex items-center gap-2 mb-4">
       <span class="text-xl">📊</span>
       Evolución Emocional
@@ -205,7 +205,7 @@ const crearGrafico = () => {
         {
           label: 'Ánimo',
           data: dataAnimo,
-          borderColor: '#D8AFA0',
+          borderColor: '#5550F2',
           backgroundColor: 'rgba(216, 175, 160, 0.1)',
           tension: 0.4,
           fill: true
@@ -240,7 +240,7 @@ const crearGrafico = () => {
               family: 'Lato',
               size: 11
             },
-            color: '#5D4A44',
+            color: '#2D3748',
             usePointStyle: true,
             padding: 15
           }
@@ -268,7 +268,7 @@ const crearGrafico = () => {
               family: 'Lato',
               size: 11
             },
-            color: '#5D4A44'
+            color: '#2D3748'
           },
           grid: {
             color: 'rgba(234, 213, 211, 0.3)'
@@ -280,7 +280,7 @@ const crearGrafico = () => {
               family: 'Lato',
               size: 11
             },
-            color: '#5D4A44',
+            color: '#2D3748',
             maxRotation: 45,
             minRotation: 45
           },

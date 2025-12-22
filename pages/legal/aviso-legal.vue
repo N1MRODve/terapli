@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-[#F9F7F3] min-h-screen">
+  <div class="bg-[#F2F2F2] min-h-screen">
     <!-- Hero Section -->
-    <section class="bg-gradient-to-b from-[#EAD5D3]/20 to-[#F9F7F3] py-16 border-b border-[#EAD5D3]">
+    <section class="bg-gradient-to-b from-[#E2E8F0]/20 to-[#F2F2F2] py-16 border-b border-[#E2E8F0]">
       <div class="max-w-5xl mx-auto px-6 text-center">
         <h1 class="font-serif text-4xl md:text-5xl font-semibold text-[#5D4A44] mb-4">
           Aviso Legal
@@ -23,7 +23,7 @@
       <div class="max-w-5xl mx-auto px-6 text-[#5D4A44]">
         
         <!-- Introducción -->
-        <div class="mb-12 p-6 bg-white/50 rounded-lg border border-[#EAD5D3]">
+        <div class="mb-12 p-6 bg-white/50 rounded-lg border border-[#E2E8F0]">
           <p class="font-sans text-lg leading-relaxed">
             En cumplimiento de la normativa vigente en materia de Servicios de la Sociedad de la Información, en particular de la 
             <strong>Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y del Comercio Electrónico (LSSICE)</strong>, 
@@ -35,46 +35,46 @@
         </div>
 
         <!-- Sección 1: Datos Identificativos -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             1. Datos Identificativos del Responsable
           </h2>
           <div class="bg-white/30 p-6 rounded-lg">
             <ul class="font-sans leading-relaxed space-y-3">
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div><strong>Titularidad del sitio web:</strong> Karem Eydelys Peña Marcano</div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div><strong>Nombre comercial:</strong> Psicóloga Karem</div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div><strong>Número de identificación fiscal:</strong> 35717628P</div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div><strong>Domicilio profesional:</strong> Calle del Dr. Rivas 2, Nº8, 28350 Ciempozuelos (Madrid)</div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
-                <div><strong>Teléfono de contacto:</strong> <a href="tel:+34722377290" class="text-[#D8AFA0] hover:text-[#EFA08B]">+34 722 377 290</a></div>
+                <span class="text-[#5550F2] font-bold">•</span>
+                <div><strong>Teléfono de contacto:</strong> <a href="tel:+34722377290" class="text-[#5550F2] hover:text-[#EFA08B]">+34 722 377 290</a></div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
-                <div><strong>Correo electrónico:</strong> <a href="mailto:reservas@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline">reservas@psicologakarem.com</a></div>
+                <span class="text-[#5550F2] font-bold">•</span>
+                <div><strong>Correo electrónico:</strong> <a href="mailto:reservas@psicologakarem.com" class="text-[#5550F2] hover:text-[#EFA08B] underline">reservas@psicologakarem.com</a></div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div><strong>Número de colegiada:</strong> 32005</div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div><strong>Colegio Profesional:</strong> Colegio Oficial de Psicología de Cataluña</div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div><strong>Lugar de ejercicio profesional:</strong> Madrid</div>
               </li>
             </ul>
@@ -82,7 +82,7 @@
         </article>
 
         <!-- Sección 2: Actividad Profesional -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             2. Actividad Profesional y Servicios
           </h2>
@@ -116,7 +116,7 @@
         </article>
 
         <!-- Sección 3: Condiciones de Uso -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             3. Condiciones de Uso del Sitio Web
           </h2>
@@ -141,7 +141,7 @@
         </article>
 
         <!-- Sección 4: Condiciones de Prestación -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             4. Condiciones de Prestación de Servicios
           </h2>
@@ -163,22 +163,22 @@
           <h3 class="font-serif text-2xl font-semibold mb-4 text-[#5D4A44]">
             Política de Cancelación de Sesiones
           </h3>
-          <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-6 rounded-r-lg mb-6">
+          <div class="bg-[#E2E8F0]/20 border-l-4 border-[#5550F2] p-6 rounded-r-lg mb-6">
             <ul class="font-sans leading-relaxed space-y-3">
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div>Cancelación con al menos <strong>24 horas de antelación</strong></div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div>Cancelaciones tardías: <strong>recargo del 20%</strong> en la siguiente sesión</div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div>En bonos de sesiones, la cancelación tardía conlleva la <strong>pérdida de la sesión</strong></div>
               </li>
               <li class="flex gap-3">
-                <span class="text-[#D8AFA0] font-bold">•</span>
+                <span class="text-[#5550F2] font-bold">•</span>
                 <div>Se contemplan <strong>excepciones en casos de emergencia o fuerza mayor</strong></div>
               </li>
             </ul>
@@ -189,7 +189,7 @@
         </article>
 
         <!-- Sección 5: Propiedad Intelectual -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             5. Propiedad Intelectual e Industrial
           </h2>
@@ -200,7 +200,7 @@
         </article>
 
         <!-- Sección 6: Responsabilidad -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             6. Responsabilidad
           </h2>
@@ -228,7 +228,7 @@
         </article>
 
         <!-- Sección 7: Protección de Datos -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             7. Protección de Datos Personales
           </h2>
@@ -267,7 +267,7 @@
           </h3>
           <p class="font-sans leading-relaxed mb-6">
             Los usuarios pueden ejercer derechos de <strong>acceso, rectificación, supresión, limitación, portabilidad y oposición</strong> 
-            enviando un correo a <a href="mailto:reservas@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline">reservas@psicologakarem.com</a>.
+            enviando un correo a <a href="mailto:reservas@psicologakarem.com" class="text-[#5550F2] hover:text-[#EFA08B] underline">reservas@psicologakarem.com</a>.
           </p>
 
           <h3 class="font-serif text-2xl font-semibold mb-4 text-[#5D4A44] mt-8">
@@ -279,23 +279,23 @@
         </article>
 
         <!-- Sección 8: Cookies -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             8. Cookies y Tecnologías Similares
           </h2>
           <p class="font-sans leading-relaxed">
             El sitio utiliza cookies técnicas necesarias para su funcionamiento. 
-            Consulte la <NuxtLink to="/legal/cookies" class="text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold">Política de Cookies</NuxtLink> 
+            Consulte la <NuxtLink to="/legal/cookies" class="text-[#5550F2] hover:text-[#EFA08B] underline font-semibold">Política de Cookies</NuxtLink> 
             para más información.
           </p>
         </article>
 
         <!-- Sección 9: Legislación -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             9. Legislación Aplicable y Jurisdicción
           </h2>
-          <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-6 rounded-r-lg">
+          <div class="bg-[#E2E8F0]/20 border-l-4 border-[#5550F2] p-6 rounded-r-lg">
             <p class="font-sans leading-relaxed">
               Este Aviso Legal se rige por la <strong>legislación española</strong>. 
               Las partes se someten a los <strong>Juzgados y Tribunales de Madrid</strong> para cualquier disputa.
@@ -318,7 +318,7 @@
         </article>
 
         <!-- CTA Final -->
-        <div class="mt-16 p-8 bg-gradient-to-br from-[#EAD5D3]/30 to-[#D8AFA0]/20 rounded-lg border border-[#EAD5D3] text-center">
+        <div class="mt-16 p-8 bg-gradient-to-br from-[#E2E8F0]/30 to-[#5550F2]/20 rounded-lg border border-[#E2E8F0] text-center">
           <h3 class="font-serif text-2xl font-semibold mb-4 text-[#5D4A44]">
             ¿Tienes dudas sobre nuestras condiciones?
           </h3>
@@ -326,7 +326,7 @@
             Estamos aquí para aclarar cualquier inquietud sobre el uso del sitio web o nuestros servicios.
           </p>
           <a href="mailto:reservas@psicologakarem.com" 
-             class="inline-block px-8 py-3 bg-[#D8AFA0] hover:bg-[#EFA08B] text-white font-sans font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
+             class="inline-block px-8 py-3 bg-[#5550F2] hover:bg-[#EFA08B] text-white font-sans font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
             Contactar
           </a>
         </div>

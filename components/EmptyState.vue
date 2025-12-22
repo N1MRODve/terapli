@@ -4,7 +4,7 @@
     <div class="mb-4">
       <slot name="icon">
         <svg 
-          class="w-16 h-16 text-[#D8AFA0] opacity-50" 
+          class="w-16 h-16 text-[#5550F2] opacity-50" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -20,12 +20,12 @@
     </div>
 
     <!-- Título -->
-    <h3 class="text-lg font-medium text-[#5D4A44] font-['Lora'] mb-2">
+    <h3 class="text-lg font-medium text-[#2D3748] font-serif mb-2">
       {{ title }}
     </h3>
 
     <!-- Descripción -->
-    <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato'] max-w-md mb-4">
+    <p class="text-sm text-[#2D3748] opacity-70 font-sans max-w-md mb-4">
       {{ description }}
     </p>
 

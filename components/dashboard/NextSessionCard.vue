@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#EAD5D3]/30 p-5">
+  <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#E2E8F0]/30 p-5">
     <div class="flex items-start justify-between mb-4">
-      <h2 class="font-['Lora'] text-xl text-[#5D4A44]">
+      <h2 class="font-serif text-xl text-[#2D3748]">
         Próxima sesión
       </h2>
-      <div class="flex items-center gap-1 text-[#D8AFA0]">
+      <div class="flex items-center gap-1 text-[#5550F2]">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -15,10 +15,10 @@
     <div v-if="nextSession">
       <!-- Fecha y hora compacta -->
       <div class="mb-4">
-        <p class="font-['Lora'] text-lg font-medium text-[#5D4A44] mb-1">
+        <p class="font-serif text-lg font-medium text-[#2D3748] mb-1">
           {{ formatDate(nextSession.date) }}
         </p>
-        <div class="flex items-center gap-4 text-sm font-['Lato'] text-[#5D4A44]/70">
+        <div class="flex items-center gap-4 text-sm font-sans text-[#2D3748]/70">
           <div class="flex items-center gap-1.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -26,7 +26,7 @@
             </svg>
             <span>{{ nextSession.time }}</span>
           </div>
-          <span class="text-[#5D4A44]/30">•</span>
+          <span class="text-[#2D3748]/30">•</span>
           <div class="flex items-center gap-1.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -34,14 +34,14 @@
             </svg>
             <span class="capitalize">{{ nextSession.modality }}</span>
           </div>
-          <span class="text-[#5D4A44]/30">•</span>
+          <span class="text-[#2D3748]/30">•</span>
           <span>{{ nextSession.duration }} min</span>
         </div>
       </div>
 
       <!-- Nota empática -->
-      <div v-if="nextSession.note" class="mb-4 p-3 bg-[#F9F7F3] rounded-xl border-l-4 border-[#D8AFA0]">
-        <p class="font-['Lato'] text-sm text-[#5D4A44]/80">
+      <div v-if="nextSession.note" class="mb-4 p-3 bg-[#F2F2F2] rounded-xl border-l-4 border-[#5550F2]">
+        <p class="font-sans text-sm text-[#2D3748]/80">
           {{ nextSession.note }}
         </p>
       </div>
@@ -54,8 +54,8 @@
           :class="[
             'flex-1 py-2.5 rounded-xl font-medium text-white transition-all duration-300 ease-in-out',
             canJoin
-              ? 'bg-[#D8AFA0] hover:bg-[#C99F90] hover:shadow-md hover:scale-[1.02]'
-              : 'bg-[#D8AFA0]/50 cursor-not-allowed'
+              ? 'bg-[#5550F2] hover:bg-[#C99F90] hover:shadow-md hover:scale-[1.02]'
+              : 'bg-[#5550F2]/50 cursor-not-allowed'
           ]"
           style="font-family: 'Lato', sans-serif"
         >
@@ -64,7 +64,7 @@
         
         <!-- Contador regresivo compacto -->
         <div v-if="timeUntilSession" class="text-right">
-          <p class="font-['Lato'] text-xs text-[#5D4A44]/60 whitespace-nowrap">
+          <p class="font-sans text-xs text-[#2D3748]/60 whitespace-nowrap">
             {{ timeUntilSession }}
           </p>
         </div>
@@ -73,12 +73,12 @@
 
     <div v-else class="text-center py-6">
       <div class="inline-block mb-3 text-4xl opacity-30">📅</div>
-      <p class="font-['Lato'] text-sm text-[#5D4A44]/60 mb-3">
+      <p class="font-sans text-sm text-[#2D3748]/60 mb-3">
         No tienes sesiones programadas próximamente
       </p>
       <button
         @click="$router.push('/reservar')"
-        class="px-5 py-2 rounded-full bg-[#D8AFA0] text-white font-medium text-sm
+        class="px-5 py-2 rounded-full bg-[#5550F2] text-white font-medium text-sm
                hover:bg-[#C99F90] transition-all duration-300 ease-in-out hover:scale-105"
         style="font-family: 'Lato', sans-serif"
       >

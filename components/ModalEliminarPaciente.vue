@@ -4,12 +4,12 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     @click.self="cerrarModal"
   >
-    <div class="bg-[#F9F7F3] rounded-lg shadow-xl max-w-md w-full">
+    <div class="bg-[#F2F2F2] rounded-lg shadow-xl max-w-md w-full">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-[#D8AFA0]/30">
+      <div class="px-6 py-4 border-b border-[#5550F2]/30">
         <div class="flex items-center gap-3">
           <span class="text-3xl">⚠️</span>
-          <h2 class="text-2xl font-['Lora'] text-[#5D4A44] font-semibold">
+          <h2 class="text-2xl font-serif text-[#2D3748] font-semibold">
             Eliminar Paciente
           </h2>
         </div>
@@ -17,7 +17,7 @@
 
       <!-- Contenido -->
       <div class="px-6 py-6 space-y-4">
-        <p class="text-[#5D4A44]">
+        <p class="text-[#2D3748]">
           ¿Estás seguro de que deseas eliminar a
           <strong class="font-semibold">{{ pacienteNombre }}</strong>?
         </p>
@@ -61,12 +61,12 @@
       </div>
 
       <!-- Botones de Acción -->
-      <div class="px-6 py-4 border-t border-[#D8AFA0]/30 flex justify-end gap-3">
+      <div class="px-6 py-4 border-t border-[#5550F2]/30 flex justify-end gap-3">
         <button
           type="button"
           @click="cerrarModal"
           :disabled="procesando"
-          class="px-6 py-2 border border-[#D8AFA0] text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-6 py-2 border border-[#5550F2] text-[#2D3748] rounded-lg hover:bg-[#5550F2]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>

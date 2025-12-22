@@ -18,7 +18,7 @@
       <!-- Lista de conversaciones -->
       <div class="overflow-y-auto h-[calc(100%-5rem)]">
         <!-- Loading -->
-        <div v-if="loadingConversaciones" class="p-8 text-center">
+        <div v-if="loading" class="p-8 text-center">
           <div class="inline-block w-8 h-8 border-4 border-[#EAD5D3] border-t-[#D8AFA0] rounded-full animate-spin"></div>
         </div>
 
@@ -202,7 +202,7 @@
           class="flex-1 overflow-y-auto p-6 space-y-3 bg-[#F9F7F3]/30"
         >
           <!-- Loading mensajes -->
-          <div v-if="loadingMensajes" class="flex items-center justify-center h-full">
+          <div v-if="loading" class="flex items-center justify-center h-full">
             <div class="inline-block w-8 h-8 border-4 border-[#EAD5D3] border-t-[#D8AFA0] rounded-full animate-spin"></div>
           </div>
 
@@ -239,7 +239,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const { conversaciones, mensajes, loadingConversaciones, loadingMensajes, listarConversaciones, listarConversacion, marcarVistos, suscribirseAConversacion, desuscribirse } = useMensajes()
+const { conversaciones, mensajes, loading, listarConversaciones, listarConversacion, marcarVistos, suscribirseAConversacion, desuscribirse } = useMensajes()
 const user = useSupabaseUser()
 const { getUserId } = useSupabase()
 

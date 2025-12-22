@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#EAD5D3]/30 p-5">
+  <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#E2E8F0]/30 p-5">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="font-['Lora'] text-xl text-[#5D4A44]">
+      <h2 class="font-serif text-xl text-[#2D3748]">
         Recursos para ti
       </h2>
       <button
         @click="$router.push('/paciente/recursos')"
-        class="font-['Lato'] text-sm text-[#D8AFA0] hover:text-[#C99F90] transition-colors flex items-center gap-1"
+        class="font-sans text-sm text-[#5550F2] hover:text-[#C99F90] transition-colors flex items-center gap-1"
       >
         Ver todos
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,8 +19,8 @@
       <div
         v-for="resource in resources"
         :key="resource.id"
-        class="flex-shrink-0 snap-start w-64 group p-4 bg-[#F9F7F3] rounded-2xl border border-transparent
-               hover:border-[#D8AFA0]/30 hover:shadow-md transition-all duration-300 ease-in-out cursor-pointer"
+        class="flex-shrink-0 snap-start w-64 group p-4 bg-[#F2F2F2] rounded-2xl border border-transparent
+               hover:border-[#5550F2]/30 hover:shadow-md transition-all duration-300 ease-in-out cursor-pointer"
         @click="openResource(resource)"
       >
         <!-- Icono -->
@@ -30,23 +30,23 @@
         </div>
 
         <!-- Categoría -->
-        <span class="inline-block px-2.5 py-1 mb-2 text-xs font-['Lato'] rounded-full
-                     bg-[#D8AFA0]/20 text-[#D8AFA0]">
+        <span class="inline-block px-2.5 py-1 mb-2 text-xs font-sans rounded-full
+                     bg-[#5550F2]/20 text-[#5550F2]">
           {{ resource.category }}
         </span>
 
         <!-- Título -->
-        <h3 class="font-['Lora'] text-base text-[#5D4A44] mb-2 group-hover:text-[#D8AFA0] transition-colors line-clamp-2">
+        <h3 class="font-serif text-base text-[#2D3748] mb-2 group-hover:text-[#5550F2] transition-colors line-clamp-2">
           {{ resource.title }}
         </h3>
 
         <!-- Descripción -->
-        <p class="font-['Lato'] text-sm text-[#5D4A44]/70 mb-3 line-clamp-2">
+        <p class="font-sans text-sm text-[#2D3748]/70 mb-3 line-clamp-2">
           {{ resource.description }}
         </p>
 
         <!-- Metadata -->
-        <div class="flex items-center gap-3 text-xs font-['Lato'] text-[#5D4A44]/50">
+        <div class="flex items-center gap-3 text-xs font-sans text-[#2D3748]/50">
           <span v-if="resource.duration" class="flex items-center gap-1">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -54,7 +54,7 @@
             </svg>
             {{ resource.duration }}
           </span>
-          <span v-if="resource.isNew" class="px-2 py-0.5 bg-[#D8AFA0] text-white rounded-full">
+          <span v-if="resource.isNew" class="px-2 py-0.5 bg-[#5550F2] text-white rounded-full">
             Nuevo
           </span>
         </div>
@@ -63,7 +63,7 @@
 
     <div v-else class="text-center py-6">
       <div class="inline-block mb-3 text-4xl opacity-30">📚</div>
-      <p class="font-['Lato'] text-sm text-[#5D4A44]/60">
+      <p class="font-sans text-sm text-[#2D3748]/60">
         No hay recursos disponibles en este momento
       </p>
     </div>

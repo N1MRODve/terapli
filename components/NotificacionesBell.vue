@@ -3,13 +3,13 @@
     <!-- Botón de notificaciones -->
     <button
       @click="toggleDropdown"
-      class="relative p-2 rounded-full hover:bg-[#EAD5D3]/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#D8AFA0]/50"
-      :class="{ 'bg-[#EAD5D3]/20': mostrarDropdown }"
+      class="relative p-2 rounded-full hover:bg-[#E2E8F0]/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#5550F2]/50"
+      :class="{ 'bg-[#E2E8F0]/20': mostrarDropdown }"
       aria-label="Notificaciones"
     >
       <!-- Icono de campana -->
       <svg
-        class="w-6 h-6 text-[#5D4A44]"
+        class="w-6 h-6 text-[#2D3748]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -25,7 +25,7 @@
       <!-- Badge contador -->
       <span
         v-if="totalNoVistas > 0"
-        class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-[#D8AFA0] rounded-full border-2 border-[#F9F7F3]"
+        class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-[#5550F2] rounded-full border-2 border-[#F2F2F2]"
       >
         {{ totalNoVistas > 9 ? '9+' : totalNoVistas }}
       </span>
@@ -42,17 +42,17 @@
     >
       <div
         v-if="mostrarDropdown"
-        class="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white rounded-lg shadow-xl border border-[#EAD5D3]/40 z-50 overflow-hidden"
+        class="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white rounded-lg shadow-xl border border-[#E2E8F0]/40 z-50 overflow-hidden"
       >
         <!-- Header -->
-        <div class="px-4 py-3 border-b border-[#EAD5D3]/30 flex items-center justify-between bg-[#F9F7F3]">
-          <h3 class="text-sm font-semibold text-[#5D4A44] font-lora">
+        <div class="px-4 py-3 border-b border-[#E2E8F0]/30 flex items-center justify-between bg-[#F2F2F2]">
+          <h3 class="text-sm font-semibold text-[#2D3748] font-lora">
             Notificaciones
           </h3>
           <button
             v-if="notificaciones.length > 0"
             @click="marcarTodasComoVistas"
-            class="text-xs text-[#D8AFA0] hover:text-[#C89B8A] font-lato transition-colors"
+            class="text-xs text-[#5550F2] hover:text-[#C89B8A] font-lato transition-colors"
           >
             Marcar todas como leídas
           </button>
@@ -62,16 +62,16 @@
         <div class="max-h-[400px] overflow-y-auto">
           <!-- Loading -->
           <div v-if="loading" class="p-8 text-center">
-            <div class="inline-block w-8 h-8 border-4 border-[#EAD5D3] border-t-[#D8AFA0] rounded-full animate-spin"></div>
+            <div class="inline-block w-8 h-8 border-4 border-[#E2E8F0] border-t-[#5550F2] rounded-full animate-spin"></div>
           </div>
 
           <!-- Sin notificaciones -->
           <div
             v-else-if="notificaciones.length === 0"
-            class="p-8 text-center text-[#5D4A44]/60 font-lato text-sm"
+            class="p-8 text-center text-[#2D3748]/60 font-lato text-sm"
           >
             <svg
-              class="w-12 h-12 mx-auto mb-3 text-[#EAD5D3]"
+              class="w-12 h-12 mx-auto mb-3 text-[#E2E8F0]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -92,21 +92,21 @@
               v-for="notif in notificaciones"
               :key="notif.id"
               @click="handleClickNotificacion(notif)"
-              class="w-full px-4 py-3 hover:bg-[#F9F7F3] transition-colors border-b border-[#EAD5D3]/20 text-left group"
-              :class="{ 'bg-[#EAD5D3]/10': !notif.visto }"
+              class="w-full px-4 py-3 hover:bg-[#F2F2F2] transition-colors border-b border-[#E2E8F0]/20 text-left group"
+              :class="{ 'bg-[#E2E8F0]/10': !notif.leido }"
             >
               <div class="flex items-start gap-3">
                 <!-- Icono según tipo -->
                 <div
                   class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
                   :class="
-                    notif.tipo === 'mensaje'
-                      ? 'bg-[#D8AFA0]/20 text-[#D8AFA0]'
+                    notif.tipo === 'sistema'
+                      ? 'bg-[#5550F2]/20 text-[#5550F2]'
                       : 'bg-[#8A9A5B]/20 text-[#8A9A5B]'
                   "
                 >
                   <svg
-                    v-if="notif.tipo === 'mensaje'"
+                    v-if="notif.tipo === 'sistema'"
                     class="w-4 h-4"
                     fill="currentColor"
                     viewBox="0 0 20 20"
@@ -130,26 +130,26 @@
                 <!-- Contenido -->
                 <div class="flex-1 min-w-0">
                   <p
-                    class="text-sm font-medium text-[#5D4A44] font-lato"
-                    :class="{ 'font-semibold': !notif.visto }"
+                    class="text-sm font-medium text-[#2D3748] font-lato"
+                    :class="{ 'font-semibold': !notif.leido }"
                   >
                     {{ notif.titulo }}
                   </p>
                   <p
                     v-if="notif.mensaje"
-                    class="text-xs text-[#5D4A44]/70 font-lato mt-1 line-clamp-2"
+                    class="text-xs text-[#2D3748]/70 font-lato mt-1 line-clamp-2"
                   >
                     {{ notif.mensaje }}
                   </p>
-                  <p class="text-xs text-[#5D4A44]/50 font-lato mt-1">
+                  <p class="text-xs text-[#2D3748]/50 font-lato mt-1">
                     {{ formatearFecha(notif.created_at) }}
                   </p>
                 </div>
 
                 <!-- Indicador no visto -->
                 <div
-                  v-if="!notif.visto"
-                  class="flex-shrink-0 w-2 h-2 bg-[#D8AFA0] rounded-full mt-2"
+                  v-if="!notif.leido"
+                  class="flex-shrink-0 w-2 h-2 bg-[#5550F2] rounded-full mt-2"
                 ></div>
               </div>
             </button>
@@ -159,11 +159,11 @@
         <!-- Footer -->
         <div
           v-if="notificaciones.length > 0"
-          class="px-4 py-2 border-t border-[#EAD5D3]/30 bg-[#F9F7F3] text-center"
+          class="px-4 py-2 border-t border-[#E2E8F0]/30 bg-[#F2F2F2] text-center"
         >
           <button
             @click="verTodasLasNotificaciones"
-            class="text-xs text-[#D8AFA0] hover:text-[#C89B8A] font-lato font-medium transition-colors"
+            class="text-xs text-[#5550F2] hover:text-[#C89B8A] font-lato font-medium transition-colors"
           >
             Ver todas las notificaciones
           </button>
@@ -230,7 +230,7 @@ const handleClickNotificacion = async (notif: any) => {
   mostrarDropdown.value = false
 
   // Navegar según el tipo (solo si router y route están disponibles)
-  if (notif.tipo === 'mensaje' && router && route) {
+  if (notif.tipo === 'sistema' && router && route) {
     // Intentar navegar según la ruta actual
     if (route.path.includes('/paciente')) {
       router.push('/paciente/mensajes')

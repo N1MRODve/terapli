@@ -1,22 +1,22 @@
 <template>
-  <transition name="fade" mode="out-in" appear>
+  <transition name="fade" mode="out-in">
     <div 
       v-if="show" 
-      class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#F9F7F3] text-center px-6"
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#F2F2F2] text-center px-6"
       role="status"
       aria-live="polite"
     >
-      <h2 class="text-3xl md:text-4xl font-serif text-[#5D4A44] animate-fade-in-up max-w-3xl">
+      <h2 class="text-3xl md:text-4xl font-serif text-[#2D3748] animate-fade-in-up max-w-3xl">
         {{ visitorName 
           ? `${visitorName}, me alegra que hayas llegado hasta aquí.` 
           : 'Me alegra que hayas llegado hasta aquí.' }}
       </h2>
-      <p class="text-lg md:text-xl text-[#5D4A44]/80 mt-6 animate-fade-in-up [animation-delay:0.4s] max-w-2xl leading-relaxed">
+      <p class="text-lg md:text-xl text-[#2D3748]/80 mt-6 animate-fade-in-up [animation-delay:0.4s] max-w-2xl leading-relaxed">
         Ahora te explico cómo puedes comenzar tu proceso.
       </p>
       
       <!-- Subtle breathing indicator -->
-      <div class="mt-12 w-3 h-3 bg-[#D8AFA0] rounded-full animate-pulse opacity-40"></div>
+      <div class="mt-12 w-3 h-3 bg-[#5550F2] rounded-full animate-pulse opacity-40"></div>
     </div>
   </transition>
 </template>

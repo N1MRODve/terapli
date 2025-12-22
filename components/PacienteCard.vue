@@ -1,59 +1,73 @@
 <template>
-  <div 
-    class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:border-gray-200 transition-all duration-300 group relative cursor-pointer"
+  <article
+    class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:border-gray-200 transition-all duration-300 group relative cursor-pointer focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2"
+    role="article"
+    :aria-label="`Ficha de ${nombreMostrar}`"
+    tabindex="0"
   >
     <!-- Botones de acción (aparecen al hover) -->
-    <div class="absolute top-4 right-4 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10">
+    <div
+      class="absolute top-4 right-4 flex gap-1.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-200 z-10"
+      role="toolbar"
+      aria-label="Acciones del paciente"
+    >
       <button
         @click.stop="$emit('gestionar-bonos', paciente)"
-        class="p-1.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors shadow-md hover:shadow-lg"
-        title="Gestionar bonos"
+        class="min-h-[44px] min-w-[44px] p-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors shadow-md hover:shadow-lg focus:ring-2 focus:ring-purple-300 focus:outline-none"
+        :aria-label="`Gestionar bonos de ${nombreMostrar}`"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
         </svg>
       </button>
       <button
         @click.stop="$emit('editar', paciente)"
-        class="p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg"
-        title="Editar paciente"
+        class="min-h-[44px] min-w-[44px] p-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
+        :aria-label="`Editar información de ${nombreMostrar}`"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
         </svg>
       </button>
       <button
         @click.stop="$emit('eliminar', paciente)"
-        class="p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md hover:shadow-lg"
-        title="Eliminar paciente"
+        class="min-h-[44px] min-w-[44px] p-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md hover:shadow-lg focus:ring-2 focus:ring-red-300 focus:outline-none"
+        :aria-label="`Eliminar a ${nombreMostrar}`"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
       </button>
     </div>
 
-    <!-- Header con avatar y estado -->
+    <!-- Header con avatar, nombre y badges -->
     <div class="flex items-start justify-between mb-5">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 flex-1">
         <!-- Avatar -->
-        <div 
-          class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg flex-shrink-0 shadow-sm"
+        <div
+          class="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-md"
           :style="{ backgroundColor: avatarColor }"
+          :aria-label="`Avatar de ${nombreMostrar}`"
         >
           {{ iniciales }}
         </div>
-        
-        <!-- Nombre y estado emocional -->
-        <div>
-          <h3 class="font-serif text-lg font-semibold text-cafe group-hover:text-purple-600 transition-colors leading-tight">
+
+        <!-- Nombre, estado emocional y badges -->
+        <div class="flex-1 min-w-0">
+          <h3 class="font-serif text-lg font-semibold text-cafe group-hover:text-purple-600 transition-colors leading-tight truncate">
             {{ nombreMostrar }}
           </h3>
-          <div class="flex items-center gap-2 mt-1">
-            <span class="text-lg" :title="estadoEmocionalTexto">
+
+          <!-- Estado emocional y badges -->
+          <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+            <span
+              class="text-xl leading-none"
+              :title="estadoEmocionalTexto"
+              :aria-label="`Estado emocional: ${estadoEmocionalTexto}`"
+            >
               {{ estadoEmocional }}
             </span>
-            <span class="text-xs text-gray-500">
+            <span class="text-xs text-gray-500 font-medium">
               {{ estadoEmocionalTexto }}
             </span>
           </div>
@@ -61,11 +75,13 @@
       </div>
 
       <!-- Badge de estado del vínculo -->
-      <span 
-        class="px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap"
+      <span
+        class="px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0"
         :class="estadoVinculoClasses"
+        :aria-label="`Estado del vínculo: ${estadoVinculoTexto}`"
       >
-        {{ estadoVinculoTexto }}
+        <span class="w-1.5 h-1.5 rounded-full" :class="estadoVinculoPuntoClass"></span>
+        <span>{{ estadoVinculoTexto }}</span>
       </span>
     </div>
 
@@ -85,22 +101,22 @@
         <span class="font-medium">{{ ultimaSesion }}</span>
       </div>
       
-      <div class="flex items-center gap-2 text-sm text-gray-600">
-        <ClockIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
+      <div class="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
+        <ClockIcon class="w-4 h-4 text-purple-600 flex-shrink-0" aria-hidden="true" />
         <span>Próxima: </span>
         <button
           v-if="proximaSesion"
           @click.stop="$emit('editar-cita', paciente.proxima_cita_id)"
-          class="text-purple-600 hover:text-cafe font-medium hover:underline transition-colors flex-shrink-0"
-          :title="`Editar cita del ${proximaSesion}`"
+          class="min-h-[44px] px-2 -mx-2 text-purple-600 hover:text-cafe font-medium hover:underline transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-300 rounded"
+          :aria-label="`Editar cita programada para ${proximaSesion}`"
         >
           {{ proximaSesion }}
         </button>
         <span v-else class="text-gray-400 font-medium">No programada</span>
         <button
           @click.stop="$emit('ver-citas', paciente)"
-          class="ml-auto text-xs text-purple-600 hover:text-cafe hover:underline transition-colors flex-shrink-0"
-          title="Ver todas las citas"
+          class="min-h-[44px] px-2 ml-auto text-xs text-purple-600 hover:text-cafe hover:underline transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-300 rounded"
+          :aria-label="`Ver todas las citas de ${nombreMostrar}`"
         >
           Ver citas →
         </button>
@@ -253,7 +269,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </article>
 </template>
 
 <script setup>
@@ -309,7 +325,7 @@ const iniciales = computed(() => {
 
 // Color de avatar basado en el ID (consistente)
 const avatarColor = computed(() => {
-  const colors = ['#D8AFA0', '#C89B8A', '#B7C6B0', '#A8C5B5', '#D4A5A5', '#C4B5A0']
+  const colors = ['#5550F2', '#C89B8A', '#B7C6B0', '#A8C5B5', '#D4A5A5', '#C4B5A0']
   const index = props.paciente.id.charCodeAt(0) % colors.length
   return colors[index]
 })
@@ -344,6 +360,17 @@ const estadoVinculoClasses = computed(() => {
     return 'bg-yellow-100 text-yellow-700'
   }
   return 'bg-green-100 text-green-700'
+})
+
+// Color del punto indicador de estado
+const estadoVinculoPuntoClass = computed(() => {
+  if (!props.paciente.activo) {
+    return 'bg-gray-500'
+  }
+  if (props.paciente.en_pausa) {
+    return 'bg-yellow-500'
+  }
+  return 'bg-green-500'
 })
 
 // Área de acompañamiento

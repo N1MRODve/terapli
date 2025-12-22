@@ -6,12 +6,12 @@
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
         @click.self="cerrar"
       >
-        <div class="bg-[#F9F7F3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div class="bg-[#F2F2F2] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
           <!-- Header -->
-          <div class="bg-gradient-to-r from-[#D8AFA0] to-[#EAD5D3] px-6 py-5">
+          <div class="bg-gradient-to-r from-[#5550F2] to-[#E2E8F0] px-6 py-5">
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-2xl font-['Lora'] text-white">
+                <h2 class="text-2xl font-serif text-white">
                   {{ esEdicion ? '✏️ Editar Recurso' : '➕ Nuevo Recurso' }}
                 </h2>
                 <p class="text-sm text-white/90 mt-1">
@@ -34,7 +34,7 @@
             <div class="space-y-5">
               <!-- Título -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Título del recurso *
                 </label>
                 <input
@@ -42,13 +42,13 @@
                   type="text"
                   required
                   placeholder="Ej: Guía de respiración consciente"
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                 />
               </div>
 
               <!-- Descripción -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Descripción *
                 </label>
                 <textarea
@@ -56,7 +56,7 @@
                   rows="3"
                   required
                   placeholder="Describe brevemente el contenido del recurso..."
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44] resize-none"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748] resize-none"
                 ></textarea>
               </div>
 
@@ -64,13 +64,13 @@
               <div class="grid grid-cols-2 gap-4">
                 <!-- Tipo -->
                 <div>
-                  <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                  <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                     Tipo *
                   </label>
                   <select
                     v-model="form.tipo"
                     required
-                    class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                    class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                   >
                     <option value="">Seleccionar...</option>
                     <option value="Guía">📋 Guía</option>
@@ -84,12 +84,12 @@
 
                 <!-- Categoría -->
                 <div>
-                  <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                  <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                     Categoría
                   </label>
                   <select
                     v-model="form.categoria"
-                    class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                    class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                   >
                     <option value="">Sin categoría</option>
                     <option value="Ansiedad">Ansiedad</option>
@@ -107,7 +107,7 @@
 
               <!-- URL -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   URL del recurso *
                 </label>
                 <input
@@ -115,16 +115,16 @@
                   type="url"
                   required
                   placeholder="https://..."
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                 />
-                <p class="text-xs text-[#5D4A44]/60 mt-1">
+                <p class="text-xs text-[#2D3748]/60 mt-1">
                   Enlace directo al recurso (YouTube, PDF, artículo web, etc.)
                 </p>
               </div>
 
               <!-- Icono -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Icono (emoji)
                 </label>
                 <div class="flex gap-2">
@@ -133,7 +133,7 @@
                     type="text"
                     maxlength="2"
                     placeholder="📚"
-                    class="w-20 px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-center text-2xl"
+                    class="w-20 px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-center text-2xl"
                   />
                   <div class="flex flex-wrap gap-2 flex-1">
                     <button
@@ -141,7 +141,7 @@
                       :key="emoji"
                       type="button"
                       @click="form.icono = emoji"
-                      class="px-3 py-2 text-2xl hover:bg-[#EAD5D3]/30 rounded-lg transition"
+                      class="px-3 py-2 text-2xl hover:bg-[#E2E8F0]/30 rounded-lg transition"
                     >
                       {{ emoji }}
                     </button>
@@ -151,29 +151,29 @@
 
               <!-- Tags -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Etiquetas
                 </label>
                 <input
                   v-model="tagsInput"
                   type="text"
                   placeholder="respiración, mindfulness, ansiedad (separadas por comas)"
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                 />
-                <p class="text-xs text-[#5D4A44]/60 mt-1">
+                <p class="text-xs text-[#2D3748]/60 mt-1">
                   Separa las etiquetas con comas
                 </p>
                 <div v-if="form.tags.length > 0" class="flex flex-wrap gap-2 mt-2">
                   <span
                     v-for="(tag, index) in form.tags"
                     :key="index"
-                    class="px-3 py-1 bg-[#D8AFA0]/20 text-[#5D4A44] rounded-full text-sm flex items-center gap-2"
+                    class="px-3 py-1 bg-[#5550F2]/20 text-[#2D3748] rounded-full text-sm flex items-center gap-2"
                   >
                     #{{ tag }}
                     <button
                       type="button"
                       @click="eliminarTag(index)"
-                      class="text-[#5D4A44]/50 hover:text-[#5D4A44]"
+                      class="text-[#2D3748]/50 hover:text-[#2D3748]"
                     >
                       ×
                     </button>
@@ -194,19 +194,19 @@
           </form>
 
           <!-- Footer -->
-          <div class="bg-white border-t border-[#EAD5D3]/30 px-6 py-4 flex items-center justify-end gap-3">
+          <div class="bg-white border-t border-[#E2E8F0]/30 px-6 py-4 flex items-center justify-end gap-3">
             <button
               type="button"
               @click="cerrar"
               :disabled="guardando"
-              class="px-6 py-2.5 text-[#5D4A44] font-['Lato'] rounded-xl hover:bg-[#F9F7F3] transition disabled:opacity-50"
+              class="px-6 py-2.5 text-[#2D3748] font-sans rounded-xl hover:bg-[#F2F2F2] transition disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               @click="guardar"
               :disabled="guardando || !formularioValido"
-              class="px-6 py-2.5 bg-[#D8AFA0] text-white font-['Lato'] font-semibold rounded-xl hover:bg-[#D8AFA0]/90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              class="px-6 py-2.5 bg-[#5550F2] text-white font-sans font-semibold rounded-xl hover:bg-[#5550F2]/90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <span v-if="guardando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
               <span>{{ guardando ? 'Guardando...' : (esEdicion ? 'Guardar Cambios' : 'Crear Recurso') }}</span>

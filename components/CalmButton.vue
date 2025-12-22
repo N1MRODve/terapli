@@ -33,9 +33,9 @@ const buttonClasses = computed(() => {
   const base = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
   
   const variants = {
-    primary: 'bg-[#D8AFA0] hover:bg-[#C5968B] text-white focus:ring-[#D8AFA0]/50',
-    secondary: 'border-2 border-[#D8AFA0] text-[#D8AFA0] hover:bg-[#D8AFA0] hover:text-white focus:ring-[#D8AFA0]/50',
-    tertiary: 'text-[#5D4A44] hover:text-[#D8AFA0] hover:bg-[#D8AFA0]/10 focus:ring-[#D8AFA0]/50'
+    primary: 'bg-[#5550F2] hover:bg-[#C5968B] text-white focus:ring-[#5550F2]/50',
+    secondary: 'border-2 border-[#5550F2] text-[#5550F2] hover:bg-[#5550F2] hover:text-white focus:ring-[#5550F2]/50',
+    tertiary: 'text-[#2D3748] hover:text-[#5550F2] hover:bg-[#5550F2]/10 focus:ring-[#5550F2]/50'
   }
   
   const sizes = {

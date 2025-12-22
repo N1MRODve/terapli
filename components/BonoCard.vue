@@ -21,7 +21,7 @@
         <!-- Estado del bono -->
         <div class="flex items-center gap-3 flex-wrap">
           <span 
-            class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-['Lato'] font-semibold border backdrop-blur-sm shadow-sm"
+            class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-sans font-semibold border backdrop-blur-sm shadow-sm"
             :class="estadoColor"
           >
             {{ estadoIcono }} {{ estadoTexto }}
@@ -30,7 +30,7 @@
           <!-- Alerta de vencimiento próximo -->
           <span 
             v-if="proximoAVencer"
-            class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-['Lato'] font-semibold bg-gradient-to-r from-[#F2B33D]/20 to-[#F2B33D]/10 text-[#F2B33D] border border-[#F2B33D]/30 backdrop-blur-sm shadow-sm"
+            class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-sans font-semibold bg-gradient-to-r from-[#F2B33D]/20 to-[#F2B33D]/10 text-[#F2B33D] border border-[#F2B33D]/30 backdrop-blur-sm shadow-sm"
           >
             ⚠️ Vence pronto
           </span>
@@ -38,7 +38,7 @@
           <!-- Alerta de pocas sesiones -->
           <span 
             v-if="pocasSesiones"
-            class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-['Lato'] font-semibold bg-gradient-to-r from-[#04BF9D]/20 to-[#027368]/10 text-[#027368] border border-[#04BF9D]/30 backdrop-blur-sm shadow-sm"
+            class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-sans font-semibold bg-gradient-to-r from-[#04BF9D]/20 to-[#027368]/10 text-[#027368] border border-[#04BF9D]/30 backdrop-blur-sm shadow-sm"
           >
             📊 Pocas sesiones
           </span>
@@ -69,8 +69,8 @@
     <!-- Progreso de sesiones -->
     <div class="relative mb-6">
       <div class="flex items-center justify-between mb-3">
-        <span class="text-sm font-['Lato'] text-gray-600 font-medium">Sesiones</span>
-        <span class="text-sm font-['Lato'] font-semibold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
+        <span class="text-sm font-sans text-gray-600 font-medium">Sesiones</span>
+        <span class="text-sm font-sans font-semibold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
           {{ sesionesRestantes }} / {{ bono.sesiones_totales }} disponibles
         </span>
       </div>
@@ -87,7 +87,7 @@
         </div>
       </div>
       
-      <div class="flex justify-between mt-2 text-xs font-['Lato'] text-gray-600">
+      <div class="flex justify-between mt-2 text-xs font-sans text-gray-600">
         <span>{{ sesionesUsadas }} usadas</span>
         <span class="font-semibold">{{ porcentajeUsado }}% completado</span>
       </div>
@@ -97,30 +97,30 @@
     <div class="relative grid grid-cols-2 gap-4 mb-6">
       <!-- Tipo y frecuencia -->
       <div class="p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50 shadow-sm group-hover:shadow-md transition-all duration-300">
-        <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Tipo</div>
-        <div class="text-sm font-['Lato'] font-semibold text-gray-800 capitalize">
+        <div class="text-xs font-sans text-gray-500 uppercase tracking-wider mb-2">Tipo</div>
+        <div class="text-sm font-sans font-semibold text-gray-800 capitalize">
           {{ bono.tipo || 'Estándar' }}
         </div>
       </div>
       
       <div class="p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50 shadow-sm group-hover:shadow-md transition-all duration-300">
-        <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Frecuencia</div>
-        <div class="text-sm font-['Lato'] font-semibold text-gray-800 capitalize">
+        <div class="text-xs font-sans text-gray-500 uppercase tracking-wider mb-2">Frecuencia</div>
+        <div class="text-sm font-sans font-semibold text-gray-800 capitalize">
           {{ bono.frecuencia || 'Semanal' }}
         </div>
       </div>
 
       <!-- Monto -->
-      <div class="p-3 bg-white rounded-lg border border-[#D8AFA0]/20">
-        <div class="text-xs text-[#5D4A44]/60 mb-1">Monto</div>
-        <div class="text-sm font-medium text-[#5D4A44]">
+      <div class="p-3 bg-white rounded-lg border border-[#5550F2]/20">
+        <div class="text-xs text-[#2D3748]/60 mb-1">Monto</div>
+        <div class="text-sm font-medium text-[#2D3748]">
           {{ formatearMonto(bono.monto) }}
         </div>
       </div>
 
       <!-- Estado de pago -->
-      <div class="p-3 bg-white rounded-lg border border-[#D8AFA0]/20">
-        <div class="text-xs text-[#5D4A44]/60 mb-1">Pago</div>
+      <div class="p-3 bg-white rounded-lg border border-[#5550F2]/20">
+        <div class="text-xs text-[#2D3748]/60 mb-1">Pago</div>
         <div class="text-sm font-medium flex items-center gap-1"
           :class="bono.pagado ? 'text-green-600' : 'text-orange-600'"
         >
@@ -130,22 +130,22 @@
     </div>
 
     <!-- Fechas -->
-    <div v-if="bono.fecha_inicio || bono.fecha_fin" class="mb-4 p-3 bg-gradient-to-r from-[#D8AFA0]/10 to-[#ECC8BA]/10 rounded-lg">
+    <div v-if="bono.fecha_inicio || bono.fecha_fin" class="mb-4 p-3 bg-gradient-to-r from-[#5550F2]/10 to-[#ECC8BA]/10 rounded-lg">
       <div class="flex items-center justify-between text-sm">
         <div v-if="bono.fecha_inicio">
-          <span class="text-[#5D4A44]/60">Inicio:</span>
-          <span class="font-medium text-[#5D4A44] ml-1">{{ formatearFecha(bono.fecha_inicio) }}</span>
+          <span class="text-[#2D3748]/60">Inicio:</span>
+          <span class="font-medium text-[#2D3748] ml-1">{{ formatearFecha(bono.fecha_inicio) }}</span>
         </div>
         <div v-if="bono.fecha_fin">
-          <span class="text-[#5D4A44]/60">Vence:</span>
-          <span class="font-medium ml-1" :class="proximoAVencer ? 'text-orange-600' : 'text-[#5D4A44]'">
+          <span class="text-[#2D3748]/60">Vence:</span>
+          <span class="font-medium ml-1" :class="proximoAVencer ? 'text-orange-600' : 'text-[#2D3748]'">
             {{ formatearFecha(bono.fecha_fin) }}
           </span>
         </div>
       </div>
       
       <!-- Días restantes -->
-      <div v-if="diasRestantes !== null && bono.estado === 'activo'" class="mt-2 text-xs text-center text-[#5D4A44]/60">
+      <div v-if="diasRestantes !== null && bono.estado === 'activo'" class="mt-2 text-xs text-center text-[#2D3748]/60">
         {{ diasRestantes > 0 ? `${diasRestantes} días restantes` : 'Vencido' }}
       </div>
     </div>
@@ -158,18 +158,18 @@
 
     <!-- Notas -->
     <div v-if="bono.notas" class="mb-4">
-      <div class="text-xs text-[#5D4A44]/60 mb-1">Notas</div>
-      <div class="text-sm text-[#5D4A44]/80 p-2 bg-white rounded-lg border border-[#D8AFA0]/20">
+      <div class="text-xs text-[#2D3748]/60 mb-1">Notas</div>
+      <div class="text-sm text-[#2D3748]/80 p-2 bg-white rounded-lg border border-[#5550F2]/20">
         {{ bono.notas }}
       </div>
     </div>
 
     <!-- Botones de acción -->
-    <div class="flex gap-2 pt-3 border-t border-[#D8AFA0]/20">
+    <div class="flex gap-2 pt-3 border-t border-[#5550F2]/20">
       <button
         v-if="puedeVerPagos"
         @click="$emit('verPagos', bono)"
-        class="flex-1 px-4 py-2 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#C89B8A] transition-colors text-sm font-medium flex items-center justify-center gap-2"
+        class="flex-1 px-4 py-2 bg-[#5550F2] text-white rounded-lg hover:bg-[#C89B8A] transition-colors text-sm font-medium flex items-center justify-center gap-2"
       >
         <span>💰</span>
         <span>Ver Pagos</span>
@@ -187,7 +187,7 @@
       <button
         v-if="puedeEditar"
         @click="$emit('editar', bono)"
-        class="px-4 py-2 bg-white border border-[#D8AFA0]/30 text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors text-sm font-medium"
+        class="px-4 py-2 bg-white border border-[#5550F2]/30 text-[#2D3748] rounded-lg hover:bg-[#5550F2]/10 transition-colors text-sm font-medium"
       >
         ✏️
       </button>
@@ -254,7 +254,7 @@ const barraProgresoColor = computed(() => {
   if (porcentaje >= 90) return 'bg-red-500'
   if (porcentaje >= 70) return 'bg-orange-500'
   if (porcentaje >= 50) return 'bg-yellow-500'
-  return 'bg-gradient-to-r from-[#D8AFA0] to-[#ECC8BA]'
+  return 'bg-gradient-to-r from-[#5550F2] to-[#ECC8BA]'
 })
 
 const diasRestantes = computed(() => {

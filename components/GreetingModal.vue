@@ -6,7 +6,7 @@
       @click.self="handleSkip"
     >
       <div 
-        class="bg-white rounded-3xl shadow-xl max-w-md w-full p-8 animate-fade-in-up border border-[#EAD5D3]/30"
+        class="bg-white rounded-3xl shadow-xl max-w-md w-full p-8 animate-fade-in-up border border-[#E2E8F0]/30"
         role="dialog"
         aria-labelledby="greeting-title"
         aria-modal="true"
@@ -15,13 +15,13 @@
           <!-- Simplified Title -->
           <h2 
             id="greeting-title" 
-            class="text-2xl font-serif text-[#5D4A44] mb-6"
+            class="text-2xl font-serif text-[#2D3748] mb-6"
           >
             Bienvenido/a
           </h2>
           
           <!-- Simple question -->
-          <p class="text-[#5D4A44]/80 leading-relaxed mb-6">
+          <p class="text-[#2D3748]/80 leading-relaxed mb-6">
             ¿Cuál es tu nombre?
           </p>
 
@@ -32,7 +32,7 @@
                 v-model="nameInput"
                 type="text"
                 placeholder="Tu nombre"
-                class="w-full px-4 py-3 rounded-2xl border border-[#EAD5D3]/50 focus:border-[#D8AFA0] focus:outline-none focus:ring-2 focus:ring-[#D8AFA0]/20 transition-all text-[#5D4A44] placeholder:text-[#5D4A44]/40"
+                class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0]/50 focus:border-[#5550F2] focus:outline-none focus:ring-2 focus:ring-[#5550F2]/20 transition-all text-[#2D3748] placeholder:text-[#2D3748]/40"
                 maxlength="30"
                 aria-label="Tu nombre"
                 ref="nameInputRef"
@@ -44,14 +44,14 @@
             <button
               type="submit"
               :disabled="!nameInput.trim()"
-              class="w-full bg-[#D8AFA0] hover:bg-[#C89B8C] disabled:bg-[#EAD5D3] disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-2xl transition-all duration-300 hover:shadow-md disabled:opacity-50"
+              class="w-full bg-[#5550F2] hover:bg-[#C89B8C] disabled:bg-[#E2E8F0] disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-2xl transition-all duration-300 hover:shadow-md disabled:opacity-50"
             >
               Continuar
             </button>
           </form>
 
           <!-- Privacy note -->
-          <p class="text-xs text-[#5D4A44]/50 text-center mt-6 leading-relaxed">
+          <p class="text-xs text-[#2D3748]/50 text-center mt-6 leading-relaxed">
             Solo usamos tu nombre para personalizar tu experiencia en esta web.<br/>
             No lo guardamos ni compartimos con nadie.
           </p>
@@ -60,7 +60,7 @@
           <button
             type="button"
             @click="handleSkip"
-            class="text-xs text-[#5D4A44]/40 hover:text-[#5D4A44]/60 mt-3 transition-colors underline"
+            class="text-xs text-[#2D3748]/40 hover:text-[#2D3748]/60 mt-3 transition-colors underline"
           >
             Prefiero continuar sin nombre
           </button>

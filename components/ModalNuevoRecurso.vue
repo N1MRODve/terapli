@@ -6,11 +6,11 @@
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
         @click.self="$emit('update:modelValue', false)"
       >
-        <div class="bg-[#F9F7F3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div class="bg-[#F2F2F2] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
           <!-- Header -->
-          <div class="bg-gradient-to-r from-[#D8AFA0] to-[#EAD5D3] px-6 py-5">
+          <div class="bg-gradient-to-r from-[#5550F2] to-[#E2E8F0] px-6 py-5">
             <div class="flex items-center justify-between">
-              <h2 class="text-2xl font-['Lora'] text-white">
+              <h2 class="text-2xl font-serif text-white">
                 {{ recursoEditar ? 'Editar Recurso' : 'Nuevo Recurso Terapéutico' }}
               </h2>
               <button 
@@ -29,7 +29,7 @@
             <div class="space-y-5">
               <!-- Título -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Título del recurso *
                 </label>
                 <input
@@ -37,26 +37,26 @@
                   type="text"
                   required
                   placeholder="Ej: Guía de Respiración Consciente"
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                 />
               </div>
 
               <!-- Descripción -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Descripción
                 </label>
                 <textarea
                   v-model="form.descripcion"
                   rows="3"
                   placeholder="Describe brevemente el contenido..."
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44] resize-none"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748] resize-none"
                 ></textarea>
               </div>
 
               <!-- Tipo de recurso -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Tipo de recurso *
                 </label>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -67,18 +67,18 @@
                     @click="form.tipo = tipo.valor"
                     class="flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all"
                     :class="form.tipo === tipo.valor 
-                      ? 'border-[#D8AFA0] bg-[#D8AFA0]/10' 
-                      : 'border-[#EAD5D3]/50 bg-white hover:border-[#D8AFA0]/50'"
+                      ? 'border-[#5550F2] bg-[#5550F2]/10' 
+                      : 'border-[#E2E8F0]/50 bg-white hover:border-[#5550F2]/50'"
                   >
                     <span class="text-2xl mb-1">{{ tipo.icono }}</span>
-                    <span class="text-xs font-medium text-[#5D4A44]">{{ tipo.valor }}</span>
+                    <span class="text-xs font-medium text-[#2D3748]">{{ tipo.valor }}</span>
                   </button>
                 </div>
               </div>
 
               <!-- URL -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   URL del recurso *
                 </label>
                 <input
@@ -86,9 +86,9 @@
                   type="url"
                   required
                   placeholder="https://ejemplo.com/recurso"
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                 />
-                <p class="mt-2 text-xs text-[#5D4A44]/60">
+                <p class="mt-2 text-xs text-[#2D3748]/60">
                   Puedes agregar enlaces de YouTube, Google Drive, Dropbox, etc.
                 </p>
               </div>
@@ -99,29 +99,29 @@
               </div>
 
               <!-- Cargando -->
-              <div v-if="cargando" class="bg-[#D8AFA0]/10 border border-[#D8AFA0]/30 rounded-xl p-4">
+              <div v-if="cargando" class="bg-[#5550F2]/10 border border-[#5550F2]/30 rounded-xl p-4">
                 <div class="flex items-center gap-3">
-                  <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-[#D8AFA0]"></div>
-                  <span class="text-sm text-[#5D4A44]">{{ mensajeCarga }}</span>
+                  <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-[#5550F2]"></div>
+                  <span class="text-sm text-[#2D3748]">{{ mensajeCarga }}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Footer -->
-          <div class="bg-white border-t border-[#EAD5D3]/30 px-6 py-4 flex items-center justify-end gap-3">
+          <div class="bg-white border-t border-[#E2E8F0]/30 px-6 py-4 flex items-center justify-end gap-3">
             <button
               type="button"
               @click="$emit('update:modelValue', false)"
               :disabled="cargando"
-              class="px-6 py-2.5 text-[#5D4A44] font-['Lato'] rounded-xl hover:bg-[#F9F7F3] transition disabled:opacity-50"
+              class="px-6 py-2.5 text-[#2D3748] font-sans rounded-xl hover:bg-[#F2F2F2] transition disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               @click="guardar"
               :disabled="cargando || !formularioValido"
-              class="px-6 py-2.5 bg-[#D8AFA0] text-white font-['Lato'] font-semibold rounded-xl hover:bg-[#D8AFA0]/90 transition disabled:opacity-50"
+              class="px-6 py-2.5 bg-[#5550F2] text-white font-sans font-semibold rounded-xl hover:bg-[#5550F2]/90 transition disabled:opacity-50"
             >
               {{ cargando ? 'Guardando...' : (recursoEditar ? 'Actualizar' : 'Guardar') }}
             </button>

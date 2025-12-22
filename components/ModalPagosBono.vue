@@ -23,7 +23,7 @@
                   Pagos del Bono
                 </h2>
               </div>
-              <p class="text-sm font-['Lato'] text-gray-600 ml-18">
+              <p class="text-sm font-sans text-gray-600 ml-18">
                 Gestiona los pagos y confirma transacciones de forma segura
               </p>
             </div>
@@ -42,16 +42,16 @@
           <div v-if="bono" class="mt-6 p-6 bg-gradient-to-r from-[#5550F2]/5 via-[#027368]/5 to-[#04BF9D]/5 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg">
             <div class="grid grid-cols-3 gap-6 text-sm">
               <div class="text-center">
-                <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Tipo</div>
-                <div class="font-['Lato'] font-semibold text-gray-800 capitalize text-lg">{{ bono.tipo }}</div>
+                <div class="text-xs font-sans text-gray-500 uppercase tracking-wider mb-2">Tipo</div>
+                <div class="font-sans font-semibold text-gray-800 capitalize text-lg">{{ bono.tipo }}</div>
               </div>
               <div class="text-center">
-                <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Monto Total</div>
+                <div class="text-xs font-sans text-gray-500 uppercase tracking-wider mb-2">Monto Total</div>
                 <div class="font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#F2B33D] to-[#5550F2] bg-clip-text text-transparent text-2xl">{{ formatearMonto(bono.monto) }}</div>
               </div>
               <div class="text-center">
-                <div class="text-xs font-['Lato'] text-gray-500 uppercase tracking-wider mb-2">Estado</div>
-                <div class="font-['Lato'] font-semibold text-lg capitalize"
+                <div class="text-xs font-sans text-gray-500 uppercase tracking-wider mb-2">Estado</div>
+                <div class="font-sans font-semibold text-lg capitalize"
                   :class="bono.pagado ? 'text-[#04BF9D]' : 'text-[#F2B33D]'"
                 >
                   {{ bono.pagado ? '✓ Pagado' : '⏳ Pendiente' }}
@@ -64,32 +64,32 @@
       <!-- Contenido -->
       <div class="px-6 py-6 space-y-6">
         <!-- Resumen de Pagos -->
-        <div class="p-4 bg-white border-2 border-[#D8AFA0]/30 rounded-xl">
+        <div class="p-4 bg-white border-2 border-[#5550F2]/30 rounded-xl">
           <div class="grid grid-cols-3 gap-4 text-center">
             <div>
               <div class="text-2xl font-bold text-green-600">{{ formatearMonto(totalPagado) }}</div>
-              <div class="text-xs text-[#5D4A44]/60 mt-1">Total Pagado</div>
+              <div class="text-xs text-[#2D3748]/60 mt-1">Total Pagado</div>
             </div>
             <div>
               <div class="text-2xl font-bold text-orange-600">{{ formatearMonto(montoPendiente) }}</div>
-              <div class="text-xs text-[#5D4A44]/60 mt-1">Pendiente</div>
+              <div class="text-xs text-[#2D3748]/60 mt-1">Pendiente</div>
             </div>
             <div>
-              <div class="text-2xl font-bold text-[#5D4A44]">{{ pagos.length }}</div>
-              <div class="text-xs text-[#5D4A44]/60 mt-1">Transacciones</div>
+              <div class="text-2xl font-bold text-[#2D3748]">{{ pagos.length }}</div>
+              <div class="text-xs text-[#2D3748]/60 mt-1">Transacciones</div>
             </div>
           </div>
 
           <!-- Barra de progreso de pago -->
           <div class="mt-4">
-            <div class="flex justify-between text-xs text-[#5D4A44]/60 mb-1">
+            <div class="flex justify-between text-xs text-[#2D3748]/60 mb-1">
               <span>Progreso de pago</span>
               <span>{{ porcentajePagado }}%</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
               <div 
                 class="h-2 rounded-full transition-all duration-500"
-                :class="porcentajePagado >= 100 ? 'bg-green-500' : 'bg-gradient-to-r from-[#D8AFA0] to-[#ECC8BA]'"
+                :class="porcentajePagado >= 100 ? 'bg-green-500' : 'bg-gradient-to-r from-[#5550F2] to-[#ECC8BA]'"
                 :style="{ width: Math.min(porcentajePagado, 100) + '%' }"
               ></div>
             </div>
@@ -100,7 +100,7 @@
         <div v-if="puedeGestionarBonos" class="flex justify-end">
           <button
             @click="mostrarFormularioPago = !mostrarFormularioPago"
-            class="px-4 py-2 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#C89B8A] transition-colors font-medium flex items-center gap-2"
+            class="px-4 py-2 bg-[#5550F2] text-white rounded-lg hover:bg-[#C89B8A] transition-colors font-medium flex items-center gap-2"
           >
             <span>{{ mostrarFormularioPago ? '✕' : '+' }}</span>
             <span>{{ mostrarFormularioPago ? 'Cancelar' : 'Registrar Pago' }}</span>
@@ -109,7 +109,7 @@
 
         <!-- Formulario de Nuevo Pago -->
         <div v-if="mostrarFormularioPago" class="p-5 bg-green-50 border-2 border-green-300 rounded-xl">
-          <h3 class="font-['Lora'] text-lg font-semibold text-[#5D4A44] mb-4 flex items-center gap-2">
+          <h3 class="font-serif text-lg font-semibold text-[#2D3748] mb-4 flex items-center gap-2">
             <span>💳</span>
             Registrar Nuevo Pago
           </h3>
@@ -117,11 +117,11 @@
           <form @submit.prevent="registrarNuevoPago" class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+                <label class="block text-sm font-medium text-[#2D3748] mb-2">
                   Monto <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4A44]/60">€</span>
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#2D3748]/60">€</span>
                   <input
                     v-model.number="nuevoPago.monto"
                     type="number"
@@ -129,19 +129,19 @@
                     step="0.01"
                     required
                     placeholder="0.00"
-                    class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] bg-white"
+                    class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2] bg-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+                <label class="block text-sm font-medium text-[#2D3748] mb-2">
                   Método de Pago <span class="text-red-500">*</span>
                 </label>
                 <select
                   v-model="nuevoPago.metodo"
                   required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] bg-white"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2] bg-white"
                 >
                   <option value="">Seleccionar método</option>
                   <option value="efectivo">💵 Efectivo</option>
@@ -161,7 +161,7 @@
                 id="confirmar-pago"
                 class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
               />
-              <label for="confirmar-pago" class="text-sm text-[#5D4A44] cursor-pointer">
+              <label for="confirmar-pago" class="text-sm text-[#2D3748] cursor-pointer">
                 ✓ Confirmar pago inmediatamente (ya verificado)
               </label>
             </div>
@@ -170,7 +170,7 @@
               <button
                 type="button"
                 @click="mostrarFormularioPago = false"
-                class="flex-1 px-4 py-2 bg-white border border-gray-300 text-[#5D4A44] rounded-lg hover:bg-gray-50 transition-colors"
+                class="flex-1 px-4 py-2 bg-white border border-gray-300 text-[#2D3748] rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancelar
               </button>
@@ -187,19 +187,19 @@
 
         <!-- Lista de Pagos -->
         <div>
-          <h3 class="font-['Lora'] text-lg font-semibold text-[#5D4A44] mb-4 flex items-center gap-2">
+          <h3 class="font-serif text-lg font-semibold text-[#2D3748] mb-4 flex items-center gap-2">
             <span>📜</span>
             Historial de Pagos ({{ pagos.length }})
           </h3>
 
           <div v-if="cargando" class="text-center py-8">
-            <div class="animate-spin w-10 h-10 border-4 border-[#D8AFA0] border-t-transparent rounded-full mx-auto mb-3"></div>
-            <p class="text-[#5D4A44]/60">Cargando pagos...</p>
+            <div class="animate-spin w-10 h-10 border-4 border-[#5550F2] border-t-transparent rounded-full mx-auto mb-3"></div>
+            <p class="text-[#2D3748]/60">Cargando pagos...</p>
           </div>
 
           <div v-else-if="pagos.length === 0" class="text-center py-12">
             <span class="text-6xl mb-3 block opacity-40">💸</span>
-            <p class="text-[#5D4A44]/60">No hay pagos registrados aún</p>
+            <p class="text-[#2D3748]/60">No hay pagos registrados aún</p>
           </div>
 
           <div v-else class="space-y-3">
@@ -226,7 +226,7 @@
                     </span>
                   </div>
 
-                  <div class="space-y-1 text-sm text-[#5D4A44]/70">
+                  <div class="space-y-1 text-sm text-[#2D3748]/70">
                     <div class="flex items-center gap-2">
                       <span>💳</span>
                       <span class="capitalize">{{ obtenerMetodoPagoTexto(pago.metodo_pago) }}</span>
@@ -275,10 +275,10 @@
       </div>
 
       <!-- Footer con botón cerrar -->
-      <div class="sticky bottom-0 bg-[#F9F7F3] border-t border-[#D8AFA0]/30 px-6 py-4">
+      <div class="sticky bottom-0 bg-[#F2F2F2] border-t border-[#5550F2]/30 px-6 py-4">
         <button
           @click="cerrar"
-          class="w-full px-6 py-3 bg-[#5D4A44] text-white rounded-lg hover:bg-[#4A3A34] transition-colors font-medium"
+          class="w-full px-6 py-3 bg-[#2D3748] text-white rounded-lg hover:bg-[#4A3A34] transition-colors font-medium"
         >
           Cerrar
         </button>

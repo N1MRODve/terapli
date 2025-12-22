@@ -6,7 +6,7 @@
       @click.self="handleConfirm"
     >
       <div 
-        class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 md:p-10 animate-fade-in-up border border-[#EAD5D3]/30"
+        class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 md:p-10 animate-fade-in-up border border-[#E2E8F0]/30"
         role="dialog"
         aria-labelledby="inactivity-title"
         aria-modal="true"
@@ -18,13 +18,13 @@
           <!-- Title -->
           <h2 
             id="inactivity-title" 
-            class="text-2xl md:text-3xl font-serif text-[#5D4A44] mb-4"
+            class="text-2xl md:text-3xl font-serif text-[#2D3748] mb-4"
           >
             {{ title }}
           </h2>
           
           <!-- Message -->
-          <p class="text-[#5D4A44]/80 leading-relaxed mb-6">
+          <p class="text-[#2D3748]/80 leading-relaxed mb-6">
             {{ message }}
           </p>
 
@@ -38,7 +38,7 @@
           </CalmButton>
 
           <!-- Optional secondary text -->
-          <p class="text-xs text-[#5D4A44]/50 mt-4 leading-relaxed">
+          <p class="text-xs text-[#2D3748]/50 mt-4 leading-relaxed">
             Tómate el tiempo que necesites. Este espacio estará aquí cuando lo necesites.
           </p>
         </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="mb-6">
-    <h1 class="font-['Lato'] text-2xl sm:text-3xl text-[#5D4A44] mb-1 flex items-center gap-2">
+    <h1 class="font-sans text-2xl sm:text-3xl text-[#2D3748] mb-1 flex items-center gap-2">
       {{ greeting }} <span class="text-3xl">{{ greetingIcon }}</span>
     </h1>
   </div>

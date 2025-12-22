@@ -1,16 +1,16 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-sm border border-[#EAD5D3]/40 p-6 space-y-6">
+  <div class="bg-white rounded-2xl shadow-sm border border-[#E2E8F0]/40 p-6 space-y-6">
     <!-- Título -->
     <div>
-      <h2 class="text-xl font-['Lora'] text-[#5D4A44] mb-1">Tu registro emocional 🌿</h2>
-      <p class="text-sm font-['Lato'] text-[#5D4A44]/70">
+      <h2 class="text-xl font-serif text-[#2D3748] mb-1">Tu registro emocional 🌿</h2>
+      <p class="text-sm font-sans text-[#2D3748]/70">
         Registra cómo te sientes hoy y observa tu evolución emocional con el tiempo.
       </p>
     </div>
 
     <!-- Paso 1: Estado general -->
     <div>
-      <p class="text-sm font-['Lato'] text-[#5D4A44]/70 mb-3">¿Cómo te sientes en general?</p>
+      <p class="text-sm font-sans text-[#2D3748]/70 mb-3">¿Cómo te sientes en general?</p>
       <div class="flex justify-between gap-2">
         <button
           v-for="nivel in niveles"
@@ -19,13 +19,13 @@
           :class="[
             'flex flex-col items-center p-3 rounded-xl transition-all duration-300 flex-1',
             estado === nivel.valor 
-              ? 'bg-[#D8AFA0]/20 scale-105 shadow-sm' 
-              : 'opacity-70 hover:opacity-100 hover:bg-[#F9F7F3]'
+              ? 'bg-[#5550F2]/20 scale-105 shadow-sm' 
+              : 'opacity-70 hover:opacity-100 hover:bg-[#F2F2F2]'
           ]"
           :title="nivel.texto"
         >
           <span class="text-3xl mb-1">{{ nivel.icono }}</span>
-          <span class="text-xs font-['Lato'] text-[#5D4A44] text-center">{{ nivel.texto }}</span>
+          <span class="text-xs font-sans text-[#2D3748] text-center">{{ nivel.texto }}</span>
         </button>
       </div>
     </div>
@@ -33,12 +33,12 @@
     <!-- Paso 2: Emociones específicas -->
     <div>
       <div class="flex items-center justify-between mb-3">
-        <p class="text-sm font-['Lato'] text-[#5D4A44]/70">
+        <p class="text-sm font-sans text-[#2D3748]/70">
           Selecciona hasta 3 emociones que te representen hoy
         </p>
         <span 
           v-if="emociones.length > 0"
-          class="text-xs font-['Lato'] text-[#D8AFA0] font-medium"
+          class="text-xs font-sans text-[#5550F2] font-medium"
         >
           {{ emociones.length }}/3
         </span>
@@ -51,8 +51,8 @@
           :class="[
             'px-3 py-1.5 rounded-full border text-sm font-[\'Lato\'] transition-all duration-200',
             emociones.includes(emocion)
-              ? 'bg-[#D8AFA0] text-white border-[#D8AFA0] shadow-sm scale-105'
-              : 'border-[#EAD5D3]/70 text-[#5D4A44]/70 hover:border-[#D8AFA0]/40 hover:bg-[#F9F7F3]'
+              ? 'bg-[#5550F2] text-white border-[#5550F2] shadow-sm scale-105'
+              : 'border-[#E2E8F0]/70 text-[#2D3748]/70 hover:border-[#5550F2]/40 hover:bg-[#F2F2F2]'
           ]"
         >
           {{ emocion }}
@@ -62,7 +62,7 @@
 
     <!-- Paso 3: Factores influyentes -->
     <div>
-      <p class="text-sm font-['Lato'] text-[#5D4A44]/70 mb-3">
+      <p class="text-sm font-sans text-[#2D3748]/70 mb-3">
         ¿Qué crees que influyó en tu estado de ánimo?
       </p>
       <div class="flex flex-wrap gap-2">
@@ -73,8 +73,8 @@
           :class="[
             'px-3 py-1.5 rounded-full border text-sm font-[\'Lato\'] transition-all duration-200',
             influencias.includes(factor)
-              ? 'bg-[#EAD5D3] border-[#D8AFA0] text-[#5D4A44] shadow-sm'
-              : 'border-[#EAD5D3]/70 text-[#5D4A44]/70 hover:border-[#D8AFA0]/40 hover:bg-[#F9F7F3]'
+              ? 'bg-[#E2E8F0] border-[#5550F2] text-[#2D3748] shadow-sm'
+              : 'border-[#E2E8F0]/70 text-[#2D3748]/70 hover:border-[#5550F2]/40 hover:bg-[#F2F2F2]'
           ]"
         >
           {{ factor }}
@@ -84,18 +84,18 @@
 
     <!-- Paso 4: Reflexión -->
     <div>
-      <p class="text-sm font-['Lato'] text-[#5D4A44]/70 mb-2">
+      <p class="text-sm font-sans text-[#2D3748]/70 mb-2">
         ¿Quieres dejar una reflexión? (opcional)
       </p>
       <textarea
         v-model="reflexion"
         rows="3"
-        class="w-full border border-[#EAD5D3]/60 rounded-xl p-3 text-sm text-[#5D4A44] font-['Lato'] focus:ring-2 focus:ring-[#D8AFA0]/30 focus:border-[#D8AFA0] transition-all resize-none"
+        class="w-full border border-[#E2E8F0]/60 rounded-xl p-3 text-sm text-[#2D3748] font-sans focus:ring-2 focus:ring-[#5550F2]/30 focus:border-[#5550F2] transition-all resize-none"
         placeholder="Por ejemplo: hoy me sentí más tranquila después de practicar respiración..."
         maxlength="500"
       ></textarea>
       <div class="flex justify-end mt-1">
-        <span class="text-xs text-[#5D4A44]/50 font-['Lato']">
+        <span class="text-xs text-[#2D3748]/50 font-sans">
           {{ reflexion.length }}/500
         </span>
       </div>
@@ -109,7 +109,7 @@
       <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <p class="text-sm font-['Lato'] text-green-800">{{ mensajeExito }}</p>
+      <p class="text-sm font-sans text-green-800">{{ mensajeExito }}</p>
     </div>
 
     <div
@@ -119,7 +119,7 @@
       <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <p class="text-sm font-['Lato'] text-red-800">{{ mensajeError }}</p>
+      <p class="text-sm font-sans text-red-800">{{ mensajeError }}</p>
     </div>
 
     <!-- Guardar -->
@@ -127,7 +127,7 @@
       <button
         @click="guardarRegistro"
         :disabled="guardando || !estado"
-        class="px-6 py-2.5 bg-[#D8AFA0] hover:bg-[#C89B8A] text-white rounded-xl font-['Lato'] font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+        class="px-6 py-2.5 bg-[#5550F2] hover:bg-[#C89B8A] text-white rounded-xl font-sans font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span v-if="guardando" class="flex items-center space-x-2">
           <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -141,8 +141,8 @@
     </div>
 
     <!-- Vista rápida de últimos días -->
-    <div v-if="registros.length > 0" class="border-t border-[#EAD5D3]/40 pt-6 mt-6">
-      <h3 class="text-base font-['Lora'] text-[#5D4A44] mb-4">Evolución reciente 💫</h3>
+    <div v-if="registros.length > 0" class="border-t border-[#E2E8F0]/40 pt-6 mt-6">
+      <h3 class="text-base font-serif text-[#2D3748] mb-4">Evolución reciente 💫</h3>
       <div class="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
         <div
           v-for="registro in registrosRecientes"
@@ -162,15 +162,15 @@
               {{ iconoPorEstado(registro.estado_general) }}
             </span>
           </div>
-          <span class="text-[10px] mt-1.5 text-[#5D4A44]/70 font-['Lato'] text-center">
+          <span class="text-[10px] mt-1.5 text-[#2D3748]/70 font-sans text-center">
             {{ formatearFecha(registro.fecha) }}
           </span>
         </div>
       </div>
       
       <!-- Mensaje de ánimo según la evolución -->
-      <div v-if="mensajeEvolucion" class="mt-4 p-3 bg-[#F9F7F3] rounded-lg">
-        <p class="text-sm font-['Lato'] text-[#5D4A44] italic">
+      <div v-if="mensajeEvolucion" class="mt-4 p-3 bg-[#F2F2F2] rounded-lg">
+        <p class="text-sm font-sans text-[#2D3748] italic">
           {{ mensajeEvolucion }}
         </p>
       </div>
@@ -188,19 +188,19 @@
       >
         <div class="flex items-start justify-between">
           <div>
-            <h3 class="text-lg font-['Lora'] text-[#5D4A44] mb-1">
+            <h3 class="text-lg font-serif text-[#2D3748] mb-1">
               Registro del {{ formatearFechaCompleta(registroSeleccionado.fecha) }}
             </h3>
             <div class="flex items-center space-x-2">
               <span class="text-2xl">{{ iconoPorEstado(registroSeleccionado.estado_general) }}</span>
-              <span class="text-sm font-['Lato'] text-[#5D4A44]/70 capitalize">
+              <span class="text-sm font-sans text-[#2D3748]/70 capitalize">
                 {{ registroSeleccionado.estado_general }}
               </span>
             </div>
           </div>
           <button
             @click="registroSeleccionado = null"
-            class="text-[#5D4A44]/50 hover:text-[#5D4A44] transition-colors"
+            class="text-[#2D3748]/50 hover:text-[#2D3748] transition-colors"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -209,12 +209,12 @@
         </div>
 
         <div v-if="registroSeleccionado.emociones?.length > 0">
-          <p class="text-xs font-['Lato'] text-[#5D4A44]/70 mb-2">Emociones:</p>
+          <p class="text-xs font-sans text-[#2D3748]/70 mb-2">Emociones:</p>
           <div class="flex flex-wrap gap-2">
             <span
               v-for="emocion in registroSeleccionado.emociones"
               :key="emocion"
-              class="px-2 py-1 bg-[#D8AFA0]/20 text-[#5D4A44] rounded-full text-xs font-['Lato']"
+              class="px-2 py-1 bg-[#5550F2]/20 text-[#2D3748] rounded-full text-xs font-sans"
             >
               {{ emocion }}
             </span>
@@ -222,12 +222,12 @@
         </div>
 
         <div v-if="registroSeleccionado.influencias?.length > 0">
-          <p class="text-xs font-['Lato'] text-[#5D4A44]/70 mb-2">Factores influyentes:</p>
+          <p class="text-xs font-sans text-[#2D3748]/70 mb-2">Factores influyentes:</p>
           <div class="flex flex-wrap gap-2">
             <span
               v-for="influencia in registroSeleccionado.influencias"
               :key="influencia"
-              class="px-2 py-1 bg-[#EAD5D3]/50 text-[#5D4A44] rounded-full text-xs font-['Lato']"
+              class="px-2 py-1 bg-[#E2E8F0]/50 text-[#2D3748] rounded-full text-xs font-sans"
             >
               {{ influencia }}
             </span>
@@ -235,8 +235,8 @@
         </div>
 
         <div v-if="registroSeleccionado.reflexion">
-          <p class="text-xs font-['Lato'] text-[#5D4A44]/70 mb-2">Reflexión:</p>
-          <p class="text-sm font-['Lato'] text-[#5D4A44] italic leading-relaxed">
+          <p class="text-xs font-sans text-[#2D3748]/70 mb-2">Reflexión:</p>
+          <p class="text-sm font-sans text-[#2D3748] italic leading-relaxed">
             "{{ registroSeleccionado.reflexion }}"
           </p>
         </div>

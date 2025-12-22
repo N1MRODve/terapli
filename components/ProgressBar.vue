@@ -2,16 +2,16 @@
   <div class="w-full">
     <!-- Etiqueta opcional -->
     <div v-if="label" class="flex justify-between items-center mb-2">
-      <span class="text-sm font-medium text-[#5D4A44] font-['Lato']">
+      <span class="text-sm font-medium text-[#2D3748] font-sans">
         {{ label }}
       </span>
-      <span class="text-sm text-[#5D4A44] font-['Lato']">
+      <span class="text-sm text-[#2D3748] font-sans">
         {{ current }} / {{ total }}
       </span>
     </div>
 
     <!-- Barra de progreso -->
-    <div class="relative w-full bg-[#F9F7F3] rounded-full h-3 overflow-hidden border border-[#EAD5D3]">
+    <div class="relative w-full bg-[#F2F2F2] rounded-full h-3 overflow-hidden border border-[#E2E8F0]">
       <div 
         class="h-full transition-all duration-500 ease-out rounded-full"
         :class="[
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Texto inferior opcional -->
-    <p v-if="showPercentage" class="text-xs text-[#5D4A44] opacity-70 mt-1 font-['Lato']">
+    <p v-if="showPercentage" class="text-xs text-[#2D3748] opacity-70 mt-1 font-sans">
       {{ percentage }}% completado
     </p>
   </div>
@@ -66,7 +66,7 @@ const percentage = computed(() => {
 const progressColorClass = computed(() => {
   switch (props.color) {
     case 'rosa':
-      return 'bg-[#EAD5D3]'
+      return 'bg-[#E2E8F0]'
     case 'success':
       return 'bg-green-400'
     case 'warning':

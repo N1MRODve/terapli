@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-white rounded-xl shadow-sm p-6 border border-[#EAD5D3]/40">
-    <h2 class="font-['Lora'] text-xl text-[#5D4A44] mb-4 flex items-center gap-2">
+  <div class="bg-white rounded-xl shadow-sm p-6 border border-[#E2E8F0]/40">
+    <h2 class="font-serif text-xl text-[#2D3748] mb-4 flex items-center gap-2">
       <span class="text-2xl">📝</span>
       Historial de Sesiones
     </h2>
 
     <!-- Loading -->
     <div v-if="loading" class="text-center py-8">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#D8AFA0]"></div>
-      <p class="mt-2 text-sm text-[#5D4A44]/60">Cargando historial...</p>
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5550F2]"></div>
+      <p class="mt-2 text-sm text-[#2D3748]/60">Cargando historial...</p>
     </div>
 
     <!-- Sesiones List -->
@@ -16,21 +16,21 @@
       <div 
         v-for="sesion in sesiones" 
         :key="sesion.id"
-        class="p-4 bg-[#F9F7F3] rounded-lg hover:bg-[#EAD5D3]/20 transition-colors"
+        class="p-4 bg-[#F2F2F2] rounded-lg hover:bg-[#E2E8F0]/20 transition-colors"
       >
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-2">
               <span class="text-xl">{{ getEstadoIcon(sesion.estado) }}</span>
-              <span class="font-medium text-[#5D4A44]">
+              <span class="font-medium text-[#2D3748]">
                 {{ formatearFecha(sesion.fecha) }}
               </span>
-              <span class="text-sm text-[#5D4A44]/60">
+              <span class="text-sm text-[#2D3748]/60">
                 {{ formatearHora(sesion.fecha) }}
               </span>
             </div>
 
-            <div class="flex items-center gap-4 text-sm text-[#5D4A44]/70">
+            <div class="flex items-center gap-4 text-sm text-[#2D3748]/70">
               <span class="flex items-center gap-1">
                 {{ sesion.modalidad === 'online' ? '💻' : '🏥' }}
                 {{ sesion.modalidad === 'online' ? 'Online' : 'Presencial' }}
@@ -43,14 +43,14 @@
               </span>
             </div>
 
-            <p v-if="sesion.notas" class="mt-2 text-sm text-[#5D4A44]/60 line-clamp-2">
+            <p v-if="sesion.notas" class="mt-2 text-sm text-[#2D3748]/60 line-clamp-2">
               {{ sesion.notas }}
             </p>
           </div>
 
           <NuxtLink
             :to="`/terapeuta/sesiones/${sesion.id}`"
-            class="px-3 py-1.5 text-sm bg-white border border-[#EAD5D3] text-[#5D4A44] hover:bg-[#D8AFA0] hover:text-white hover:border-[#D8AFA0] rounded-lg transition-colors ml-4"
+            class="px-3 py-1.5 text-sm bg-white border border-[#E2E8F0] text-[#2D3748] hover:bg-[#5550F2] hover:text-white hover:border-[#5550F2] rounded-lg transition-colors ml-4"
           >
             Ver →
           </NuxtLink>
@@ -58,15 +58,15 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalSesiones > limit" class="pt-4 border-t border-[#EAD5D3]/30">
+      <div v-if="totalSesiones > limit" class="pt-4 border-t border-[#E2E8F0]/30">
         <div class="flex items-center justify-between">
-          <p class="text-sm text-[#5D4A44]/60">
+          <p class="text-sm text-[#2D3748]/60">
             Mostrando {{ sesiones.length }} de {{ totalSesiones }} sesiones
           </p>
           <button
             v-if="sesiones.length < totalSesiones"
             @click="cargarMas"
-            class="px-4 py-2 bg-white border border-[#EAD5D3] text-[#5D4A44] hover:bg-[#F9F7F3] rounded-lg transition-colors text-sm"
+            class="px-4 py-2 bg-white border border-[#E2E8F0] text-[#2D3748] hover:bg-[#F2F2F2] rounded-lg transition-colors text-sm"
           >
             Cargar más
           </button>
@@ -75,11 +75,11 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="text-center py-12 text-[#5D4A44]/60">
+    <div v-else class="text-center py-12 text-[#2D3748]/60">
       <span class="text-4xl mb-3 block">📅</span>
       <p>No hay sesiones registradas todavía</p>
       <button
-        class="mt-4 px-4 py-2 bg-[#D8AFA0] hover:bg-[#C89B8A] text-white rounded-lg transition-colors text-sm font-medium"
+        class="mt-4 px-4 py-2 bg-[#5550F2] hover:bg-[#C89B8A] text-white rounded-lg transition-colors text-sm font-medium"
       >
         + Programar Primera Sesión
       </button>

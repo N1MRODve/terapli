@@ -21,7 +21,7 @@
               <h2 class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
                 Nuevo Bono
               </h2>
-              <p class="text-sm font-['Lato'] text-gray-600 mt-1">
+              <p class="text-sm font-sans text-gray-600 mt-1">
                 Crea un nuevo bono para {{ pacienteNombre }}
               </p>
             </div>
@@ -42,13 +42,13 @@
           <!-- Tipo y Frecuencia -->
           <div class="grid grid-cols-2 gap-6">
             <div>
-              <label class="block text-sm font-['Lato'] font-semibold text-gray-700 mb-3">
+              <label class="block text-sm font-sans font-semibold text-gray-700 mb-3">
                 Tipo de Bono <span class="text-[#F2B33D]">*</span>
               </label>
               <select
                 v-model="formData.tipo"
                 required
-                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-['Lato'] hover:bg-white shadow-sm hover:shadow-md"
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2]/20 focus:border-[#5550F2] bg-white/80 backdrop-blur-sm transition-all duration-300 font-sans hover:bg-white shadow-sm hover:shadow-md"
               >
                 <option value="">Seleccionar tipo</option>
                 <option value="quincenal">Quincenal</option>
@@ -58,13 +58,13 @@
             </div>
 
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Frecuencia Sugerida <span class="text-red-500">*</span>
             </label>
             <select
               v-model="formData.frecuencia"
               required
-              class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] bg-white"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2] bg-white"
             >
               <option value="">Seleccionar frecuencia</option>
               <option value="semanal">Semanal</option>
@@ -76,7 +76,7 @@
 
         <!-- Sesiones Totales -->
         <div>
-          <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+          <label class="block text-sm font-medium text-[#2D3748] mb-2">
             Sesiones Totales <span class="text-red-500">*</span>
           </label>
           <input
@@ -86,20 +86,20 @@
             max="100"
             required
             placeholder="Ej: 4, 8, 12..."
-            class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0]"
+            class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
           />
-          <p class="text-xs text-[#5D4A44]/60 mt-1">
+          <p class="text-xs text-[#2D3748]/60 mt-1">
             Número de sesiones incluidas en el bono
           </p>
         </div>
 
         <!-- Monto -->
         <div>
-          <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+          <label class="block text-sm font-medium text-[#2D3748] mb-2">
             Monto Total <span class="text-red-500">*</span>
           </label>
           <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4A44]/60">€</span>
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#2D3748]/60">€</span>
             <input
               v-model.number="formData.monto"
               type="number"
@@ -107,10 +107,10 @@
               step="0.01"
               required
               placeholder="0.00"
-              class="w-full pl-8 pr-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0]"
+              class="w-full pl-8 pr-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
             />
           </div>
-          <p class="text-xs text-[#5D4A44]/60 mt-1">
+          <p class="text-xs text-[#2D3748]/60 mt-1">
             Precio total del bono (todas las sesiones)
           </p>
         </div>
@@ -118,25 +118,25 @@
         <!-- Fechas -->
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Fecha de Inicio
             </label>
             <input
               v-model="formData.fecha_inicio"
               type="date"
-              class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0]"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Fecha de Vencimiento
             </label>
             <input
               v-model="formData.fecha_fin"
               type="date"
               :min="formData.fecha_inicio"
-              class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0]"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
             />
           </div>
         </div>
@@ -161,7 +161,7 @@
 
         <!-- Estado Inicial -->
         <div>
-          <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+          <label class="block text-sm font-medium text-[#2D3748] mb-2">
             Estado Inicial
           </label>
           <div class="grid grid-cols-2 gap-3">
@@ -175,8 +175,8 @@
                 class="w-4 h-4 text-yellow-600"
               />
               <div>
-                <div class="text-sm font-medium text-[#5D4A44]">⏳ Pendiente</div>
-                <div class="text-xs text-[#5D4A44]/60">Requiere pago</div>
+                <div class="text-sm font-medium text-[#2D3748]">⏳ Pendiente</div>
+                <div class="text-xs text-[#2D3748]/60">Requiere pago</div>
               </div>
             </label>
 
@@ -190,8 +190,8 @@
                 class="w-4 h-4 text-green-600"
               />
               <div>
-                <div class="text-sm font-medium text-[#5D4A44]">✅ Activo</div>
-                <div class="text-xs text-[#5D4A44]/60">Ya pagado</div>
+                <div class="text-sm font-medium text-[#2D3748]">✅ Activo</div>
+                <div class="text-xs text-[#2D3748]/60">Ya pagado</div>
               </div>
             </label>
           </div>
@@ -199,46 +199,46 @@
 
         <!-- Notas -->
         <div>
-          <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+          <label class="block text-sm font-medium text-[#2D3748] mb-2">
             Notas (Opcional)
           </label>
           <textarea
             v-model="formData.notas"
             rows="3"
             placeholder="Información adicional sobre el bono..."
-            class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] resize-none"
+            class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2] resize-none"
           ></textarea>
         </div>
 
         <!-- Resumen del bono -->
-        <div v-if="resumenVisible" class="p-4 bg-gradient-to-r from-[#D8AFA0]/10 to-[#ECC8BA]/10 rounded-lg border border-[#D8AFA0]/30">
-          <div class="font-medium text-[#5D4A44] mb-3 flex items-center gap-2">
+        <div v-if="resumenVisible" class="p-4 bg-gradient-to-r from-[#5550F2]/10 to-[#ECC8BA]/10 rounded-lg border border-[#5550F2]/30">
+          <div class="font-medium text-[#2D3748] mb-3 flex items-center gap-2">
             <span>📋</span>
             Resumen del Bono
           </div>
           <div class="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <span class="text-[#5D4A44]/60">Tipo:</span>
-              <span class="font-medium text-[#5D4A44] ml-1 capitalize">{{ formData.tipo || '-' }}</span>
+              <span class="text-[#2D3748]/60">Tipo:</span>
+              <span class="font-medium text-[#2D3748] ml-1 capitalize">{{ formData.tipo || '-' }}</span>
             </div>
             <div>
-              <span class="text-[#5D4A44]/60">Frecuencia:</span>
-              <span class="font-medium text-[#5D4A44] ml-1 capitalize">{{ formData.frecuencia || '-' }}</span>
+              <span class="text-[#2D3748]/60">Frecuencia:</span>
+              <span class="font-medium text-[#2D3748] ml-1 capitalize">{{ formData.frecuencia || '-' }}</span>
             </div>
             <div>
-              <span class="text-[#5D4A44]/60">Sesiones:</span>
-              <span class="font-medium text-[#5D4A44] ml-1">{{ formData.sesiones_totales || 0 }}</span>
+              <span class="text-[#2D3748]/60">Sesiones:</span>
+              <span class="font-medium text-[#2D3748] ml-1">{{ formData.sesiones_totales || 0 }}</span>
             </div>
             <div>
-              <span class="text-[#5D4A44]/60">Monto:</span>
-              <span class="font-medium text-[#5D4A44] ml-1">€{{ formData.monto || 0 }}</span>
+              <span class="text-[#2D3748]/60">Monto:</span>
+              <span class="font-medium text-[#2D3748] ml-1">€{{ formData.monto || 0 }}</span>
             </div>
             <div>
-              <span class="text-[#5D4A44]/60">Precio/sesión:</span>
-              <span class="font-medium text-[#5D4A44] ml-1">€{{ precioSesion }}</span>
+              <span class="text-[#2D3748]/60">Precio/sesión:</span>
+              <span class="font-medium text-[#2D3748] ml-1">€{{ precioSesion }}</span>
             </div>
             <div>
-              <span class="text-[#5D4A44]/60">Estado:</span>
+              <span class="text-[#2D3748]/60">Estado:</span>
               <span class="font-medium capitalize ml-1"
                 :class="formData.estado === 'activo' ? 'text-green-600' : 'text-yellow-600'"
               >
@@ -257,18 +257,18 @@
         </div>
 
         <!-- Botones de acción -->
-        <div class="flex gap-3 pt-4 border-t border-[#D8AFA0]/30">
+        <div class="flex gap-3 pt-4 border-t border-[#5550F2]/30">
           <button
             type="button"
             @click="cerrar"
-            class="flex-1 px-6 py-3 bg-white border border-[#D8AFA0]/30 text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors font-medium"
+            class="flex-1 px-6 py-3 bg-white border border-[#5550F2]/30 text-[#2D3748] rounded-lg hover:bg-[#5550F2]/10 transition-colors font-medium"
             :disabled="guardando"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            class="flex-1 px-6 py-3 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#C89B8A] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex-1 px-6 py-3 bg-[#5550F2] text-white rounded-lg hover:bg-[#C89B8A] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="guardando || !formularioValido"
           >
             {{ guardando ? 'Creando...' : 'Crear Bono' }}

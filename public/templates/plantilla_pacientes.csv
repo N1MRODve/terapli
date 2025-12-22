@@ -1,0 +1,4 @@
+nombre_completo,email,telefono,area_de_acompanamiento,frecuencia,activo,notas
+María García López,maria.garcia@example.com,+34 612 345 678,Ansiedad,Semanal,true,Paciente con seguimiento regular
+Juan Pérez Martínez,juan.perez@example.com,+34 623 456 789,Depresión,Quincenal,true,Primera sesión próximamente
+Ana Rodríguez,ana.rodriguez@example.com,+34 634 567 890,Trastornos del sueño,Mensual,false,Tratamiento finalizado

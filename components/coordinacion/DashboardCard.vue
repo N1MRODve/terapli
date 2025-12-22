@@ -15,7 +15,7 @@
           </div>
           <div>
             <h3 class="text-sm font-medium text-[#8B7470]">{{ title }}</h3>
-            <p class="text-3xl font-bold font-lora text-[#5D4A44] mt-1">
+            <p class="text-3xl font-bold font-lora text-[#2D3748] mt-1">
               {{ count }}
             </p>
           </div>
@@ -73,7 +73,7 @@ const colorClass = computed(() => {
 
 const iconBgClass = computed(() => {
   const classes = {
-    default: 'bg-gradient-to-br from-[#D8AFA0] to-[#C49484]',
+    default: 'bg-gradient-to-br from-[#5550F2] to-[#C49484]',
     warning: 'bg-gradient-to-br from-yellow-400 to-yellow-500',
     success: 'bg-gradient-to-br from-green-400 to-green-500',
     danger: 'bg-gradient-to-br from-red-400 to-red-500'

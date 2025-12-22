@@ -1,6 +1,6 @@
 <template>
   <header 
-    class="fixed top-0 left-0 right-0 z-50 bg-[#F9F7F3] shadow-sm transition-all duration-300"
+    class="fixed top-0 left-0 right-0 z-50 bg-[#F2F2F2] shadow-sm transition-all duration-300"
   >
     <nav class="flex items-center justify-between w-full h-20 px-6 md:px-10 max-w-[1600px] mx-auto">
       <!-- Logo -->
@@ -14,7 +14,7 @@
       </NuxtLink>
 
       <!-- Desktop Navigation Links -->
-      <div class="hidden md:flex items-center justify-center gap-6 lg:gap-8 font-['Lato'] text-base text-[#5D4A44]">
+      <div class="hidden md:flex items-center justify-center gap-6 lg:gap-8 font-sans text-base text-[#2D3748]">
         <NuxtLink to="/" class="nav-link">
           Inicio
         </NuxtLink>
@@ -36,7 +36,7 @@
       <div class="hidden md:flex items-center gap-4">
         <NuxtLink 
           to="/login" 
-          class="flex items-center gap-1.5 text-[#5D4A44] hover:text-[#D8AFA0] transition-colors duration-300 font-['Lato'] text-sm lg:text-base"
+          class="flex items-center gap-1.5 text-[#2D3748] hover:text-[#5550F2] transition-colors duration-300 font-sans text-sm lg:text-base"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -46,7 +46,7 @@
 
         <NuxtLink
           to="/reservar"
-          class="px-6 py-2.5 bg-[#D8AFA0] hover:bg-[#C89B8A] text-white rounded-full font-['Lato'] font-medium transition-all duration-300 text-sm lg:text-base whitespace-nowrap"
+          class="px-6 py-2.5 bg-[#5550F2] hover:bg-[#C89B8A] text-white rounded-full font-sans font-medium transition-all duration-300 text-sm lg:text-base whitespace-nowrap"
         >
           Reservar cita
         </NuxtLink>
@@ -55,7 +55,7 @@
       <!-- Mobile Menu Button -->
       <button 
         @click="menuOpen = !menuOpen" 
-        class="md:hidden text-[#5D4A44] hover:text-[#D8AFA0] transition-colors p-2"
+        class="md:hidden text-[#2D3748] hover:text-[#5550F2] transition-colors p-2"
         aria-label="Toggle menu"
       >
         <svg 
@@ -87,11 +87,11 @@
     <Transition name="fade-slide">
       <div
         v-if="menuOpen"
-        class="fixed inset-0 top-20 z-40 bg-[#5D4A44]/10 backdrop-blur-sm md:hidden"
+        class="fixed inset-0 top-20 z-40 bg-[#2D3748]/10 backdrop-blur-sm md:hidden"
         @click="menuOpen = false"
       >
         <div
-          class="bg-[#F9F7F3] shadow-lg mx-4 mt-4 rounded-2xl p-6"
+          class="bg-[#F2F2F2] shadow-lg mx-4 mt-4 rounded-2xl p-6"
           @click.stop
         >
           <!-- Navigation links -->
@@ -133,7 +133,7 @@
             </NuxtLink>
             
             <!-- Divider -->
-            <div class="h-px bg-[#D8AFA0]/20 my-2"></div>
+            <div class="h-px bg-[#5550F2]/20 my-2"></div>
             
             <NuxtLink 
               to="/login" 
@@ -151,7 +151,7 @@
           <div class="mt-6">
             <NuxtLink 
               to="/reservar" 
-              class="block w-full px-6 py-3.5 bg-[#D8AFA0] hover:bg-[#C89B8A] text-white rounded-full font-['Lato'] font-semibold text-center transition-all duration-300 shadow-md"
+              class="block w-full px-6 py-3.5 bg-[#5550F2] hover:bg-[#C89B8A] text-white rounded-full font-sans font-semibold text-center transition-all duration-300 shadow-md"
               @click="menuOpen = false"
             >
               Reservar cita
@@ -171,13 +171,13 @@ const menuOpen = ref(false)
 
 <style scoped>
 .nav-link {
-  @apply relative py-2 text-[#5D4A44] hover:text-[#D8AFA0] transition-colors duration-300;
+  @apply relative py-2 text-[#2D3748] hover:text-[#5550F2] transition-colors duration-300;
   @apply font-medium whitespace-nowrap;
 }
 
 .nav-link::after {
   content: '';
-  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-[#D8AFA0];
+  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-[#5550F2];
   @apply transition-all duration-300 ease-out;
 }
 
@@ -186,7 +186,7 @@ const menuOpen = ref(false)
 }
 
 .router-link-active.nav-link {
-  @apply text-[#D8AFA0];
+  @apply text-[#5550F2];
 }
 
 .router-link-active.nav-link::after {
@@ -194,23 +194,23 @@ const menuOpen = ref(false)
 }
 
 .mobile-nav-link {
-  @apply py-3 px-4 text-[#5D4A44] hover:text-[#D8AFA0] hover:bg-[#F9F7F3]/50;
-  @apply transition-all duration-300 rounded-xl font-['Lato'] font-medium;
+  @apply py-3 px-4 text-[#2D3748] hover:text-[#5550F2] hover:bg-[#F2F2F2]/50;
+  @apply transition-all duration-300 rounded-xl font-sans font-medium;
 }
 
 .router-link-active.mobile-nav-link {
-  @apply text-[#D8AFA0] bg-[#F9F7F3]/50;
+  @apply text-[#5550F2] bg-[#F2F2F2]/50;
 }
 
 .mobile-nav-link-therapeutic {
-  @apply flex items-center gap-2 py-3 px-4 text-[#5D4A44] hover:text-[#D8AFA0];
-  @apply border-2 border-[#D8AFA0]/30 hover:border-[#D8AFA0];
-  @apply transition-all duration-300 rounded-xl font-['Lato'] font-medium;
-  @apply hover:bg-[#F9F7F3]/50;
+  @apply flex items-center gap-2 py-3 px-4 text-[#2D3748] hover:text-[#5550F2];
+  @apply border-2 border-[#5550F2]/30 hover:border-[#5550F2];
+  @apply transition-all duration-300 rounded-xl font-sans font-medium;
+  @apply hover:bg-[#F2F2F2]/50;
 }
 
 .router-link-active.mobile-nav-link-therapeutic {
-  @apply text-[#D8AFA0] border-[#D8AFA0] bg-[#F9F7F3]/50;
+  @apply text-[#5550F2] border-[#5550F2] bg-[#F2F2F2]/50;
 }
 
 .fade-slide-enter-active,

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl shadow-sm border border-[#EAD5D3]/40 p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0]/40 p-6">
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-serif text-lg font-semibold text-cafe flex items-center gap-2">
         <span class="text-xl">📝</span>

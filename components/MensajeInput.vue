@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-end gap-3 border-t border-[#EAD5D3]/30 pt-4 bg-[#F9F7F3]">
+  <div class="flex items-end gap-3 border-t border-[#E2E8F0]/30 pt-4 bg-[#F2F2F2]">
     <!-- Área de texto -->
     <div class="flex-1 relative">
       <textarea
@@ -8,7 +8,7 @@
         :placeholder="placeholder"
         @keydown.enter.exact.prevent="enviarMensaje"
         @input="ajustarAltura"
-        class="w-full border border-[#EAD5D3]/40 rounded-lg p-3 bg-white resize-none text-sm text-[#5D4A44] font-['Lato'] focus:outline-none focus:ring-2 focus:ring-[#D8AFA0]/50 focus:border-[#D8AFA0] transition-all"
+        class="w-full border border-[#E2E8F0]/40 rounded-lg p-3 bg-white resize-none text-sm text-[#2D3748] font-sans focus:outline-none focus:ring-2 focus:ring-[#5550F2]/50 focus:border-[#5550F2] transition-all"
         :class="{ 'opacity-50 cursor-not-allowed': enviando }"
         :disabled="enviando"
         rows="1"
@@ -18,7 +18,7 @@
       <!-- Contador de caracteres -->
       <div 
         v-if="contenido.length > 0" 
-        class="absolute bottom-2 right-2 text-[10px] text-[#5D4A44]/40 font-['Lato']"
+        class="absolute bottom-2 right-2 text-[10px] text-[#2D3748]/40 font-sans"
       >
         {{ contenido.length }}/2000
       </div>
@@ -28,7 +28,7 @@
     <button
       @click="enviarMensaje"
       :disabled="!puedeEnviar || enviando"
-      class="bg-[#D8AFA0] hover:bg-[#C89B8A] text-white px-5 py-3 rounded-lg transition-all duration-200 font-['Lato'] text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm hover:shadow-md"
+      class="bg-[#5550F2] hover:bg-[#C89B8A] text-white px-5 py-3 rounded-lg transition-all duration-200 font-sans text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm hover:shadow-md"
       :class="{ 'animate-pulse': enviando }"
     >
       <svg 
@@ -69,7 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const { enviarMensaje: enviarMensajeApi } = useMensajeria()
+const { enviar: enviarMensajeApi } = useMensajes()
 const contenido = ref('')
 const enviando = ref(false)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)

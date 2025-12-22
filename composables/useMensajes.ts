@@ -45,7 +45,7 @@ export const useMensajes = () => {
   const conversaciones = ref<Conversacion[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const canal = ref<RealtimeChannel | null>(null)
+  const canal = ref<any>(null)
 
   /**
    * Listar conversación entre el usuario actual y otro participante

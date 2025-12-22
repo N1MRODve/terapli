@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-sm border border-[#EAD5D3]/40 p-6 space-y-6">
+  <div class="bg-white rounded-2xl shadow-sm border border-[#E2E8F0]/40 p-6 space-y-6">
     <!-- Header con selector de rango -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h2 class="text-xl font-['Lora'] text-[#5D4A44] mb-1">Evolución emocional 📈</h2>
-        <p class="text-sm font-['Lato'] text-[#5D4A44]/70">
+        <h2 class="text-xl font-serif text-[#2D3748] mb-1">Evolución emocional 📈</h2>
+        <p class="text-sm font-sans text-[#2D3748]/70">
           Observa cómo ha sido tu estado emocional en los últimos días
         </p>
       </div>
@@ -16,8 +16,8 @@
           :class="[
             'px-4 py-2 rounded-xl text-sm font-[\'Lato\'] font-medium transition-all duration-200',
             rango === r.valor 
-              ? 'bg-[#D8AFA0] text-white shadow-sm' 
-              : 'bg-[#F9F7F3] text-[#5D4A44]/70 hover:bg-[#EAD5D3]/40 hover:text-[#5D4A44]'
+              ? 'bg-[#5550F2] text-white shadow-sm' 
+              : 'bg-[#F2F2F2] text-[#2D3748]/70 hover:bg-[#E2E8F0]/40 hover:text-[#2D3748]'
           ]"
         >
           {{ r.texto }}
@@ -28,25 +28,25 @@
     <!-- Estado de carga -->
     <div v-if="cargando" class="flex items-center justify-center py-12">
       <div class="flex flex-col items-center space-y-3">
-        <svg class="animate-spin h-8 w-8 text-[#D8AFA0]" fill="none" viewBox="0 0 24 24">
+        <svg class="animate-spin h-8 w-8 text-[#5550F2]" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <p class="text-sm font-['Lato'] text-[#5D4A44]/70">Cargando tu evolución emocional...</p>
+        <p class="text-sm font-sans text-[#2D3748]/70">Cargando tu evolución emocional...</p>
       </div>
     </div>
 
     <!-- Sin datos -->
     <div v-else-if="registros.length === 0" class="py-12 text-center">
-      <div class="w-16 h-16 bg-[#F9F7F3] rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg class="w-8 h-8 text-[#D8AFA0]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="w-16 h-16 bg-[#F2F2F2] rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-[#5550F2]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
       </div>
-      <h3 class="text-lg font-['Lora'] text-[#5D4A44] mb-2">
+      <h3 class="text-lg font-serif text-[#2D3748] mb-2">
         Aún no hay registros suficientes
       </h3>
-      <p class="text-sm font-['Lato'] text-[#5D4A44]/70 max-w-md mx-auto">
+      <p class="text-sm font-sans text-[#2D3748]/70 max-w-md mx-auto">
         Comienza a registrar tu estado emocional diariamente para ver tu evolución aquí. 
         Cada registro te ayudará a conocerte mejor 🌿
       </p>
@@ -56,7 +56,7 @@
     <div v-else class="space-y-6">
       <!-- Gráfico principal -->
       <div class="w-full">
-        <div class="bg-[#F9F7F3]/30 rounded-xl p-4" style="height: 280px;">
+        <div class="bg-[#F2F2F2]/30 rounded-xl p-4" style="height: 280px;">
           <Line 
             :data="chartData" 
             :options="chartOptions"
@@ -67,39 +67,39 @@
 
       <!-- Estadísticas rápidas -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-[#F9F7F3] rounded-xl p-4 text-center">
-          <p class="text-2xl font-['Lora'] font-medium text-[#5D4A44] mb-1">
+        <div class="bg-[#F2F2F2] rounded-xl p-4 text-center">
+          <p class="text-2xl font-serif font-medium text-[#2D3748] mb-1">
             {{ registros.length }}
           </p>
-          <p class="text-xs font-['Lato'] text-[#5D4A44]/70">
+          <p class="text-xs font-sans text-[#2D3748]/70">
             {{ registros.length === 1 ? 'registro' : 'registros' }}
           </p>
         </div>
-        <div class="bg-[#F9F7F3] rounded-xl p-4 text-center">
+        <div class="bg-[#F2F2F2] rounded-xl p-4 text-center">
           <p class="text-2xl mb-1">{{ promedioEmocional.emoji }}</p>
-          <p class="text-xs font-['Lato'] text-[#5D4A44]/70">
+          <p class="text-xs font-sans text-[#2D3748]/70">
             Promedio
           </p>
         </div>
-        <div class="bg-[#F9F7F3] rounded-xl p-4 text-center">
+        <div class="bg-[#F2F2F2] rounded-xl p-4 text-center">
           <p class="text-2xl mb-1">{{ mejorDia.emoji }}</p>
-          <p class="text-xs font-['Lato'] text-[#5D4A44]/70">
+          <p class="text-xs font-sans text-[#2D3748]/70">
             Mejor día
           </p>
         </div>
-        <div class="bg-[#F9F7F3] rounded-xl p-4 text-center">
-          <p class="text-2xl font-['Lora'] font-medium text-[#D8AFA0] mb-1">
+        <div class="bg-[#F2F2F2] rounded-xl p-4 text-center">
+          <p class="text-2xl font-serif font-medium text-[#5550F2] mb-1">
             {{ racha }}
           </p>
-          <p class="text-xs font-['Lato'] text-[#5D4A44]/70">
+          <p class="text-xs font-sans text-[#2D3748]/70">
             días seguidos
           </p>
         </div>
       </div>
 
       <!-- Emociones más frecuentes -->
-      <div v-if="emocionesFrecuentes.length > 0" class="border-t border-[#EAD5D3]/30 pt-6">
-        <h3 class="text-lg font-['Lora'] text-[#5D4A44] mb-3">
+      <div v-if="emocionesFrecuentes.length > 0" class="border-t border-[#E2E8F0]/30 pt-6">
+        <h3 class="text-lg font-serif text-[#2D3748] mb-3">
           Emociones más presentes 🌈
         </h3>
         <div class="flex flex-wrap gap-2">
@@ -112,10 +112,10 @@
               opacity: 0.9 - (i * 0.1)
             }"
           >
-            <span class="text-sm font-['Lato'] font-medium text-[#5D4A44]">
+            <span class="text-sm font-sans font-medium text-[#2D3748]">
               {{ emo.emocion }}
             </span>
-            <span class="ml-1.5 text-xs font-['Lato'] text-[#5D4A44]/70">
+            <span class="ml-1.5 text-xs font-sans text-[#2D3748]/70">
               × {{ emo.frecuencia }}
             </span>
           </div>
@@ -123,24 +123,24 @@
       </div>
 
       <!-- Factores influyentes -->
-      <div v-if="factoresFrecuentes.length > 0" class="border-t border-[#EAD5D3]/30 pt-6">
-        <h3 class="text-lg font-['Lora'] text-[#5D4A44] mb-3">
+      <div v-if="factoresFrecuentes.length > 0" class="border-t border-[#E2E8F0]/30 pt-6">
+        <h3 class="text-lg font-serif text-[#2D3748] mb-3">
           Factores que más influyen 💡
         </h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           <div
             v-for="(factor, i) in factoresFrecuentes"
             :key="i"
-            class="flex items-center space-x-2 px-3 py-2 bg-[#EAD5D3]/30 rounded-lg"
+            class="flex items-center space-x-2 px-3 py-2 bg-[#E2E8F0]/30 rounded-lg"
           >
             <div class="flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center">
               <span class="text-lg">{{ obtenerIconoFactor(factor.factor) }}</span>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-['Lato'] font-medium text-[#5D4A44] truncate">
+              <p class="text-sm font-sans font-medium text-[#2D3748] truncate">
                 {{ factor.factor }}
               </p>
-              <p class="text-xs font-['Lato'] text-[#5D4A44]/60">
+              <p class="text-xs font-sans text-[#2D3748]/60">
                 {{ factor.frecuencia }}×
               </p>
             </div>
@@ -149,19 +149,19 @@
       </div>
 
       <!-- Insight textual personalizado -->
-      <div v-if="insight" class="border-t border-[#EAD5D3]/30 pt-6">
-        <div class="bg-gradient-to-br from-[#F9F7F3] to-white rounded-xl p-6 border border-[#EAD5D3]/30">
+      <div v-if="insight" class="border-t border-[#E2E8F0]/30 pt-6">
+        <div class="bg-gradient-to-br from-[#F2F2F2] to-white rounded-xl p-6 border border-[#E2E8F0]/30">
           <div class="flex items-start space-x-3">
-            <div class="flex-shrink-0 w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 w-10 h-10 bg-[#5550F2]/20 rounded-full flex items-center justify-center">
+              <svg class="w-5 h-5 text-[#5550F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
             <div class="flex-1">
-              <h4 class="text-sm font-['Lato'] font-semibold text-[#D8AFA0] mb-1">
+              <h4 class="text-sm font-sans font-semibold text-[#5550F2] mb-1">
                 Reflexión sobre tu evolución
               </h4>
-              <p class="text-sm font-['Lato'] text-[#5D4A44]/80 leading-relaxed italic">
+              <p class="text-sm font-sans text-[#2D3748]/80 leading-relaxed italic">
                 "{{ insight }}"
               </p>
             </div>
@@ -242,12 +242,12 @@ const chartData = computed(() => {
         label: 'Estado emocional',
         data: registros.value.map(r => niveles.indexOf(r.estado_general) + 1),
         fill: true,
-        borderColor: '#D8AFA0',
+        borderColor: '#5550F2',
         backgroundColor: 'rgba(216, 175, 160, 0.15)',
         tension: 0.4,
         pointRadius: 6,
         pointHoverRadius: 8,
-        pointBackgroundColor: '#D8AFA0',
+        pointBackgroundColor: '#5550F2',
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointHoverBackgroundColor: '#C89B8A',
@@ -275,7 +275,7 @@ const chartOptions = computed(() => ({
           family: 'Lato',
           size: 11
         },
-        color: '#5D4A44'
+        color: '#2D3748'
       },
       grid: {
         color: 'rgba(93, 74, 68, 0.08)',
@@ -291,7 +291,7 @@ const chartOptions = computed(() => ({
           family: 'Lato',
           size: 11
         },
-        color: '#5D4A44'
+        color: '#2D3748'
       },
       grid: {
         display: false
@@ -306,7 +306,7 @@ const chartOptions = computed(() => ({
       display: false
     },
     tooltip: {
-      backgroundColor: '#5D4A44',
+      backgroundColor: '#2D3748',
       titleFont: {
         family: 'Lora',
         size: 13
@@ -484,8 +484,8 @@ const insight = computed(() => {
 // Funciones de utilidad
 const obtenerColorEmocion = (indice) => {
   const colores = [
-    '#D8AFA0', // Naranja claro
-    '#EAD5D3', // Rosa empolvado
+    '#5550F2', // Naranja claro
+    '#E2E8F0', // Rosa empolvado
     '#B7C7A8', // Verde suave
     '#B4D4D3', // Azul sereno
     '#E8C4A8'  // Beige cálido

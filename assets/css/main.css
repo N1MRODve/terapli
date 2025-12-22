@@ -174,13 +174,13 @@
 
   /* Calm breathing animation - Imita respiración profunda (8s) */
   @keyframes calm-pulse {
-    0%, 100% { 
-      transform: scale(1); 
+    0%, 100% {
+      transform: scale(1);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
-    50% { 
-      transform: scale(1.02); 
-      box-shadow: 0 0 25px rgba(232, 186, 170, 0.3), 0 10px 30px -5px rgba(216, 175, 160, 0.2);
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 25px rgba(85, 80, 242, 0.3), 0 10px 30px -5px rgba(123, 114, 247, 0.2);
     }
   }
 
@@ -209,7 +209,7 @@
 
   /* Gradientes suaves */
   .gradient-warm {
-    background: linear-gradient(135deg, #FDFBF9 0%, #F9F7F3 100%);
+    background: linear-gradient(135deg, #FAFAFA 0%, #F2F2F2 100%);
   }
 
   .gradient-violeta {
@@ -268,7 +268,7 @@
   .blob-1 {
     width: 400px;
     height: 400px;
-    background: linear-gradient(135deg, #EAD5D3, #D8AFA0);
+    background: linear-gradient(135deg, #5550F2, #7B72F7);
     top: -100px;
     right: -100px;
     animation-delay: 0s;
@@ -277,7 +277,7 @@
   .blob-2 {
     width: 300px;
     height: 300px;
-    background: linear-gradient(135deg, #D8AFA0, #EFA08B);
+    background: linear-gradient(135deg, #04BF9D, #2DCFB0);
     bottom: -50px;
     left: -50px;
     animation-delay: 2s;

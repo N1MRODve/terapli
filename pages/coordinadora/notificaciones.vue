@@ -5,7 +5,7 @@
 
 definePageMeta({
   middleware: 'auth',
-  layout: 'dashboard'
+  layout: 'coordinadora'
 })
 
 import { ref, computed, onMounted } from 'vue'

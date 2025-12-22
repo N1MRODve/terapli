@@ -123,8 +123,9 @@ export const useSupabase = () => {
       }
       // Si ya se cargó el perfil mientras esperábamos, retornarlo
       if (userProfile.value) {
-        console.log('[useSupabase] Perfil cargado durante espera:', userProfile.value.email)
-        return userProfile.value
+        const perfil = userProfile.value
+        console.log('[useSupabase] Perfil cargado durante espera:', perfil.email)
+        return perfil
       }
     }
 

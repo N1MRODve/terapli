@@ -1101,27 +1101,21 @@ const cargarMesesDisponibles = async () => {
         const [year, month] = mesValor.split('-')
         const yearNum = parseInt(year)
         const monthNum = parseInt(month)
-        
+
         // Validar números
         if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
           console.error('[Frontend] Valores de fecha inválidos:', { year, month })
-          return {
-            valor: mesValor,
-            nombre: 'Mes inválido'
-          }
+          return null
         }
-        
+
         const fecha = new Date(yearNum, monthNum - 1)
-        
+
         // Validar fecha resultante
         if (isNaN(fecha.getTime())) {
           console.error('[Frontend] Fecha construida inválida:', { yearNum, monthNum })
-          return {
-            valor: mesValor,
-            nombre: 'Fecha inválida'
-          }
+          return null
         }
-        
+
         const nombreMes = fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
         return {
           valor: mesValor,
@@ -1129,12 +1123,9 @@ const cargarMesesDisponibles = async () => {
         }
       } catch (formatError) {
         console.error('[Frontend] Error al formatear mes:', formatError, mesValor)
-        return {
-          valor: mesValor,
-          nombre: `Error: ${mesValor}`
-        }
+        return null
       }
-    }).filter(mes => mes.nombre !== 'Mes inválido' && mes.nombre !== 'Fecha inválida')
+    }).filter(mes => mes !== null)
 
     console.log(`[Frontend] ✅ ${mesesDisponibles.value.length} meses únicos disponibles`)
     

@@ -2,22 +2,22 @@
   <div class="flex flex-col h-[calc(100vh-8rem)] max-w-4xl mx-auto px-4 py-8">
     <!-- Header -->
     <header class="mb-6 flex-shrink-0">
-      <h1 class="text-2xl sm:text-3xl font-['Lora'] font-medium text-[#5D4A44]">
+      <h1 class="text-2xl sm:text-3xl font-serif font-medium text-[#2D3748]">
         Mensajes
       </h1>
-      <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato'] mt-1">
+      <p class="text-sm text-[#2D3748] opacity-70 font-sans mt-1">
         Conversación con tu coordinadora
       </p>
     </header>
 
     <!-- Loader -->
     <div v-if="loading" class="flex-1 flex flex-col items-center justify-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D8AFA0]"></div>
-      <p class="mt-4 text-[#5D4A44] opacity-70 font-['Lato']">Cargando mensajes...</p>
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5550F2]"></div>
+      <p class="mt-4 text-[#2D3748] opacity-70 font-sans">Cargando mensajes...</p>
     </div>
 
     <!-- Chat Container -->
-    <div v-else class="flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-[#EAD5D3]/30 overflow-hidden">
+    <div v-else class="flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-[#E2E8F0]/30 overflow-hidden">
       <!-- Mensajes -->
       <div 
         ref="mensajesContainer"
@@ -26,13 +26,13 @@
       >
         <!-- Empty state -->
         <div v-if="mensajes.length === 0" class="flex flex-col items-center justify-center h-full text-center py-12">
-          <div class="w-20 h-20 rounded-full bg-[#EAD5D3]/30 flex items-center justify-center mb-4">
-            <svg class="w-10 h-10 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-20 h-20 rounded-full bg-[#E2E8F0]/30 flex items-center justify-center mb-4">
+            <svg class="w-10 h-10 text-[#5550F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <h3 class="text-xl font-['Lora'] font-medium text-[#5D4A44] mb-2">No hay mensajes</h3>
-          <p class="text-sm text-[#5D4A44] opacity-70 font-['Lato'] max-w-md">
+          <h3 class="text-xl font-serif font-medium text-[#2D3748] mb-2">No hay mensajes</h3>
+          <p class="text-sm text-[#2D3748] opacity-70 font-sans max-w-md">
             Inicia la conversación enviando un mensaje a tu coordinadora.
           </p>
         </div>
@@ -50,20 +50,20 @@
             :class="[
               'max-w-[70%] rounded-2xl px-4 py-3 shadow-sm',
               esMensajeMio(mensaje)
-                ? 'bg-[#D8AFA0] text-white rounded-br-sm'
-                : 'bg-[#F9F7F3] text-[#5D4A44] rounded-bl-sm'
+                ? 'bg-[#5550F2] text-white rounded-br-sm'
+                : 'bg-[#F2F2F2] text-[#2D3748] rounded-bl-sm'
             ]"
           >
             <!-- Nombre del autor (solo para mensajes recibidos) -->
             <p 
               v-if="!esMensajeMio(mensaje)" 
-              class="text-xs font-['Lato'] font-medium mb-1 opacity-70"
+              class="text-xs font-sans font-medium mb-1 opacity-70"
             >
               {{ mensaje.autor?.nombre_completo || 'Coordinadora' }}
             </p>
 
             <!-- Contenido -->
-            <p class="text-sm font-['Lato'] whitespace-pre-wrap break-words">
+            <p class="text-sm font-sans whitespace-pre-wrap break-words">
               {{ mensaje.contenido }}
             </p>
 
@@ -72,7 +72,7 @@
               :class="[
                 'flex items-center gap-1 mt-1 text-xs',
                 'font-[\'Lato\']',
-                esMensajeMio(mensaje) ? 'text-white/70' : 'text-[#5D4A44]/50'
+                esMensajeMio(mensaje) ? 'text-white/70' : 'text-[#2D3748]/50'
               ]"
             >
               <span>{{ formatearHora(mensaje.created_at) }}</span>
@@ -93,24 +93,24 @@
 
         <!-- Indicador de escritura (opcional) -->
         <div v-if="estaEscribiendo" class="flex justify-start">
-          <div class="bg-[#F9F7F3] rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+          <div class="bg-[#F2F2F2] rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
             <div class="flex gap-1">
-              <span class="w-2 h-2 bg-[#D8AFA0] rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-              <span class="w-2 h-2 bg-[#D8AFA0] rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-              <span class="w-2 h-2 bg-[#D8AFA0] rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+              <span class="w-2 h-2 bg-[#5550F2] rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+              <span class="w-2 h-2 bg-[#5550F2] rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+              <span class="w-2 h-2 bg-[#5550F2] rounded-full animate-bounce" style="animation-delay: 300ms"></span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Input de mensaje -->
-      <div class="flex-shrink-0 border-t border-[#EAD5D3]/30 p-4 bg-[#F9F7F3]/30">
+      <div class="flex-shrink-0 border-t border-[#E2E8F0]/30 p-4 bg-[#F2F2F2]/30">
         <form @submit.prevent="handleEnviarMensaje" class="flex gap-2">
           <textarea
             v-model="nuevoMensaje"
             placeholder="Escribe tu mensaje..."
             rows="1"
-            class="flex-1 px-4 py-3 border border-[#EAD5D3] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent resize-none font-['Lato'] text-[#5D4A44] placeholder:text-[#5D4A44]/40 bg-white"
+            class="flex-1 px-4 py-3 border border-[#E2E8F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] focus:border-transparent resize-none font-sans text-[#2D3748] placeholder:text-[#2D3748]/40 bg-white"
             @keydown.enter.exact.prevent="handleEnviarMensaje"
             @input="autoResize"
             ref="textareaRef"
@@ -118,7 +118,7 @@
           <button
             type="submit"
             :disabled="!nuevoMensaje.trim() || enviando"
-            class="flex-shrink-0 w-12 h-12 bg-[#D8AFA0] hover:bg-[#C89B8A] disabled:bg-[#EAD5D3] disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center"
+            class="flex-shrink-0 w-12 h-12 bg-[#5550F2] hover:bg-[#C89B8A] disabled:bg-[#E2E8F0] disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center"
           >
             <svg v-if="!enviando" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

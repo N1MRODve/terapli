@@ -10,7 +10,7 @@
     <!-- Header opcional -->
     <div v-if="title || $slots.header" class="mb-4">
       <slot name="header">
-        <h3 class="text-lg font-medium text-[#5D4A44] font-['Lora']">
+        <h3 class="text-lg font-medium text-[#2D3748] font-serif">
           {{ title }}
         </h3>
       </slot>

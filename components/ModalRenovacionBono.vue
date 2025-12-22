@@ -4,21 +4,21 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     @click.self="cerrar"
   >
-    <div class="bg-[#F9F7F3] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="bg-[#F2F2F2] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
       <!-- Header -->
-      <div class="sticky top-0 bg-[#F9F7F3] border-b border-[#D8AFA0]/30 px-6 py-4 flex justify-between items-center">
+      <div class="sticky top-0 bg-[#F2F2F2] border-b border-[#5550F2]/30 px-6 py-4 flex justify-between items-center">
         <div>
-          <h2 class="text-2xl font-['Lora'] text-[#5D4A44] font-semibold flex items-center gap-2">
+          <h2 class="text-2xl font-serif text-[#2D3748] font-semibold flex items-center gap-2">
             <span class="text-2xl">🔄</span>
             Renovar Bono
           </h2>
-          <p class="text-sm text-[#5D4A44]/60 mt-1">
+          <p class="text-sm text-[#2D3748]/60 mt-1">
             Crea una nueva renovación basada en el bono actual
           </p>
         </div>
         <button
           @click="cerrar"
-          class="text-[#5D4A44] hover:text-[#D8AFA0] transition-colors"
+          class="text-[#2D3748] hover:text-[#5550F2] transition-colors"
           aria-label="Cerrar modal"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,34 +31,34 @@
       <div class="px-6 py-6 space-y-6">
         <!-- Resumen del Bono Actual -->
         <div class="p-5 bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-300 rounded-xl">
-          <h3 class="font-['Lora'] text-lg font-semibold text-[#5D4A44] mb-4 flex items-center gap-2">
+          <h3 class="font-serif text-lg font-semibold text-[#2D3748] mb-4 flex items-center gap-2">
             <span>📋</span>
             Bono Actual
           </h3>
 
           <div class="grid grid-cols-2 gap-4 text-sm">
             <div class="p-3 bg-white rounded-lg">
-              <div class="text-[#5D4A44]/60 mb-1">Tipo</div>
-              <div class="font-medium text-[#5D4A44] capitalize">{{ bono.tipo }}</div>
+              <div class="text-[#2D3748]/60 mb-1">Tipo</div>
+              <div class="font-medium text-[#2D3748] capitalize">{{ bono.tipo }}</div>
             </div>
             <div class="p-3 bg-white rounded-lg">
-              <div class="text-[#5D4A44]/60 mb-1">Frecuencia</div>
-              <div class="font-medium text-[#5D4A44] capitalize">{{ bono.frecuencia }}</div>
+              <div class="text-[#2D3748]/60 mb-1">Frecuencia</div>
+              <div class="font-medium text-[#2D3748] capitalize">{{ bono.frecuencia }}</div>
             </div>
             <div class="p-3 bg-white rounded-lg">
-              <div class="text-[#5D4A44]/60 mb-1">Sesiones Totales</div>
-              <div class="font-medium text-[#5D4A44]">{{ bono.sesiones_totales }}</div>
+              <div class="text-[#2D3748]/60 mb-1">Sesiones Totales</div>
+              <div class="font-medium text-[#2D3748]">{{ bono.sesiones_totales }}</div>
             </div>
             <div class="p-3 bg-white rounded-lg">
-              <div class="text-[#5D4A44]/60 mb-1">Sesiones Restantes</div>
-              <div class="font-medium text-[#5D4A44]">{{ bono.sesiones_restantes || 0 }}</div>
+              <div class="text-[#2D3748]/60 mb-1">Sesiones Restantes</div>
+              <div class="font-medium text-[#2D3748]">{{ bono.sesiones_restantes || 0 }}</div>
             </div>
             <div class="p-3 bg-white rounded-lg">
-              <div class="text-[#5D4A44]/60 mb-1">Monto</div>
-              <div class="font-bold text-[#D8AFA0] text-lg">{{ formatearMonto(bono.monto) }}</div>
+              <div class="text-[#2D3748]/60 mb-1">Monto</div>
+              <div class="font-bold text-[#5550F2] text-lg">{{ formatearMonto(bono.monto) }}</div>
             </div>
             <div class="p-3 bg-white rounded-lg">
-              <div class="text-[#5D4A44]/60 mb-1">Estado</div>
+              <div class="text-[#2D3748]/60 mb-1">Estado</div>
               <div class="font-medium capitalize"
                 :class="estadoColor"
               >
@@ -71,7 +71,7 @@
         <!-- Formulario de Renovación -->
         <form @submit.prevent="renovar" class="space-y-5">
           <div class="p-5 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-300 rounded-xl">
-            <h3 class="font-['Lora'] text-lg font-semibold text-[#5D4A44] mb-4 flex items-center gap-2">
+            <h3 class="font-serif text-lg font-semibold text-[#2D3748] mb-4 flex items-center gap-2">
               <span>✨</span>
               Datos del Nuevo Bono
             </h3>
@@ -85,10 +85,10 @@
                   class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                 />
                 <div>
-                  <div class="text-sm font-medium text-[#5D4A44]">
+                  <div class="text-sm font-medium text-[#2D3748]">
                     Mantener los mismos valores del bono original
                   </div>
-                  <div class="text-xs text-[#5D4A44]/60 mt-1">
+                  <div class="text-xs text-[#2D3748]/60 mt-1">
                     Si lo desmarcas, podrás personalizar las sesiones y el monto
                   </div>
                 </div>
@@ -99,7 +99,7 @@
             <div v-if="!mantenerValoresOriginales" class="space-y-4">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+                  <label class="block text-sm font-medium text-[#2D3748] mb-2">
                     Sesiones Totales
                   </label>
                   <input
@@ -113,11 +113,11 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+                  <label class="block text-sm font-medium text-[#2D3748] mb-2">
                     Monto Total
                   </label>
                   <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4A44]/60">€</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#2D3748]/60">€</span>
                     <input
                       v-model.number="formData.monto_nuevo"
                       type="number"
@@ -133,12 +133,12 @@
 
               <div class="p-3 bg-purple-100 rounded-lg text-sm">
                 <div class="flex justify-between mb-1">
-                  <span class="text-[#5D4A44]/70">Precio por sesión (nuevo):</span>
+                  <span class="text-[#2D3748]/70">Precio por sesión (nuevo):</span>
                   <span class="font-bold text-purple-700">€{{ precioSesionNuevo }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-[#5D4A44]/70">Precio por sesión (original):</span>
-                  <span class="font-medium text-[#5D4A44]/60">€{{ precioSesionOriginal }}</span>
+                  <span class="text-[#2D3748]/70">Precio por sesión (original):</span>
+                  <span class="font-medium text-[#2D3748]/60">€{{ precioSesionOriginal }}</span>
                 </div>
               </div>
             </div>
@@ -153,14 +153,14 @@
 
           <!-- Motivo de la renovación -->
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Motivo de la Renovación (Opcional)
             </label>
             <textarea
               v-model="formData.motivo"
               rows="3"
               placeholder="Explica por qué se renueva este bono..."
-              class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] resize-none"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2] resize-none"
             ></textarea>
           </div>
 
@@ -199,11 +199,11 @@
           </div>
 
           <!-- Botones de acción -->
-          <div class="flex gap-3 pt-4 border-t border-[#D8AFA0]/30">
+          <div class="flex gap-3 pt-4 border-t border-[#5550F2]/30">
             <button
               type="button"
               @click="cerrar"
-              class="flex-1 px-6 py-3 bg-white border border-[#D8AFA0]/30 text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors font-medium"
+              class="flex-1 px-6 py-3 bg-white border border-[#5550F2]/30 text-[#2D3748] rounded-lg hover:bg-[#5550F2]/10 transition-colors font-medium"
               :disabled="renovando"
             >
               Cancelar

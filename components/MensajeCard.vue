@@ -3,25 +3,25 @@
     :class="[
       'p-4 rounded-lg max-w-[80%] transition-all duration-200',
       remitente 
-        ? 'bg-[#EAD5D3]/50 self-end text-right ml-auto' 
-        : 'bg-white border border-[#EAD5D3]/40 self-start shadow-sm'
+        ? 'bg-[#E2E8F0]/50 self-end text-right ml-auto' 
+        : 'bg-white border border-[#E2E8F0]/40 self-start shadow-sm'
     ]"
   >
     <!-- Contenido del mensaje -->
-    <p class="text-[#5D4A44] font-['Lato'] text-sm leading-relaxed whitespace-pre-wrap break-words">
+    <p class="text-[#2D3748] font-sans text-sm leading-relaxed whitespace-pre-wrap break-words">
       {{ texto }}
     </p>
     
     <!-- Metainformación -->
     <div class="flex items-center gap-2 mt-2" :class="remitente ? 'justify-end' : 'justify-start'">
-      <p class="text-[10px] text-[#5D4A44]/50 font-['Lato']">
+      <p class="text-[10px] text-[#2D3748]/50 font-sans">
         {{ formatearFecha(fecha) }}
       </p>
       
       <!-- Indicador de no visto (solo para remitente) -->
       <span 
         v-if="remitente && !visto" 
-        class="inline-block w-2 h-2 bg-[#D8AFA0] rounded-full"
+        class="inline-block w-2 h-2 bg-[#5550F2] rounded-full"
         title="Enviado"
       ></span>
     </div>

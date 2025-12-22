@@ -324,10 +324,10 @@
         </div>
 
         <!-- Selector de Terapeuta (SOLO COORDINADORA) -->
-        <div v-if="esCoordinadora" class="space-y-4 pt-4 border-t-2 border-[#D8AFA0]/30">
+        <div v-if="esCoordinadora" class="space-y-4 pt-4 border-t-2 border-[#5550F2]/30">
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold flex items-center gap-2">
-              <span v-if="!terapeutaSeleccionado" class="w-7 h-7 rounded-full bg-[#D8AFA0] text-white flex items-center justify-center text-sm font-bold">
+            <h3 class="text-lg font-serif text-[#2D3748] font-semibold flex items-center gap-2">
+              <span v-if="!terapeutaSeleccionado" class="w-7 h-7 rounded-full bg-[#5550F2] text-white flex items-center justify-center text-sm font-bold">
                 {{ props.pacientePreseleccionado ? '2' : '2' }}
               </span>
               <span v-else class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center">
@@ -352,25 +352,25 @@
               :key="terapeuta.id"
               type="button"
               @click="seleccionarTerapeuta(terapeuta)"
-              class="p-4 text-left hover:bg-[#D8AFA0]/10 transition-all border-2 border-[#D8AFA0]/30 hover:border-[#D8AFA0] rounded-lg cursor-pointer group bg-white"
+              class="p-4 text-left hover:bg-[#5550F2]/10 transition-all border-2 border-[#5550F2]/30 hover:border-[#5550F2] rounded-lg cursor-pointer group bg-white"
             >
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-[#D8AFA0]/20 group-hover:bg-[#D8AFA0] flex items-center justify-center transition-colors">
-                  <UserIcon class="w-6 h-6 text-[#5D4A44] group-hover:text-white transition-colors" />
+                <div class="w-12 h-12 rounded-full bg-[#5550F2]/20 group-hover:bg-[#5550F2] flex items-center justify-center transition-colors">
+                  <UserIcon class="w-6 h-6 text-[#2D3748] group-hover:text-white transition-colors" />
                 </div>
                 <div class="flex-1">
-                  <div class="font-medium text-[#5D4A44] group-hover:text-[#D8AFA0] transition-colors">
+                  <div class="font-medium text-[#2D3748] group-hover:text-[#5550F2] transition-colors">
                     {{ terapeuta.nombre_completo }}
                   </div>
-                  <div v-if="terapeuta.especialidad" class="text-sm text-[#5D4A44]/60">
+                  <div v-if="terapeuta.especialidad" class="text-sm text-[#2D3748]/60">
                     {{ terapeuta.especialidad }}
                   </div>
-                  <div class="text-xs text-[#5D4A44]/50">
+                  <div class="text-xs text-[#2D3748]/50">
                     {{ terapeuta.email }}
                   </div>
                 </div>
                 <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg class="w-5 h-5 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 text-[#5550F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -406,11 +406,11 @@
         </div>
 
         <!-- Paso 2/3: Detalles de la Cita -->
-        <div class="space-y-6 pt-4 border-t-2 border-[#D8AFA0]/30">
-          <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold flex items-center gap-2">
+        <div class="space-y-6 pt-4 border-t-2 border-[#5550F2]/30">
+          <h3 class="text-lg font-serif text-[#2D3748] font-semibold flex items-center gap-2">
             <span 
               v-if="!formularioValido"
-              class="w-7 h-7 rounded-full bg-[#D8AFA0] text-white flex items-center justify-center text-sm font-bold"
+              class="w-7 h-7 rounded-full bg-[#5550F2] text-white flex items-center justify-center text-sm font-bold"
             >
               {{ esCoordinadora ? '3' : (props.pacientePreseleccionado ? '1' : '2') }}
             </span>
@@ -433,7 +433,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Fecha -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2">
+              <label class="block text-sm font-medium text-[#2D3748] mb-2 flex items-center gap-2">
                 <CalendarIcon class="w-4 h-4" />
                 <span>Fecha</span>
                 <span class="text-red-500">*</span>
@@ -446,8 +446,8 @@
                   :min="fechaMinima"
                   @keydown.enter.prevent
                   :class="[
-                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white text-base cursor-pointer',
-                    camposInvalidos.includes('fecha') ? 'border-red-500 border-2' : 'border-[#D8AFA0]/30'
+                    'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white text-base cursor-pointer',
+                    camposInvalidos.includes('fecha') ? 'border-red-500 border-2' : 'border-[#5550F2]/30'
                   ]"
                   style="min-height: 44px;"
                   placeholder="dd/mm/aaaa"
@@ -463,8 +463,8 @@
                     :class="[
                       'text-xs px-3 py-1.5 rounded-lg border transition-all',
                       formulario.fecha === opcion.fecha
-                        ? 'bg-[#D8AFA0] text-white border-[#D8AFA0] font-semibold'
-                        : 'bg-white text-[#5D4A44] border-[#D8AFA0]/30 hover:border-[#D8AFA0] hover:bg-[#D8AFA0]/10'
+                        ? 'bg-[#5550F2] text-white border-[#5550F2] font-semibold'
+                        : 'bg-white text-[#2D3748] border-[#5550F2]/30 hover:border-[#5550F2] hover:bg-[#5550F2]/10'
                     ]"
                   >
                     {{ opcion.label }}
@@ -486,14 +486,14 @@
 
             <!-- Hora de Inicio -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2">
+              <label class="block text-sm font-medium text-[#2D3748] mb-2 flex items-center gap-2">
                 <ClockIcon class="w-4 h-4" />
                 <span>Hora de Inicio</span>
                 <span class="text-red-500">*</span>
               </label>
               <div class="space-y-3">
                 <!-- Grid de horas disponibles -->
-                <div class="grid grid-cols-4 gap-3 max-h-72 overflow-y-auto p-4 bg-white rounded-lg border border-[#D8AFA0]/20 shadow-inner">
+                <div class="grid grid-cols-4 gap-3 max-h-72 overflow-y-auto p-4 bg-white rounded-lg border border-[#5550F2]/20 shadow-inner">
                   <button
                     v-for="hora in horasDisponibles"
                     :key="hora"
@@ -502,8 +502,8 @@
                     :class="[
                       'px-4 py-3 text-sm font-semibold rounded-lg transition-all border-2 flex items-center justify-center min-w-[70px]',
                       formulario.hora_inicio === hora
-                        ? 'bg-[#D8AFA0] text-white border-[#D8AFA0] shadow-lg transform scale-105 ring-2 ring-[#D8AFA0]/30'
-                        : 'bg-white text-[#5D4A44] border-gray-300 hover:border-[#D8AFA0] hover:bg-[#D8AFA0]/10 hover:shadow-md hover:scale-102'
+                        ? 'bg-[#5550F2] text-white border-[#5550F2] shadow-lg transform scale-105 ring-2 ring-[#5550F2]/30'
+                        : 'bg-white text-[#2D3748] border-gray-300 hover:border-[#5550F2] hover:bg-[#5550F2]/10 hover:shadow-md hover:scale-102'
                     ]"
                   >
                     {{ hora }}
@@ -512,7 +512,7 @@
                 
                 <!-- Input manual alternativo -->
                 <details class="text-xs">
-                  <summary class="cursor-pointer text-[#5D4A44]/60 hover:text-[#5D4A44] select-none flex items-center gap-2">
+                  <summary class="cursor-pointer text-[#2D3748]/60 hover:text-[#2D3748] select-none flex items-center gap-2">
                     <DocumentTextIcon class="w-4 h-4" />
                     <span>Ingresar hora manualmente</span>
                   </summary>
@@ -523,8 +523,8 @@
                       step="1800"
                       @change="calcularHoraFin"
                       :class="[
-                        'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white',
-                        camposInvalidos.includes('hora_inicio') ? 'border-red-500 border-2' : 'border-[#D8AFA0]/30'
+                        'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white',
+                        camposInvalidos.includes('hora_inicio') ? 'border-red-500 border-2' : 'border-[#5550F2]/30'
                       ]"
                     />
                   </div>
@@ -546,7 +546,7 @@
                     <span>Usar hora sugerida: {{ horaSugerida }}</span>
                   </button>
                 </div>
-                <div v-if="cargandoSugerencia" class="text-xs text-[#5D4A44]/50 flex items-center gap-2">
+                <div v-if="cargandoSugerencia" class="text-xs text-[#2D3748]/50 flex items-center gap-2">
                   <svg class="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -558,14 +558,14 @@
 
             <!-- Duración -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label class="block text-sm font-medium text-[#2D3748] mb-1">
                 Duración <span class="text-red-500">*</span>
               </label>
               <select
                 v-model="formulario.duracion"
                 required
                 @change="calcularHoraFin"
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
               >
                 <option value="30">30 minutos</option>
                 <option value="60" selected>60 minutos (1 hora)</option>
@@ -576,14 +576,14 @@
 
             <!-- Hora de Fin (automática) -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label class="block text-sm font-medium text-[#2D3748] mb-1">
                 Hora de Fin
               </label>
               <input
                 :value="formulario.hora_fin"
                 type="text"
                 readonly
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg bg-gray-100 text-[#5D4A44]/60"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg bg-gray-100 text-[#2D3748]/60"
                 placeholder="Se calculará automáticamente"
               />
             </div>
@@ -599,7 +599,7 @@
 
             <!-- Tipo de Sesión -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2">
+              <label class="block text-sm font-medium text-[#2D3748] mb-2 flex items-center gap-2">
                 <ComputerDesktopIcon class="w-5 h-5" />
                 <span>Tipo de Sesión</span>
                 <span class="text-red-500">*</span>
@@ -616,26 +616,26 @@
                   :class="[
                     'p-4 border-2 rounded-lg transition-all flex flex-col items-center gap-2 group',
                     formulario.tipo === tipo.valor
-                      ? 'border-[#D8AFA0] bg-[#D8AFA0]/20 shadow-md'
-                      : 'border-[#D8AFA0]/30 hover:border-[#D8AFA0] hover:bg-[#D8AFA0]/5 bg-white'
+                      ? 'border-[#5550F2] bg-[#5550F2]/20 shadow-md'
+                      : 'border-[#5550F2]/30 hover:border-[#5550F2] hover:bg-[#5550F2]/5 bg-white'
                   ]"
                 >
                   <component 
                     :is="tipo.componente" 
                     :class="[
                       'w-8 h-8 transition-colors',
-                      formulario.tipo === tipo.valor ? 'text-[#D8AFA0]' : 'text-[#5D4A44]/60 group-hover:text-[#D8AFA0]'
+                      formulario.tipo === tipo.valor ? 'text-[#5550F2]' : 'text-[#2D3748]/60 group-hover:text-[#5550F2]'
                     ]"
                   />
-                  <div class="font-medium text-[#5D4A44] text-sm">{{ tipo.nombre }}</div>
-                  <div class="text-xs text-[#5D4A44]/50">{{ tipo.descripcion }}</div>
+                  <div class="font-medium text-[#2D3748] text-sm">{{ tipo.nombre }}</div>
+                  <div class="text-xs text-[#2D3748]/50">{{ tipo.descripcion }}</div>
                 </button>
               </div>
             </div>
 
             <!-- Estado -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2">
+              <label class="block text-sm font-medium text-[#2D3748] mb-2 flex items-center gap-2">
                 <CheckCircleIcon class="w-5 h-5" />
                 <span>Estado</span>
                 <span class="text-red-500">*</span>
@@ -672,14 +672,14 @@
             
             <!-- Notas -->
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-2 flex items-center gap-2">
+              <label class="block text-sm font-medium text-[#2D3748] mb-2 flex items-center gap-2">
                 <DocumentTextIcon class="w-4 h-4" />
                 <span>Notas (opcional)</span>
               </label>
               <textarea
                 v-model="formulario.notas"
                 rows="3"
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white resize-none"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white resize-none"
                 placeholder="Notas sobre la cita, recordatorios, etc."
               ></textarea>
             </div>
@@ -781,11 +781,11 @@
         </div>
 
         <!-- Botones de acción (fijos al fondo) -->
-        <div class="sticky bottom-0 bg-[#F9F7F3] pt-4 border-t border-[#D8AFA0]/30 flex gap-3 mt-6">
+        <div class="sticky bottom-0 bg-[#F2F2F2] pt-4 border-t border-[#5550F2]/30 flex gap-3 mt-6">
           <button
             type="button"
             @click="cerrarModal"
-            class="flex-1 px-6 py-3 border-2 border-[#D8AFA0] text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors font-medium"
+            class="flex-1 px-6 py-3 border-2 border-[#5550F2] text-[#2D3748] rounded-lg hover:bg-[#5550F2]/10 transition-colors font-medium"
             aria-label="Cancelar creación de cita"
           >
             Cancelar
@@ -797,7 +797,7 @@
               :class="[
                 'w-full px-6 py-3 rounded-lg transition-all font-medium text-white',
                 formularioValido && !guardando && !conflictoHorario
-                  ? 'bg-[#D8AFA0] hover:bg-[#D8AFA0]/90 hover:shadow-lg cursor-pointer'
+                  ? 'bg-[#5550F2] hover:bg-[#5550F2]/90 hover:shadow-lg cursor-pointer'
                   : 'bg-gray-400 cursor-not-allowed opacity-60'
               ]"
               :aria-label="formularioValido ? 'Guardar cita' : 'Completa todos los campos requeridos para guardar'"
@@ -1919,7 +1919,7 @@ watch(() => props.mostrar, (nuevo) => {
   animation: fadeIn 0.2s ease-out;
 }
 
-.bg-\[\#F9F7F3\] {
+.bg-\[\#F2F2F2\] {
   animation: slideUp 0.3s ease-out;
 }
 

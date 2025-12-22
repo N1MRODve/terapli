@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-[#F9F7F3] min-h-screen">
+  <div class="bg-[#F2F2F2] min-h-screen">
     <!-- Hero Section -->
-    <section class="bg-gradient-to-b from-[#EAD5D3]/20 to-[#F9F7F3] py-16 border-b border-[#EAD5D3]">
+    <section class="bg-gradient-to-b from-[#E2E8F0]/20 to-[#F2F2F2] py-16 border-b border-[#E2E8F0]">
       <div class="max-w-4xl mx-auto px-6 text-center">
         <h1 class="font-serif text-4xl md:text-5xl font-semibold text-[#5D4A44] mb-4">
           Política de Privacidad Reforzada
@@ -23,7 +23,7 @@
       <div class="max-w-4xl mx-auto px-6 text-[#5D4A44]">
         
         <!-- Introducción -->
-        <div class="mb-12 p-6 bg-white/50 rounded-lg border border-[#EAD5D3]">
+        <div class="mb-12 p-6 bg-white/50 rounded-lg border border-[#E2E8F0]">
           <p class="font-sans text-lg leading-relaxed">
             Tu confianza es fundamental en el proceso terapéutico. Esta política describe cómo protegemos tus datos personales y de salud mental 
             con el máximo rigor legal y profesional, siguiendo el <strong>Reglamento General de Protección de Datos (RGPD)</strong>, 
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Responsable del Tratamiento -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Información del Responsable del Tratamiento
           </h2>
@@ -42,29 +42,29 @@
             <p><strong>Número de colegiada:</strong> 32005 (COPC – Col·legi Oficial de Psicologia de Catalunya)</p>
             <p><strong>NIF:</strong> 35717628P</p>
             <p><strong>Dirección:</strong> Calle del Dr. Rivas, 2, Número 8 – 28350 Ciempozuelos, Madrid</p>
-            <p><strong>Correo electrónico:</strong> <a href="mailto:reservas@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline">reservas@psicologakarem.com</a></p>
-            <p><strong>Teléfono:</strong> <a href="tel:+34722377290" class="text-[#D8AFA0] hover:text-[#EFA08B]">+34 722 377 290</a></p>
-            <p><strong>Sitio web:</strong> <a href="https://psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline">https://psicologakarem.com</a></p>
+            <p><strong>Correo electrónico:</strong> <a href="mailto:reservas@psicologakarem.com" class="text-[#5550F2] hover:text-[#EFA08B] underline">reservas@psicologakarem.com</a></p>
+            <p><strong>Teléfono:</strong> <a href="tel:+34722377290" class="text-[#5550F2] hover:text-[#EFA08B]">+34 722 377 290</a></p>
+            <p><strong>Sitio web:</strong> <a href="https://psicologakarem.com" class="text-[#5550F2] hover:text-[#EFA08B] underline">https://psicologakarem.com</a></p>
           </div>
         </article>
 
         <!-- DPO -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Delegado de Protección de Datos (DPO)
           </h2>
           <div class="font-sans leading-relaxed space-y-3 bg-white/30 p-6 rounded-lg">
             <p><strong>Delegado:</strong> Dieter José Lorenzo Molina</p>
-            <p><strong>Correo electrónico DPO:</strong> <a href="mailto:dpo@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline">dpo@psicologakarem.com</a></p>
+            <p><strong>Correo electrónico DPO:</strong> <a href="mailto:dpo@psicologakarem.com" class="text-[#5550F2] hover:text-[#EFA08B] underline">dpo@psicologakarem.com</a></p>
             <p><strong>Dirección postal:</strong> Calle del Dr. Rivas, 2, Número 8 – 28350 Ciempozuelos, Madrid</p>
-            <p class="mt-4 pt-4 border-t border-[#EAD5D3]/50">
+            <p class="mt-4 pt-4 border-t border-[#E2E8F0]/50">
               Puede contactar con nuestro DPO para cualquier cuestión relacionada con el tratamiento de sus datos personales y el ejercicio de sus derechos.
             </p>
           </div>
         </article>
 
         <!-- Naturaleza de los Datos -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Información sobre el Tratamiento de Perfiles Psicoterapéuticos
           </h2>
@@ -75,7 +75,7 @@
           <p class="font-sans leading-relaxed mb-4">
             Tratamos categorías especiales de datos personales, incluyendo:
           </p>
-          <ul class="font-sans leading-relaxed space-y-2 ml-6 list-disc marker:text-[#D8AFA0]">
+          <ul class="font-sans leading-relaxed space-y-2 ml-6 list-disc marker:text-[#5550F2]">
             <li>Datos relativos a la salud mental (art. 9 RGPD)</li>
             <li>Perfiles psicoterapéuticos (situación emocional y psicológica)</li>
             <li>Datos de identificación personal (nombre, DNI, dirección, teléfono, email)</li>
@@ -85,7 +85,7 @@
         </article>
 
         <!-- Finalidades -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Finalidades del Tratamiento
           </h2>
@@ -142,21 +142,21 @@
         </article>
 
         <!-- Consentimiento -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Consentimiento Explícito
           </h2>
-          <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-6 rounded-r-lg">
+          <div class="bg-[#E2E8F0]/20 border-l-4 border-[#5550F2] p-6 rounded-r-lg">
             <p class="font-sans leading-relaxed">
               Para tratar datos de salud mental, solicitamos consentimiento explícito conforme al Art. 9.2.a) RGPD.
               Puede retirarlo en cualquier momento escribiendo a 
-              <a href="mailto:dpo@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold">dpo@psicologakarem.com</a>.
+              <a href="mailto:dpo@psicologakarem.com" class="text-[#5550F2] hover:text-[#EFA08B] underline font-semibold">dpo@psicologakarem.com</a>.
             </p>
           </div>
         </article>
 
         <!-- Medidas de Seguridad -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Medidas de Seguridad Reforzadas
           </h2>
@@ -164,7 +164,7 @@
           <h3 class="font-serif text-2xl font-semibold mb-4 text-[#5D4A44] mt-8">
             Medidas Técnicas
           </h3>
-          <ul class="font-sans leading-relaxed space-y-3 ml-6 list-disc marker:text-[#D8AFA0]">
+          <ul class="font-sans leading-relaxed space-y-3 ml-6 list-disc marker:text-[#5550F2]">
             <li>Cifrado AES-256 de los perfiles psicoterapéuticos</li>
             <li>Autenticación multifactor para acceso a historiales</li>
             <li>Backup cifrado diario en servidor seguro dentro del EEE</li>
@@ -174,7 +174,7 @@
           <h3 class="font-serif text-2xl font-semibold mb-4 text-[#5D4A44] mt-8">
             Medidas Organizativas
           </h3>
-          <ul class="font-sans leading-relaxed space-y-3 ml-6 list-disc marker:text-[#D8AFA0]">
+          <ul class="font-sans leading-relaxed space-y-3 ml-6 list-disc marker:text-[#5550F2]">
             <li>Acceso restringido al personal bajo deber de secreto profesional</li>
             <li>Formación anual en protección de datos sanitarios</li>
             <li>Política de escritorio limpio y destrucción segura de documentos en papel</li>
@@ -183,28 +183,28 @@
         </article>
 
         <!-- Transferencias -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Transferencias y Comunicaciones
           </h2>
           <div class="font-sans leading-relaxed space-y-4">
             <div class="flex gap-3">
-              <span class="text-[#D8AFA0] font-bold">•</span>
+              <span class="text-[#5550F2] font-bold">•</span>
               <p><strong>Profesionales colaboradores:</strong> solo con su consentimiento explícito</p>
             </div>
             <div class="flex gap-3">
-              <span class="text-[#D8AFA0] font-bold">•</span>
+              <span class="text-[#5550F2] font-bold">•</span>
               <p><strong>Autoridades sanitarias o judiciales:</strong> solo cuando exista obligación legal</p>
             </div>
             <div class="flex gap-3">
-              <span class="text-[#D8AFA0] font-bold">•</span>
+              <span class="text-[#5550F2] font-bold">•</span>
               <p><strong>Transferencias internacionales:</strong> no se realizan fuera del Espacio Económico Europeo (EEE)</p>
             </div>
           </div>
         </article>
 
         <!-- Plazos de Conservación -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Plazos de Conservación
           </h2>
@@ -222,7 +222,7 @@
         </article>
 
         <!-- Derechos -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Ejercicio de Derechos
           </h2>
@@ -230,8 +230,8 @@
             <p>
               Puede ejercer sus derechos de <strong>acceso, rectificación, supresión, limitación, portabilidad y oposición</strong> (arts. 15–22 RGPD).
             </p>
-            <div class="bg-[#EAD5D3]/20 p-6 rounded-lg">
-              <p class="mb-2"><strong>Solicitudes a:</strong> <a href="mailto:dpo@psicologakarem.com" class="text-[#D8AFA0] hover:text-[#EFA08B] underline">dpo@psicologakarem.com</a></p>
+            <div class="bg-[#E2E8F0]/20 p-6 rounded-lg">
+              <p class="mb-2"><strong>Solicitudes a:</strong> <a href="mailto:dpo@psicologakarem.com" class="text-[#5550F2] hover:text-[#EFA08B] underline">dpo@psicologakarem.com</a></p>
               <p class="mb-2"><strong>Documentación requerida:</strong> adjuntar copia del DNI</p>
               <p><strong>Plazo máximo de respuesta:</strong> 1 mes (ampliable a 2 meses en casos complejos)</p>
             </div>
@@ -239,7 +239,7 @@
         </article>
 
         <!-- Violaciones de Seguridad -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Violaciones de Seguridad
           </h2>
@@ -250,7 +250,7 @@
         </article>
 
         <!-- EIPD -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Evaluación de Impacto (EIPD)
           </h2>
@@ -261,7 +261,7 @@
         </article>
 
         <!-- RAT -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Registro de Actividades de Tratamiento (RAT)
           </h2>
@@ -272,11 +272,11 @@
         </article>
 
         <!-- Comunicación Digital -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Comunicación Digital Segura
           </h2>
-          <div class="bg-[#EAD5D3]/20 border-l-4 border-[#D8AFA0] p-6 rounded-r-lg">
+          <div class="bg-[#E2E8F0]/20 border-l-4 border-[#5550F2] p-6 rounded-r-lg">
             <p class="font-sans leading-relaxed">
               Toda comunicación digital (email, WhatsApp, formularios web) utiliza cifrado de extremo a extremo 
               y solo se emplea con su consentimiento previo.
@@ -285,7 +285,7 @@
         </article>
 
         <!-- Derecho a Reclamar -->
-        <article class="mb-12 border-b border-[#EAD5D3] pb-12">
+        <article class="mb-12 border-b border-[#E2E8F0] pb-12">
           <h2 class="font-serif text-3xl font-semibold mb-6 text-[#5D4A44]">
             Derecho a Reclamar ante la AEPD
           </h2>
@@ -296,7 +296,7 @@
             </p>
             <p class="mt-4">
               <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" 
-                 class="text-[#D8AFA0] hover:text-[#EFA08B] underline font-semibold">
+                 class="text-[#5550F2] hover:text-[#EFA08B] underline font-semibold">
                 www.aepd.es
               </a>
             </p>
@@ -319,7 +319,7 @@
         </article>
 
         <!-- CTA Final -->
-        <div class="mt-16 p-8 bg-gradient-to-br from-[#EAD5D3]/30 to-[#D8AFA0]/20 rounded-lg border border-[#EAD5D3] text-center">
+        <div class="mt-16 p-8 bg-gradient-to-br from-[#E2E8F0]/30 to-[#5550F2]/20 rounded-lg border border-[#E2E8F0] text-center">
           <h3 class="font-serif text-2xl font-semibold mb-4 text-[#5D4A44]">
             ¿Tienes dudas sobre tu privacidad?
           </h3>
@@ -327,7 +327,7 @@
             Estamos aquí para aclarar cualquier inquietud sobre cómo protegemos tus datos.
           </p>
           <a href="mailto:dpo@psicologakarem.com" 
-             class="inline-block px-8 py-3 bg-[#D8AFA0] hover:bg-[#EFA08B] text-white font-sans font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
+             class="inline-block px-8 py-3 bg-[#5550F2] hover:bg-[#EFA08B] text-white font-sans font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
             Contactar con el DPO
           </a>
         </div>

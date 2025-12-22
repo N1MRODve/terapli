@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F9F7F3]">
+  <div class="min-h-screen bg-gradient-to-br from-[#F2F2F2] via-[#FAFAFA] to-[#F8F9FA]">
     <LoadingSpinner v-if="loading" text="Cargando tu espacio personal..." full-height />
 
     <div v-else class="max-w-5xl mx-auto px-4 py-6 sm:px-8 space-y-6">
@@ -33,7 +33,7 @@
 
       <!-- 8. Pie emocional (opcional, solo si hay espacio) -->
       <div class="text-center py-4">
-        <p class="font-['Lato'] text-sm text-[#5D4A44]/60">
+        <p class="font-sans text-sm text-[#718096]">
           Tu bienestar es un camino, no una meta. 🌿
         </p>
       </div>

@@ -347,7 +347,7 @@ watch(() => props.citaId, (nuevoCitaId) => {
                     v-for="(opcion, index) in opcionesFechaRapida"
                     :key="index"
                     type="button"
-                    @click="formulario.fecha_cita = opcion.fecha"
+                    @click="opcion.fecha && (formulario.fecha_cita = opcion.fecha)"
                     :class="[
                       'text-xs px-3 py-1.5 rounded-lg border transition-all',
                       formulario.fecha_cita === opcion.fecha

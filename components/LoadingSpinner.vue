@@ -3,12 +3,12 @@
     <div class="relative">
       <!-- Spinner circular -->
       <div 
-        class="w-12 h-12 border-4 border-[#EAD5D3] border-t-[#D8AFA0] rounded-full animate-spin"
+        class="w-12 h-12 border-4 border-[#E2E8F0] border-t-[#5550F2] rounded-full animate-spin"
         :class="sizeClass"
       ></div>
       
       <!-- Texto opcional -->
-      <p v-if="text" class="mt-4 text-sm text-[#5D4A44] font-['Lato'] text-center">
+      <p v-if="text" class="mt-4 text-sm text-[#2D3748] font-sans text-center">
         {{ text }}
       </p>
     </div>

@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-[#F9F7F3] rounded-2xl border-l-4 border-[#D8AFA0] p-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
+  <div class="bg-[#F2F2F2] rounded-2xl border-l-4 border-[#5550F2] p-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
     <div class="flex items-start gap-3">
-      <div class="flex-shrink-0 w-10 h-10 bg-[#D8AFA0]/20 rounded-full flex items-center justify-center">
+      <div class="flex-shrink-0 w-10 h-10 bg-[#5550F2]/20 rounded-full flex items-center justify-center">
         <span class="text-xl">{{ insightIcon }}</span>
       </div>
       <div class="flex-1">
-        <p class="font-['Lato'] text-sm text-[#5D4A44]/90 leading-relaxed">
+        <p class="font-sans text-sm text-[#2D3748]/90 leading-relaxed">
           {{ insightMessage }}
         </p>
       </div>

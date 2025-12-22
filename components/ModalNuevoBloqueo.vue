@@ -7,7 +7,7 @@
     >
       <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <!-- Header -->
-        <div class="sticky top-0 bg-gradient-to-r from-[#D8AFA0] to-[#E8BFA0] text-white p-6 rounded-t-2xl">
+        <div class="sticky top-0 bg-gradient-to-r from-[#5550F2] to-[#E8BFA0] text-white p-6 rounded-t-2xl">
           <div class="flex items-center justify-between">
             <div>
               <h2 class="text-2xl font-serif font-bold">
@@ -32,7 +32,7 @@
         <div class="p-6 space-y-6">
           <!-- Fecha -->
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Fecha <span class="text-red-500">*</span>
             </label>
             <input
@@ -40,14 +40,14 @@
               type="date"
               required
               :min="fechaMinima"
-              class="w-full px-4 py-3 border-2 border-[#EAD5D3] rounded-lg focus:border-[#D8AFA0] focus:ring-2 focus:ring-[#D8AFA0]/20 outline-none transition-all"
+              class="w-full px-4 py-3 border-2 border-[#E2E8F0] rounded-lg focus:border-[#5550F2] focus:ring-2 focus:ring-[#5550F2]/20 outline-none transition-all"
             />
           </div>
 
           <!-- Horarios -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+              <label class="block text-sm font-medium text-[#2D3748] mb-2">
                 Hora Inicio <span class="text-red-500">*</span>
               </label>
               <input
@@ -55,12 +55,12 @@
                 type="time"
                 required
                 step="1800"
-                class="w-full px-4 py-3 border-2 border-[#EAD5D3] rounded-lg focus:border-[#D8AFA0] focus:ring-2 focus:ring-[#D8AFA0]/20 outline-none transition-all"
+                class="w-full px-4 py-3 border-2 border-[#E2E8F0] rounded-lg focus:border-[#5550F2] focus:ring-2 focus:ring-[#5550F2]/20 outline-none transition-all"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+              <label class="block text-sm font-medium text-[#2D3748] mb-2">
                 Hora Fin <span class="text-red-500">*</span>
               </label>
               <input
@@ -68,14 +68,14 @@
                 type="time"
                 required
                 step="1800"
-                class="w-full px-4 py-3 border-2 border-[#EAD5D3] rounded-lg focus:border-[#D8AFA0] focus:ring-2 focus:ring-[#D8AFA0]/20 outline-none transition-all"
+                class="w-full px-4 py-3 border-2 border-[#E2E8F0] rounded-lg focus:border-[#5550F2] focus:ring-2 focus:ring-[#5550F2]/20 outline-none transition-all"
               />
             </div>
           </div>
 
           <!-- Tipo de bloqueo -->
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-3">
+            <label class="block text-sm font-medium text-[#2D3748] mb-3">
               Tipo de bloqueo <span class="text-red-500">*</span>
             </label>
             <div class="grid grid-cols-3 gap-3">
@@ -87,8 +87,8 @@
                 :class="[
                   'p-4 rounded-lg border-2 transition-all text-center',
                   formulario.tipo === tipo.valor
-                    ? 'border-[#D8AFA0] bg-[#D8AFA0]/10 text-[#5D4A44] font-semibold'
-                    : 'border-[#EAD5D3] hover:border-[#D8AFA0]/50'
+                    ? 'border-[#5550F2] bg-[#5550F2]/10 text-[#2D3748] font-semibold'
+                    : 'border-[#E2E8F0] hover:border-[#5550F2]/50'
                 ]"
               >
                 <div class="text-3xl mb-2">{{ tipo.icono }}</div>
@@ -99,14 +99,14 @@
 
           <!-- Motivo -->
           <div>
-            <label class="block text-sm font-medium text-[#5D4A44] mb-2">
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Motivo (opcional)
             </label>
             <textarea
               v-model="formulario.motivo"
               rows="3"
               placeholder="Ej: Almuerzo, Reunión, Día personal..."
-              class="w-full px-4 py-3 border-2 border-[#EAD5D3] rounded-lg focus:border-[#D8AFA0] focus:ring-2 focus:ring-[#D8AFA0]/20 outline-none transition-all resize-none"
+              class="w-full px-4 py-3 border-2 border-[#E2E8F0] rounded-lg focus:border-[#5550F2] focus:ring-2 focus:ring-[#5550F2]/20 outline-none transition-all resize-none"
             ></textarea>
           </div>
 
@@ -134,7 +134,7 @@
           <button
             type="button"
             @click="cerrar"
-            class="flex-1 px-6 py-3 border-2 border-[#EAD5D3] text-[#5D4A44] rounded-lg hover:bg-white transition-all font-medium"
+            class="flex-1 px-6 py-3 border-2 border-[#E2E8F0] text-[#2D3748] rounded-lg hover:bg-white transition-all font-medium"
           >
             Cancelar
           </button>
@@ -145,7 +145,7 @@
             :class="[
               'flex-1 px-6 py-3 rounded-lg font-medium transition-all',
               formularioValido && !guardando
-                ? 'bg-[#D8AFA0] text-white hover:bg-[#C89F90] shadow-md'
+                ? 'bg-[#5550F2] text-white hover:bg-[#C89F90] shadow-md'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             ]"
           >
@@ -178,7 +178,27 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['cerrar', 'bloqueoCreado'])
 
 // Composables
-const { crearBloqueo, getCitasPorDia } = useCitas()
+const { getCitasPorDia, crearCita } = useCitas()
+
+// Función auxiliar para crear bloqueos usando crearCita
+const crearBloqueo = async (params: { fecha: string; hora_inicio: string; hora_fin: string; tipo: string; motivo?: string }) => {
+  const user = useSupabaseUser()
+  if (!user.value) {
+    return { success: false, error: 'No hay usuario autenticado' }
+  }
+
+  return await crearCita({
+    paciente_id: user.value.id,
+    paciente_nombre: `Bloqueo - ${params.tipo}`,
+    fecha: params.fecha,
+    hora_inicio: params.hora_inicio,
+    hora_fin: params.hora_fin,
+    modalidad: 'presencial',
+    estado: 'confirmada',
+    notas: params.motivo || `Bloqueo de tipo: ${params.tipo}`,
+    descontar_de_bono: false
+  })
+}
 
 // Estado
 const guardando = ref(false)

@@ -6,24 +6,24 @@
       <!-- Header con filtros -->
       <div class="space-y-4">
         <div>
-          <h1 class="text-3xl font-['Lora'] font-medium text-[#5D4A44]">
+          <h1 class="text-3xl font-serif font-medium text-[#2D3748]">
             Mis Sesiones
           </h1>
-          <p class="text-sm text-[#5D4A44]/70 font-['Lato'] mt-2">
+          <p class="text-sm text-[#2D3748]/70 font-sans mt-2">
             Tu espacio de acompañamiento terapéutico
           </p>
         </div>
 
         <!-- Filtros tipo pestañas -->
-        <div class="flex items-center space-x-1 bg-[#F9F7F3] p-1 rounded-xl w-fit">
+        <div class="flex items-center space-x-1 bg-[#F2F2F2] p-1 rounded-xl w-fit">
           <button
             v-for="filtro in filtros"
             :key="filtro.value"
             @click="filtroActivo = filtro.value"
-            class="px-5 py-2.5 rounded-lg text-sm font-['Lato'] font-medium transition-all duration-200"
+            class="px-5 py-2.5 rounded-lg text-sm font-sans font-medium transition-all duration-200"
             :class="filtroActivo === filtro.value
-              ? 'bg-white text-[#5D4A44] shadow-sm'
-              : 'text-[#5D4A44]/60 hover:text-[#5D4A44]'"
+              ? 'bg-white text-[#2D3748] shadow-sm'
+              : 'text-[#2D3748]/60 hover:text-[#2D3748]'"
           >
             {{ filtro.label }}
           </button>
@@ -32,10 +32,10 @@
 
       <!-- Próxima sesión destacada -->
       <div v-if="proximaSesion && (filtroActivo === 'todas' || filtroActivo === 'proximas')" 
-           class="relative bg-gradient-to-br from-[#F9F7F3] to-white rounded-2xl p-6 border-l-4"
-           :class="estaProxima(proximaSesion.fecha) ? 'border-[#D8AFA0]' : 'border-[#EAD5D3]'">
+           class="relative bg-gradient-to-br from-[#F2F2F2] to-white rounded-2xl p-6 border-l-4"
+           :class="estaProxima(proximaSesion.fecha) ? 'border-[#5550F2]' : 'border-[#E2E8F0]'">
         <div class="absolute top-4 right-4">
-          <span class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#D8AFA0]/10 text-[#D8AFA0] rounded-full text-xs font-['Lato'] font-semibold">
+          <span class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#5550F2]/10 text-[#5550F2] rounded-full text-xs font-sans font-semibold">
             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
@@ -46,24 +46,24 @@
         <div class="space-y-4">
           <!-- Fecha grande -->
           <div>
-            <h2 class="text-2xl font-['Lora'] font-medium text-[#5D4A44] mb-1">
+            <h2 class="text-2xl font-serif font-medium text-[#2D3748] mb-1">
               {{ formatearFechaLarga(proximaSesion.fecha) }}
             </h2>
-            <div class="flex items-center space-x-4 text-[#5D4A44]/70 font-['Lato']">
+            <div class="flex items-center space-x-4 text-[#2D3748]/70 font-sans">
               <div class="flex items-center space-x-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span class="font-medium">{{ formatearHora(proximaSesion.fecha) }}</span>
               </div>
-              <span class="text-[#5D4A44]/40">•</span>
+              <span class="text-[#2D3748]/40">•</span>
               <span>{{ proximaSesion.duracion_min }} minutos</span>
             </div>
           </div>
 
           <!-- Modalidad y Estado -->
           <div class="flex items-center flex-wrap gap-2">
-            <span class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg text-sm font-['Lato'] font-medium bg-white border border-[#EAD5D3] text-[#5D4A44]">
+            <span class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg text-sm font-sans font-medium bg-white border border-[#E2E8F0] text-[#2D3748]">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path v-if="proximaSesion.modalidad === 'online'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -72,7 +72,7 @@
             </span>
 
             <span
-              class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-['Lato'] font-medium"
+              class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-sans font-medium"
               :class="estadoClassExtendido(proximaSesion.estado)"
             >
               <span>{{ estadoTextoExtendido(proximaSesion.estado) }}</span>
@@ -83,7 +83,7 @@
           <div v-if="proximaSesion.ubicacion && proximaSesion.modalidad === 'online' && ['pendiente', 'confirmada'].includes(proximaSesion.estado)">
             <button
               @click="abrirSesion(proximaSesion.ubicacion)"
-              class="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-[#D8AFA0] text-white rounded-xl hover:bg-[#c99d8d] transition-all duration-200 font-['Lato'] font-medium shadow-sm hover:shadow-md"
+              class="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-[#5550F2] text-white rounded-xl hover:bg-[#c99d8d] transition-all duration-200 font-sans font-medium shadow-sm hover:shadow-md"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -92,8 +92,8 @@
             </button>
           </div>
 
-          <div v-else-if="proximaSesion.ubicacion && proximaSesion.modalidad === 'presencial'" class="flex items-start space-x-2 text-sm font-['Lato'] text-[#5D4A44]/70 bg-white px-4 py-3 rounded-lg border border-[#EAD5D3]">
-            <svg class="w-5 h-5 text-[#D8AFA0] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-else-if="proximaSesion.ubicacion && proximaSesion.modalidad === 'presencial'" class="flex items-start space-x-2 text-sm font-sans text-[#2D3748]/70 bg-white px-4 py-3 rounded-lg border border-[#E2E8F0]">
+            <svg class="w-5 h-5 text-[#5550F2] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <span>{{ proximaSesion.ubicacion }}</span>
@@ -103,8 +103,8 @@
 
       <!-- Lista de sesiones próximas -->
       <div v-if="sesionesProximasRestantes.length > 0 && (filtroActivo === 'todas' || filtroActivo === 'proximas')" class="space-y-3">
-        <h3 class="text-lg font-['Lora'] font-medium text-[#5D4A44] flex items-center space-x-2">
-          <svg class="w-5 h-5 text-[#D8AFA0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <h3 class="text-lg font-serif font-medium text-[#2D3748] flex items-center space-x-2">
+          <svg class="w-5 h-5 text-[#5550F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <span>Próximas sesiones</span>
@@ -122,8 +122,8 @@
 
       <!-- Lista de sesiones pasadas -->
       <div v-if="sesionesPasadas.length > 0 && (filtroActivo === 'todas' || filtroActivo === 'pasadas')" class="space-y-3">
-        <h3 class="text-lg font-['Lora'] font-medium text-[#5D4A44] flex items-center space-x-2">
-          <svg class="w-5 h-5 text-[#5D4A44]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <h3 class="text-lg font-serif font-medium text-[#2D3748] flex items-center space-x-2">
+          <svg class="w-5 h-5 text-[#2D3748]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <span>Sesiones pasadas</span>
@@ -147,7 +147,7 @@
         :description="descripcionVacio"
       >
         <template #icon>
-          <svg class="w-16 h-16 text-[#D8AFA0] opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-16 h-16 text-[#5550F2] opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </template>

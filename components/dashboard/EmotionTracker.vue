@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#EAD5D3]/30 p-6">
-    <h2 class="font-['Lora'] text-2xl text-[#5D4A44] mb-6">
+  <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#E2E8F0]/30 p-6">
+    <h2 class="font-serif text-2xl text-[#2D3748] mb-6">
       ¿Cómo te sientes hoy?
     </h2>
     
@@ -15,14 +15,14 @@
             :class="[
               'flex flex-col items-center gap-2 p-3 rounded-2xl transition-all duration-300 ease-in-out',
               selectedEmotion === emotion.value
-                ? 'bg-[#D8AFA0]/20 ring-2 ring-[#D8AFA0] scale-110'
-                : 'bg-[#F9F7F3] hover:bg-[#EAD5D3]/30 hover:scale-105'
+                ? 'bg-[#5550F2]/20 ring-2 ring-[#5550F2] scale-110'
+                : 'bg-[#F2F2F2] hover:bg-[#E2E8F0]/30 hover:scale-105'
             ]"
           >
             <span class="text-6xl transition-transform duration-300 ease-in-out hover:scale-110">
               {{ emotion.emoji }}
             </span>
-            <span class="font-['Lato'] text-xs text-[#5D4A44]/70">
+            <span class="font-sans text-xs text-[#2D3748]/70">
               {{ emotion.label }}
             </span>
           </button>
@@ -31,7 +31,7 @@
 
       <!-- Etiquetas de emociones específicas con scroll horizontal -->
       <div class="mb-6">
-        <p class="font-['Lato'] text-sm text-[#5D4A44]/70 mb-3">
+        <p class="font-sans text-sm text-[#2D3748]/70 mb-3">
           Emociones específicas (opcional)
         </p>
         <div class="flex overflow-x-auto snap-x snap-mandatory gap-2 pb-2 -mx-1 px-1 scrollbar-hide">
@@ -42,8 +42,8 @@
             :class="[
               'flex-shrink-0 snap-start px-4 py-2 rounded-full text-sm transition-all duration-300 ease-in-out',
               selectedTags.includes(tag)
-                ? 'bg-[#D8AFA0] text-white scale-105'
-                : 'bg-[#F9F7F3] text-[#5D4A44]/70 hover:bg-[#EAD5D3]/50'
+                ? 'bg-[#5550F2] text-white scale-105'
+                : 'bg-[#F2F2F2] text-[#2D3748]/70 hover:bg-[#E2E8F0]/50'
             ]"
             style="font-family: 'Lato', sans-serif"
           >
@@ -58,9 +58,9 @@
           v-model="reflection"
           rows="3"
           placeholder="Escribe lo que sientes, sin juicios…"
-          class="w-full px-4 py-3 rounded-xl border border-[#EAD5D3]/50 bg-[#F9F7F3]/50 
-                 font-['Lato'] text-[#5D4A44] placeholder:text-[#5D4A44]/40
-                 focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent
+          class="w-full px-4 py-3 rounded-xl border border-[#E2E8F0]/50 bg-[#F2F2F2]/50 
+                 font-sans text-[#2D3748] placeholder:text-[#2D3748]/40
+                 focus:outline-none focus:ring-2 focus:ring-[#5550F2] focus:border-transparent
                  transition-all duration-300 ease-in-out"
         ></textarea>
       </div>
@@ -72,8 +72,8 @@
         :class="[
           'w-full py-3 rounded-xl font-medium text-white transition-all duration-300 ease-in-out',
           selectedEmotion && !isSubmitting
-            ? 'bg-[#D8AFA0] hover:bg-[#C99F90] hover:shadow-md hover:scale-[1.02]'
-            : 'bg-[#D8AFA0]/50 cursor-not-allowed'
+            ? 'bg-[#5550F2] hover:bg-[#C99F90] hover:shadow-md hover:scale-[1.02]'
+            : 'bg-[#5550F2]/50 cursor-not-allowed'
         ]"
         style="font-family: 'Lato', sans-serif"
       >
@@ -84,13 +84,13 @@
     <!-- Mensaje de confirmación con animación -->
     <div v-else class="text-center py-8 animate-fadeIn">
       <div class="inline-block mb-4 text-6xl animate-float">🌿</div>
-      <p class="font-['Lato'] text-base text-[#5D4A44] mb-2">
+      <p class="font-sans text-base text-[#2D3748] mb-2">
         Gracias por compartir cómo te sientes hoy.
       </p>
       <button
         @click="resetForm"
-        class="mt-4 px-6 py-2 rounded-full bg-[#D8AFA0]/20 text-[#D8AFA0] font-['Lato'] text-sm
-               hover:bg-[#D8AFA0]/30 transition-all duration-300 ease-in-out"
+        class="mt-4 px-6 py-2 rounded-full bg-[#5550F2]/20 text-[#5550F2] font-sans text-sm
+               hover:bg-[#5550F2]/30 transition-all duration-300 ease-in-out"
       >
         Registrar otro momento
       </button>

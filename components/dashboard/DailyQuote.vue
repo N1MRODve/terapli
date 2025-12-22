@@ -1,20 +1,20 @@
 <template>
-  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#D8AFA0] via-[#F9F7F3] to-[#F9F7F3] p-8 sm:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#EAD5D3]/30">
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#5550F2] via-[#F2F2F2] to-[#F2F2F2] p-8 sm:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-[#E2E8F0]/30">
     <!-- Icono decorativo -->
     <div class="absolute top-6 right-6 text-5xl opacity-15">✨</div>
     
     <div class="relative z-10 text-center max-w-3xl mx-auto">
-      <p class="font-['Lora'] text-2xl sm:text-3xl text-[#5D4A44] italic mb-3 leading-relaxed">
+      <p class="font-serif text-2xl sm:text-3xl text-[#2D3748] italic mb-3 leading-relaxed">
         "{{ quote.text }}"
       </p>
-      <p class="font-['Lato'] text-sm sm:text-base text-[#5D4A44]/60">
+      <p class="font-sans text-sm sm:text-base text-[#2D3748]/60">
         {{ quote.author }}
       </p>
     </div>
 
     <!-- Elementos decorativos -->
     <div class="absolute -left-8 -bottom-8 w-32 h-32 bg-white/30 rounded-full blur-2xl"></div>
-    <div class="absolute -right-4 top-1/2 w-20 h-20 bg-[#D8AFA0]/20 rounded-full blur-xl"></div>
+    <div class="absolute -right-4 top-1/2 w-20 h-20 bg-[#5550F2]/20 rounded-full blur-xl"></div>
   </div>
 </template>
 

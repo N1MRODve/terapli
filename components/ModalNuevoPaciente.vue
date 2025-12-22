@@ -91,7 +91,7 @@
 
             <!-- Fecha de Nacimiento -->
             <div>
-              <label for="fecha_nacimiento" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="fecha_nacimiento" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Fecha de Nacimiento
               </label>
               <div class="relative">
@@ -99,13 +99,13 @@
                   id="fecha_nacimiento"
                   v-model="formulario.fecha_nacimiento"
                   type="date"
-                  class="w-full px-4 py-2 pr-12 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white cursor-pointer"
+                  class="w-full px-4 py-2 pr-12 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white cursor-pointer"
                   @focus="abrirSelectorFecha($event)"
                 />
                 <button
                   type="button"
                   @click="abrirSelectorFecha($event, 'fecha_nacimiento')"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#D8AFA0] hover:text-[#5D4A44] transition-colors"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#5550F2] hover:text-[#2D3748] transition-colors"
                   title="Abrir calendario"
                 >
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,14 +129,14 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Área de Acompañamiento -->
             <div class="md:col-span-2">
-              <label for="area_acompanamiento" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="area_acompanamiento" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Área de Acompañamiento <span class="text-red-500">*</span>
               </label>
               <select
                 id="area_acompanamiento"
                 v-model="formulario.area_acompanamiento"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
               >
                 <option value="">Selecciona un área</option>
                 <option value="Ansiedad">Ansiedad</option>
@@ -152,14 +152,14 @@
 
             <!-- Tipo de Bono -->
             <div>
-              <label for="tipo_bono" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="tipo_bono" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Tipo de Bono <span class="text-red-500">*</span>
               </label>
               <select
                 id="tipo_bono"
                 v-model="formulario.tipo_bono"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
               >
                 <option value="">Selecciona tipo de bono</option>
                 <option value="otro">A Demanda (1 sesión - 60€ - sin compromiso)</option>
@@ -174,7 +174,7 @@
 
             <!-- Primera Sesión -->
             <div>
-              <label for="primera_sesion" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="primera_sesion" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Primera Sesión <span class="text-red-500">*</span>
               </label>
               <div class="relative">
@@ -184,13 +184,13 @@
                   type="datetime-local"
                   required
                   step="1800"
-                  class="w-full px-4 py-2 pr-12 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white cursor-pointer"
+                  class="w-full px-4 py-2 pr-12 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white cursor-pointer"
                   @focus="abrirSelectorFecha($event)"
                 />
                 <button
                   type="button"
                   @click="abrirSelectorFecha($event, 'primera_sesion')"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#D8AFA0] hover:text-[#5D4A44] transition-colors"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#5550F2] hover:text-[#2D3748] transition-colors"
                   title="Abrir selector de fecha y hora"
                 >
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,8 +209,8 @@
                   :class="[
                     'text-xs px-3 py-1.5 rounded-lg border transition-all',
                     formulario.primera_sesion === opcion.datetime
-                      ? 'bg-[#D8AFA0] text-white border-[#D8AFA0] font-semibold'
-                      : 'bg-white text-[#5D4A44] border-[#D8AFA0]/30 hover:border-[#D8AFA0] hover:bg-[#D8AFA0]/10'
+                      ? 'bg-[#5550F2] text-white border-[#5550F2] font-semibold'
+                      : 'bg-white text-[#2D3748] border-[#5550F2]/30 hover:border-[#5550F2] hover:bg-[#5550F2]/10'
                   ]"
                 >
                   {{ opcion.label }}
@@ -225,10 +225,10 @@
         </div>
 
         <!-- Creación de Bono Inicial (Opcional) -->
-        <div class="space-y-4 pt-4 border-t border-[#D8AFA0]/30">
+        <div class="space-y-4 pt-4 border-t border-[#5550F2]/30">
                     <!-- Sección Bono Inicial -->
           <div class="border-t pt-6">
-            <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold mb-2">
+            <h3 class="text-lg font-serif text-[#2D3748] font-semibold mb-2">
               💳 Bono Inicial (Opcional)
             </h3>
             
@@ -307,11 +307,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Monto del Bono -->
               <div>
-                <label for="bono_monto" class="block text-sm font-medium text-[#5D4A44] mb-1">
+                <label for="bono_monto" class="block text-sm font-medium text-[#2D3748] mb-1">
                   Monto Total <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4A44]/60">€</span>
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#2D3748]/60">€</span>
                   <input
                     id="bono_monto"
                     v-model.number="formulario.bono_monto"
@@ -327,7 +327,7 @@
 
               <!-- Precio por sesión (calculado) -->
               <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
+                <label class="block text-sm font-medium text-[#2D3748] mb-1">
                   Precio por Sesión
                 </label>
                 <div class="px-4 py-2 bg-purple-100 rounded-lg border border-purple-300">
@@ -353,7 +353,7 @@
                         Recomendado
                       </span>
                     </div>
-                    <div class="text-xs text-[#5D4A44]/70 space-y-1">
+                    <div class="text-xs text-[#2D3748]/70 space-y-1">
                       <p>✓ El bono se renovará automáticamente cuando se agoten las sesiones o expire</p>
                       <p>✓ Mantiene la continuidad del tratamiento sin interrupciones</p>
                       <p>✓ Puedes desactivar la renovación en cualquier momento</p>
@@ -368,16 +368,16 @@
               <div class="text-xs font-medium text-purple-800 mb-2">📋 Resumen del Bono</div>
               <div class="grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <span class="text-[#5D4A44]/60">Tipo:</span>
-                  <span class="font-medium text-[#5D4A44] ml-1">{{ nombreTipoBono }}</span>
+                  <span class="text-[#2D3748]/60">Tipo:</span>
+                  <span class="font-medium text-[#2D3748] ml-1">{{ nombreTipoBono }}</span>
                 </div>
                 <div>
-                  <span class="text-[#5D4A44]/60">Sesiones:</span>
-                  <span class="font-medium text-[#5D4A44] ml-1">{{ sesionesSegunTipo }}</span>
+                  <span class="text-[#2D3748]/60">Sesiones:</span>
+                  <span class="font-medium text-[#2D3748] ml-1">{{ sesionesSegunTipo }}</span>
                 </div>
                 <div>
-                  <span class="text-[#5D4A44]/60">Total:</span>
-                  <span class="font-medium text-[#5D4A44] ml-1">€{{ formulario.bono_monto }}</span>
+                  <span class="text-[#2D3748]/60">Total:</span>
+                  <span class="font-medium text-[#2D3748] ml-1">€{{ formulario.bono_monto }}</span>
                 </div>
               </div>
             </div>
@@ -385,19 +385,19 @@
         </div>
 
         <!-- Notas Iniciales -->
-        <div class="space-y-4 pt-4 border-t border-[#D8AFA0]/30">
-          <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold">
+        <div class="space-y-4 pt-4 border-t border-[#5550F2]/30">
+          <h3 class="text-lg font-serif text-[#2D3748] font-semibold">
             Notas Iniciales
           </h3>
           <div>
-            <label for="notas_iniciales" class="block text-sm font-medium text-[#5D4A44] mb-1">
+            <label for="notas_iniciales" class="block text-sm font-medium text-[#2D3748] mb-1">
               Observaciones (Opcional)
             </label>
             <textarea
               id="notas_iniciales"
               v-model="formulario.notas_iniciales"
               rows="3"
-              class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white resize-none"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white resize-none"
               placeholder="Observaciones iniciales, motivo de consulta, etc."
             ></textarea>
           </div>

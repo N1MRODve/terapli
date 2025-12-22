@@ -4,15 +4,15 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     @click.self="cerrarModal"
   >
-    <div class="bg-[#F9F7F3] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="bg-[#F2F2F2] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
       <!-- Header -->
-      <div class="sticky top-0 bg-[#F9F7F3] border-b border-[#D8AFA0]/30 px-6 py-4 flex justify-between items-center">
-        <h2 class="text-2xl font-['Lora'] text-[#5D4A44] font-semibold">
+      <div class="sticky top-0 bg-[#F2F2F2] border-b border-[#5550F2]/30 px-6 py-4 flex justify-between items-center">
+        <h2 class="text-2xl font-serif text-[#2D3748] font-semibold">
           Editar Paciente
         </h2>
         <button
           @click="cerrarModal"
-          class="text-[#5D4A44] hover:text-[#D8AFA0] transition-colors"
+          class="text-[#2D3748] hover:text-[#5550F2] transition-colors"
           aria-label="Cerrar modal"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,14 +25,14 @@
       <form @submit.prevent="actualizarPaciente" class="px-6 py-6 space-y-6">
         <!-- Información Personal -->
         <div class="space-y-4">
-          <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold">
+          <h3 class="text-lg font-serif text-[#2D3748] font-semibold">
             Información Personal
           </h3>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Nombre -->
             <div>
-              <label for="nombre" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="nombre" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Nombre <span class="text-red-500">*</span>
               </label>
               <input
@@ -40,14 +40,14 @@
                 v-model="formulario.nombre"
                 type="text"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
                 placeholder="Nombre del paciente"
               />
             </div>
 
             <!-- Apellido -->
             <div>
-              <label for="apellido" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="apellido" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Apellido <span class="text-red-500">*</span>
               </label>
               <input
@@ -55,14 +55,14 @@
                 v-model="formulario.apellido"
                 type="text"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
                 placeholder="Apellido(s) del paciente"
               />
             </div>
 
             <!-- Email -->
             <div>
-              <label for="email" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="email" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Email <span class="text-red-500">*</span>
               </label>
               <input
@@ -70,57 +70,57 @@
                 v-model="formulario.email"
                 type="email"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
                 placeholder="correo@ejemplo.com"
               />
             </div>
 
             <!-- Teléfono -->
             <div>
-              <label for="telefono" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="telefono" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Teléfono
               </label>
               <input
                 id="telefono"
                 v-model="formulario.telefono"
                 type="tel"
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
                 placeholder="+52 123 456 7890"
               />
             </div>
 
             <!-- Fecha de Nacimiento -->
             <div>
-              <label for="fecha_nacimiento" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="fecha_nacimiento" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Fecha de Nacimiento
               </label>
               <input
                 id="fecha_nacimiento"
                 v-model="formulario.fecha_nacimiento"
                 type="date"
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
               />
             </div>
           </div>
         </div>
 
         <!-- Información Terapéutica -->
-        <div class="space-y-4 pt-4 border-t border-[#D8AFA0]/30">
-          <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold">
+        <div class="space-y-4 pt-4 border-t border-[#5550F2]/30">
+          <h3 class="text-lg font-serif text-[#2D3748] font-semibold">
             Información Terapéutica
           </h3>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Área de Acompañamiento -->
             <div class="md:col-span-2">
-              <label for="area_acompanamiento" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="area_acompanamiento" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Área de Acompañamiento <span class="text-red-500">*</span>
               </label>
               <select
                 id="area_acompanamiento"
                 v-model="formulario.area_acompanamiento"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
               >
                 <option value="">Selecciona un área</option>
                 <option value="Ansiedad">Ansiedad</option>
@@ -136,14 +136,14 @@
 
             <!-- Tipo de Bono -->
             <div>
-              <label for="tipo_bono" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="tipo_bono" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Tipo de Bono <span class="text-red-500">*</span>
               </label>
               <select
                 id="tipo_bono"
                 v-model="formulario.tipo_bono"
                 required
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
               >
                 <option value="">Selecciona tipo de bono</option>
                 <option value="a_demanda">A Demanda (1 sesión)</option>
@@ -154,13 +154,13 @@
 
             <!-- Estado -->
             <div>
-              <label for="activo" class="block text-sm font-medium text-[#5D4A44] mb-1">
+              <label for="activo" class="block text-sm font-medium text-[#2D3748] mb-1">
                 Estado
               </label>
               <select
                 id="activo"
                 v-model="formulario.activo"
-                class="w-full px-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-[#D8AFA0] focus:border-transparent bg-white"
+                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
               >
                 <option :value="true">Activo</option>
                 <option :value="false">Inactivo</option>
@@ -173,9 +173,9 @@
                 <input
                   v-model="formulario.en_pausa"
                   type="checkbox"
-                  class="w-4 h-4 text-[#D8AFA0] border-gray-300 rounded focus:ring-[#D8AFA0]"
+                  class="w-4 h-4 text-[#5550F2] border-gray-300 rounded focus:ring-[#5550F2]"
                 />
-                <span class="text-sm font-medium text-[#5D4A44]">
+                <span class="text-sm font-medium text-[#2D3748]">
                   Proceso en pausa temporal
                 </span>
               </label>
@@ -187,9 +187,9 @@
         </div>
 
         <!-- Gestión de Bonos -->
-        <div class="space-y-4 pt-4 border-t border-[#D8AFA0]/30">
+        <div class="space-y-4 pt-4 border-t border-[#5550F2]/30">
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-['Lora'] text-[#5D4A44] font-semibold">
+            <h3 class="text-lg font-serif text-[#2D3748] font-semibold">
               Gestión de Bonos
             </h3>
             <label class="flex items-center gap-2 cursor-pointer">
@@ -198,7 +198,7 @@
                 type="checkbox"
                 class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
               />
-              <span class="text-sm font-medium text-[#5D4A44]">
+              <span class="text-sm font-medium text-[#2D3748]">
                 🎫 Crear nuevo bono para este paciente
               </span>
             </label>
@@ -222,11 +222,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Monto Total -->
               <div>
-                <label for="bono_monto" class="block text-sm font-medium text-[#5D4A44] mb-1">
+                <label for="bono_monto" class="block text-sm font-medium text-[#2D3748] mb-1">
                   Monto Total <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                  <span class="absolute left-3 top-2.5 text-[#5D4A44] font-medium">€</span>
+                  <span class="absolute left-3 top-2.5 text-[#2D3748] font-medium">€</span>
                   <input
                     id="bono_monto"
                     v-model.number="formulario.bono_monto"
@@ -234,7 +234,7 @@
                     min="0"
                     step="0.01"
                     :required="formulario.crear_bono"
-                    class="w-full pl-8 pr-4 py-2 border border-[#D8AFA0]/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
+                    class="w-full pl-8 pr-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
                     placeholder="0.00"
                   />
                 </div>
@@ -242,7 +242,7 @@
 
               <!-- Precio por Sesión (calculado) -->
               <div>
-                <label class="block text-sm font-medium text-[#5D4A44] mb-1">
+                <label class="block text-sm font-medium text-[#2D3748] mb-1">
                   Precio por Sesión
                 </label>
                 <div class="px-4 py-2 bg-purple-100 border-2 border-purple-300 rounded-lg text-purple-900 font-bold">
@@ -258,7 +258,7 @@
                     type="checkbox"
                     class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                   />
-                  <span class="text-sm font-medium text-[#5D4A44]">
+                  <span class="text-sm font-medium text-[#2D3748]">
                     🔄 Renovación automática al vencer
                   </span>
                 </label>
@@ -270,7 +270,7 @@
 
             <!-- Resumen del Bono -->
             <div v-if="sesionesAutomaticas && formulario.bono_monto" class="bg-white border border-purple-300 rounded-lg p-4">
-              <p class="text-sm font-medium text-[#5D4A44] mb-2">📋 Resumen del Bono:</p>
+              <p class="text-sm font-medium text-[#2D3748] mb-2">📋 Resumen del Bono:</p>
               <div class="text-sm text-cafe/80 space-y-1">
                 <p>• <strong>Tipo:</strong> {{ nombreTipoBono }}</p>
                 <p>• <strong>Sesiones:</strong> {{ sesionesAutomaticas }}</p>
@@ -288,19 +288,19 @@
         </div>
 
         <!-- Botones de Acción -->
-        <div class="flex justify-end gap-3 pt-4 border-t border-[#D8AFA0]/30">
+        <div class="flex justify-end gap-3 pt-4 border-t border-[#5550F2]/30">
           <button
             type="button"
             @click="cerrarModal"
             :disabled="guardando"
-            class="px-6 py-2 border border-[#D8AFA0] text-[#5D4A44] rounded-lg hover:bg-[#D8AFA0]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-6 py-2 border border-[#5550F2] text-[#2D3748] rounded-lg hover:bg-[#5550F2]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancelar
           </button>
           <button
             type="submit"
             :disabled="guardando"
-            class="px-6 py-2 bg-[#D8AFA0] text-white rounded-lg hover:bg-[#C69F91] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            class="px-6 py-2 bg-[#5550F2] text-white rounded-lg hover:bg-[#C69F91] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             <span v-if="guardando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             {{ guardando ? 'Actualizando...' : 'Guardar Cambios' }}

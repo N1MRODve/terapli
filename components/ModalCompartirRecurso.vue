@@ -6,12 +6,12 @@
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
         @click.self="$emit('update:modelValue', false)"
       >
-        <div class="bg-[#F9F7F3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div class="bg-[#F2F2F2] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
           <!-- Header -->
-          <div class="bg-gradient-to-r from-[#D8AFA0] to-[#EAD5D3] px-6 py-5">
+          <div class="bg-gradient-to-r from-[#5550F2] to-[#E2E8F0] px-6 py-5">
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-2xl font-['Lora'] text-white">Compartir Recurso</h2>
+                <h2 class="text-2xl font-serif text-white">Compartir Recurso</h2>
                 <p class="text-sm text-white/90 mt-1">{{ recurso?.titulo }}</p>
               </div>
               <button 
@@ -30,7 +30,7 @@
             <div class="space-y-5">
               <!-- Buscar pacientes -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Buscar paciente
                 </label>
                 <div class="relative">
@@ -38,9 +38,9 @@
                     v-model="busqueda"
                     type="text"
                     placeholder="Buscar por nombre..."
-                    class="w-full px-4 py-3 pl-10 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44]"
+                    class="w-full px-4 py-3 pl-10 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748]"
                   />
-                  <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4A44]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#2D3748]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -48,59 +48,59 @@
 
               <!-- Seleccionar pacientes -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Seleccionar pacientes *
                 </label>
                 
                 <div v-if="cargandoPacientes" class="text-center py-8">
-                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D8AFA0] mx-auto"></div>
-                  <p class="text-sm text-[#5D4A44]/60 mt-2">Cargando pacientes...</p>
+                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5550F2] mx-auto"></div>
+                  <p class="text-sm text-[#2D3748]/60 mt-2">Cargando pacientes...</p>
                 </div>
 
                 <div v-else-if="pacientesFiltrados.length === 0" class="text-center py-8">
-                  <p class="text-sm text-[#5D4A44]/60">No se encontraron pacientes</p>
+                  <p class="text-sm text-[#2D3748]/60">No se encontraron pacientes</p>
                 </div>
 
-                <div v-else class="bg-white border border-[#EAD5D3]/50 rounded-xl max-h-60 overflow-y-auto">
+                <div v-else class="bg-white border border-[#E2E8F0]/50 rounded-xl max-h-60 overflow-y-auto">
                   <label
                     v-for="paciente in pacientesFiltrados"
                     :key="paciente.id"
-                    class="flex items-center gap-3 p-4 hover:bg-[#F9F7F3] cursor-pointer border-b border-[#EAD5D3]/30 last:border-0 transition"
+                    class="flex items-center gap-3 p-4 hover:bg-[#F2F2F2] cursor-pointer border-b border-[#E2E8F0]/30 last:border-0 transition"
                   >
                     <input
                       type="checkbox"
                       :value="paciente.id"
                       v-model="pacientesSeleccionados"
-                      class="w-5 h-5 text-[#D8AFA0] rounded focus:ring-2 focus:ring-[#D8AFA0]"
+                      class="w-5 h-5 text-[#5550F2] rounded focus:ring-2 focus:ring-[#5550F2]"
                     />
                     <div class="flex-1">
-                      <p class="font-medium text-[#5D4A44]">
+                      <p class="font-medium text-[#2D3748]">
                         {{ paciente.nombre }}
                       </p>
-                      <p v-if="paciente.email" class="text-sm text-[#5D4A44]/60">
+                      <p v-if="paciente.email" class="text-sm text-[#2D3748]/60">
                         {{ paciente.email }}
                       </p>
                     </div>
                   </label>
                 </div>
 
-                <p v-if="pacientesSeleccionados.length > 0" class="text-sm text-[#5D4A44]/70 mt-2">
+                <p v-if="pacientesSeleccionados.length > 0" class="text-sm text-[#2D3748]/70 mt-2">
                   {{ pacientesSeleccionados.length }} paciente(s) seleccionado(s)
                 </p>
               </div>
 
               <!-- Mensaje opcional -->
               <div>
-                <label class="block text-sm font-['Lato'] font-semibold text-[#5D4A44] mb-2">
+                <label class="block text-sm font-sans font-semibold text-[#2D3748] mb-2">
                   Mensaje opcional
                 </label>
                 <textarea
                   v-model="mensaje"
                   rows="3"
                   placeholder="Añade un mensaje personalizado para el paciente..."
-                  class="w-full px-4 py-3 bg-white border border-[#EAD5D3]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D8AFA0] text-[#5D4A44] resize-none"
+                  class="w-full px-4 py-3 bg-white border border-[#E2E8F0]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5550F2] text-[#2D3748] resize-none"
                 ></textarea>
-                <p class="text-xs text-[#5D4A44]/60 mt-1">
+                <p class="text-xs text-[#2D3748]/60 mt-1">
                   Este mensaje se incluirá en la notificación que recibirá el paciente
                 </p>
               </div>
@@ -116,18 +116,18 @@
               </div>
 
               <!-- Mensaje de carga -->
-              <div v-if="compartiendo" class="bg-[#D8AFA0]/10 border border-[#D8AFA0]/30 rounded-xl p-4">
+              <div v-if="compartiendo" class="bg-[#5550F2]/10 border border-[#5550F2]/30 rounded-xl p-4">
                 <div class="flex items-center gap-3">
-                  <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-[#D8AFA0]"></div>
-                  <span class="text-sm text-[#5D4A44]">Compartiendo recurso...</span>
+                  <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-[#5550F2]"></div>
+                  <span class="text-sm text-[#2D3748]">Compartiendo recurso...</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Footer -->
-          <div class="bg-white border-t border-[#EAD5D3]/30 px-6 py-4 flex items-center justify-between">
-            <p class="text-sm text-[#5D4A44]/70">
+          <div class="bg-white border-t border-[#E2E8F0]/30 px-6 py-4 flex items-center justify-between">
+            <p class="text-sm text-[#2D3748]/70">
               Los pacientes recibirán una notificación automática
             </p>
             <div class="flex items-center gap-3">
@@ -135,14 +135,14 @@
                 type="button"
                 @click="$emit('update:modelValue', false)"
                 :disabled="compartiendo"
-                class="px-6 py-2.5 text-[#5D4A44] font-['Lato'] rounded-xl hover:bg-[#F9F7F3] transition disabled:opacity-50"
+                class="px-6 py-2.5 text-[#2D3748] font-sans rounded-xl hover:bg-[#F2F2F2] transition disabled:opacity-50"
               >
                 Cancelar
               </button>
               <button
                 @click="compartir"
                 :disabled="compartiendo || pacientesSeleccionados.length === 0"
-                class="px-6 py-2.5 bg-[#D8AFA0] text-white font-['Lato'] font-semibold rounded-xl hover:bg-[#D8AFA0]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-6 py-2.5 bg-[#5550F2] text-white font-sans font-semibold rounded-xl hover:bg-[#5550F2]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {{ compartiendo ? 'Compartiendo...' : 'Enviar Recurso' }}
               </button>

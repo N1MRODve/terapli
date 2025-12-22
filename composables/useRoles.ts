@@ -42,6 +42,7 @@ export const useRoles = () => {
    */
   const getRoleName = (role?: UserRole): string => {
     const nombres: Record<UserRole, string> = {
+      admin: 'Administrador',
       psicologa: 'Psicóloga',
       paciente: 'Paciente',
       coordinadora: 'Coordinadora'
@@ -53,15 +54,16 @@ export const useRoles = () => {
    * Obtiene el dashboard correspondiente al rol
    */
   const getDashboardPath = (role?: UserRole): string => {
-    const rol = role || userProfile.value?.rol
-    
+    const rol: UserRole | undefined = role || userProfile.value?.rol
+
     const paths: Record<UserRole, string> = {
+      admin: '/admin/dashboard',
       psicologa: '/terapeuta/dashboard',
       coordinadora: '/coordinadora/dashboard',
       paciente: '/paciente/dashboard'
     }
-    
-    return rol ? paths[rol] : '/login'
+
+    return rol && rol in paths ? paths[rol] : '/login'
   }
 
   /**

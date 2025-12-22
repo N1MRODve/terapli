@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-white rounded-xl shadow-sm p-6 border border-[#EAD5D3]/40">
-    <h2 class="font-['Lora'] text-xl text-[#5D4A44] mb-4 flex items-center gap-2">
+  <div class="bg-white rounded-xl shadow-sm p-6 border border-[#E2E8F0]/40">
+    <h2 class="font-serif text-xl text-[#2D3748] mb-4 flex items-center gap-2">
       <span class="text-2xl">📊</span>
       Evolución Emocional
     </h2>
 
     <!-- Loading -->
     <div v-if="loading" class="text-center py-8">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#D8AFA0]"></div>
-      <p class="mt-2 text-sm text-[#5D4A44]/60">Cargando datos...</p>
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5550F2]"></div>
+      <p class="mt-2 text-sm text-[#2D3748]/60">Cargando datos...</p>
     </div>
 
     <!-- Chart -->
@@ -19,31 +19,31 @@
       </div>
 
       <!-- Estadísticas Resumidas -->
-      <div class="grid grid-cols-3 gap-4 pt-4 border-t border-[#EAD5D3]/30">
+      <div class="grid grid-cols-3 gap-4 pt-4 border-t border-[#E2E8F0]/30">
         <div class="text-center">
           <p class="text-2xl font-bold" :class="getColorClase(promedio)">
             {{ promedio }}%
           </p>
-          <p class="text-xs text-[#5D4A44]/60 mt-1">Promedio</p>
+          <p class="text-xs text-[#2D3748]/60 mt-1">Promedio</p>
         </div>
         <div class="text-center">
           <p class="text-2xl font-bold text-green-600">
             {{ maximo }}%
           </p>
-          <p class="text-xs text-[#5D4A44]/60 mt-1">Máximo</p>
+          <p class="text-xs text-[#2D3748]/60 mt-1">Máximo</p>
         </div>
         <div class="text-center">
-          <p class="text-2xl font-bold text-[#D8AFA0]">
+          <p class="text-2xl font-bold text-[#5550F2]">
             {{ registros.length }}
           </p>
-          <p class="text-xs text-[#5D4A44]/60 mt-1">Registros</p>
+          <p class="text-xs text-[#2D3748]/60 mt-1">Registros</p>
         </div>
       </div>
 
       <!-- Tendencia -->
-      <div class="mt-4 p-3 bg-[#F9F7F3] rounded-lg">
+      <div class="mt-4 p-3 bg-[#F2F2F2] rounded-lg">
         <div class="flex items-center justify-between">
-          <span class="text-sm text-[#5D4A44]/70">Tendencia últimos 30 días</span>
+          <span class="text-sm text-[#2D3748]/70">Tendencia últimos 30 días</span>
           <span 
             class="flex items-center gap-1 text-sm font-medium"
             :class="tendencia > 0 ? 'text-green-600' : tendencia < 0 ? 'text-red-600' : 'text-gray-600'"
@@ -56,7 +56,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="text-center py-12 text-[#5D4A44]/60">
+    <div v-else class="text-center py-12 text-[#2D3748]/60">
       <span class="text-4xl mb-3 block">📈</span>
       <p>No hay registros emocionales todavía</p>
       <p class="text-xs mt-2">Los registros aparecerán cuando el paciente complete su seguimiento</p>
@@ -183,12 +183,12 @@ const crearGrafica = () => {
       datasets: [{
         label: 'Nivel de Bienestar',
         data: datos,
-        borderColor: '#D8AFA0',
+        borderColor: '#5550F2',
         backgroundColor: 'rgba(216, 175, 160, 0.1)',
         borderWidth: 3,
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: '#D8AFA0',
+        pointBackgroundColor: '#5550F2',
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointRadius: 4,
@@ -203,7 +203,7 @@ const crearGrafica = () => {
           display: false
         },
         tooltip: {
-          backgroundColor: '#5D4A44',
+          backgroundColor: '#2D3748',
           padding: 12,
           titleFont: {
             family: "'Lora', serif",

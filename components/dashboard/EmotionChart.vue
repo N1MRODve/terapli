@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-sm border border-[#EAD5D3]/30 p-6">
-    <h2 class="font-['Lora'] text-2xl text-[#5D4A44] mb-6">
+  <div class="bg-white rounded-2xl shadow-sm border border-[#E2E8F0]/30 p-6">
+    <h2 class="font-serif text-2xl text-[#2D3748] mb-6">
       Tu evolución emocional
     </h2>
     
@@ -10,8 +10,8 @@
       </div>
       
       <template #fallback>
-        <div class="h-64 sm:h-80 flex items-center justify-center bg-[#F9F7F3] rounded-xl">
-          <p class="font-['Lato'] text-[#5D4A44]/50">Cargando gráfico...</p>
+        <div class="h-64 sm:h-80 flex items-center justify-center bg-[#F2F2F2] rounded-xl">
+          <p class="font-sans text-[#2D3748]/50">Cargando gráfico...</p>
         </div>
       </template>
     </ClientOnly>
@@ -19,18 +19,18 @@
     <!-- Leyenda personalizada -->
     <div class="mt-6 flex flex-wrap gap-4 justify-center">
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 rounded-full bg-[#D8AFA0]"></div>
-        <span class="font-['Lato'] text-sm text-[#5D4A44]/70">Estado emocional</span>
+        <div class="w-3 h-3 rounded-full bg-[#5550F2]"></div>
+        <span class="font-sans text-sm text-[#2D3748]/70">Estado emocional</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 rounded-full bg-[#EAD5D3]"></div>
-        <span class="font-['Lato'] text-sm text-[#5D4A44]/70">Tendencia</span>
+        <div class="w-3 h-3 rounded-full bg-[#E2E8F0]"></div>
+        <span class="font-sans text-sm text-[#2D3748]/70">Tendencia</span>
       </div>
     </div>
 
     <!-- Insight emocional -->
-    <div v-if="emotionalInsight" class="mt-6 p-4 bg-[#F9F7F3] rounded-xl">
-      <p class="font-['Lato'] text-sm text-[#5D4A44]/80">
+    <div v-if="emotionalInsight" class="mt-6 p-4 bg-[#F2F2F2] rounded-xl">
+      <p class="font-sans text-sm text-[#2D3748]/80">
         💡 <span class="font-medium">Insight:</span> {{ emotionalInsight }}
       </p>
     </div>
@@ -88,11 +88,11 @@ onMounted(async () => {
         {
           label: 'Estado emocional',
           data: emotionData.value.map(d => d.value),
-          borderColor: '#D8AFA0',
+          borderColor: '#5550F2',
           backgroundColor: 'rgba(216, 175, 160, 0.1)',
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: '#D8AFA0',
+          pointBackgroundColor: '#5550F2',
           pointBorderColor: '#fff',
           pointBorderWidth: 2,
           pointRadius: 6,
@@ -108,7 +108,7 @@ onMounted(async () => {
           display: false
         },
         tooltip: {
-          backgroundColor: '#5D4A44',
+          backgroundColor: '#2D3748',
           titleColor: '#fff',
           bodyColor: '#fff',
           padding: 12,
@@ -128,7 +128,7 @@ onMounted(async () => {
           max: 5,
           ticks: {
             stepSize: 1,
-            color: '#5D4A44',
+            color: '#2D3748',
             font: {
               family: "'Lato', sans-serif",
               size: 11
@@ -139,13 +139,13 @@ onMounted(async () => {
             }
           },
           grid: {
-            color: '#EAD5D3',
+            color: '#E2E8F0',
             borderDash: [5, 5]
           }
         },
         x: {
           ticks: {
-            color: '#5D4A44',
+            color: '#2D3748',
             font: {
               family: "'Lato', sans-serif",
               size: 11
