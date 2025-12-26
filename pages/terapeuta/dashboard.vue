@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-terapeuta min-h-screen bg-gradient-to-br from-gray-50 via-white to-violet-50/30">
+  <div class="dashboard-terapeuta min-h-screen bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
       <!-- ================================================================= -->
@@ -10,17 +10,15 @@
           <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
             Dashboard
           </h1>
-          <p class="text-gray-500 mt-1 flex items-center gap-2">
-            <span>Bienvenida de nuevo,</span>
-            <span class="font-medium text-gray-700">{{ terapeuta?.nombre || 'Karem' }}</span>
-            <span class="text-xl">👋</span>
+          <p class="text-gray-500 mt-1">
+            Bienvenida de nuevo, <span class="font-medium text-gray-700">{{ terapeuta?.nombre || 'Karem' }}</span>
           </p>
         </div>
 
         <div class="flex items-center gap-3">
           <button
             @click="navegarANuevaCita"
-            class="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-all shadow-lg shadow-violet-200 hover:shadow-violet-300 hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -29,7 +27,7 @@
           </button>
           <button
             @click="navegarANuevoPaciente"
-            class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 rounded-xl font-medium border border-gray-200 hover:border-violet-300 hover:text-violet-700 transition-all hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-600 rounded-lg font-medium border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -45,19 +43,19 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 
         <!-- =============================================================== -->
-        <!-- COLUMNA IZQUIERDA: Próximas Sesiones (2/3 del ancho) -->
+        <!-- COLUMNA IZQUIERDA: Proximas Sesiones (2/3 del ancho) -->
         <!-- =============================================================== -->
-        <section class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <!-- Header de sección -->
-          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-violet-50/50 to-transparent">
+        <section class="lg:col-span-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <!-- Header de seccion -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
               <div>
-                <h2 class="text-lg font-semibold text-gray-900">Próximas Sesiones</h2>
+                <h2 class="text-lg font-semibold text-gray-900">Proximas Sesiones</h2>
                 <p class="text-sm text-gray-500">{{ fechaHoy }}</p>
               </div>
             </div>
@@ -76,7 +74,7 @@
           <div class="p-4">
             <!-- Loading -->
             <div v-if="cargandoSesiones" class="flex flex-col items-center justify-center py-12">
-              <div class="w-10 h-10 border-3 border-violet-200 border-t-violet-600 rounded-full animate-spin mb-3"></div>
+              <div class="w-8 h-8 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mb-3"></div>
               <p class="text-sm text-gray-500">Cargando sesiones...</p>
             </div>
 
@@ -142,20 +140,20 @@
         <!-- =============================================================== -->
         <!-- COLUMNA DERECHA: Pacientes Activos (1/3 del ancho) -->
         <!-- =============================================================== -->
-        <section class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <section class="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <!-- Header de sección -->
-          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50/50 to-transparent">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
               <h2 class="text-lg font-semibold text-gray-900">Pacientes</h2>
             </div>
             <NuxtLink
               to="/terapeuta/pacientes"
-              class="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+              class="inline-flex items-center gap-1 text-sm font-medium text-violet-600 hover:text-violet-700 transition-colors"
             >
               Ver todos
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +166,7 @@
           <div class="p-4">
             <!-- Loading -->
             <div v-if="cargandoPacientes" class="flex flex-col items-center justify-center py-8">
-              <div class="w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
+              <div class="w-8 h-8 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mb-2"></div>
               <p class="text-sm text-gray-500">Cargando...</p>
             </div>
 
@@ -208,12 +206,12 @@
         <!-- =============================================================== -->
         <!-- ANALÍTICA DEL PROFESIONAL (2/3 del ancho) -->
         <!-- =============================================================== -->
-        <section class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <section class="lg:col-span-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
           <!-- Header -->
-          <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
-              <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
+            <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
             <h2 class="text-lg font-semibold text-gray-900">Analítica del Profesional</h2>
@@ -225,27 +223,24 @@
               <DashboardMetricCard
                 :value="totalPacientes"
                 label="Pacientes activos"
-                icon="👥"
-                variant="blue"
+                icon-type="users"
               />
               <DashboardMetricCard
                 :value="totalSesionesMes"
                 label="Sesiones este mes"
-                icon="📅"
-                variant="purple"
+                icon-type="calendar"
               />
               <DashboardMetricCard
                 :value="`${porcentajeAsistencia}%`"
                 label="Asistencia promedio"
-                icon="✓"
-                variant="neutral"
+                icon-type="check"
               />
               <DashboardMetricCard
                 :value="`${formatearPrecio(totalConfirmado)}€`"
                 label="Pagos confirmados"
                 :sublabel="`${totalBonosPagados} ${totalBonosPagados === 1 ? 'bono' : 'bonos'}`"
-                icon="💶"
-                variant="green"
+                icon-type="euro"
+                :highlight="true"
                 to="/terapeuta/sesiones"
               />
             </div>
@@ -255,13 +250,13 @@
         <!-- =============================================================== -->
         <!-- RECORDATORIOS (1/3 del ancho) -->
         <!-- =============================================================== -->
-        <section class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <section class="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <!-- Header -->
-          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
               <h2 class="text-lg font-semibold text-gray-900">Recordatorios</h2>
@@ -269,7 +264,7 @@
             <button
               v-if="!cargandoRecordatorios"
               @click="generarRecordatorios"
-              class="p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+              class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
               title="Actualizar recordatorios"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,14 +277,14 @@
           <div class="p-4">
             <!-- Loading -->
             <div v-if="cargandoRecordatorios" class="flex flex-col items-center justify-center py-8">
-              <div class="w-8 h-8 border-2 border-amber-200 border-t-amber-600 rounded-full animate-spin mb-2"></div>
+              <div class="w-8 h-8 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mb-2"></div>
               <p class="text-sm text-gray-500">Cargando...</p>
             </div>
 
             <!-- Empty state -->
             <div v-else-if="recordatoriosOrdenados.length === 0" class="flex flex-col items-center justify-center py-8 text-center">
-              <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
-                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
