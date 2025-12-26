@@ -33,7 +33,6 @@ const emit = defineEmits<{
 
 // State
 const eventoDragId = ref<string | null>(null)
-const zoomLevel = ref<'compact' | 'normal' | 'comfortable'>('normal')
 const gridContainer = ref<HTMLElement | null>(null)
 const lineaTiempoTop = ref<string>('0px') // Posición en píxeles
 const lineaTiempoVisible = ref<boolean>(false) // Si está visible
@@ -43,38 +42,18 @@ let intervaloTiempo: NodeJS.Timeout | null = null
 // Constantes
 const HORAS_TRABAJO = generarBloquesHorarios('08:00', '22:30', 30) // Bloques de 30 minutos hasta las 22:30 (para incluir citas hasta 22:00)
 
-// Altura según zoom
-const alturaSlot = computed(() => {
-  switch (zoomLevel.value) {
-    case 'compact': return 'h-8'
-    case 'normal': return 'h-10'
-    case 'comfortable': return 'h-16'
-    default: return 'h-10'
-  }
-})
-
-// Cargar zoom desde localStorage
-if (process.client) {
-  const savedZoom = localStorage.getItem('agenda_zoom')
-  if (savedZoom && ['compact', 'normal', 'comfortable'].includes(savedZoom)) {
-    zoomLevel.value = savedZoom as any
-  }
-}
-
-// Guardar zoom
-const setZoom = (level: 'compact' | 'normal' | 'comfortable') => {
-  zoomLevel.value = level
-  if (process.client) {
-    localStorage.setItem('agenda_zoom', level)
-  }
-}
+// Altura fija (modo compacto)
+const alturaSlot = computed(() => 'h-8')
 
 // Computadas - Fechas según vista
 const fechas = computed(() => {
   const fechaStr = props.fechaActual.toISOString().split('T')[0]!
-  
+
   if (props.vista === 'dia') {
     return [fechaStr]
+  } else if (props.vista === '5dias') {
+    // Vista 5 días: desde hoy + 4 días más
+    return Array.from({ length: 5 }, (_, i) => agregarDias(fechaStr, i))
   } else if (props.vista === 'semana') {
     const inicio = inicioSemana(fechaStr)
     return Array.from({ length: 7 }, (_, i) => agregarDias(inicio, i))
@@ -82,30 +61,30 @@ const fechas = computed(() => {
     // Vista mes: calendario completo con días del mes anterior y siguiente
     const primerDia = new Date(props.fechaActual.getFullYear(), props.fechaActual.getMonth(), 1)
     const ultimoDia = new Date(props.fechaActual.getFullYear(), props.fechaActual.getMonth() + 1, 0)
-    
+
     // Día de la semana del primer día (0=domingo, 1=lunes, ...)
     // Convertimos a formato ISO (0=lunes, 6=domingo)
     let primerDiaSemana = primerDia.getDay()
     primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1
-    
+
     // Día de la semana del último día
     let ultimoDiaSemana = ultimoDia.getDay()
     ultimoDiaSemana = ultimoDiaSemana === 0 ? 6 : ultimoDiaSemana - 1
-    
+
     const dias: string[] = []
-    
+
     // Agregar días del mes anterior para completar la primera semana
     for (let i = primerDiaSemana - 1; i >= 0; i--) {
       const fecha = new Date(primerDia)
       fecha.setDate(fecha.getDate() - (i + 1))
       dias.push(fecha.toISOString().split('T')[0]!)
     }
-    
+
     // Agregar todos los días del mes actual
     for (let d = new Date(primerDia); d <= ultimoDia; d.setDate(d.getDate() + 1)) {
       dias.push(d.toISOString().split('T')[0]!)
     }
-    
+
     // Agregar días del mes siguiente para completar la última semana
     const diasParaCompletar = 6 - ultimoDiaSemana
     for (let i = 1; i <= diasParaCompletar; i++) {
@@ -113,7 +92,7 @@ const fechas = computed(() => {
       fecha.setDate(fecha.getDate() + i)
       dias.push(fecha.toISOString().split('T')[0]!)
     }
-    
+
     return dias
   }
 })
@@ -197,11 +176,10 @@ const calcularAlturaEvento = (horaInicio: string, horaFin: string): string => {
     const fin = new Date(`1970-01-01T${horaFin}:00`)
     const duracionMinutos = (fin.getTime() - inicio.getTime()) / 60000
     
-    // Altura base por CELDA (cada celda = 30 minutos en HORAS_TRABAJO)
-    // Una celda de 30 min = 2.25rem en compact, 3.5rem en normal, 5rem en comfortable
-    const alturaPorCelda = zoomLevel.value === 'compact' ? 2.25 : zoomLevel.value === 'normal' ? 3.5 : 5
-    const alturaPor30Min = alturaPorCelda // cada celda es de 30 min
-    const alturaPorMinuto = alturaPor30Min / 30 // no 60, porque las celdas son de 30 min
+    // Altura base por CELDA (cada celda = 30 minutos) - modo compacto
+    const alturaPorCelda = 2.25 // rem
+    const alturaPor30Min = alturaPorCelda
+    const alturaPorMinuto = alturaPor30Min / 30
     
     // Calcular altura exacta
     const alturaCalculada = duracionMinutos * alturaPorMinuto
@@ -221,8 +199,8 @@ const calcularTopEvento = (horaInicio: string, horaSlot: string): string => {
     
     if (minutosDesdeSlot <= 0) return '0'
     
-    // Altura base por celda (30 minutos)
-    const alturaPorCelda = zoomLevel.value === 'compact' ? 2.25 : zoomLevel.value === 'normal' ? 3.5 : 5
+    // Altura base por celda (30 minutos) - modo compacto
+    const alturaPorCelda = 2.25
     const alturaPorMinuto = alturaPorCelda / 30
     
     return `${minutosDesdeSlot * alturaPorMinuto}rem`
@@ -244,10 +222,10 @@ const scrollToCurrentTime = async () => {
   const indiceHora = HORAS_TRABAJO.findIndex(h => h >= horaActual)
   
   if (indiceHora !== -1) {
-    // Calcular posición de scroll
-    const alturaPromedio = zoomLevel.value === 'compact' ? 40 : zoomLevel.value === 'normal' ? 56 : 80
+    // Calcular posición de scroll - modo compacto
+    const alturaPromedio = 40 // 2.5rem
     const scrollPosition = Math.max(0, (indiceHora - 2) * alturaPromedio) // 2 horas antes para contexto
-    
+
     gridContainer.value.scrollTop = scrollPosition
   }
 }
@@ -281,11 +259,8 @@ const actualizarLineaTiempo = () => {
     // Calcular minutos exactos desde las 08:00
     const minutosDesdeInicio = (ahora.getHours() - horaInicio) * 60 + ahora.getMinutes()
     
-    // Altura de cada celda según zoom (1 celda = 30 minutos)
-    // Usamos las alturas exactas del template
-    const alturaCelda = zoomLevel.value === 'compact' ? 40 : // 2.5rem
-                        zoomLevel.value === 'normal' ? 56 :   // 3.5rem
-                        80 // 5rem (comfortable)
+    // Altura de cada celda - modo compacto (1 celda = 30 minutos)
+    const alturaCelda = 40 // 2.5rem en píxeles
     
     // Calcular cuántos píxeles por minuto
     const pixelesPorMinuto = alturaCelda / 30 // 30 minutos por celda
@@ -353,7 +328,7 @@ onUnmounted(() => {
   }
 })
 
-watch([() => props.vista, () => props.cargando, zoomLevel], () => {
+watch([() => props.vista, () => props.cargando], () => {
   if (!props.cargando) {
     setTimeout(() => {
       if (props.vista === 'mes') {
@@ -398,38 +373,6 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
           <span>Cancelada</span>
         </div>
       </div>
-
-      <!-- Selector de Zoom -->
-      <div class="zoom-toggle">
-        <span class="text-xs text-cafe/60">Zoom:</span>
-        <button
-          @click="setZoom('compact')"
-          :class="[
-            'px-2 py-1 rounded-md transition-all',
-            zoomLevel === 'compact' ? 'bg-purple-600 text-white' : 'hover:bg-purple-600/10'
-          ]"
-        >
-          Compacto
-        </button>
-        <button
-          @click="setZoom('normal')"
-          :class="[
-            'px-2 py-1 rounded-md transition-all',
-            zoomLevel === 'normal' ? 'bg-purple-600 text-white' : 'hover:bg-purple-600/10'
-          ]"
-        >
-          Normal
-        </button>
-        <button
-          @click="setZoom('comfortable')"
-          :class="[
-            'px-2 py-1 rounded-md transition-all',
-            zoomLevel === 'comfortable' ? 'bg-purple-600 text-white' : 'hover:bg-purple-600/10'
-          ]"
-        >
-          Cómodo
-        </button>
-      </div>
     </div>
 
     <!-- Vista DÍA -->
@@ -449,9 +392,9 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
         <div
           v-for="(hora, idx) in HORAS_TRABAJO"
           :key="hora"
-          class="agenda-cell-dia"
+          class="agenda-cell-dia group"
           :class="idx % 2 === 0 ? 'bg-white' : 'bg-[#FFFAF7]'"
-          :style="{ minHeight: zoomLevel === 'compact' ? '2.5rem' : zoomLevel === 'normal' ? '3.5rem' : '5rem' }"
+          :style="{ minHeight: '2.5rem' }"
           @click="handleSlotClick(fechas[0]!, hora)"
         >
           <!-- Hora -->
@@ -462,28 +405,19 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
           <!-- Eventos en esta hora -->
           <div class="eventos-container">
             <div
-              v-for="(evento, idx) in obtenerEventosEnSlot(fechas[0]!, hora)"
-              :key="`${evento.id}-${idx}`"
+              v-for="(evento, evIdx) in obtenerEventosEnSlot(fechas[0]!, hora)"
+              :key="`${evento.id}-${evIdx}`"
               class="agenda-event-dia"
               :class="{ 'cita-activa': esCitaActiva(evento.id) }"
               :data-estado="evento.estado"
-              :style="{ 
+              :style="{
                 '--event-height': calcularAlturaEvento(evento.horaInicio, evento.horaFin)
               }"
               @click.stop="$emit('evento-click', evento.id)"
             >
               <span class="hora">{{ evento.horaInicio }} - {{ evento.horaFin }}</span>
               <span class="nombre">{{ evento.pacienteNombre }}</span>
-              
-              <!-- Info adicional en vista día -->
-              <div v-if="zoomLevel !== 'compact'" class="info-extra">
-                <span v-if="evento.modalidad" class="text-[10px]">
-                  {{ evento.modalidad === 'online' ? '💻' : '🏥' }}
-                </span>
-                <span v-if="evento.areaTerapeutica" class="text-[10px] text-cafe/60">
-                  {{ evento.areaTerapeutica }}
-                </span>
-              </div>
+
 
               <!-- Tooltip -->
               <div class="tooltip">
@@ -493,16 +427,28 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
                 <div v-if="evento.areaTerapeutica" class="text-[10px] opacity-80">{{ evento.areaTerapeutica }}</div>
               </div>
             </div>
+
+            <!-- Botón + para agregar cita (visible solo si no hay eventos en esta hora) -->
+            <div
+              v-if="obtenerEventosEnSlot(fechas[0]!, hora).length === 0"
+              class="add-slot-indicator"
+            >
+              <span class="add-icon">+</span>
+              <span class="add-text">Nueva cita</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Vista SEMANA -->
-    <div v-if="!cargando && vista === 'semana'" class="agenda-container">
-      <!-- Header: días de la semana (sticky) -->
-      <div class="agenda-days">
-        <div class="col-span-1"></div> <!-- Espacio para columna de horas -->
+    <!-- Vista SEMANA / 5 DÍAS -->
+    <div v-if="!cargando && (vista === 'semana' || vista === '5dias')" class="agenda-container">
+      <!-- Header: días (sticky) -->
+      <div
+        class="agenda-days"
+        :style="{ gridTemplateColumns: `3rem repeat(${fechas.length}, 1fr)` }"
+      >
+        <div></div> <!-- Espacio para columna de horas -->
         <div
           v-for="fecha in fechas"
           :key="fecha"
@@ -519,7 +465,11 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
       </div>
 
       <!-- Grid de horarios -->
-      <div ref="gridContainer" class="agenda-grid">
+      <div
+        ref="gridContainer"
+        class="agenda-grid"
+        :style="{ gridTemplateColumns: `3rem repeat(${fechas.length}, 1fr)` }"
+      >
         <!-- Línea roja de tiempo actual -->
         <div 
           v-if="lineaTiempoVisible"
@@ -627,6 +577,8 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
               +{{ (eventosPorFecha.get(fecha) || []).length - 2 }} más
             </button>
           </div>
+          <!-- Indicador de agregar cita -->
+          <span class="add-indicator">+</span>
         </div>
       </div>
     </div>
@@ -636,74 +588,109 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
 
 <style scoped>
 /* ============================================================================
-   OPTIMIZACIÓN DE VISUALIZACIÓN DE AGENDA
+   MODERN MINIMALIST AGENDA DESIGN
+   Inspired by: Linear, Notion Calendar, Cal.com, Google Calendar M3
    ============================================================================ */
 
-/* CONTROLES SUPERIORES */
+/* CONTROLES SUPERIORES - Más limpios */
 .agenda-controls {
-  @apply flex justify-between items-center py-2 px-4 border-b border-cafe/10 bg-white;
+  @apply flex justify-between items-center py-2.5 px-5 bg-white dark:bg-gray-950;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-/* LEYENDA DE ESTADOS */
+/* LEYENDA DE ESTADOS - Minimalista */
 .leyenda-estados {
-  @apply flex items-center justify-start gap-3 text-xs text-cafe/80;
+  @apply flex items-center justify-start gap-4 text-[11px] tracking-wide text-gray-500 dark:text-gray-400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .leyenda-estados .estado {
-  @apply flex items-center gap-2;
+  @apply flex items-center gap-1.5;
 }
 
 .leyenda-estados .dot {
-  @apply w-3 h-3 rounded-full flex-shrink-0;
+  @apply w-2 h-2 rounded-full flex-shrink-0;
 }
 
-.dot[data-color='pendiente'] { 
-  @apply bg-yellow-400; 
+/* Colores modernos con alpha suave */
+.dot[data-color='pendiente'] {
+  background-color: #F59E0B;
 }
-.dot[data-color='confirmada'] { 
-  @apply bg-green-500; 
+.dot[data-color='confirmada'] {
+  background-color: #10B981;
 }
-.dot[data-color='realizada'] { 
-  @apply bg-blue-500; 
+.dot[data-color='realizada'] {
+  background-color: #6366F1;
 }
-.dot[data-color='cancelada'] { 
-  @apply bg-red-500; 
-}
-
-/* SELECTOR DE ZOOM */
-.zoom-toggle {
-  @apply flex items-center gap-2 text-xs text-cafe/70;
+.dot[data-color='cancelada'] {
+  background-color: #EF4444;
 }
 
-.zoom-toggle button {
-  @apply px-2 py-1 text-xs transition-all;
-}
-
-/* Contenedor principal */
+/* Contenedor principal - Elegante con sombra sutil */
 .agenda-container {
-  @apply relative bg-white rounded-2xl shadow-sm border border-cafe/5 overflow-hidden;
+  @apply relative bg-white dark:bg-gray-950 overflow-hidden;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-/* CABECERA DE DÍAS */
+/* CABECERA DE DÍAS - Más limpia */
 .agenda-days {
-  @apply sticky top-0 z-10 grid grid-cols-8 text-center bg-[#FFFAF7] border-b border-cafe/10;
+  @apply sticky top-0 z-10 grid text-center;
+  background: linear-gradient(to bottom, #FAFAFA, #FFFFFF);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-/* COLUMNA DE HORAS */
+.agenda-days > div:not(:first-child) {
+  @apply py-3 px-2;
+}
+
+.agenda-days .text-xs {
+  @apply text-[10px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500;
+  letter-spacing: 0.1em;
+}
+
+.agenda-days .text-sm {
+  @apply text-base font-light text-gray-800 dark:text-gray-200;
+}
+
+/* Día actual - Indicador sutil */
+.agenda-days > div.bg-purple-600\/5 {
+  background: rgba(99, 102, 241, 0.04);
+  border-bottom: none;
+  position: relative;
+}
+
+.agenda-days > div.bg-purple-600\/5::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: #6366F1;
+  border-radius: 1px;
+}
+
+/* COLUMNA DE HORAS - Más sutil */
 .agenda-hours {
-  @apply text-[11px] font-medium text-cafe/50 pr-2 py-2 border-r border-cafe/10 text-right;
-  background: linear-gradient(to right, #FFFAF7 0%, white 100%);
+  @apply text-[10px] font-normal pr-3 py-2 text-right;
+  color: #9CA3AF;
+  background: transparent;
+  border-right: 1px solid rgba(0, 0, 0, 0.02);
 }
 
-/* GRID DE HORARIOS */
+/* GRID DE HORARIOS - Líneas casi invisibles */
 .agenda-grid {
-  @apply grid grid-cols-8 gap-px;
+  @apply grid;
   max-height: 70vh;
   overflow-y: auto;
-  overflow-x: visible; /* Permitir que eventos se extiendan */
+  overflow-x: visible;
   scroll-behavior: smooth;
-  background-color: #F5F5F5;
-  position: relative; /* Contexto para posicionamiento */
+  background-color: #FFFFFF;
+  position: relative;
 }
 
 /* GRID VISTA DÍA */
@@ -711,132 +698,219 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
   @apply overflow-y-auto;
   max-height: 70vh;
   scroll-behavior: smooth;
-  background-color: #F5F5F5;
+  background-color: #FFFFFF;
+  position: relative;
 }
 
 .agenda-cell-dia {
-  @apply flex items-start gap-3 px-4 py-2 border-b border-cafe/10 transition-all cursor-pointer;
+  @apply flex items-start gap-4 px-5 py-2.5 transition-all cursor-pointer relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.agenda-cell-dia:nth-child(odd) {
+  background-color: #FFFFFF;
+}
+
+.agenda-cell-dia:nth-child(even) {
+  background-color: #FAFAFA;
 }
 
 .agenda-cell-dia:hover {
-  @apply bg-[#FDF8F5];
+  background-color: rgba(99, 102, 241, 0.03);
 }
 
 .hora-dia {
-  @apply text-xs font-medium text-cafe/50 w-14 flex-shrink-0 text-right pt-1;
+  @apply text-[11px] font-normal w-12 flex-shrink-0 text-right pt-1;
+  color: #9CA3AF;
+}
+
+/* Indicador de agregar cita - Más sutil */
+.add-slot-indicator {
+  @apply flex items-center gap-2 px-3 py-2 rounded-lg
+         text-gray-400 text-sm
+         opacity-0 transition-all duration-300;
+}
+
+.agenda-cell-dia:hover .add-slot-indicator {
+  @apply opacity-100;
+}
+
+.add-slot-indicator .add-icon {
+  @apply w-5 h-5 rounded-full flex items-center justify-center text-sm font-normal;
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366F1;
+}
+
+.add-slot-indicator .add-text {
+  @apply text-xs font-normal;
+  color: #6366F1;
 }
 
 .eventos-container {
   @apply flex-1 flex flex-col gap-2;
 }
 
+/* ============================================================================
+   BLOQUES DE CITAS - Diseño moderno con colores suaves
+   ============================================================================ */
+
 .agenda-event-dia {
-  @apply relative flex flex-col justify-center px-3 py-2 bg-white rounded-lg shadow-sm transition-all text-xs text-cafe;
-  border-left-width: 4px;
+  @apply relative flex flex-col justify-center rounded-md transition-all;
+  padding: 8px 12px;
+  border-left-width: 2px;
   border-left-style: solid;
-  /* Altura dinámica basada en duración */
   height: var(--event-height, 3.5rem);
   min-height: 2rem;
 }
 
-.agenda-event-dia[data-estado='pendiente'] { 
-  @apply border-yellow-400; 
+/* Colores de fondo con alpha muy bajo (0.12) */
+.agenda-event-dia[data-estado='pendiente'] {
+  background: rgba(245, 158, 11, 0.10);
+  border-left-color: #F59E0B;
 }
-.agenda-event-dia[data-estado='confirmada'] { 
-  @apply border-green-500; 
+.agenda-event-dia[data-estado='confirmada'] {
+  background: rgba(16, 185, 129, 0.10);
+  border-left-color: #10B981;
 }
-.agenda-event-dia[data-estado='realizada'] { 
-  @apply border-blue-500; 
+.agenda-event-dia[data-estado='realizada'] {
+  background: rgba(99, 102, 241, 0.10);
+  border-left-color: #6366F1;
 }
-.agenda-event-dia[data-estado='cancelada'] { 
-  @apply border-red-500 opacity-70; 
+.agenda-event-dia[data-estado='cancelada'] {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: #EF4444;
+  opacity: 0.7;
 }
 
 .agenda-event-dia .hora {
-  @apply text-[10px] font-medium text-cafe/60 mb-1 leading-none;
+  @apply text-[11px] font-normal mb-0.5 leading-none;
+  color: #9CA3AF;
 }
 
 .agenda-event-dia .nombre {
-  @apply text-sm font-semibold text-cafe leading-tight;
+  @apply text-[13px] font-medium leading-tight;
+  color: #374151;
 }
 
-.agenda-event-dia .info-extra {
-  @apply flex items-center gap-2 mt-1 text-cafe/60;
-}
-
+/* Hover con elevación sutil */
 .agenda-event-dia:hover {
-  @apply bg-[#FFFDFB] shadow-md scale-[1.01];
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+.agenda-event-dia[data-estado='pendiente']:hover {
+  background: rgba(245, 158, 11, 0.16);
+}
+.agenda-event-dia[data-estado='confirmada']:hover {
+  background: rgba(16, 185, 129, 0.16);
+}
+.agenda-event-dia[data-estado='realizada']:hover {
+  background: rgba(99, 102, 241, 0.16);
+}
+.agenda-event-dia[data-estado='cancelada']:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Tooltip elegante */
 .agenda-event-dia .tooltip {
-  @apply absolute left-full top-0 ml-2 
-  bg-cafe text-white text-[11px] px-3 py-2 rounded-lg shadow-lg z-50 
+  @apply absolute left-full top-0 ml-3
+  text-[11px] px-3 py-2 rounded-lg shadow-xl z-50
   opacity-0 pointer-events-none transition-all whitespace-nowrap;
-  min-width: 150px;
+  background: #1F2937;
+  color: white;
+  min-width: 160px;
 }
 
 .agenda-event-dia:hover .tooltip {
   @apply opacity-100;
 }
 
-/* GRID DE HORARIOS SEMANA */
+/* GRID DE HORARIOS SEMANA - Líneas mínimas */
 .agenda-cell {
-  @apply relative border-b border-cafe/10 transition-all cursor-pointer;
-  min-height: 2.25rem; /* Compacta */
-  position: relative; /* Asegurar contexto de posicionamiento */
-  overflow: visible; /* CLAVE: Permitir que los eventos se extiendan fuera */
+  @apply relative transition-all cursor-pointer;
+  min-height: 2.25rem;
+  position: relative;
+  overflow: visible;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  border-right: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .agenda-cell:hover {
-  @apply bg-[#FDF8F5];
+  background-color: rgba(99, 102, 241, 0.03);
 }
 
-/* CITA (EVENTO) dentro de celda - OCUPA TODO EL LARGO */
+/* CITA (EVENTO) dentro de celda */
 .agenda-cell .agenda-event {
-  @apply absolute flex flex-col justify-start px-2 py-1.5 bg-white rounded-md shadow-sm transition-all text-xs text-cafe;
-  border-left-width: 4px;
+  @apply absolute flex flex-col justify-start rounded-md transition-all;
+  padding: 6px 10px;
+  border-left-width: 2px;
   border-left-style: solid;
-  left: 1px;
-  right: 1px;
-  /* Altura dinámica basada en duración */
+  left: 2px;
+  right: 2px;
   height: var(--event-height, 2.5rem) !important;
   max-height: none !important;
-  overflow: visible; /* Para tooltips */
-  z-index: 10; /* Para que se superponga a otras celdas */
-  pointer-events: auto; /* Asegurar que siga siendo clickeable */
+  overflow: visible;
+  z-index: 10;
+  pointer-events: auto;
 }
 
-.agenda-cell .agenda-event[data-estado='pendiente'] { 
-  @apply border-yellow-400; 
+/* Colores con alpha suave */
+.agenda-cell .agenda-event[data-estado='pendiente'] {
+  background: rgba(245, 158, 11, 0.10);
+  border-left-color: #F59E0B;
 }
-.agenda-cell .agenda-event[data-estado='confirmada'] { 
-  @apply border-green-500; 
+.agenda-cell .agenda-event[data-estado='confirmada'] {
+  background: rgba(16, 185, 129, 0.10);
+  border-left-color: #10B981;
 }
-.agenda-cell .agenda-event[data-estado='realizada'] { 
-  @apply border-blue-500; 
+.agenda-cell .agenda-event[data-estado='realizada'] {
+  background: rgba(99, 102, 241, 0.10);
+  border-left-color: #6366F1;
 }
-.agenda-cell .agenda-event[data-estado='cancelada'] { 
-  @apply border-red-500 opacity-70; 
+.agenda-cell .agenda-event[data-estado='cancelada'] {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: #EF4444;
+  opacity: 0.7;
 }
 
-/* Jerarquía interna del evento */
+/* Tipografía refinada */
 .agenda-cell .agenda-event .hora {
-  @apply text-[10px] font-medium text-cafe/60 mb-[2px] leading-none;
+  @apply text-[10px] font-normal mb-0.5 leading-none;
+  color: #9CA3AF;
 }
 
 .agenda-cell .agenda-event .nombre {
-  @apply text-xs font-semibold text-cafe truncate leading-tight;
+  @apply text-[12px] font-medium truncate leading-tight;
+  color: #374151;
 }
 
+/* Hover con microinteracción */
 .agenda-cell .agenda-event:hover {
-  @apply bg-[#FFFDFB] scale-[1.02] shadow-md z-10;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 20;
+}
+
+.agenda-cell .agenda-event[data-estado='pendiente']:hover {
+  background: rgba(245, 158, 11, 0.18);
+}
+.agenda-cell .agenda-event[data-estado='confirmada']:hover {
+  background: rgba(16, 185, 129, 0.18);
+}
+.agenda-cell .agenda-event[data-estado='realizada']:hover {
+  background: rgba(99, 102, 241, 0.18);
+}
+.agenda-cell .agenda-event[data-estado='cancelada']:hover {
+  background: rgba(239, 68, 68, 0.14);
 }
 
 /* TOOLTIP */
 .agenda-cell .tooltip {
-  @apply absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 
-  bg-cafe text-white text-[11px] px-3 py-2 rounded-lg shadow-lg z-50 
+  @apply absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2
+  text-[11px] px-3 py-2 rounded-lg shadow-xl z-50
   opacity-0 pointer-events-none transition-all whitespace-nowrap;
+  background: #1F2937;
+  color: white;
   min-width: 150px;
 }
 
@@ -854,10 +928,10 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
   cursor: move;
 }
 
-/* Smooth animations */
+/* Transiciones suaves */
 * {
-  transition-property: background-color, border-color, transform, opacity;
-  transition-duration: 150ms;
+  transition-property: background-color, border-color, transform, opacity, box-shadow;
+  transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -872,26 +946,36 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
   animation: spin 1s linear infinite;
 }
 
-/* Scroll automático suave */
-.agenda-grid::-webkit-scrollbar {
-  width: 8px;
+/* Scrollbar minimalista */
+.agenda-grid::-webkit-scrollbar,
+.agenda-grid-dia::-webkit-scrollbar {
+  width: 6px;
 }
 
-.agenda-grid::-webkit-scrollbar-track {
-  @apply bg-cafe/5 rounded-full;
+.agenda-grid::-webkit-scrollbar-track,
+.agenda-grid-dia::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.agenda-grid::-webkit-scrollbar-thumb {
-  @apply bg-cafe/20 rounded-full hover:bg-cafe/30;
+.agenda-grid::-webkit-scrollbar-thumb,
+.agenda-grid-dia::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.agenda-grid::-webkit-scrollbar-thumb:hover,
+.agenda-grid-dia::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.18);
 }
 
 /* ============================================================================
-   VISTA MENSUAL - DISEÑO OPTIMIZADO
+   VISTA MENSUAL - DISEÑO MODERNO
    ============================================================================ */
 
 /* Contenedor principal de vista mensual */
 .agenda-mes-container {
-  @apply flex flex-col overflow-hidden bg-white dark:bg-zinc-950;
+  @apply flex flex-col overflow-hidden;
+  background: #FFFFFF;
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
@@ -900,86 +984,132 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
 
 /* Grid del calendario mensual */
 .agenda-mes-grid {
-  @apply gap-[1px] bg-cafe/5 dark:bg-zinc-800/50;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: auto repeat(6, 1fr); /* Header + max 6 semanas */
+  grid-template-rows: auto repeat(6, 1fr);
   flex: 1 1 auto;
-  overflow: hidden; /* Sin scroll */
-  padding: 0.75rem;
+  overflow: hidden;
+  padding: 1rem;
+  gap: 4px;
   height: 100%;
+  background: #FAFAFA;
 }
 
 /* Header: Días de la semana */
 .agenda-mes-header {
-  @apply sticky top-0 z-10 text-center font-semibold text-xs text-cafe/70 dark:text-zinc-400 py-3 bg-[#FFFAF7] dark:bg-zinc-900 border-b-2 border-cafe/20 dark:border-zinc-700;
+  @apply text-center py-3;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9CA3AF;
+  background: transparent;
 }
 
 /* Celda de día individual */
 .agenda-dia-mes {
-  @apply relative bg-white dark:bg-zinc-950 border border-cafe/10 dark:border-zinc-800 p-1.5 rounded-lg transition-all cursor-pointer;
+  @apply relative p-2 transition-all cursor-pointer;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   overflow: hidden;
   min-height: 0;
   height: 100%;
+  background: #FFFFFF;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .agenda-dia-mes:hover {
-  @apply bg-[#FFF8F4] dark:bg-zinc-900/80 shadow-md border-purple-600/30 dark:border-purple-600/40;
-  transform: scale(1.005);
-  z-index: 5;
+  background: rgba(99, 102, 241, 0.03);
+  border-color: rgba(99, 102, 241, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* Día del mes actual */
+/* Indicador de agregar cita en vista mes */
+.agenda-dia-mes .add-indicator {
+  @apply absolute bottom-1.5 right-1.5 w-5 h-5 rounded-full
+         flex items-center justify-center
+         text-xs font-normal opacity-0 transition-all duration-300;
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366F1;
+}
+
+.agenda-dia-mes:hover .add-indicator {
+  @apply opacity-100;
+}
+
+/* Día del mes actual - Indicador elegante */
 .agenda-dia-mes.dia-hoy {
-  @apply ring-2 ring-purple-300 dark:ring-purple-300/80 bg-purple-600/5 dark:bg-purple-600/10;
+  background: rgba(99, 102, 241, 0.04);
   position: relative;
 }
 
-.agenda-dia-mes.dia-hoy::after {
+.agenda-dia-mes.dia-hoy::before {
   content: '';
-  @apply absolute inset-0 pointer-events-none;
-  background: linear-gradient(135deg, rgba(201, 124, 93, 0.05) 0%, transparent 100%);
-  border-radius: 0.5rem;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: #6366F1;
+  border-radius: 1px;
 }
 
 /* Días de otros meses (anterior/siguiente) */
 .agenda-dia-mes.dia-otro-mes {
-  @apply bg-zinc-50 dark:bg-zinc-900/30 opacity-60;
+  background: #F9FAFB;
+  opacity: 0.5;
 }
 
 .agenda-dia-mes.dia-otro-mes .dia-numero {
-  @apply text-cafe/40 dark:text-zinc-600;
+  color: #D1D5DB;
 }
 
 /* Header del día */
 .agenda-dia-header {
-  @apply flex justify-between items-center text-xs font-semibold mb-1;
+  @apply flex justify-between items-center mb-1.5;
   flex-shrink: 0;
 }
 
 .dia-numero {
-  @apply text-xs font-bold text-cafe dark:text-zinc-300;
+  font-size: 13px;
+  font-weight: 300;
+  color: #374151;
+}
+
+.agenda-dia-mes.dia-hoy .dia-numero {
+  font-weight: 500;
+  color: #6366F1;
 }
 
 .contador-citas {
-  @apply text-[9px] font-bold text-white dark:text-zinc-900;
-  @apply bg-purple-600 dark:bg-purple-600/90 rounded-full;
-  @apply flex items-center justify-center;
-  min-width: 1rem;
-  height: 1rem;
-  padding: 0 0.25rem;
+  font-size: 9px;
+  font-weight: 500;
+  color: white;
+  background: #6366F1;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dia-hoy-badge {
-  @apply text-[9px] font-semibold text-purple-600 dark:text-purple-600/90 bg-purple-600/10 dark:bg-purple-600/20 px-1.5 py-0.5 rounded-full;
+  font-size: 9px;
+  font-weight: 500;
+  color: #6366F1;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
 }
 
 /* Contenedor de eventos del día */
 .agenda-dia-eventos {
-  @apply flex flex-col gap-0.5;
+  @apply flex flex-col gap-1;
   flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
@@ -987,34 +1117,41 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
 }
 
 .agenda-dia-eventos::-webkit-scrollbar {
-  width: 3px;
+  width: 2px;
 }
 
 .agenda-dia-eventos::-webkit-scrollbar-thumb {
-  @apply bg-cafe/20 dark:bg-zinc-600 rounded-full;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 1px;
 }
 
 /* Contador de eventos adicionales */
 .mas-eventos {
-  @apply text-[9px] text-cafe/70 dark:text-zinc-400 font-semibold px-2 py-1 rounded-md;
-  @apply hover:bg-cafe/10 dark:hover:bg-zinc-800 hover:text-cafe dark:hover:text-zinc-200;
-  @apply transition-all cursor-pointer;
-  @apply border border-transparent hover:border-cafe/20 dark:hover:border-zinc-700;
+  font-size: 10px;
+  font-weight: 500;
+  color: #6B7280;
+  padding: 4px 8px;
+  border-radius: 4px;
   flex-shrink: 0;
   text-align: left;
   background: transparent;
   width: 100%;
   display: block;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .mas-eventos:hover {
-  transform: translateX(2px);
+  background: rgba(99, 102, 241, 0.06);
+  color: #6366F1;
 }
 
 /* Responsivo: pantallas pequeñas */
 @media (max-height: 800px) {
   .agenda-mes-grid {
     padding: 0.5rem;
+    gap: 2px;
   }
   .agenda-dia-mes {
     padding: 0.375rem;
@@ -1024,115 +1161,113 @@ watch([() => props.vista, () => props.cargando, zoomLevel], () => {
 /* Responsivo: tablets */
 @media (max-width: 1024px) {
   .agenda-mes-grid {
-    gap: 0.5px;
+    gap: 2px;
     padding: 0.5rem;
   }
   .agenda-dia-mes {
     padding: 0.375rem;
+    border-radius: 6px;
   }
   .dia-numero {
-    font-size: 0.7rem;
+    font-size: 11px;
   }
 }
 
 /* Responsivo: móviles */
 @media (max-width: 640px) {
   .agenda-mes-grid {
-    gap: 0;
+    gap: 1px;
     padding: 0.25rem;
   }
   .agenda-dia-mes {
     padding: 0.25rem;
-    border-radius: 0.375rem;
+    border-radius: 4px;
   }
   .dia-numero {
-    font-size: 0.625rem;
+    font-size: 10px;
   }
   .dia-hoy-badge {
-    font-size: 0.5rem;
-    padding: 0.125rem 0.25rem;
+    font-size: 8px;
+    padding: 1px 4px;
   }
   .agenda-mes-header {
-    font-size: 0.625rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    font-size: 9px;
+    padding: 0.5rem 0;
   }
   .mas-eventos {
-    font-size: 0.5rem;
-    padding: 0.25rem 0.5rem;
+    font-size: 8px;
+    padding: 2px 4px;
   }
 }
 
 /* ============================================================================
-   LÍNEA DE TIEMPO ACTUAL Y CITAS ACTIVAS
+   LÍNEA DE TIEMPO ACTUAL - Diseño refinado
    ============================================================================ */
 
-/* Línea roja de tiempo en vivo */
+/* Línea de tiempo - Más delgada y elegante */
 .linea-tiempo-actual {
   @apply absolute z-30 pointer-events-none;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, #e63946 10%, #e63946 90%, transparent 100%);
-  box-shadow: 0 0 8px rgba(230, 57, 70, 0.6), 0 0 16px rgba(230, 57, 70, 0.3);
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #EF4444 5%, #EF4444 95%, transparent 100%);
   transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Círculo indicador en la línea */
+/* Círculo indicador - Más pequeño con borde blanco */
 .circulo-tiempo {
-  @apply absolute -left-1 top-1/2 transform -translate-y-1/2;
-  width: 10px;
-  height: 10px;
-  background: #e63946;
+  @apply absolute top-1/2 transform -translate-y-1/2;
+  left: 2.5rem;
+  width: 8px;
+  height: 8px;
+  background: #EF4444;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
-  animation: pulsoTiempo 2s ease-in-out infinite;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-/* Texto de hora actual */
+/* Texto de hora actual - Más compacto */
 .texto-tiempo {
-  @apply absolute left-3 top-1/2 transform -translate-y-1/2;
-  @apply bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md;
+  @apply absolute top-1/2 transform -translate-y-1/2;
+  left: 3.25rem;
+  background: #EF4444;
+  color: white;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   pointer-events: auto;
 }
 
-@keyframes pulsoTiempo {
-  0%, 100% {
-    transform: translateY(-50%) scale(1);
-    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
-  }
-  50% {
-    transform: translateY(-50%) scale(1.2);
-    box-shadow: 0 0 0 6px rgba(230, 57, 70, 0.1);
-  }
-}
-
-/* Cita activa (está ocurriendo ahora) */
+/* Cita activa - Indicador más sutil */
 .cita-activa {
   @apply relative;
-  border-left-color: #10b981 !important; /* Verde brillante */
-  background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%) !important;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.2) !important;
-  animation: pulsoActivo 2s ease-in-out infinite;
+  border-left-color: #10B981 !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2) !important;
 }
 
 .cita-activa::before {
-  content: '🔴';
-  @apply absolute -top-1 -right-1 text-xs;
-  animation: parpadeo 1.5s ease-in-out infinite;
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  background: #10B981;
+  border-radius: 50%;
+  animation: pulseDot 2s ease-in-out infinite;
 }
 
-@keyframes pulsoActivo {
+@keyframes pulseDot {
   0%, 100% {
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.2);
+    opacity: 1;
+    transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 6px 16px rgba(16, 185, 129, 0.3);
+    opacity: 0.5;
+    transform: scale(0.8);
   }
-}
-
-@keyframes parpadeo {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
 }
 </style>

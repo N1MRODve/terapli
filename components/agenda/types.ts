@@ -4,7 +4,7 @@
 // Interfaces TypeScript para componentes de agenda
 
 export type EstadoCita = 'pendiente' | 'confirmada' | 'cancelada' | 'realizada'
-export type VistaAgenda = 'dia' | 'semana' | 'mes'
+export type VistaAgenda = 'dia' | '5dias' | 'semana' | 'mes'
 export type Modalidad = 'online' | 'presencial'
 
 export interface AgendaEvent {
@@ -116,10 +116,12 @@ export const obtenerNumeroSemana = (fecha: string): number => {
 export const obtenerTituloAgenda = (vista: VistaAgenda, fecha: Date | string): string => {
   // Convertir Date a string ISO si es necesario
   const fechaStr = typeof fecha === 'string' ? fecha : fecha.toISOString().split('T')[0]!
-  
+
   switch (vista) {
     case 'dia':
       return formatearFecha(fechaStr)
+    case '5dias':
+      return `${formatearMesAnio(fechaStr)} — 5 días`
     case 'semana':
       return `${formatearMesAnio(fechaStr)} — Semana ${obtenerNumeroSemana(fechaStr)}`
     case 'mes':

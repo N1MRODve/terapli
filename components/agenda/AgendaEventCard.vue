@@ -2,23 +2,27 @@
 // =============================================================================
 // COMPONENTE: Tarjeta de Evento/Cita en Agenda
 // =============================================================================
-// Tarjeta visual para mostrar información compacta de una cita
+// Tarjeta visual interactiva para mostrar información compacta de una cita
+// Soporta click para ver detalles, confirmación rápida y accesibilidad completa
 
 import type { AgendaEvent } from './types'
 import { COLORES_ESTADO } from './types'
 import { computed } from 'vue'
+import { CheckIcon } from '@heroicons/vue/24/solid'
 
 // Props
 const props = defineProps<{
   event: AgendaEvent
   compact?: boolean
   draggable?: boolean
+  confirmando?: boolean // Indica si está en proceso de confirmación
 }>()
 
 // Emits
 const emit = defineEmits<{
   open: [id: string]
   menu: [id: string, event: MouseEvent]
+  confirmar: [id: string] // Nuevo: confirmación rápida
 }>()
 
 // Computadas
@@ -63,6 +67,20 @@ const colorSesiones = computed(() => {
   return 'green'
 })
 
+// Aria-label descriptivo para accesibilidad
+const ariaLabel = computed(() => {
+  const estado = props.event.estado === 'pendiente' ? 'pendiente' :
+                 props.event.estado === 'confirmada' ? 'confirmada' :
+                 props.event.estado === 'realizada' ? 'realizada' : 'cancelada'
+  const modalidad = props.event.modalidad === 'online' ? 'online' : 'presencial'
+  const terapeuta = props.event.terapeuta?.nombre ? `, con ${props.event.terapeuta.nombre}` : ''
+
+  return `Cita ${estado} de ${nombrePaciente.value}, ${horaFormateada.value}, ${modalidad}${terapeuta}. Pulsa para ver detalles${props.event.estado === 'pendiente' ? ' o confirmar' : ''}.`
+})
+
+// Verificar si se puede confirmar
+const puedeConfirmar = computed(() => props.event.estado === 'pendiente')
+
 const handleClick = () => {
   emit('open', props.event.id)
 }
@@ -71,17 +89,27 @@ const handleMenu = (e: MouseEvent) => {
   e.stopPropagation()
   emit('menu', props.event.id, e)
 }
+
+// Confirmación rápida
+const handleConfirmarRapido = (e: MouseEvent) => {
+  e.stopPropagation()
+  if (puedeConfirmar.value && !props.confirmando) {
+    emit('confirmar', props.event.id)
+  }
+}
 </script>
 
 <template>
   <div
     class="agenda-event group"
+    :class="{ 'confirmando': confirmando }"
     :data-estado="event.estado"
     :data-compact="compact"
     :draggable="draggable"
     role="button"
     tabindex="0"
-    :title="`${nombrePaciente} - ${horaFormateada}`"
+    :aria-label="ariaLabel"
+    :title="`${nombrePaciente} - ${horaFormateada}. Click para ver detalles.`"
     @click="handleClick"
     @keydown.enter="handleClick"
     @keydown.space.prevent="handleClick"
@@ -127,6 +155,24 @@ const handleMenu = (e: MouseEvent) => {
       </div>
     </div>
 
+    <!-- Botón de confirmación rápida (solo para citas pendientes) -->
+    <button
+      v-if="!compact && puedeConfirmar"
+      @click="handleConfirmarRapido"
+      class="confirm-btn"
+      :class="{ 'confirming': confirmando }"
+      :disabled="confirmando"
+      :aria-label="`Confirmar cita de ${nombrePaciente}`"
+      :title="confirmando ? 'Confirmando...' : 'Confirmar cita rápidamente'"
+      type="button"
+    >
+      <svg v-if="confirmando" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <CheckIcon v-else class="w-3.5 h-3.5" />
+    </button>
+
     <!-- Menú de acciones (solo hover) -->
     <button
       v-if="!compact"
@@ -144,104 +190,133 @@ const handleMenu = (e: MouseEvent) => {
 
 <style scoped>
 /* ============================================================================
-   DISEÑO MINIMALISTA PARA TARJETAS DE CITA
+   MODERN MINIMALIST EVENT CARD DESIGN
    ============================================================================ */
 
-/* Contenedor principal - Fondo neutro con franja lateral */
+/* Contenedor principal - Diseño limpio con colores suaves */
 .agenda-event {
-  @apply relative flex flex-col justify-center rounded-lg shadow-sm border border-cafe/10 bg-white dark:bg-zinc-900;
-  @apply cursor-pointer transition-all duration-200 ease-out;
-  padding: 0.5rem 0.625rem 0.5rem 0.875rem; /* py-2 px-2.5 pl-3.5 */
-  min-height: 3.5rem; /* 56px */
+  @apply relative flex flex-col justify-center cursor-pointer;
+  padding: 6px 10px 6px 12px;
+  min-height: 2.5rem;
+  border-radius: 6px;
+  border-left-width: 2px;
+  border-left-style: solid;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Colores de fondo con alpha muy bajo */
+.agenda-event[data-estado='pendiente'] {
+  background: rgba(245, 158, 11, 0.10);
+  border-left-color: #F59E0B;
+}
+.agenda-event[data-estado='confirmada'] {
+  background: rgba(16, 185, 129, 0.10);
+  border-left-color: #10B981;
+}
+.agenda-event[data-estado='realizada'] {
+  background: rgba(99, 102, 241, 0.10);
+  border-left-color: #6366F1;
+}
+.agenda-event[data-estado='cancelada'] {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: #EF4444;
+  opacity: 0.7;
 }
 
 /* Modo compacto para vista mensual */
 .agenda-event[data-compact="true"] {
-  padding: 0.25rem 0.375rem 0.25rem 0.5rem; /* Más compacto */
-  min-height: 1.75rem; /* 28px - Mucho más pequeño */
+  padding: 3px 6px 3px 8px;
+  min-height: 1.5rem;
+  border-radius: 4px;
 }
 
 .agenda-event[data-compact="true"] .hora {
-  @apply text-[9px]; /* Texto más pequeño */
+  font-size: 9px;
 }
 
 .agenda-event[data-compact="true"] .nombre {
-  @apply text-[10px]; /* Texto más pequeño */
+  font-size: 10px;
 }
 
 .agenda-event[data-compact="true"] .estado-dot {
-  width: 0.375rem; /* 6px - Dot más pequeño */
-  height: 0.375rem;
-}
-
-/* Franja lateral según estado - 4px de ancho */
-.agenda-event::before {
-  content: '';
-  @apply absolute left-0 top-0 h-full rounded-l-lg;
   width: 4px;
+  height: 4px;
 }
 
-.agenda-event[data-estado='pendiente']::before { 
-  @apply bg-yellow-400;
-}
-.agenda-event[data-estado='confirmada']::before { 
-  @apply bg-green-500;
-}
-.agenda-event[data-estado='realizada']::before { 
-  @apply bg-blue-500;
-}
-.agenda-event[data-estado='cancelada']::before { 
-  @apply bg-red-500;
-}
-
-/* Hover - Elevación y escala sutil */
+/* Hover - Elevación sutil */
 .agenda-event:hover {
-  @apply shadow-md bg-white dark:bg-zinc-800;
-  transform: scale(1.02) translateY(-1px);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.agenda-event[data-estado='pendiente']:hover {
+  background: rgba(245, 158, 11, 0.16);
+}
+.agenda-event[data-estado='confirmada']:hover {
+  background: rgba(16, 185, 129, 0.16);
+}
+.agenda-event[data-estado='realizada']:hover {
+  background: rgba(99, 102, 241, 0.16);
+}
+.agenda-event[data-estado='cancelada']:hover {
+  background: rgba(239, 68, 68, 0.12);
 }
 
 /* Focus visible para accesibilidad */
 .agenda-event:focus-visible {
-  @apply outline-none ring-2 ring-purple-300 ring-offset-2 dark:ring-offset-gray-950;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
 }
 
 /* ============================================================================
-   TIPOGRAFÍA - Jerarquía clara
+   TIPOGRAFÍA - Refinada
    ============================================================================ */
 
-/* Hora - Texto pequeño, color suave */
+/* Hora - Texto pequeño, color gris suave */
 .agenda-event .hora {
-  @apply text-[11px] font-medium text-cafe/60 dark:text-zinc-400;
+  font-size: 10px;
+  font-weight: 400;
+  color: #9CA3AF;
   line-height: 1.2;
 }
 
-/* Nombre del paciente - Principal, destacado */
+/* Nombre del paciente - Principal */
 .agenda-event .nombre {
-  @apply text-sm font-semibold text-cafe dark:text-zinc-100;
-  @apply truncate leading-snug;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
   display: flex;
   align-items: center;
-  gap: 0.375rem; /* 6px */
+  gap: 5px;
+  line-height: 1.3;
+}
+
+.agenda-event .nombre span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Punto de estado junto al nombre */
 .agenda-event .estado-dot {
-  @apply inline-block rounded-full flex-shrink-0;
-  width: 0.5rem; /* 8px */
-  height: 0.5rem; /* 8px */
+  display: inline-block;
+  border-radius: 50%;
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
 }
 
-.agenda-event[data-estado='pendiente'] .estado-dot { 
-  @apply bg-yellow-400;
+.agenda-event[data-estado='pendiente'] .estado-dot {
+  background-color: #F59E0B;
 }
-.agenda-event[data-estado='confirmada'] .estado-dot { 
-  @apply bg-green-500;
+.agenda-event[data-estado='confirmada'] .estado-dot {
+  background-color: #10B981;
 }
-.agenda-event[data-estado='realizada'] .estado-dot { 
-  @apply bg-blue-500;
+.agenda-event[data-estado='realizada'] .estado-dot {
+  background-color: #6366F1;
 }
-.agenda-event[data-estado='cancelada'] .estado-dot { 
-  @apply bg-red-500;
+.agenda-event[data-estado='cancelada'] .estado-dot {
+  background-color: #EF4444;
 }
 
 /* ============================================================================
@@ -249,48 +324,99 @@ const handleMenu = (e: MouseEvent) => {
    ============================================================================ */
 
 .info-adicional {
-  @apply flex flex-col gap-1 text-[11px] text-cafe/70 dark:text-zinc-400;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+  font-size: 10px;
+  color: #6B7280;
 }
 
 .modalidad, .area {
-  @apply flex items-center gap-1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .bono-info {
-  @apply font-semibold text-[10px];
+  font-size: 9px;
+  font-weight: 500;
 }
 
 /* Colores de bono según sesiones restantes */
-.bono-info[data-color="red"] { 
-  color: #dc2626; /* red-600 */
+.bono-info[data-color="red"] {
+  color: #EF4444;
 }
-.bono-info[data-color="red"]:is(.dark *) { 
-  color: #f87171; /* red-400 */
+.bono-info[data-color="orange"] {
+  color: #F97316;
 }
-
-.bono-info[data-color="orange"] { 
-  color: #ea580c; /* orange-600 */
+.bono-info[data-color="yellow"] {
+  color: #EAB308;
 }
-.bono-info[data-color="orange"]:is(.dark *) { 
-  color: #fb923c; /* orange-400 */
-}
-
-.bono-info[data-color="yellow"] { 
-  color: #ca8a04; /* yellow-600 */
-}
-.bono-info[data-color="yellow"]:is(.dark *) { 
-  color: #facc15; /* yellow-400 */
-}
-
-.bono-info[data-color="green"] { 
-  color: #16a34a; /* green-600 */
-}
-.bono-info[data-color="green"]:is(.dark *) { 
-  color: #4ade80; /* green-400 */
+.bono-info[data-color="green"] {
+  color: #10B981;
 }
 
 .indicadores {
-  @apply flex items-center gap-1.5 mt-0.5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+/* ============================================================================
+   BOTÓN DE CONFIRMACIÓN RÁPIDA
+   ============================================================================ */
+
+.confirm-btn {
+  position: absolute;
+  top: 4px;
+  right: 28px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.2s ease;
+  color: white;
+  background: #10B981;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.4);
+}
+
+.confirm-btn:hover {
+  background: #059669;
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.5);
+}
+
+.confirm-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #10B981;
+}
+
+.confirm-btn.confirming {
+  background: #059669;
+  cursor: wait;
+}
+
+.agenda-event:hover .confirm-btn,
+.agenda-event:focus-within .confirm-btn {
+  opacity: 1;
+}
+
+/* Solo mostrar en citas pendientes */
+.agenda-event[data-estado='confirmada'] .confirm-btn,
+.agenda-event[data-estado='realizada'] .confirm-btn,
+.agenda-event[data-estado='cancelada'] .confirm-btn {
+  display: none;
+}
+
+/* Estado de confirmando en la tarjeta */
+.agenda-event.confirmando {
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 /* ============================================================================
@@ -298,14 +424,24 @@ const handleMenu = (e: MouseEvent) => {
    ============================================================================ */
 
 .menu-btn {
-  @apply absolute top-1.5 right-1.5;
-  @apply p-1 rounded-md opacity-0 transition-opacity;
-  @apply hover:bg-cafe/10 dark:hover:bg-zinc-700;
-  @apply text-cafe/60 dark:text-zinc-400;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: #9CA3AF;
 }
 
-.agenda-event:hover .menu-btn {
-  @apply opacity-100;
+.menu-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #6B7280;
+}
+
+.agenda-event:hover .menu-btn,
+.agenda-event:focus-within .menu-btn {
+  opacity: 1;
 }
 
 /* ============================================================================
@@ -313,31 +449,32 @@ const handleMenu = (e: MouseEvent) => {
    ============================================================================ */
 
 .agenda-event[draggable="true"] {
-  @apply cursor-move;
+  cursor: move;
 }
 
 .agenda-event[draggable="true"]:active {
-  @apply opacity-60 cursor-grabbing;
+  opacity: 0.6;
+  cursor: grabbing;
   transform: scale(0.98);
 }
 
 /* ============================================================================
-   ANIMACIÓN DE APARICIÓN (opcional)
+   ANIMACIÓN DE APARICIÓN
    ============================================================================ */
 
-@keyframes fadeInScale {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.98);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
 .agenda-event {
-  animation: fadeInScale 0.2s ease-out;
+  animation: fadeIn 0.15s ease-out;
 }
 
 /* ============================================================================

@@ -81,10 +81,22 @@ export default defineEventHandler(async (event) => {
       })
     }
 
+    // Get runtime config for Supabase credentials
+    const config = useRuntimeConfig()
+    const supabaseUrl = config.supabaseUrl || config.public.supabaseUrl
+    const supabaseKey = config.supabaseKey || config.public.supabaseKey
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Configuración de Supabase no disponible'
+      })
+    }
+
     // Get Supabase client with user context
     const supabaseClient = await createServerClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_KEY!,
+      supabaseUrl,
+      supabaseKey,
       {
         cookies: {
           get: (name) => getCookie(event, name),

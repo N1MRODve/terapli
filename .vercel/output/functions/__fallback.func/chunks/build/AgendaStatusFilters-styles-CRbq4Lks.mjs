@@ -1,0 +1,2 @@
+const a=["@keyframes pulse-chip-8acd89bc{0%,to{transform:scale(1)}50%{transform:scale(.98)}}[role=button][data-v-8acd89bc]:active{animation:pulse-chip-8acd89bc .15s ease-out}span[data-v-8acd89bc]{transition:all .2s cubic-bezier(.4,0,.2,1)}@keyframes pulse-8acd89bc{0%,to{opacity:1}50%{opacity:.7}}.animate-pulse[data-v-8acd89bc]{animation:pulse-8acd89bc 2s cubic-bezier(.4,0,.6,1) infinite}"];export{a as default};
+//# sourceMappingURL=AgendaStatusFilters-styles-CRbq4Lks.mjs.map

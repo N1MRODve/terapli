@@ -1,0 +1,9 @@
+{
+  "runtime": "nodejs22.x",
+  "handler": "index.mjs",
+  "launcherType": "Nodejs",
+  "shouldAddHelpers": false,
+  "supportsResponseStreaming": true,
+  "maxDuration": 30,
+  "memory": 1024
+}

@@ -1,0 +1,2 @@
+const t=["input[data-v-1de7f2fa]:focus{transform:translateY(-1px)}button[type=submit][data-v-1de7f2fa]:not(:disabled):active{transform:translateY(0)!important}"];export{t as default};
+//# sourceMappingURL=login-styles-ClO8hcll.mjs.map

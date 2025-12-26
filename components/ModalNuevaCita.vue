@@ -1870,25 +1870,52 @@ function cerrarListaPacientes() {
   }
 }
 
-// Recargar pacientes cuando se abre el modal
+// Función para inicializar el modal cuando se abre
+const inicializarModal = () => {
+  console.log('🎯 Modal abierto - verificando rol y cargando datos')
+  console.log('📅 Fecha preseleccionada:', props.fechaPreseleccionada)
+  console.log('⏰ Hora preseleccionada:', props.horaPreseleccionada)
+
+  verificarRolUsuario()
+  cargarPacientes()
+
+  // Aplicar fecha y hora preseleccionadas
+  if (props.fechaPreseleccionada) {
+    formulario.value.fecha = props.fechaPreseleccionada
+    console.log('✅ Fecha aplicada:', formulario.value.fecha)
+  }
+
+  if (props.horaPreseleccionada) {
+    formulario.value.hora_inicio = props.horaPreseleccionada
+    calcularHoraFin()
+    console.log('✅ Hora aplicada:', formulario.value.hora_inicio, '- Hora fin:', formulario.value.hora_fin)
+  }
+
+  // Si hay paciente preseleccionado, cargarlo automáticamente
+  if (props.pacientePreseleccionado) {
+    nextTick(() => {
+      seleccionarPaciente({
+        id: props.pacientePreseleccionado.id,
+        nombre: props.pacientePreseleccionado.nombre,
+        email: props.pacientePreseleccionado.email,
+        frecuencia: props.pacientePreseleccionado.frecuencia || 'No definida',
+        area_acompanamiento: props.pacientePreseleccionado.area_acompanamiento || ''
+      })
+    })
+  }
+}
+
+// Recargar pacientes cuando se abre el modal (via mostrar prop)
 watch(() => props.mostrar, (nuevo) => {
   if (nuevo) {
-    console.log('🎯 Modal abierto - verificando rol y cargando datos')
-    verificarRolUsuario()
-    cargarPacientes()
-    
-    // Si hay paciente preseleccionado, cargarlo automáticamente
-    if (props.pacientePreseleccionado) {
-      nextTick(() => {
-        seleccionarPaciente({
-          id: props.pacientePreseleccionado.id,
-          nombre: props.pacientePreseleccionado.nombre,
-          email: props.pacientePreseleccionado.email,
-          frecuencia: props.pacientePreseleccionado.frecuencia || 'No definida',
-          area_acompanamiento: props.pacientePreseleccionado.area_acompanamiento || ''
-        })
-      })
-    }
+    inicializarModal()
+  }
+})
+
+// También observar modelValue para v-model
+watch(() => props.modelValue, (nuevo) => {
+  if (nuevo) {
+    inicializarModal()
   }
 })
 </script>

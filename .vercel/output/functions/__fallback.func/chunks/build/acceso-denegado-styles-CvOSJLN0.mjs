@@ -1,0 +1,2 @@
+const a=["@keyframes fade-in-5c150450{0%{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.animate-fade-in[data-v-5c150450]{animation:fade-in-5c150450 .5s ease-out}.backdrop-blur-xl[data-v-5c150450]{-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}button[data-v-5c150450]:focus{outline:none;ring:4px;ring-color:rgba(85,80,242,.2)}"];export{a as default};
+//# sourceMappingURL=acceso-denegado-styles-CvOSJLN0.mjs.map

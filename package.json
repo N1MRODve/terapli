@@ -19,6 +19,7 @@
     "pwa:icons": "node scripts/generate-icons.cjs"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
     "@nuxtjs/supabase": "^2.0.1",
     "@supabase/ssr": "^0.7.0",

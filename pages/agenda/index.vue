@@ -16,7 +16,7 @@ import { useAgenda } from '@/composables/useAgenda'
 import { useCitas } from '@/composables/useCitas'
 import AgendaHeader from '@/components/agenda/AgendaHeader.vue'
 import AgendaFilters from '@/components/agenda/AgendaFilters.vue'
-import AgendaLegend from '@/components/agenda/AgendaLegend.vue'
+import AgendaLeyendaFiltrable from '@/components/agenda/AgendaLeyendaFiltrable.vue'
 import AgendaGrid from '@/components/agenda/AgendaGrid.vue'
 import AgendaTerapeuta from '@/components/AgendaTerapeuta.vue'
 import ModalNuevaCita from '@/components/ModalNuevaCita.vue'
@@ -176,12 +176,18 @@ const cargarCitas = async () => {
     
     if (vista.value === 'dia') {
       fechaInicio = fechaFin = fechaActual.value.toISOString().split('T')[0]!
+    } else if (vista.value === '5dias') {
+      // Vista 5 días: desde la fecha actual + 4 días
+      fechaInicio = fechaActual.value.toISOString().split('T')[0]!
+      const fin5Dias = new Date(fechaActual.value)
+      fin5Dias.setDate(fin5Dias.getDate() + 4)
+      fechaFin = fin5Dias.toISOString().split('T')[0]!
     } else if (vista.value === 'semana') {
       // Obtener inicio y fin de la semana actual
       const inicioSemana = new Date(fechaActual.value)
       inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay())
       fechaInicio = inicioSemana.toISOString().split('T')[0]!
-      
+
       const finSemana = new Date(inicioSemana)
       finSemana.setDate(finSemana.getDate() + 6)
       fechaFin = finSemana.toISOString().split('T')[0]!
@@ -402,18 +408,59 @@ if (process.client) {
 // =============================================================================
 // Keyboard Shortcuts
 // =============================================================================
+// Función de navegación según vista
+const navegarAnterior = () => {
+  const fecha = new Date(fechaActual.value)
+  switch (vista.value) {
+    case 'dia':
+      fecha.setDate(fecha.getDate() - 1)
+      break
+    case '5dias':
+      fecha.setDate(fecha.getDate() - 5)
+      break
+    case 'semana':
+      fecha.setDate(fecha.getDate() - 7)
+      break
+    case 'mes':
+      fecha.setMonth(fecha.getMonth() - 1)
+      break
+  }
+  fechaActual.value = fecha
+}
+
+const navegarSiguiente = () => {
+  const fecha = new Date(fechaActual.value)
+  switch (vista.value) {
+    case 'dia':
+      fecha.setDate(fecha.getDate() + 1)
+      break
+    case '5dias':
+      fecha.setDate(fecha.getDate() + 5)
+      break
+    case 'semana':
+      fecha.setDate(fecha.getDate() + 7)
+      break
+    case 'mes':
+      fecha.setMonth(fecha.getMonth() + 1)
+      break
+  }
+  fechaActual.value = fecha
+}
+
 if (process.client) {
   document.addEventListener('keydown', (e) => {
     // Ignorar si está en un input
-    if ((e.target as HTMLElement).tagName === 'INPUT' || 
+    if ((e.target as HTMLElement).tagName === 'INPUT' ||
         (e.target as HTMLElement).tagName === 'TEXTAREA') return
 
     switch (e.key) {
-      case 'j': // Siguiente día
-        fechaActual.value = new Date(fechaActual.value.getTime() + 86400000)
+      case 'ArrowLeft': // Navegación anterior
+      case 'j':
+        navegarAnterior()
         break
-      case 'k': // Día anterior
-        fechaActual.value = new Date(fechaActual.value.getTime() - 86400000)
+      case 'ArrowRight': // Navegación siguiente
+      case 'k':
+        navegarSiguiente()
         break
       case 't': // Hoy
         fechaActual.value = new Date()
@@ -426,6 +473,9 @@ if (process.client) {
         break
       case '3': // Vista mes
         vista.value = 'mes'
+        break
+      case '4': // Vista 5 días
+        vista.value = '5dias'
         break
       case 'n': // Nueva cita
         abrirModalNuevaCita()
@@ -444,9 +494,9 @@ if (process.client) {
     <!-- Fallback a vista legacy -->
     <AgendaTerapeuta v-if="legacyFallback" />
 
-    <!-- Nueva vista de agenda -->
-    <div v-else class="h-screen flex flex-col overflow-hidden bg-[#FFF9F6] dark:bg-gray-950" :class="{ 'dark': darkMode }">
-    
+    <!-- Nueva vista de agenda - Diseño moderno -->
+    <div v-else class="agenda-main-container" :class="{ 'dark': darkMode }">
+
     <!-- Header con navegación -->
     <AgendaHeader
       v-model:vista="vista"
@@ -463,9 +513,13 @@ if (process.client) {
       :pacientes="pacientes"
     />
 
-    <!-- Leyenda -->
-    <div class="px-4 py-2 bg-white/60 dark:bg-gray-950/60 backdrop-blur-sm border-b border-cafe/5 dark:border-gray-800">
-      <AgendaLegend />
+    <!-- Leyenda Filtrable -->
+    <div class="filter-section">
+      <AgendaLeyendaFiltrable
+        :citas="eventosMapeados"
+        :filtros-activos="filtros.estados || []"
+        @filtrar="(estados) => { filtros.estados = estados.length > 0 ? estados : undefined }"
+      />
     </div>
 
     <!-- Grilla principal -->
@@ -484,9 +538,10 @@ if (process.client) {
     <!-- Modales -->
     <ModalNuevaCita
       v-model="mostrarModalNueva"
-      :fecha-inicial="slotSeleccionado?.date"
-      :hora-inicial="slotSeleccionado?.horaInicio"
-      @guardado="cargarCitas"
+      :fecha-preseleccionada="slotSeleccionado?.date"
+      :hora-preseleccionada="slotSeleccionado?.horaInicio"
+      @cita-creada="cargarCitas"
+      @cerrar="mostrarModalNueva = false; slotSeleccionado = null"
     />
 
     <ModalDetallesCita
@@ -528,7 +583,7 @@ if (process.client) {
 
     <!-- Keyboard shortcuts hint (opcional) -->
     <div class="fixed bottom-4 right-4 bg-gray-900/90 dark:bg-gray-100/90 text-white dark:text-gray-900 px-3 py-2 rounded-lg text-xs opacity-0 hover:opacity-100 transition-opacity">
-      <kbd>j/k</kbd> navegar · <kbd>t</kbd> hoy · <kbd>1/2/3</kbd> vistas · <kbd>n</kbd> nueva · <kbd>f</kbd> buscar
+      <kbd>←/→</kbd> navegar · <kbd>t</kbd> hoy · <kbd>1/2/3/4</kbd> vistas · <kbd>n</kbd> nueva · <kbd>f</kbd> buscar
     </div>
 
     </div>
@@ -536,6 +591,36 @@ if (process.client) {
 </template>
 
 <style scoped>
+/* ============================================================================
+   MODERN MINIMALIST AGENDA CONTAINER
+   ============================================================================ */
+
+/* Contenedor principal - Diseño limpio y moderno */
+.agenda-main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height en móviles */
+  overflow: hidden;
+  background-color: #FAFBFC;
+}
+
+.agenda-main-container.dark {
+  background-color: #0F172A;
+}
+
+/* Sección de filtros - Fondo sutil con separación visual */
+.filter-section {
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.agenda-main-container.dark .filter-section {
+  background: #1E293B;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
 /* Asegurar que el layout ocupe toda la altura */
 .h-screen {
   height: 100vh;

@@ -1,6 +1,6 @@
 <template>
   <div class="agenda-page">
-    <AgendaTerapeuta />
+    <AgendaCalendario />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 // PÁGINA: /terapeuta/agenda
 // =============================================================================
 // Página principal de la agenda del terapeuta
-// Muestra todas las citas con filtros por estado (hoy, pendientes, completadas, todas)
+// Usa el nuevo componente AgendaCalendario con diseño mejorado
 
 definePageMeta({
   middleware: 'auth',

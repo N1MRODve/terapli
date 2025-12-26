@@ -1,504 +1,383 @@
-// ~/composables/usePacientes.ts
+/**
+ * =============================================================================
+ * COMPOSABLE: usePacientes
+ * =============================================================================
+ *
+ * Proporciona búsqueda inteligente de pacientes y creación rápida inline
+ * para el modal de nueva cita.
+ *
+ * Características:
+ * - Búsqueda por nombre, email, teléfono
+ * - Debouncing automático
+ * - Estado de bonos integrado
+ * - Creación rápida de paciente
+ * - Cache de resultados
+ */
 
-// IMPORTANT: This is a placeholder file.
-// You need to implement the logic to fetch data from your Supabase backend.
+import { ref, computed, watch } from 'vue'
+import { useSupabaseClient, useSupabaseUser } from '#imports'
+import { agendaLogger } from '~/utils/agenda-logger'
 
-export const usePacientes = () => {
-  /**
-   * Fetches the bonos for the currently logged-in user.
-   *
-   * TODO: Implement the actual Supabase query.
-   * This should fetch from the 'bonos' table where 'paciente_id' matches the current user's ID.
-   */
-  const getBonos = async () => {
-    if (!process.client) return [];
-    
-    const supabase = useSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+export interface PacienteBusqueda {
+  id: string
+  nombre_completo: string
+  email: string
+  telefono: string | null
+  fecha_nacimiento: string | null
+  // Estado de bonos
+  bonos_activos: number
+  sesiones_restantes_total: number
+  proximo_vencimiento: string | null
+}
 
-    if (!user) {
-      console.error('User not logged in');
-      return [];
-    }
+export interface CreatePacienteParams {
+  nombre_completo: string
+  email: string
+  telefono?: string
+  fecha_nacimiento?: string
+  observaciones?: string
+}
 
-    // --- THIS IS EXAMPLE LOGIC ---
-    // --- REPLACE WITH YOUR ACTUAL QUERY ---
-    /*
-    const { data, error } = await supabase
-      .from('bonos')
-      .select('*')
-      .eq('paciente_id', user.id);
+export interface CreatePacienteResult {
+  success: boolean
+  data?: PacienteBusqueda
+  error?: string
+}
 
-    if (error) {
-      console.error('Error fetching bonos:', error);
-      return [];
-    }
-    return data;
-    */
+export function usePacientes() {
+  const supabase = useSupabaseClient()
+  const user = useSupabaseUser()
 
-    // Returning mock data for now.
-    console.warn('getBonos() is using mock data. Implement Supabase logic in composables/usePacientes.ts');
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+  // Estado
+  const pacientes = ref<PacienteBusqueda[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  const searchQuery = ref('')
+  const debounceTimeout = ref<NodeJS.Timeout | null>(null)
 
-    return [
-      {
-        id: 'b0n0-act1v0-1234',
-        total_sesiones: 10,
-        sesiones_restantes: 7,
-        precio_total: 450.00,
-        estado: 'activo',
-        created_at: new Date().toISOString(),
-        fecha_expiracion: new Date(new Date().setMonth(new Date().getMonth() + 6)).toISOString(),
-      },
-      {
-        id: 'b0n0-ant3r10r-5678',
-        total_sesiones: 5,
-        sesiones_restantes: 0,
-        precio_total: 250.00,
-        estado: 'agotado',
-        created_at: new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString(),
-        fecha_expiracion: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString(),
-      }
-    ];
-  };
+  // Cache
+  const cache = ref<Map<string, PacienteBusqueda[]>>(new Map())
+  const cacheExpiry = 5 * 60 * 1000 // 5 minutos
 
   /**
-   * Fetches the recursos (resources) shared with the currently logged-in patient.
+   * Busca pacientes del terapeuta actual con filtros
    */
-  const getRecursos = async () => {
-    if (!process.client) return [];
-    
-    const supabase = useSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      console.error('User not logged in');
-      return [];
-    }
-
+  async function searchPacientes(query: string): Promise<void> {
     try {
-      // Primero obtenemos el paciente_id del usuario actual
-      const { data: pacienteData, error: pacienteError } = await supabase
-        .from('pacientes')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
+      loading.value = true
+      error.value = null
 
-      if (pacienteError || !pacienteData) {
-        console.error('Error obteniendo paciente:', pacienteError);
-        return [];
+      // Normalizar query
+      const normalizedQuery = query.trim().toLowerCase()
+
+      // Verificar cache
+      const cachedResult = cache.value.get(normalizedQuery)
+      if (cachedResult) {
+        pacientes.value = cachedResult
+        agendaLogger.debug('search', `Resultados desde cache: ${cachedResult.length}`)
+        return
       }
 
-      // Luego obtenemos los recursos compartidos con este paciente
-      const { data, error } = await supabase
-        .from('recursos_compartidos' as any)
+      agendaLogger.debug('search', `Buscando pacientes: "${normalizedQuery}"`)
+
+      if (!user.value?.id) {
+        throw new Error('Usuario no autenticado')
+      }
+
+      // Obtener terapeuta_id
+      const { data: perfil, error: perfilError } = await supabase
+        .from('perfiles')
+        .select('terapeuta_id')
+        .eq('id', user.value.id)
+        .single()
+
+      if (perfilError || !perfil?.terapeuta_id) {
+        throw new Error('No se pudo obtener el perfil del terapeuta')
+      }
+
+      const terapeutaId = perfil.terapeuta_id
+
+      // Buscar pacientes con información de bonos
+      let queryBuilder = supabase
+        .from('pacientes')
         .select(`
           id,
-          nota_personal,
-          visto,
-          compartido_at,
-          recurso:recursos_repositorio(
+          nombre_completo,
+          email,
+          telefono,
+          fecha_nacimiento,
+          bonos:bonos_sesiones(
             id,
-            titulo,
-            descripcion,
-            tipo,
-            icono,
-            url,
-            categoria,
-            tags
+            sesiones_restantes,
+            fecha_vencimiento,
+            estado
           )
         `)
-        .eq('paciente_id', pacienteData.id)
-        .eq('archivado', false)
-        .order('compartido_at', { ascending: false });
+        .eq('terapeuta_id', terapeutaId)
 
-      if (error) {
-        console.error('Error fetching recursos compartidos:', error);
-        return [];
+      // Aplicar filtros de búsqueda si hay query
+      if (normalizedQuery.length > 0) {
+        queryBuilder = queryBuilder.or(
+          `nombre_completo.ilike.%${normalizedQuery}%,email.ilike.%${normalizedQuery}%,telefono.ilike.%${normalizedQuery}%`
+        )
       }
 
-      // Transformar datos para compatibilidad
-      return (data || []).map((rc: any) => ({
-        id: rc.id,
-        titulo: rc.recurso?.titulo || 'Sin título',
-        descripcion: rc.recurso?.descripcion || '',
-        tipo: rc.recurso?.tipo || 'pdf',
-        icono: rc.recurso?.icono || '📄',
-        url: rc.recurso?.url || '#',
-        categoria: rc.recurso?.categoria,
-        tags: rc.recurso?.tags || [],
-        nota_personal: rc.nota_personal,
-        visto: rc.visto,
-        compartido_at: rc.compartido_at,
-        recurso_id: rc.recurso?.id
-      }));
-    } catch (error) {
-      console.error('Error en getRecursos:', error);
-      return [];
-    }
-  };
+      const { data, error: fetchError } = await queryBuilder
+        .order('nombre_completo', { ascending: true })
+        .limit(50)
 
-  /**
-   * DEPRECATED: Mock data fallback (mantener por compatibilidad)
-   */
-  const getRecursosMock = async () => {
-    console.warn('getRecursosMock() - Using fallback mock data');
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    return [
-      {
-        id: 'rec-001',
-        titulo: 'Ejercicios de respiración para la ansiedad',
-        descripcion: 'Guía práctica con 5 técnicas de respiración profunda para gestionar momentos de ansiedad.',
-        tipo: 'pdf',
-        storage_path: '/recursos/ejercicios-respiracion.pdf',
-        created_at: new Date().toISOString(),
-        psicologa: { nombre_completo: 'Dra. Karem' }
-      },
-      {
-        id: 'rec-002',
-        titulo: 'Meditación guiada - 10 minutos',
-        descripcion: 'Audio de meditación guiada para practicar mindfulness y reducir el estrés.',
-        tipo: 'audio',
-        storage_path: '/recursos/meditacion-10min.mp3',
-        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        psicologa: { nombre_completo: 'Dra. Karem' }
-      },
-      {
-        id: 'rec-003',
-        titulo: 'Charla TED: El poder de la vulnerabilidad',
-        descripcion: 'Brené Brown habla sobre cómo la vulnerabilidad puede transformar nuestra vida.',
-        tipo: 'link',
-        storage_path: 'https://www.ted.com/talks/brene_brown_the_power_of_vulnerability',
-        created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        psicologa: { nombre_completo: 'Dra. Karem' }
-      },
-      {
-        id: 'rec-004',
-        titulo: 'Diario de gratitud - Plantilla',
-        descripcion: 'Plantilla descargable para llevar un registro diario de gratitud y reflexión.',
-        tipo: 'pdf',
-        storage_path: '/recursos/diario-gratitud.pdf',
-        created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        psicologa: { nombre_completo: 'Dra. Karem' }
+      if (fetchError) {
+        throw fetchError
       }
-    ];
-  };
 
-  /**
-   * Fetches messages for the currently logged-in user.
-   */
-  const getMensajes = async () => {
-    if (!process.client) return [];
-    
-    const supabase = useSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+      // Transformar datos con información de bonos
+      const pacientesConBonos: PacienteBusqueda[] = (data || []).map((p: any) => {
+        const bonosActivos = (p.bonos || []).filter((b: any) =>
+          b.estado === 'activo' && b.sesiones_restantes > 0
+        )
 
-    if (!user) {
-      console.error('User not logged in');
-      return [];
-    }
+        const sesionesRestantesTotal = bonosActivos.reduce(
+          (sum: number, b: any) => sum + (b.sesiones_restantes || 0),
+          0
+        )
 
-    // TODO: Implement the actual Supabase query
-    // const { data, error } = await supabase
-    //   .from('mensajes')
-    //   .select('*, autor:autor_id(nombre_completo, rol), receptor:receptor_id(nombre_completo, rol)')
-    //   .or(`autor_id.eq.${user.id},receptor_id.eq.${user.id}`)
-    //   .order('created_at', { ascending: true });
+        // Encontrar próximo vencimiento
+        const proximoVencimiento = bonosActivos
+          .filter((b: any) => b.fecha_vencimiento)
+          .map((b: any) => new Date(b.fecha_vencimiento).getTime())
+          .sort()
+          [0] || null
 
-    // Returning mock data for now
-    console.warn('getMensajes() is using mock data. Implement Supabase logic in composables/usePacientes.ts');
-    await new Promise(resolve => setTimeout(resolve, 600));
-
-    const userId = user.id;
-    const coordId = 'coord-uuid-1234';
-
-    return [
-      {
-        id: 'msg-001',
-        autor_id: coordId,
-        receptor_id: userId,
-        contenido: '¡Hola! Bienvenida a la plataforma. Estoy aquí para ayudarte con cualquier duda que tengas sobre tus sesiones o bonos.',
-        leido: true,
-        created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        autor: { nombre_completo: 'Coordinadora', rol: 'coordinadora' }
-      },
-      {
-        id: 'msg-002',
-        autor_id: userId,
-        receptor_id: coordId,
-        contenido: 'Gracias! Tengo una duda sobre cómo reservar mi próxima sesión.',
-        leido: true,
-        created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
-        autor: { nombre_completo: 'Tú', rol: 'paciente' }
-      },
-      {
-        id: 'msg-003',
-        autor_id: coordId,
-        receptor_id: userId,
-        contenido: 'Por supuesto! Puedes ir a la sección "Mis Sesiones" y allí encontrarás el botón para agendar. Si tienes problemas, avísame.',
-        leido: true,
-        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        autor: { nombre_completo: 'Coordinadora', rol: 'coordinadora' }
-      },
-      {
-        id: 'msg-004',
-        autor_id: userId,
-        receptor_id: coordId,
-        contenido: 'Perfecto, muchas gracias! Ya pude agendar.',
-        leido: true,
-        created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        autor: { nombre_completo: 'Tú', rol: 'paciente' }
-      },
-      {
-        id: 'msg-005',
-        autor_id: coordId,
-        receptor_id: userId,
-        contenido: 'Excelente! Nos vemos en tu próxima sesión. Cualquier cosa, aquí estoy 😊',
-        leido: false,
-        created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-        autor: { nombre_completo: 'Coordinadora', rol: 'coordinadora' }
-      }
-    ];
-  };
-
-  /**
-   * Sends a new message.
-   */
-  const enviarMensaje = async (contenido: string, receptorId: string) => {
-    if (!process.client) throw new Error('Client only function');
-    
-    const supabase = useSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error('User not logged in');
-    }
-
-    // TODO: Implement the actual Supabase query
-    // const { data, error } = await supabase
-    //   .from('mensajes')
-    //   .insert({
-    //     autor_id: user.id,
-    //     receptor_id: receptorId,
-    //     contenido,
-    //   })
-    //   .select('*, autor:autor_id(nombre_completo, rol)')
-    //   .single();
-
-    // Simulate sending message
-    console.warn('enviarMensaje() is using mock data. Implement Supabase logic in composables/usePacientes.ts');
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    return {
-      id: `msg-${Date.now()}`,
-      autor_id: user.id,
-      receptor_id: receptorId,
-      contenido,
-      leido: false,
-      created_at: new Date().toISOString(),
-      autor: { nombre_completo: 'Tú', rol: 'paciente' }
-    };
-  };
-
-  /**
-   * Marks messages as read.
-   */
-  const marcarComoLeido = async (mensajesIds: string[]) => {
-    // TODO: Implement the actual Supabase query
-    // const { error } = await supabase
-    //   .from('mensajes')
-    //   .update({ leido: true })
-    //   .in('id', mensajesIds);
-
-    console.warn('marcarComoLeido() is using mock data. Implement Supabase logic in composables/usePacientes.ts');
-    await new Promise(resolve => setTimeout(resolve, 200));
-    return true;
-  };
-
-  /**
-   * Fetches all sesiones (sessions) for the currently logged-in user.
-   */
-  const getSesiones = async () => {
-    if (!process.client) return { data: [], error: null };
-    
-    const supabase = useSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      console.error('User not logged in');
-      return { data: [], error: null };
-    }
-
-    // TODO: Implement the actual Supabase query
-    // const { data, error } = await supabase
-    //   .from('sesiones')
-    //   .select('*')
-    //   .eq('paciente_id', user.id)
-    //   .order('fecha', { ascending: false });
-
-    // Returning mock data for now
-    console.warn('getSesiones() is using mock data. Implement Supabase logic in composables/usePacientes.ts');
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const ahora = new Date();
-    
-    return {
-      data: [
-        {
-          id: 'ses-001',
-          fecha: new Date(ahora.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString(), // En 2 días
-          duracion_min: 50,
-          modalidad: 'online',
-          ubicacion: 'https://meet.google.com/abc-defg-hij',
-          estado: 'confirmada',
-          nota_terapeuta: null,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'ses-002',
-          fecha: new Date(ahora.getTime() + 9 * 24 * 60 * 60 * 1000).toISOString(), // En 9 días
-          duracion_min: 50,
-          modalidad: 'online',
-          ubicacion: 'https://meet.google.com/abc-defg-hij',
-          estado: 'pendiente',
-          nota_terapeuta: null,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'ses-003',
-          fecha: new Date(ahora.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(), // Hace 7 días
-          duracion_min: 50,
-          modalidad: 'presencial',
-          ubicacion: 'Calle Ejemplo 123, Madrid',
-          estado: 'realizada',
-          nota_terapeuta: 'Sesión muy productiva. Hemos trabajado técnicas de respiración y manejo de la ansiedad. Continuar practicando los ejercicios diarios.',
-          created_at: new Date(ahora.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'ses-004',
-          fecha: new Date(ahora.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString(), // Hace 14 días
-          duracion_min: 50,
-          modalidad: 'online',
-          ubicacion: 'https://meet.google.com/abc-defg-hij',
-          estado: 'realizada',
-          nota_terapeuta: 'Primera sesión de evaluación. Se identificaron áreas de trabajo: ansiedad social y autoestima. Plan de tratamiento establecido.',
-          created_at: new Date(ahora.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'ses-005',
-          fecha: new Date(ahora.getTime() - 21 * 24 * 60 * 60 * 1000).toISOString(), // Hace 21 días
-          duracion_min: 50,
-          modalidad: 'online',
-          ubicacion: 'https://meet.google.com/abc-defg-hij',
-          estado: 'cancelada',
-          nota_terapeuta: null,
-          created_at: new Date(ahora.getTime() - 22 * 24 * 60 * 60 * 1000).toISOString()
+        return {
+          id: p.id,
+          nombre_completo: p.nombre_completo,
+          email: p.email,
+          telefono: p.telefono,
+          fecha_nacimiento: p.fecha_nacimiento,
+          bonos_activos: bonosActivos.length,
+          sesiones_restantes_total: sesionesRestantesTotal,
+          proximo_vencimiento: proximoVencimiento
+            ? new Date(proximoVencimiento).toISOString()
+            : null
         }
-      ],
-      error: null
-    };
-  };
+      })
+
+      pacientes.value = pacientesConBonos
+
+      // Guardar en cache
+      cache.value.set(normalizedQuery, pacientesConBonos)
+
+      // Limpiar cache después de expiry time
+      setTimeout(() => {
+        cache.value.delete(normalizedQuery)
+      }, cacheExpiry)
+
+      agendaLogger.info('search', `Pacientes encontrados: ${pacientesConBonos.length}`)
+
+    } catch (err: any) {
+      const errorMsg = err.message || 'Error al buscar pacientes'
+      error.value = errorMsg
+      agendaLogger.error('api_error', errorMsg, err)
+      pacientes.value = []
+
+    } finally {
+      loading.value = false
+    }
+  }
 
   /**
-   * Fetches upcoming sesiones for the currently logged-in user.
+   * Búsqueda con debouncing automático
    */
-  const getProximasSesiones = async () => {
-    if (!process.client) return { data: [], error: null };
-    
-    const supabase = useSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      console.error('User not logged in');
-      return { data: [], error: null };
+  function debouncedSearch(query: string, delay: number = 300): void {
+    // Cancelar timeout anterior
+    if (debounceTimeout.value) {
+      clearTimeout(debounceTimeout.value)
     }
 
-    // TODO: Implement the actual Supabase query
-    // const ahora = new Date().toISOString();
-    // const { data, error } = await supabase
-    //   .from('sesiones')
-    //   .select('*')
-    //   .eq('paciente_id', user.id)
-    //   .gte('fecha', ahora)
-    //   .order('fecha', { ascending: true });
+    // Si query está vacío, buscar todos los pacientes inmediatamente
+    if (query.trim().length === 0) {
+      searchPacientes(query)
+      return
+    }
 
-    // Returning mock data for now
-    console.warn('getProximasSesiones() is using mock data. Implement Supabase logic in composables/usePacientes.ts');
-    await new Promise(resolve => setTimeout(resolve, 600));
-
-    const ahora = new Date();
-    
-    return {
-      data: [
-        {
-          id: 'ses-001',
-          fecha: new Date(ahora.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-          duracion_min: 50,
-          modalidad: 'online',
-          ubicacion: 'https://meet.google.com/abc-defg-hij',
-          estado: 'confirmada',
-          nota_terapeuta: null,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'ses-002',
-          fecha: new Date(ahora.getTime() + 9 * 24 * 60 * 60 * 1000).toISOString(),
-          duracion_min: 50,
-          modalidad: 'online',
-          ubicacion: 'https://meet.google.com/abc-defg-hij',
-          estado: 'pendiente',
-          nota_terapeuta: null,
-          created_at: new Date().toISOString()
-        }
-      ],
-      error: null
-    };
-  };
+    // Crear nuevo timeout
+    debounceTimeout.value = setTimeout(() => {
+      searchPacientes(query)
+    }, delay)
+  }
 
   /**
-   * Marca un recurso compartido como visto por el paciente
+   * Crea un nuevo paciente rápidamente (para inline creation)
    */
-  const marcarRecursoComoVisto = async (recursoCompartidoId: string) => {
-    if (!process.client) return { success: false };
-    
-    const supabase = useSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      console.error('User not logged in');
-      return { success: false };
-    }
-
+  async function createPaciente(params: CreatePacienteParams): Promise<CreatePacienteResult> {
     try {
-      const { error } = await supabase
-        .from('recursos_compartidos' as any)
-        .update({ 
-          visto: true,
-          visto_at: new Date().toISOString()
-        })
-        .eq('id', recursoCompartidoId);
+      loading.value = true
+      error.value = null
 
-      if (error) {
-        console.error('Error marcando recurso como visto:', error);
-        return { success: false, error: error.message };
+      agendaLogger.debug('create', 'Creando paciente rápido', params)
+
+      if (!user.value?.id) {
+        throw new Error('Usuario no autenticado')
       }
 
-      return { success: true };
-    } catch (error: any) {
-      console.error('Error en marcarRecursoComoVisto:', error);
-      return { success: false, error: error.message };
+      // Validaciones básicas
+      if (!params.nombre_completo || params.nombre_completo.trim().length < 2) {
+        return {
+          success: false,
+          error: 'El nombre debe tener al menos 2 caracteres'
+        }
+      }
+
+      if (!params.email || !params.email.includes('@')) {
+        return {
+          success: false,
+          error: 'Email inválido'
+        }
+      }
+
+      // Obtener terapeuta_id
+      const { data: perfil, error: perfilError } = await supabase
+        .from('perfiles')
+        .select('terapeuta_id')
+        .eq('id', user.value.id)
+        .single()
+
+      if (perfilError || !perfil?.terapeuta_id) {
+        throw new Error('No se pudo obtener el perfil del terapeuta')
+      }
+
+      const terapeutaId = perfil.terapeuta_id
+
+      // Verificar si el email ya existe para este terapeuta
+      const { data: existente, error: checkError } = await supabase
+        .from('pacientes')
+        .select('id, nombre_completo')
+        .eq('terapeuta_id', terapeutaId)
+        .eq('email', params.email.trim().toLowerCase())
+        .maybeSingle()
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError
+      }
+
+      if (existente) {
+        return {
+          success: false,
+          error: `Ya existe un paciente con el email ${params.email}: ${existente.nombre_completo}`
+        }
+      }
+
+      // Crear paciente
+      const { data: nuevoPaciente, error: insertError } = await supabase
+        .from('pacientes')
+        .insert({
+          terapeuta_id: terapeutaId,
+          nombre_completo: params.nombre_completo.trim(),
+          email: params.email.trim().toLowerCase(),
+          telefono: params.telefono?.trim() || null,
+          fecha_nacimiento: params.fecha_nacimiento || null,
+          observaciones: params.observaciones?.trim() || null
+        })
+        .select()
+        .single()
+
+      if (insertError) {
+        throw insertError
+      }
+
+      // Transformar a PacienteBusqueda
+      const pacienteBusqueda: PacienteBusqueda = {
+        id: nuevoPaciente.id,
+        nombre_completo: nuevoPaciente.nombre_completo,
+        email: nuevoPaciente.email,
+        telefono: nuevoPaciente.telefono,
+        fecha_nacimiento: nuevoPaciente.fecha_nacimiento,
+        bonos_activos: 0,
+        sesiones_restantes_total: 0,
+        proximo_vencimiento: null
+      }
+
+      // Agregar a la lista local
+      pacientes.value.unshift(pacienteBusqueda)
+
+      // Invalidar cache
+      cache.value.clear()
+
+      agendaLogger.info('create', `Paciente creado: ${nuevoPaciente.id}`)
+
+      return {
+        success: true,
+        data: pacienteBusqueda
+      }
+
+    } catch (err: any) {
+      const errorMsg = err.message || 'Error al crear paciente'
+      error.value = errorMsg
+      agendaLogger.error('api_error', errorMsg, err)
+
+      return {
+        success: false,
+        error: errorMsg
+      }
+
+    } finally {
+      loading.value = false
     }
-  };
+  }
+
+  /**
+   * Carga todos los pacientes del terapeuta
+   */
+  async function loadAllPacientes(): Promise<void> {
+    await searchPacientes('')
+  }
+
+  /**
+   * Limpia los resultados de búsqueda
+   */
+  function clearSearch(): void {
+    searchQuery.value = ''
+    pacientes.value = []
+    error.value = null
+  }
+
+  /**
+   * Invalida el cache
+   */
+  function invalidateCache(): void {
+    cache.value.clear()
+    agendaLogger.debug('cache', 'Cache invalidado')
+  }
+
+  // Watch searchQuery para auto-búsqueda
+  watch(searchQuery, (newQuery) => {
+    debouncedSearch(newQuery)
+  })
+
+  // Computadas
+  const hasPacientes = computed(() => pacientes.value.length > 0)
+  const isLoading = computed(() => loading.value)
+  const hasError = computed(() => error.value !== null)
 
   return {
-    getBonos,
-    getRecursos,
-    marcarRecursoComoVisto,
-    getMensajes,
-    enviarMensaje,
-    marcarComoLeido,
-    getSesiones,
-    getProximasSesiones
-  };
-};
+    // Estado
+    pacientes,
+    loading: isLoading,
+    error: hasError,
+    searchQuery,
+
+    // Computadas
+    hasPacientes,
+
+    // Métodos
+    searchPacientes,
+    debouncedSearch,
+    createPaciente,
+    loadAllPacientes,
+    clearSearch,
+    invalidateCache,
+
+    // Utilidades
+    clearError: () => { error.value = null }
+  }
+}

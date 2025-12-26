@@ -1,0 +1,2 @@
+const e=[".line-clamp-2[data-v-7f1c48a0]{display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}"];export{e as default};
+//# sourceMappingURL=NotificacionesBell-styles-B0WyYzda.mjs.map

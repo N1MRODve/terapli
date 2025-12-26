@@ -21,7 +21,10 @@ const props = defineProps<{
   citaId: string | null
 }>()
 
-const emit = defineEmits(['close', 'cita-actualizada', 'cita-eliminada'])
+const emit = defineEmits(['close', 'cita-actualizada', 'cita-eliminada', 'actualizado', 'eliminado'])
+
+// Estado para confirmación rápida
+const confirmando = ref(false)
 
 // Composables
 const supabase = useSupabaseClient()
@@ -205,6 +208,9 @@ const estadoLabel = computed(() => {
   return labels[cita.value?.estado] || cita.value?.estado || ''
 })
 
+// Computed: si la cita puede ser confirmada
+const puedeConfirmar = computed(() => cita.value?.estado === 'pendiente')
+
 // Acciones
 const cerrar = () => {
   modoEdicion.value = false
@@ -213,6 +219,44 @@ const cerrar = () => {
 
 const activarModoEdicion = () => {
   modoEdicion.value = true
+}
+
+/**
+ * Confirmación rápida desde el modal
+ */
+const confirmarCitaRapido = async () => {
+  if (!props.citaId || confirmando.value || !puedeConfirmar.value) return
+
+  confirmando.value = true
+
+  try {
+    const { error } = await supabase
+      .from('citas')
+      .update({
+        estado: 'confirmada',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', props.citaId)
+
+    if (error) throw error
+
+    // Actualizar el estado local
+    if (cita.value) {
+      cita.value.estado = 'confirmada'
+    }
+
+    // Emitir evento de actualización
+    emit('cita-actualizada')
+    emit('actualizado')
+
+    // Mostrar feedback
+    alert('✅ Cita confirmada correctamente')
+  } catch (error: any) {
+    console.error('Error al confirmar cita:', error)
+    alert(`❌ Error al confirmar: ${error.message}`)
+  } finally {
+    confirmando.value = false
+  }
 }
 
 const cancelarEdicion = () => {
@@ -232,11 +276,38 @@ const cancelarEdicion = () => {
 
 const guardarCambios = async () => {
   if (!props.citaId) return
-  
+
   try {
     cargando.value = true
-    
-    const { error } = await supabase
+
+    // Validar que hora_fin sea mayor que hora_inicio
+    const horaInicioMinutes = parseInt(formEdicion.value.hora_inicio.split(':')[0]) * 60 + parseInt(formEdicion.value.hora_inicio.split(':')[1])
+    const horaFinMinutes = parseInt(formEdicion.value.hora_fin.split(':')[0]) * 60 + parseInt(formEdicion.value.hora_fin.split(':')[1])
+
+    if (horaFinMinutes <= horaInicioMinutes) {
+      alert('❌ Error: La hora de fin debe ser posterior a la hora de inicio')
+      cargando.value = false
+      return
+    }
+
+    const duracionMinutos = horaFinMinutes - horaInicioMinutes
+    if (duracionMinutos < 15) {
+      alert('❌ Error: La duración mínima de una cita es de 15 minutos')
+      cargando.value = false
+      return
+    }
+
+    console.log('💾 Guardando cambios de cita:', {
+      id: props.citaId,
+      fecha_cita: formEdicion.value.fecha_cita,
+      hora_inicio: formEdicion.value.hora_inicio,
+      hora_fin: formEdicion.value.hora_fin,
+      modalidad: formEdicion.value.modalidad,
+      estado: formEdicion.value.estado,
+      duracion: `${duracionMinutos} minutos`
+    })
+
+    const { data, error } = await supabase
       .from('citas')
       .update({
         fecha_cita: formEdicion.value.fecha_cita,
@@ -248,19 +319,47 @@ const guardarCambios = async () => {
         updated_at: new Date().toISOString()
       })
       .eq('id', props.citaId)
-    
-    if (error) throw error
-    
+      .select()
+      .single()
+
+    if (error) {
+      console.error('❌ Error de Supabase:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      })
+      throw error
+    }
+
+    console.log('✅ Cita actualizada exitosamente:', data)
+
     modoEdicion.value = false
     await cargarCita()
+
+    // Emitir ambos eventos para compatibilidad con diferentes páginas
     emit('cita-actualizada')
-  } catch (error) {
-    console.error('Error al actualizar cita:', error)
-    alert('Error al actualizar la cita')
+    emit('actualizado')
+  } catch (error: any) {
+    console.error('❌ Error al actualizar cita:', error)
+    const errorMsg = error?.message || 'Error desconocido al actualizar la cita'
+    alert(`Error al actualizar la cita:\n${errorMsg}`)
   } finally {
     cargando.value = false
   }
 }
+
+// Auto-calcular hora_fin cuando cambia hora_inicio en modo edición
+// Solo se activa si estamos en modo edición
+watch(() => formEdicion.value.hora_inicio, (newHora) => {
+  if (modoEdicion.value && newHora) {
+    const [hours, minutes] = newHora.split(':').map(Number)
+    const totalMinutes = hours * 60 + minutes + 60  // +60 minutos (1 hora)
+    const endHours = Math.floor(totalMinutes / 60)
+    const endMinutes = totalMinutes % 60
+    formEdicion.value.hora_fin = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`
+  }
+})
 
 </script>
 
@@ -554,9 +653,23 @@ const guardarCambios = async () => {
           <template v-if="!modoEdicion">
             <button
               @click="cerrar"
-              class="flex-1 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-sm"
+              class="px-5 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-sm"
             >
               Cerrar
+            </button>
+            <!-- Botón de Confirmación Rápida (solo para citas pendientes) -->
+            <button
+              v-if="puedeConfirmar"
+              @click="confirmarCitaRapido"
+              :disabled="confirmando"
+              class="flex-1 px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg v-if="confirmando" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              <CheckCircleIcon v-else class="w-5 h-5" />
+              {{ confirmando ? 'Confirmando...' : 'Confirmar Cita' }}
             </button>
             <button
               @click="activarModoEdicion"

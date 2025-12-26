@@ -1,0 +1,13 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo suave -->
+  <rect width="192" height="192" rx="42" fill="#F9F7F3"/>
+  
+  <!-- Forma orgánica (hoja/corazón que representa bienestar) -->
+  <path d="M96 50C81 50 70 61 70 76C70 91 81 102 96 120C111 102 122 91 122 76C122 61 111 50 96 50Z" fill="#D8AFA0"/>
+  
+  <!-- Detalle secundario -->
+  <circle cx="96" cy="135" r="8" fill="#D8AFA0" opacity="0.6"/>
+  
+  <!-- Letra K estilizada -->
+  <text x="96" y="155" font-family="Lora, serif" font-size="48" font-weight="600" text-anchor="middle" fill="#5A4A42">K</text>
+</svg>
