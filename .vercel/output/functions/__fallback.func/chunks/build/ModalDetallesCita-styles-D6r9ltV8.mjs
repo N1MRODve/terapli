@@ -1,2 +1,0 @@
-const a=["@keyframes spin-dc5d76c4{to{transform:rotate(1turn)}}.animate-spin[data-v-dc5d76c4]{animation:spin-dc5d76c4 1s linear infinite}"];export{a as default};
-//# sourceMappingURL=ModalDetallesCita-styles-D6r9ltV8.mjs.map

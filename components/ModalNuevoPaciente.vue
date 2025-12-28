@@ -127,29 +127,6 @@
           </h3>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Área de Acompañamiento -->
-            <div class="md:col-span-2">
-              <label for="area_acompanamiento" class="block text-sm font-medium text-[#2D3748] mb-1">
-                Área de Acompañamiento <span class="text-red-500">*</span>
-              </label>
-              <select
-                id="area_acompanamiento"
-                v-model="formulario.area_acompanamiento"
-                required
-                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
-              >
-                <option value="">Selecciona un área</option>
-                <option value="Ansiedad">Ansiedad</option>
-                <option value="Depresión">Depresión</option>
-                <option value="Autoestima">Autoestima</option>
-                <option value="Relaciones">Relaciones</option>
-                <option value="Duelo">Duelo</option>
-                <option value="Estrés Laboral">Estrés Laboral</option>
-                <option value="Crecimiento Personal">Crecimiento Personal</option>
-                <option value="Otro">Otro</option>
-              </select>
-            </div>
-
             <!-- Tipo de Bono -->
             <div>
               <label for="tipo_bono" class="block text-sm font-medium text-[#2D3748] mb-1">
@@ -464,7 +441,6 @@ const formulario = ref({
   email: '',
   telefono: '',
   fecha_nacimiento: '',
-  area_acompanamiento: '',
   tipo_bono: '',
   primera_sesion: '',
   activo: true,
@@ -580,18 +556,17 @@ const opcionesHorarioRapido = computed(() => {
 
 // Computed: Validación del formulario
 const formularioValido = computed(() => {
-  const base = formulario.value.nombre && 
-               formulario.value.apellido && 
-               formulario.value.email && 
-               formulario.value.area_acompanamiento && 
-               formulario.value.tipo_bono && 
+  const base = formulario.value.nombre &&
+               formulario.value.apellido &&
+               formulario.value.email &&
+               formulario.value.tipo_bono &&
                formulario.value.primera_sesion
-  
+
   // Si está creando bono, validar que tenga monto
   if (formulario.value.crear_bono) {
     return base && formulario.value.bono_monto > 0
   }
-  
+
   return base
 })
 
@@ -655,7 +630,6 @@ const resetearFormulario = () => {
     email: '',
     telefono: '',
     fecha_nacimiento: '',
-    area_acompanamiento: '',
     tipo_bono: '',
     primera_sesion: '',
     activo: true,
@@ -696,7 +670,7 @@ const guardarPaciente = async () => {
       p_email: formulario.value.email,
       p_nombre_completo: nombreCompleto,
       p_telefono: formulario.value.telefono || null,
-      p_area_acompanamiento: formulario.value.area_acompanamiento || null,
+      p_area_acompanamiento: null,
       p_tipo_bono: formulario.value.tipo_bono || null,
       p_terapeuta_id: userId,
       p_metadata: {

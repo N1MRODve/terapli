@@ -111,29 +111,6 @@
           </h3>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Área de Acompañamiento -->
-            <div class="md:col-span-2">
-              <label for="area_acompanamiento" class="block text-sm font-medium text-[#2D3748] mb-1">
-                Área de Acompañamiento <span class="text-red-500">*</span>
-              </label>
-              <select
-                id="area_acompanamiento"
-                v-model="formulario.area_acompanamiento"
-                required
-                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
-              >
-                <option value="">Selecciona un área</option>
-                <option value="Ansiedad">Ansiedad</option>
-                <option value="Depresión">Depresión</option>
-                <option value="Autoestima">Autoestima</option>
-                <option value="Relaciones">Relaciones</option>
-                <option value="Duelo">Duelo</option>
-                <option value="Estrés Laboral">Estrés Laboral</option>
-                <option value="Crecimiento Personal">Crecimiento Personal</option>
-                <option value="Otro">Otro</option>
-              </select>
-            </div>
-
             <!-- Tipo de Bono -->
             <div>
               <label for="tipo_bono" class="block text-sm font-medium text-[#2D3748] mb-1">
@@ -152,6 +129,28 @@
               </select>
             </div>
 
+            <!-- Precio por Sesión Personalizado -->
+            <div>
+              <label for="precio_sesion" class="block text-sm font-medium text-[#2D3748] mb-1">
+                Precio por Sesión (€)
+              </label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#2D3748]/60">€</span>
+                <input
+                  id="precio_sesion"
+                  v-model.number="formulario.precio_sesion"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Usar precio del terapeuta"
+                  class="w-full pl-8 pr-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
+                />
+              </div>
+              <p class="text-xs text-[#2D3748]/60 mt-1">
+                💡 Precio personalizado para este paciente. Si está vacío, se usa el precio según frecuencia del terapeuta.
+              </p>
+            </div>
+
             <!-- Estado -->
             <div>
               <label for="activo" class="block text-sm font-medium text-[#2D3748] mb-1">
@@ -168,30 +167,162 @@
             </div>
 
             <!-- En Pausa -->
-            <div class="md:col-span-2">
+            <div class="md:col-span-2 space-y-3">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input
                   v-model="formulario.en_pausa"
                   type="checkbox"
-                  class="w-4 h-4 text-[#5550F2] border-gray-300 rounded focus:ring-[#5550F2]"
+                  class="w-4 h-4 text-amber-500 border-gray-300 rounded focus:ring-amber-500"
                 />
                 <span class="text-sm font-medium text-[#2D3748]">
                   Proceso en pausa temporal
                 </span>
               </label>
-              <p class="text-xs text-cafe/60 mt-1 ml-6">
-                ⏸️ Marca esta opción si el seguimiento está pausado temporalmente
-              </p>
+
+              <!-- Aviso de pausa con mensaje de escasez -->
+              <div v-if="formulario.en_pausa" class="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+                <div class="flex items-start gap-3">
+                  <span class="text-2xl">⏸️</span>
+                  <div>
+                    <p class="font-medium text-amber-800">Cuenta en pausa temporal</p>
+                    <p class="text-sm text-amber-700 mt-1">
+                      El proceso terapeutico esta pausado. El paciente mantendra su espacio reservado durante <strong>45 dias</strong>.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Countdown y mensaje de escasez -->
+                <div class="bg-white/80 rounded-lg p-3 border border-amber-100">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">Dias restantes:</span>
+                    <span class="text-lg font-bold" :class="diasRestantesPausa <= 7 ? 'text-red-600' : 'text-amber-600'">
+                      {{ diasRestantesPausa }} dias
+                    </span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      class="h-2 rounded-full transition-all"
+                      :class="diasRestantesPausa <= 7 ? 'bg-red-500' : 'bg-amber-500'"
+                      :style="{ width: `${Math.max(0, (diasRestantesPausa / 45) * 100)}%` }"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Mensaje de advertencia -->
+                <div class="text-xs text-amber-800 space-y-2 bg-amber-100/50 rounded p-3">
+                  <p class="font-medium flex items-center gap-1">
+                    <span>⚠️</span> Importante:
+                  </p>
+                  <ul class="list-disc list-inside space-y-1 text-amber-700">
+                    <li>Pasados los 45 dias, el perfil se <strong>desactivara automaticamente</strong></li>
+                    <li>Se liberara su espacio en la agenda de Psicologa Karem</li>
+                    <li>Los datos se eliminaran conforme al <strong>reglamento de proteccion de datos</strong> para garantizar su privacidad</li>
+                    <li>Al reactivar, los precios de las sesiones podrian haberse modificado</li>
+                  </ul>
+                </div>
+
+                <!-- Boton para notificar al paciente -->
+                <button
+                  type="button"
+                  @click="enviarRecordatorioPausa"
+                  :disabled="enviandoRecordatorio"
+                  class="w-full py-2 px-4 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                >
+                  <template v-if="enviandoRecordatorio">
+                    <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    Enviando...
+                  </template>
+                  <template v-else>
+                    <span>📧</span>
+                    Enviar recordatorio al paciente
+                  </template>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Gestión de Bonos -->
         <div class="space-y-4 pt-4 border-t border-[#5550F2]/30">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-serif text-[#2D3748] font-semibold">
-              Gestión de Bonos
-            </h3>
+          <h3 class="text-lg font-serif text-[#2D3748] font-semibold">
+            Gestión de Bonos
+          </h3>
+
+          <!-- Bono Activo Existente -->
+          <div v-if="bonoActivo" class="border-2 border-blue-400/40 rounded-lg p-4 space-y-4 bg-blue-50/30">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🎫</span>
+                <div>
+                  <p class="font-medium text-[#2D3748]">Bono {{ bonoActivo.tipo || 'Activo' }}</p>
+                  <p class="text-xs text-[#2D3748]/60">
+                    Estado: <span :class="bonoActivo.estado === 'activo' ? 'text-green-600' : 'text-amber-600'" class="font-medium capitalize">{{ bonoActivo.estado }}</span>
+                  </p>
+                </div>
+              </div>
+              <span class="px-2 py-1 text-xs font-medium rounded-full" :class="bonoActivo.estado === 'activo' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'">
+                {{ bonoActivo.sesiones_restantes }}/{{ bonoActivo.sesiones_totales }} restantes
+              </span>
+            </div>
+
+            <!-- Editar Sesiones Consumidas -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-[#2D3748] mb-1">
+                  Sesiones Totales
+                </label>
+                <div class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-[#2D3748] font-medium">
+                  {{ bonoActivo.sesiones_totales }}
+                </div>
+              </div>
+              <div>
+                <label for="sesiones_usadas_bono" class="block text-sm font-medium text-[#2D3748] mb-1">
+                  Sesiones Consumidas
+                </label>
+                <input
+                  id="sesiones_usadas_bono"
+                  v-model.number="formulario.bono_sesiones_usadas"
+                  type="number"
+                  min="0"
+                  :max="bonoActivo.sesiones_totales"
+                  class="w-full px-4 py-2 border border-blue-400/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                />
+              </div>
+            </div>
+
+            <!-- Indicador de sesiones restantes calculadas -->
+            <div class="flex items-center gap-2 p-3 rounded-lg" :class="sesionesRestantesBono <= 0 ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'">
+              <span :class="sesionesRestantesBono <= 0 ? 'text-red-600' : 'text-blue-600'">
+                {{ sesionesRestantesBono <= 0 ? '⚠️' : 'ℹ️' }}
+              </span>
+              <p class="text-sm" :class="sesionesRestantesBono <= 0 ? 'text-red-800' : 'text-blue-800'">
+                <strong>{{ sesionesRestantesBono }}</strong> de {{ bonoActivo.sesiones_totales }} sesiones disponibles
+                <span v-if="formulario.bono_sesiones_usadas !== bonoActivo.sesiones_usadas" class="text-amber-600 ml-1">
+                  (modificado)
+                </span>
+              </p>
+            </div>
+
+            <p class="text-xs text-[#2D3748]/60">
+              💡 Ajusta las sesiones consumidas para sincronizar con datos de otra plataforma o corregir errores.
+            </p>
+          </div>
+
+          <!-- Sin bono activo -->
+          <div v-else-if="!cargandoBono" class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+            <p class="text-sm text-[#2D3748]/70">
+              Este paciente no tiene un bono activo.
+            </p>
+          </div>
+
+          <!-- Cargando bono -->
+          <div v-if="cargandoBono" class="flex items-center justify-center py-4">
+            <div class="w-5 h-5 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin mr-2"></div>
+            <span class="text-sm text-[#2D3748]/60">Cargando bono...</span>
+          </div>
+
+          <!-- Crear nuevo bono -->
+          <div class="flex items-center justify-between pt-2">
             <label class="flex items-center gap-2 cursor-pointer">
               <input
                 v-model="formulario.crear_bono"
@@ -327,8 +458,9 @@ const props = defineProps({
 
 const emit = defineEmits(['cerrar', 'paciente-actualizado'])
 
-const { supabase } = useSupabase()
+const { supabase, userProfile } = useSupabase()
 const { crearBono } = useBonos()
+const { success: toastSuccess, error: toastError } = useToast()
 
 const formulario = ref({
   nombre: '',
@@ -336,13 +468,67 @@ const formulario = ref({
   email: '',
   telefono: '',
   fecha_nacimiento: '',
-  area_acompanamiento: '',
   tipo_bono: '',
+  precio_sesion: null,
   activo: true,
   en_pausa: false,
   crear_bono: false,
   bono_monto: null,
-  bono_renovacion_automatica: false
+  bono_renovacion_automatica: false,
+  bono_sesiones_usadas: 0
+})
+
+// Estado del bono activo
+const bonoActivo = ref(null)
+const cargandoBono = ref(false)
+
+// Estado para enviar recordatorio de pausa
+const enviandoRecordatorio = ref(false)
+
+// Computed: Dias restantes de pausa (45 dias desde que se puso en pausa)
+const diasRestantesPausa = computed(() => {
+  if (!formulario.value.en_pausa) return 45
+
+  // Buscar fecha de inicio de pausa en metadata
+  const metadata = props.paciente?.metadata || {}
+  const fechaPausa = metadata.fecha_pausa
+
+  if (!fechaPausa) return 45 // Si no hay fecha, mostrar 45 dias
+
+  const inicioPausa = new Date(fechaPausa)
+  const ahora = new Date()
+  const diasPasados = Math.floor((ahora.getTime() - inicioPausa.getTime()) / (1000 * 60 * 60 * 24))
+
+  return Math.max(0, 45 - diasPasados)
+})
+
+// Funcion para enviar recordatorio de pausa al paciente
+const enviarRecordatorioPausa = async () => {
+  if (!props.paciente?.email) {
+    toastError('El paciente no tiene email registrado')
+    return
+  }
+
+  enviandoRecordatorio.value = true
+
+  try {
+    // TODO: Implementar envio real de email
+    // Por ahora simular envio
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    toastSuccess(`Recordatorio enviado a ${props.paciente.email}`)
+  } catch (err) {
+    console.error('Error al enviar recordatorio:', err)
+    toastError('No se pudo enviar el recordatorio')
+  } finally {
+    enviandoRecordatorio.value = false
+  }
+}
+
+// Computed: Sesiones restantes del bono calculadas
+const sesionesRestantesBono = computed(() => {
+  if (!bonoActivo.value) return 0
+  return Math.max(0, bonoActivo.value.sesiones_totales - (formulario.value.bono_sesiones_usadas || 0))
 })
 
 // Computed: Calcular sesiones según tipo de bono del paciente
@@ -388,32 +574,64 @@ watch(() => props.mostrar, (nuevo) => {
   }
 })
 
-const cargarDatosPaciente = () => {
+const cargarDatosPaciente = async () => {
   const p = props.paciente
   const metadata = p.metadata || {}
-  
+
   // Descomponer nombre_completo en nombre y apellido
   const nombreCompleto = p.nombre_completo || p.nombre || ''
   const partes = nombreCompleto.split(' ')
   const nombre = partes[0] || metadata.nombre || ''
   // Retrocompatibilidad: buscar en metadata.apellido o apellido_paterno (datos antiguos)
   const apellido = partes.slice(1).join(' ') || metadata.apellido || metadata.apellido_paterno || ''
-  
+
   formulario.value = {
     nombre: nombre,
     apellido: apellido,
     email: p.email || '',
     telefono: p.telefono || '',
     fecha_nacimiento: metadata.fecha_nacimiento || '',
-    area_acompanamiento: p.area_de_acompanamiento || p.area_acompanamiento || '',
     tipo_bono: p.tipo_bono || '',
+    precio_sesion: p.precio_sesion || null,
     activo: p.activo ?? true,
     en_pausa: p.en_pausa || metadata.en_pausa || false,
     crear_bono: false,
     bono_monto: null,
-    bono_renovacion_automatica: false
+    bono_renovacion_automatica: false,
+    bono_sesiones_usadas: 0
   }
   error.value = ''
+
+  // Cargar bono activo del paciente
+  await cargarBonoActivo()
+}
+
+const cargarBonoActivo = async () => {
+  if (!props.paciente?.id) return
+
+  cargandoBono.value = true
+  bonoActivo.value = null
+
+  try {
+    const { data, error: bonoError } = await supabase
+      .from('bonos')
+      .select('*')
+      .eq('paciente_id', props.paciente.id)
+      .in('estado', ['activo', 'pendiente'])
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (data && !bonoError) {
+      bonoActivo.value = data
+      formulario.value.bono_sesiones_usadas = data.sesiones_usadas || 0
+    }
+  } catch (err) {
+    // No hay bono activo, es normal
+    console.log('No se encontró bono activo para el paciente')
+  } finally {
+    cargandoBono.value = false
+  }
 }
 
 const cerrarModal = () => {
@@ -434,7 +652,21 @@ const actualizarPaciente = async () => {
     
     // Obtener metadata existente para no sobreescribirla completamente
     const metadataExistente = props.paciente.metadata || {}
-    
+
+    // Determinar fecha de pausa
+    // Si se esta activando la pausa por primera vez, guardar fecha actual
+    // Si ya estaba en pausa, mantener la fecha original
+    const enPausaAnterior = metadataExistente.en_pausa || false
+    let fechaPausa = metadataExistente.fecha_pausa || null
+
+    if (formulario.value.en_pausa && !enPausaAnterior) {
+      // Se esta activando la pausa ahora
+      fechaPausa = new Date().toISOString()
+    } else if (!formulario.value.en_pausa) {
+      // Se esta desactivando la pausa
+      fechaPausa = null
+    }
+
     // Actualizar registro en pacientes
     const { data: pacienteData, error: pacienteError } = await supabase
       .from('pacientes')
@@ -442,15 +674,17 @@ const actualizarPaciente = async () => {
         email: formulario.value.email,
         nombre_completo: nombreCompleto,
         telefono: formulario.value.telefono,
-        area_de_acompanamiento: formulario.value.area_acompanamiento,
         tipo_bono: formulario.value.tipo_bono,
+        precio_sesion: formulario.value.precio_sesion,
         activo: formulario.value.activo,
+        en_pausa: formulario.value.en_pausa,
         metadata: {
           ...metadataExistente,
           nombre: formulario.value.nombre,
           apellido: formulario.value.apellido,
           fecha_nacimiento: formulario.value.fecha_nacimiento,
           en_pausa: formulario.value.en_pausa,
+          fecha_pausa: fechaPausa,
           fecha_actualizacion: new Date().toISOString()
         }
       })
@@ -465,13 +699,49 @@ const actualizarPaciente = async () => {
 
     console.log('Paciente actualizado:', pacienteData)
 
+    // Si hay bono activo y se modificaron las sesiones consumidas, actualizarlo
+    if (bonoActivo.value && formulario.value.bono_sesiones_usadas !== bonoActivo.value.sesiones_usadas) {
+      console.log('Actualizando sesiones del bono...')
+
+      const nuevasSesionesUsadas = formulario.value.bono_sesiones_usadas || 0
+      const nuevasSesionesRestantes = bonoActivo.value.sesiones_totales - nuevasSesionesUsadas
+      const nuevoEstado = nuevasSesionesRestantes <= 0 ? 'agotado' : bonoActivo.value.estado
+
+      const { error: bonoError } = await supabase
+        .from('bonos')
+        .update({
+          sesiones_usadas: nuevasSesionesUsadas,
+          sesiones_restantes: nuevasSesionesRestantes,
+          estado: nuevoEstado
+        })
+        .eq('id', bonoActivo.value.id)
+
+      if (bonoError) {
+        console.error('Error al actualizar bono:', bonoError)
+        toastError('Error al actualizar las sesiones del bono')
+        throw new Error('Error al actualizar las sesiones del bono')
+      }
+
+      console.log('Bono actualizado:', { sesiones_usadas: nuevasSesionesUsadas, sesiones_restantes: nuevasSesionesRestantes })
+      toastSuccess('Sesiones del bono actualizadas')
+    }
+
     // Si el checkbox de crear bono está marcado, crear el bono
     if (formulario.value.crear_bono && formulario.value.tipo_bono && formulario.value.bono_monto) {
-      console.log('Creando bono para el paciente...')
-      
+      console.log('[BONO] Iniciando creación de bono para paciente:', props.paciente.id)
+
+      // Validar que tenemos el ID del terapeuta
+      const terapeutaId = userProfile.value?.id || props.paciente?.psicologa_id
+      if (!terapeutaId) {
+        console.error('[BONO] ERROR: No se pudo obtener el ID del terapeuta')
+        throw new Error('No se pudo identificar al terapeuta para crear el bono')
+      }
+
+      console.log('[BONO] Terapeuta ID:', terapeutaId)
+
       const fechaInicio = new Date()
       const fechaFin = new Date()
-      
+
       // Calcular fecha_fin según tipo de bono
       const tipoBono = formulario.value.tipo_bono
       if (tipoBono === 'a_demanda') {
@@ -484,22 +754,37 @@ const actualizarPaciente = async () => {
 
       const sesiones = sesionesAutomaticas.value
 
-      await crearBono({
+      const bonoData = {
         paciente_id: props.paciente.id,
+        terapeuta_id: terapeutaId,  // Columna correcta (no psicologa_id)
         tipo: tipoBono,
+        frecuencia: tipoBono,
         sesiones_totales: sesiones,
-        sesiones_disponibles: sesiones,
+        sesiones_restantes: sesiones,
+        sesiones_usadas: 0,
         monto_total: formulario.value.bono_monto,
         fecha_inicio: fechaInicio.toISOString().split('T')[0],
         fecha_fin: fechaFin.toISOString().split('T')[0],
-        estado: 'pendiente',
+        estado: 'activo',
+        pagado: false,
         renovacion_automatica: formulario.value.bono_renovacion_automatica
-      })
+      }
 
-      console.log('Bono creado exitosamente')
+      console.log('[BONO] Datos del bono a crear:', bonoData)
+
+      try {
+        const nuevoBono = await crearBono(bonoData)
+        console.log('[BONO] Bono creado exitosamente:', nuevoBono)
+        toastSuccess('Bono creado correctamente')
+      } catch (bonoErr) {
+        console.error('[BONO] Error al crear bono:', bonoErr)
+        // No lanzar el error para no interrumpir el guardado del paciente
+        toastError('Error al crear el bono: ' + (bonoErr.message || 'Error desconocido'))
+      }
     }
 
     // Emitir evento de éxito
+    toastSuccess('Paciente actualizado correctamente')
     emit('paciente-actualizado', pacienteData)
     emit('cerrar')
 

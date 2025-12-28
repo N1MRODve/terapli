@@ -1,285 +1,169 @@
 <template>
   <article
-    class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:border-gray-200 transition-all duration-300 group relative cursor-pointer focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2"
+    class="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 group relative cursor-pointer focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2"
     role="article"
     :aria-label="`Ficha de ${nombreMostrar}`"
     tabindex="0"
   >
     <!-- Botones de acción (aparecen al hover) -->
     <div
-      class="absolute top-4 right-4 flex gap-1.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-200 z-10"
+      class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-200 z-10"
       role="toolbar"
       aria-label="Acciones del paciente"
     >
       <button
         @click.stop="$emit('gestionar-bonos', paciente)"
-        class="min-h-[44px] min-w-[44px] p-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors shadow-md hover:shadow-lg focus:ring-2 focus:ring-purple-300 focus:outline-none"
+        class="min-h-[36px] min-w-[36px] p-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors shadow-sm hover:shadow-md focus:ring-2 focus:ring-purple-300 focus:outline-none"
         :aria-label="`Gestionar bonos de ${nombreMostrar}`"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-        </svg>
+        <TicketIcon class="w-4 h-4" aria-hidden="true" />
       </button>
       <button
         @click.stop="$emit('editar', paciente)"
-        class="min-h-[44px] min-w-[44px] p-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
+        class="min-h-[36px] min-w-[36px] p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors shadow-sm hover:shadow-md focus:ring-2 focus:ring-gray-300 focus:outline-none"
         :aria-label="`Editar información de ${nombreMostrar}`"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
+        <PencilIcon class="w-4 h-4" aria-hidden="true" />
       </button>
       <button
         @click.stop="$emit('eliminar', paciente)"
-        class="min-h-[44px] min-w-[44px] p-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md hover:shadow-lg focus:ring-2 focus:ring-red-300 focus:outline-none"
+        class="min-h-[36px] min-w-[36px] p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors shadow-sm hover:shadow-md focus:ring-2 focus:ring-red-300 focus:outline-none"
         :aria-label="`Eliminar a ${nombreMostrar}`"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
+        <TrashIcon class="w-4 h-4" aria-hidden="true" />
       </button>
     </div>
 
-    <!-- Header con avatar, nombre y badges -->
-    <div class="flex items-start justify-between mb-5">
-      <div class="flex items-center gap-3 flex-1">
-        <!-- Avatar -->
-        <div
-          class="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-md"
-          :style="{ backgroundColor: avatarColor }"
-          :aria-label="`Avatar de ${nombreMostrar}`"
-        >
-          {{ iniciales }}
-        </div>
+    <!-- Header: Avatar + Nombre + Estado -->
+    <div class="flex items-center gap-3 mb-4">
+      <!-- Avatar compacto -->
+      <div
+        class="w-11 h-11 rounded-full flex items-center justify-center text-white font-semibold text-base flex-shrink-0"
+        :style="{ backgroundColor: avatarColor }"
+        :aria-label="`Avatar de ${nombreMostrar}`"
+      >
+        {{ iniciales }}
+      </div>
 
-        <!-- Nombre, estado emocional y badges -->
-        <div class="flex-1 min-w-0">
-          <h3 class="font-serif text-lg font-semibold text-cafe group-hover:text-purple-600 transition-colors leading-tight truncate">
+      <!-- Nombre y badge de estado -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <h3 class="font-medium text-base text-gray-900 truncate">
             {{ nombreMostrar }}
           </h3>
-
-          <!-- Estado emocional y badges -->
-          <div class="flex items-center gap-2 mt-1.5 flex-wrap">
-            <span
-              class="text-xl leading-none"
-              :title="estadoEmocionalTexto"
-              :aria-label="`Estado emocional: ${estadoEmocionalTexto}`"
-            >
-              {{ estadoEmocional }}
-            </span>
-            <span class="text-xs text-gray-500 font-medium">
-              {{ estadoEmocionalTexto }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Badge de estado del vínculo -->
-      <span
-        class="px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0"
-        :class="estadoVinculoClasses"
-        :aria-label="`Estado del vínculo: ${estadoVinculoTexto}`"
-      >
-        <span class="w-1.5 h-1.5 rounded-full" :class="estadoVinculoPuntoClass"></span>
-        <span>{{ estadoVinculoTexto }}</span>
-      </span>
-    </div>
-
-    <!-- Área de acompañamiento -->
-    <div v-if="areaAcompanamiento" class="mb-4 flex items-center gap-2">
-      <span class="text-xs text-gray-400 uppercase tracking-wide">Área:</span>
-      <span class="text-sm text-gray-700 font-medium">
-        {{ areaAcompanamiento }}
-      </span>
-    </div>
-
-    <!-- Información de sesiones -->
-    <div class="space-y-3 mb-5">
-      <div class="flex items-center gap-2 text-sm text-gray-600">
-        <CalendarIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
-        <span>Última sesión: </span>
-        <span class="font-medium">{{ ultimaSesion }}</span>
-      </div>
-      
-      <div class="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
-        <ClockIcon class="w-4 h-4 text-purple-600 flex-shrink-0" aria-hidden="true" />
-        <span>Próxima: </span>
-        <button
-          v-if="proximaSesion"
-          @click.stop="$emit('editar-cita', paciente.proxima_cita_id)"
-          class="min-h-[44px] px-2 -mx-2 text-purple-600 hover:text-cafe font-medium hover:underline transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-300 rounded"
-          :aria-label="`Editar cita programada para ${proximaSesion}`"
-        >
-          {{ proximaSesion }}
-        </button>
-        <span v-else class="text-gray-400 font-medium">No programada</span>
-        <button
-          @click.stop="$emit('ver-citas', paciente)"
-          class="min-h-[44px] px-2 ml-auto text-xs text-purple-600 hover:text-cafe hover:underline transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-300 rounded"
-          :aria-label="`Ver todas las citas de ${nombreMostrar}`"
-        >
-          Ver citas →
-        </button>
-      </div>
-
-      <div class="flex items-center gap-2 text-sm text-gray-600">
-        <CheckCircleIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
-        <span>{{ totalSesiones }} sesiones completadas</span>
-      </div>
-    </div>
-
-    <!-- Sección de BONO ACTIVO (destacada) -->
-        <!-- Sección de BONO ACTIVO (destacada) -->
-    <div v-if="bonoActivo" class="mb-5 p-4 bg-gradient-to-br from-purple-600/8 to-rosa/12 rounded-xl border border-purple-600/15">
-      <div class="space-y-3">
-        <!-- Header del Bono -->
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <TicketIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
-            <span class="text-sm font-medium text-gray-700">Bono:</span>
-            <span 
-              class="px-2.5 py-1 rounded-lg text-xs font-semibold"
-              :class="tipoBonoClasses"
-            >
-              {{ tipoBonoTexto }}
-            </span>
-          </div>
-          
-          <!-- Estado -->
-          <span 
-            class="px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5"
-            :class="estadoBonoClasses"
+          <span
+            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full flex-shrink-0"
+            :class="estadoVinculoClasses"
           >
-            <CurrencyDollarIcon class="w-3 h-3" />
-            <span>{{ estadoBonoTexto }}</span>
+            <span class="w-1.5 h-1.5 rounded-full" :class="estadoVinculoPuntoClass"></span>
+            {{ estadoVinculoTexto }}
           </span>
         </div>
-
-        <!-- Información del bono -->
-        <div class="grid grid-cols-1 gap-2">
-          <!-- Fecha fin -->
-          <div class="flex items-center gap-2 text-sm">
-            <CalendarIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
-            <span class="text-gray-600">Vigencia:</span>
-            <span :class="fechaFinClases" class="font-medium">{{ fechaFinTexto }}</span>
-          </div>
-
-          <!-- Sesiones X/Y -->
-          <div class="flex items-center gap-2 text-sm">
-            <ChartBarIcon class="w-4 h-4 text-purple-600 flex-shrink-0" />
-            <span class="text-gray-600">Sesiones:</span>
-            <span :class="sesionesColorClass" class="font-semibold">
-              {{ sesionesUsadas }}/{{ sesionesTotales }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Barra de progreso -->
-        <div class="pt-1">
-          <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
-            <span>Progreso del bono</span>
-            <span class="font-semibold text-gray-700">{{ progresoBonoTexto }}%</span>
-          </div>
-          <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-            <div 
-              class="h-2 rounded-full transition-all duration-500"
-              :class="progresoBonoColorClass"
-              :style="{ width: `${progresoBono}%` }"
-            ></div>
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- Indicador de evolución -->
-    <div class="pt-5 border-t border-gray-100">
-      <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
-        <span>Evolución general</span>
-        <span class="font-semibold text-gray-700">{{ evolucionPorcentaje }}%</span>
+    <!-- Info compacta con iconos -->
+    <div class="space-y-2 text-sm text-gray-600">
+      <!-- Última sesión -->
+      <div class="flex items-center gap-2">
+        <CalendarIcon class="w-4 h-4 text-gray-400 flex-shrink-0" />
+        <span :class="{ 'text-gray-400': !paciente.ultima_sesion }">
+          {{ ultimaSesionTexto }}
+        </span>
       </div>
-      <div class="w-full bg-gray-200 rounded-full h-2">
-        <div 
-          class="h-2 rounded-full transition-all duration-500"
-          :class="evolucionColor"
-          :style="{ width: `${evolucionPorcentaje}%` }"
-        ></div>
+
+      <!-- Próxima cita -->
+      <div class="flex items-center gap-2">
+        <ClockIcon class="w-4 h-4 text-gray-400 flex-shrink-0" />
+        <template v-if="proximaSesion">
+          <button
+            @click.stop="$emit('editar-cita', paciente.proxima_cita_id)"
+            class="text-purple-600 hover:text-purple-700 hover:underline transition-colors focus:outline-none focus:ring-1 focus:ring-purple-300 rounded px-1 -mx-1"
+            :aria-label="`Editar cita: ${proximaSesion}`"
+          >
+            {{ proximaSesion }}
+          </button>
+        </template>
+        <span v-else class="text-gray-400">Sin cita programada</span>
+      </div>
+
+      <!-- Bono compacto (1 línea) -->
+      <div v-if="bonoActivo" class="flex items-center gap-2">
+        <TicketIcon class="w-4 h-4 flex-shrink-0" :class="bonoIconColor" />
+        <span class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-medium" :class="sesionesColorClass">
+            {{ tipoBonoTexto }} {{ sesionesUsadas }}/{{ sesionesTotales }}
+          </span>
+          <span class="text-gray-400">·</span>
+          <span :class="fechaFinClases" class="text-xs">
+            Vence {{ fechaFinCorta }}
+          </span>
+          <span
+            v-if="bonoActivo.estado !== 'activo'"
+            class="px-1.5 py-0.5 text-xs font-medium rounded"
+            :class="estadoBonoClasses"
+          >
+            {{ estadoBonoTexto }}
+          </span>
+        </span>
       </div>
     </div>
 
-    <!-- Alertas -->
-    <div class="mt-5 space-y-2">
-      <!-- Alerta de bono por agotarse (1 sesión restante) -->
-      <div 
+    <!-- Alertas compactas (solo las críticas) -->
+    <div v-if="tieneAlertaCritica" class="mt-3">
+      <!-- Alerta de bono crítica (1 sesión) -->
+      <div
         v-if="tieneAlertaBonoCritica"
-        class="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg animate-pulse-subtle"
+        class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-100 rounded-lg text-xs"
       >
-        <ExclamationTriangleIcon class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-        <div class="flex-1">
-          <p class="text-xs font-semibold text-red-800 mb-1">
-            Bono casi agotado
-          </p>
-          <p class="text-xs text-red-700">
-            Solo queda {{ bonoActivo.sesiones_restantes }} sesión. Informar para renovación.
-          </p>
-        </div>
+        <ExclamationTriangleIcon class="w-4 h-4 text-red-500 flex-shrink-0" />
+        <span class="text-red-700 font-medium">
+          Última sesión del bono
+        </span>
       </div>
 
-      <!-- Alerta de bono con pocas sesiones (2 sesiones restantes) -->
-      <div 
+      <!-- Alerta de bono advertencia (2 sesiones) -->
+      <div
         v-else-if="tieneAlertaBonoAdvertencia"
-        class="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg"
+        class="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-100 rounded-lg text-xs"
       >
-        <ExclamationCircleIcon class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-        <div class="flex-1">
-          <p class="text-xs font-semibold text-amber-800 mb-1">
-            Bono próximo a agotar
-          </p>
-          <p class="text-xs text-amber-700">
-            Quedan {{ bonoActivo.sesiones_restantes }} sesiones. Considerar renovación.
-          </p>
-        </div>
+        <ExclamationCircleIcon class="w-4 h-4 text-amber-500 flex-shrink-0" />
+        <span class="text-amber-700 font-medium">
+          Quedan {{ bonoActivo.sesiones_restantes }} sesiones
+        </span>
       </div>
 
-      <!-- Alerta de inactividad (más de 30 días sin sesión) -->
-      <div 
-        v-if="tieneAlertaInactividad"
-        class="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg animate-pulse-subtle"
+      <!-- Alerta de inactividad -->
+      <div
+        v-else-if="tieneAlertaInactividad"
+        class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-100 rounded-lg text-xs"
       >
-        <BellAlertIcon class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-        <div class="flex-1">
-          <p class="text-xs font-semibold text-red-800 mb-1">
-            Riesgo de abandono
-          </p>
-          <p class="text-xs text-red-700">
-            {{ diasInactividad }} días sin sesión. Considera contactar pronto.
-          </p>
-        </div>
+        <BellAlertIcon class="w-4 h-4 text-red-500 flex-shrink-0" />
+        <span class="text-red-700 font-medium">
+          {{ diasInactividad }} días sin sesión
+        </span>
       </div>
+    </div>
 
-      <!-- Alerta de seguimiento especial (requiere atención por estado emocional) -->
-      <div 
-        v-if="tieneAlertaEmocional"
-        class="flex items-start gap-3 p-3 bg-orange-50 border border-orange-200 rounded-lg"
-      >
-        <ExclamationCircleIcon class="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
-        <div class="flex-1">
-          <p class="text-xs font-semibold text-orange-800">
-            Requiere seguimiento especial por estado emocional
-          </p>
-        </div>
-      </div>
+    <!-- Sesiones completadas (indicador sutil) -->
+    <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-xs text-gray-400">
+      <span>{{ totalSesiones }} sesiones completadas</span>
+      <span v-if="evolucionPorcentaje > 0" class="flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full" :class="evolucionDotColor"></span>
+        {{ evolucionPorcentaje }}%
+      </span>
     </div>
   </article>
 </template>
 
 <script setup>
-import { 
-  CalendarIcon, 
-  ClockIcon, 
-  CheckCircleIcon, 
-  TicketIcon, 
-  CurrencyDollarIcon, 
-  ChartBarIcon,
+import {
+  CalendarIcon,
+  ClockIcon,
+  TicketIcon,
+  MapPinIcon,
+  PencilIcon,
+  TrashIcon,
   ExclamationTriangleIcon,
   ExclamationCircleIcon,
   BellAlertIcon
@@ -298,17 +182,15 @@ defineEmits(['editar', 'eliminar', 'ver-citas', 'gestionar-bonos', 'editar-cita'
 const nombreMostrar = computed(() => {
   const nombreCompleto = props.paciente.nombre || 'Sin nombre'
   if (!nombreCompleto || nombreCompleto === 'Sin nombre') return 'Sin nombre'
-  
-  // Si el nombre tiene múltiples palabras, formatear con inicial del último apellido
+
   const partes = nombreCompleto.trim().split(' ')
   if (partes.length > 2) {
-    // Formato: "Nombre Apellido1 A."
     const nombre = partes[0]
     const apellido1 = partes[1]
     const apellido2Inicial = partes[partes.length - 1].charAt(0)
     return `${nombre} ${apellido1} ${apellido2Inicial}.`
   }
-  
+
   return nombreCompleto
 })
 
@@ -316,138 +198,90 @@ const nombreMostrar = computed(() => {
 const iniciales = computed(() => {
   const nombreCompleto = props.paciente.nombre || ''
   if (!nombreCompleto) return '??'
-  
+
   const partes = nombreCompleto.trim().split(' ')
   const nombreInicial = partes[0]?.charAt(0).toUpperCase() || '?'
   const apellidoInicial = partes[1]?.charAt(0).toUpperCase() || ''
   return `${nombreInicial}${apellidoInicial}`
 })
 
-// Color de avatar basado en el ID (consistente)
+// Color de avatar basado en el ID
 const avatarColor = computed(() => {
   const colors = ['#5550F2', '#C89B8A', '#B7C6B0', '#A8C5B5', '#D4A5A5', '#C4B5A0']
   const index = props.paciente.id.charCodeAt(0) % colors.length
   return colors[index]
 })
 
-// Estado emocional (basado en últimos registros)
-const estadoEmocional = computed(() => {
-  const promedio = props.paciente.estado_emocional_promedio || 3
-  if (promedio >= 4) return '�'
-  if (promedio >= 3) return '😐'
-  return '�'
-})
-
-const estadoEmocionalTexto = computed(() => {
-  const promedio = props.paciente.estado_emocional_promedio || 3
-  if (promedio >= 4) return 'Estado positivo'
-  if (promedio >= 3) return 'Estado neutro'
-  return 'Requiere atención'
-})
-
 // Estado del vínculo terapéutico
 const estadoVinculoTexto = computed(() => {
   if (!props.paciente.activo) return 'Finalizado'
-  if (props.paciente.en_pausa) return 'En pausa'
+  if (props.paciente.en_pausa) return 'Pausa'
   return 'Activo'
 })
 
 const estadoVinculoClasses = computed(() => {
-  if (!props.paciente.activo) {
-    return 'bg-gray-100 text-gray-600'
-  }
-  if (props.paciente.en_pausa) {
-    return 'bg-yellow-100 text-yellow-700'
-  }
-  return 'bg-green-100 text-green-700'
+  if (!props.paciente.activo) return 'bg-gray-100 text-gray-600'
+  if (props.paciente.en_pausa) return 'bg-yellow-50 text-yellow-700'
+  return 'bg-green-50 text-green-700'
 })
 
-// Color del punto indicador de estado
 const estadoVinculoPuntoClass = computed(() => {
-  if (!props.paciente.activo) {
-    return 'bg-gray-500'
-  }
-  if (props.paciente.en_pausa) {
-    return 'bg-yellow-500'
-  }
+  if (!props.paciente.activo) return 'bg-gray-400'
+  if (props.paciente.en_pausa) return 'bg-yellow-500'
   return 'bg-green-500'
 })
 
-// Área de acompañamiento
-const areaAcompanamiento = computed(() => {
-  return props.paciente.area_de_acompanamiento || null
-})
-
 // Última sesión
-const ultimaSesion = computed(() => {
+const ultimaSesionTexto = computed(() => {
   if (!props.paciente.ultima_sesion) return 'Sin registro'
   const fecha = new Date(props.paciente.ultima_sesion)
   const ahora = new Date()
   const diffDias = Math.floor((ahora - fecha) / (1000 * 60 * 60 * 24))
-  
+
   if (diffDias === 0) return 'Hoy'
   if (diffDias === 1) return 'Ayer'
   if (diffDias < 7) return `Hace ${diffDias} días`
-  if (diffDias < 30) return `Hace ${Math.floor(diffDias / 7)} semanas`
+  if (diffDias < 30) return `Hace ${Math.floor(diffDias / 7)} sem`
   return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
 })
 
-// Próxima sesión (si existe)
+// Próxima sesión
 const proximaSesion = computed(() => {
   if (!props.paciente.proxima_sesion) return null
-  
+
   try {
-    // Asegurar que el formato de fecha es correcto
     let fechaStr = props.paciente.proxima_sesion
-    
-    // Si la fecha no incluye T, añadirla para parsing correcto
-    if (!fechaStr.includes('T')) {
-      fechaStr += 'T00:00:00'
-    }
-    
+    if (!fechaStr.includes('T')) fechaStr += 'T00:00:00'
+
     const fecha = new Date(fechaStr)
-    
-    // Verificar que la fecha es válida
-    if (isNaN(fecha.getTime())) {
-      console.warn('Fecha inválida en próxima sesión:', props.paciente.proxima_sesion)
-      return null
-    }
-    
-    return fecha.toLocaleDateString('es-ES', { 
-      weekday: 'short', 
-      day: 'numeric', 
+    if (isNaN(fecha.getTime())) return null
+
+    return fecha.toLocaleDateString('es-ES', {
+      weekday: 'short',
+      day: 'numeric',
       month: 'short',
       hour: '2-digit',
       minute: '2-digit'
     })
-  } catch (error) {
-    console.error('Error al formatear próxima sesión:', error, props.paciente.proxima_sesion)
+  } catch {
     return null
   }
 })
 
 // Total de sesiones
-const totalSesiones = computed(() => {
-  return props.paciente.total_sesiones || 0
-})
+const totalSesiones = computed(() => props.paciente.total_sesiones || 0)
 
-// Evolución (porcentaje calculado)
-const evolucionPorcentaje = computed(() => {
-  return props.paciente.evolucion_porcentaje || 50
-})
+// Evolución
+const evolucionPorcentaje = computed(() => props.paciente.evolucion_porcentaje || 0)
 
-const evolucionColor = computed(() => {
+const evolucionDotColor = computed(() => {
   const valor = evolucionPorcentaje.value
   if (valor >= 70) return 'bg-green-500'
   if (valor >= 50) return 'bg-yellow-500'
   return 'bg-orange-500'
 })
 
-// ============================================================================
-// SISTEMA DE ALERTAS
-// ============================================================================
-
-// Calcular días desde última sesión
+// Días de inactividad
 const diasInactividad = computed(() => {
   if (!props.paciente.ultima_sesion) return 0
   const fecha = new Date(props.paciente.ultima_sesion)
@@ -455,191 +289,116 @@ const diasInactividad = computed(() => {
   return Math.floor((ahora - fecha) / (1000 * 60 * 60 * 24))
 })
 
-// Alerta de inactividad (>30 días sin sesión)
+// Alerta de inactividad
 const tieneAlertaInactividad = computed(() => {
-  // Solo mostrar alerta para pacientes activos
   if (!props.paciente.activo || props.paciente.en_pausa) return false
-  
-  // Mostrar alerta si han pasado más de 30 días sin sesión
   return diasInactividad.value > 30
 })
 
-// Alerta emocional (tendencia negativa)
-const tieneAlertaEmocional = computed(() => {
-  return props.paciente.requiere_atencion || false
-})
+// Bono activo
+const bonoActivo = computed(() => props.paciente.bono_activo || null)
 
-// ============================================================================
-// INFORMACIÓN DE BONO
-// ============================================================================
-
-// Bono activo (si existe)
-const bonoActivo = computed(() => {
-  return props.paciente.bono_activo || null
-})
-
-// Tipo de bono - texto y estilos
+// Tipo de bono
 const tipoBonoTexto = computed(() => {
-  if (!bonoActivo.value?.tipo) return 'Sin tipo'
-  
+  if (!bonoActivo.value?.tipo) return ''
   const tipoMap = {
-    'otro': 'A demanda',
-    'quincenal': 'Quincenal',
+    'otro': 'Demanda',
+    'quincenal': 'Quinc.',
     'semanal': 'Semanal',
     'mensual': 'Mensual',
-    'personalizado': 'Personalizado'
+    'personalizado': 'Pers.'
   }
-  
   return tipoMap[bonoActivo.value.tipo] || bonoActivo.value.tipo
 })
 
-const tipoBonoClasses = computed(() => {
-  if (!bonoActivo.value?.tipo) return 'bg-gray-100 text-gray-600'
-  
-  const classMap = {
-    'otro': 'bg-blue-100 text-blue-700',
-    'quincenal': 'bg-purple-100 text-purple-700',
-    'semanal': 'bg-indigo-100 text-indigo-700',
-    'mensual': 'bg-teal-100 text-teal-700',
-    'personalizado': 'bg-pink-100 text-pink-700'
-  }
-  
-  return classMap[bonoActivo.value.tipo] || 'bg-gray-100 text-gray-600'
-})
-
-// Estado del bono - texto y estilos
+// Estado del bono
 const estadoBonoTexto = computed(() => {
-  if (!bonoActivo.value?.estado) return 'Sin estado'
-  
+  if (!bonoActivo.value?.estado) return ''
   const estadoMap = {
     'activo': 'Activo',
-    'pendiente': 'Pendiente',
+    'pendiente': 'Pend.',
     'vencido': 'Vencido',
-    'completado': 'Completado'
+    'completado': 'Complet.'
   }
-  
   return estadoMap[bonoActivo.value.estado] || bonoActivo.value.estado
 })
 
 const estadoBonoClasses = computed(() => {
   if (!bonoActivo.value?.estado) return 'bg-gray-100 text-gray-600'
-  
   const classMap = {
     'activo': 'bg-green-100 text-green-700',
     'pendiente': 'bg-yellow-100 text-yellow-700',
     'vencido': 'bg-red-100 text-red-700',
     'completado': 'bg-gray-100 text-gray-600'
   }
-  
   return classMap[bonoActivo.value.estado] || 'bg-gray-100 text-gray-600'
 })
 
-// Fecha fin - texto y estilos
-const fechaFinTexto = computed(() => {
-  if (!bonoActivo.value?.fecha_fin) return 'Sin fecha'
-  
+// Fecha fin compacta
+const fechaFinCorta = computed(() => {
+  if (!bonoActivo.value?.fecha_fin) return '—'
   try {
     const fecha = new Date(bonoActivo.value.fecha_fin)
-    return fecha.toLocaleDateString('es-ES', { 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
-    })
-  } catch (error) {
-    return 'Fecha inválida'
+    return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+  } catch {
+    return '—'
   }
 })
 
-const fechaFinClasses = computed(() => {
-  if (!bonoActivo.value?.fecha_fin) return 'text-cafe/60'
-  
+const fechaFinClases = computed(() => {
+  if (!bonoActivo.value?.fecha_fin) return 'text-gray-400'
   const fecha = new Date(bonoActivo.value.fecha_fin)
   const ahora = new Date()
   const diasRestantes = Math.floor((fecha - ahora) / (1000 * 60 * 60 * 24))
-  
-  if (diasRestantes < 0) return 'text-red-600 font-semibold'
-  if (diasRestantes <= 7) return 'text-orange-600 font-semibold'
-  if (diasRestantes <= 14) return 'text-amber-600'
-  return 'text-cafe/80'
+
+  if (diasRestantes < 0) return 'text-red-600 font-medium'
+  if (diasRestantes <= 7) return 'text-orange-600'
+  return 'text-gray-500'
 })
 
-// Sesiones - contadores y estilos
+// Sesiones
 const sesionesUsadas = computed(() => {
   if (!bonoActivo.value) return 0
   return bonoActivo.value.sesiones_totales - bonoActivo.value.sesiones_restantes
 })
 
-const sesionesTotales = computed(() => {
-  return bonoActivo.value?.sesiones_totales || 0
-})
+const sesionesTotales = computed(() => bonoActivo.value?.sesiones_totales || 0)
 
 const sesionesColorClass = computed(() => {
-  if (!bonoActivo.value) return 'text-purple-600'
-  
+  if (!bonoActivo.value) return 'text-gray-600'
   const restantes = bonoActivo.value.sesiones_restantes
-  if (restantes === 0) return 'text-red-600 font-bold'
-  if (restantes === 1) return 'text-red-600 font-semibold'
-  if (restantes === 2) return 'text-orange-600 font-semibold'
-  return 'text-purple-600 font-semibold'
+  if (restantes === 0) return 'text-red-600'
+  if (restantes <= 2) return 'text-orange-600'
+  return 'text-gray-700'
 })
 
-// Progreso del bono - cálculo y estilos
-const progresoBono = computed(() => {
-  if (!bonoActivo.value) return 0
-  
-  const total = bonoActivo.value.sesiones_totales
+const bonoIconColor = computed(() => {
+  if (!bonoActivo.value) return 'text-gray-400'
   const restantes = bonoActivo.value.sesiones_restantes
-  
-  if (total === 0) return 0
-  
-  const usadas = total - restantes
-  return Math.round((usadas / total) * 100)
+  if (restantes <= 1) return 'text-red-500'
+  if (restantes === 2) return 'text-amber-500'
+  return 'text-purple-500'
 })
 
-const progresoBonoTexto = computed(() => {
-  return progresoBono.value.toString()
-})
-
-const progresoBonoColorClass = computed(() => {
-  if (!bonoActivo.value) return 'bg-gray-400'
-  
-  const estado = bonoActivo.value.estado
-  
-  // Color según estado
-  const colorMap = {
-    'activo': 'bg-green-500',
-    'pendiente': 'bg-yellow-500',
-    'vencido': 'bg-red-500',
-    'completado': 'bg-gray-400'
-  }
-  
-  return colorMap[estado] || 'bg-gray-400'
-})
-
-// Alerta crítica de bono (1 sesión restante)
+// Alertas de bono
 const tieneAlertaBonoCritica = computed(() => {
   if (!bonoActivo.value) return false
   return bonoActivo.value.sesiones_restantes === 1
 })
 
-// Alerta de advertencia de bono (2 sesiones restantes)
 const tieneAlertaBonoAdvertencia = computed(() => {
   if (!bonoActivo.value) return false
   return bonoActivo.value.sesiones_restantes === 2
 })
+
+// Tiene alguna alerta crítica
+const tieneAlertaCritica = computed(() => {
+  return tieneAlertaBonoCritica.value ||
+         tieneAlertaBonoAdvertencia.value ||
+         tieneAlertaInactividad.value
+})
 </script>
 
 <style scoped>
-@keyframes pulse-subtle {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.95;
-  }
-}
-
-.animate-pulse-subtle {
-  animation: pulse-subtle 2s ease-in-out infinite;
-}
+/* Estilos para PacienteCard */
 </style>

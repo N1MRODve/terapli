@@ -437,9 +437,10 @@ const handleConfirmarCitaRapido = async (citaId: string) => {
   }
 }
 
-// Estado para operaciones de cancelar/reprogramar
+// Estado para operaciones de cancelar/reprogramar/marcar realizada
 const citaCancelandoId = ref<string | null>(null)
 const citaReprogramandoId = ref<string | null>(null)
+const citaMarcandoRealizadaId = ref<string | null>(null)
 const mostrarModalReprogramar = ref(false)
 const citaParaReprogramar = ref<any>(null)
 
@@ -456,6 +457,30 @@ const horasFinDisponibles = computed(() => {
   // Retornar horas después de la hora de inicio + la siguiente hora (para sesiones de 1h mínimo)
   return [...horasDelDia.slice(indexInicio + 1), '23:00']
 })
+
+/**
+ * Marcar cita como realizada rápidamente
+ */
+const handleMarcarRealizada = async (citaId: string) => {
+  if (citaMarcandoRealizadaId.value) return
+
+  citaMarcandoRealizadaId.value = citaId
+
+  try {
+    const result = await changeAppointmentStatus(citaId, 'realizada')
+
+    if (result.success) {
+      toast.success('✓ Cita marcada como realizada')
+    } else {
+      toast.error(result.error || 'Error al marcar como realizada')
+    }
+  } catch (error: any) {
+    console.error('Error al marcar cita como realizada:', error)
+    toast.error('Error al marcar como realizada')
+  } finally {
+    citaMarcandoRealizadaId.value = null
+  }
+}
 
 /**
  * Cancelar cita rápidamente
@@ -1110,11 +1135,31 @@ onUnmounted(() => {
                     </svg>
                   </button>
 
+                  <!-- Botón de marcar como realizada (solo confirmadas o pendientes, no canceladas ni ya realizadas) -->
+                  <button
+                    v-if="cita.estado === 'confirmada' || cita.estado === 'pendiente'"
+                    @click.stop="handleMarcarRealizada(cita.id)"
+                    class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 hover:scale-110 shadow-sm transition-all"
+                    :class="{ 'animate-pulse': citaMarcandoRealizadaId === cita.id }"
+                    :disabled="citaMarcandoRealizadaId === cita.id"
+                    :title="citaMarcandoRealizadaId === cita.id ? 'Marcando...' : 'Marcar como realizada'"
+                    :aria-label="`Marcar como realizada cita de ${cita.paciente_nombre || 'paciente'}`"
+                    type="button"
+                  >
+                    <svg v-if="citaMarcandoRealizadaId === cita.id" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    <svg v-else class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+
                   <!-- Botón de reprogramar (no canceladas) -->
                   <button
                     v-if="cita.estado !== 'cancelada'"
                     @click.stop="handleReprogramarCita(cita.id)"
-                    class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 hover:scale-110 shadow-sm transition-all"
+                    class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-600 hover:scale-110 shadow-sm transition-all"
                     :disabled="citaReprogramandoId === cita.id"
                     title="Reprogramar cita"
                     :aria-label="`Reprogramar cita de ${cita.paciente_nombre || 'paciente'}`"
@@ -1306,11 +1351,31 @@ onUnmounted(() => {
                       </svg>
                     </button>
 
+                    <!-- Botón de marcar como realizada (solo confirmadas o pendientes) -->
+                    <button
+                      v-if="cita.estado === 'confirmada' || cita.estado === 'pendiente'"
+                      @click.stop="handleMarcarRealizada(cita.id)"
+                      class="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 hover:scale-110 shadow-sm transition-all"
+                      :class="{ 'animate-pulse': citaMarcandoRealizadaId === cita.id }"
+                      :disabled="citaMarcandoRealizadaId === cita.id"
+                      :title="citaMarcandoRealizadaId === cita.id ? 'Marcando...' : 'Marcar como realizada'"
+                      :aria-label="`Marcar como realizada cita de ${cita.paciente_nombre || 'paciente'}`"
+                      type="button"
+                    >
+                      <svg v-if="citaMarcandoRealizadaId === cita.id" class="w-2.5 h-2.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                      </svg>
+                      <svg v-else class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+
                     <!-- Botón de reprogramar (no canceladas) -->
                     <button
                       v-if="cita.estado !== 'cancelada'"
                       @click.stop="handleReprogramarCita(cita.id)"
-                      class="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 hover:scale-110 shadow-sm transition-all"
+                      class="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-600 hover:scale-110 shadow-sm transition-all"
                       :disabled="citaReprogramandoId === cita.id"
                       title="Reprogramar cita"
                       :aria-label="`Reprogramar cita de ${cita.paciente_nombre || 'paciente'}`"

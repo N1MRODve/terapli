@@ -9,12 +9,55 @@
 
 const props = defineProps<{
   id: string
+  fecha: string
   hora: string
   pacienteNombre: string
   modalidad: 'presencial' | 'online' | 'virtual' | 'telefonica'
   estado: 'pendiente' | 'confirmada' | 'realizada' | 'cancelada'
   isNext?: boolean
 }>()
+
+/**
+ * Formatea la fecha para mostrar de forma amigable
+ * - Hoy: "Hoy"
+ * - Mañana: "Mañana"
+ * - Otros días: "Lun 30 dic"
+ */
+const fechaFormateada = computed(() => {
+  if (!props.fecha) return ''
+
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+
+  const manana = new Date(hoy)
+  manana.setDate(manana.getDate() + 1)
+
+  const fechaCita = new Date(props.fecha + 'T00:00:00')
+  fechaCita.setHours(0, 0, 0, 0)
+
+  if (fechaCita.getTime() === hoy.getTime()) {
+    return 'Hoy'
+  }
+
+  if (fechaCita.getTime() === manana.getTime()) {
+    return 'Mañana'
+  }
+
+  // Formato: "Lun 30 dic"
+  const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+  const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+
+  return `${dias[fechaCita.getDay()]} ${fechaCita.getDate()} ${meses[fechaCita.getMonth()]}`
+})
+
+/**
+ * Determina si la fecha es hoy para resaltar visualmente
+ */
+const esHoy = computed(() => {
+  if (!props.fecha) return false
+  const hoy = new Date().toISOString().split('T')[0]
+  return props.fecha === hoy
+})
 
 const emit = defineEmits<{
   (e: 'click', id: string): void
@@ -38,9 +81,15 @@ const modalidad = computed(() => modalidadConfig[props.modalidad] || modalidadCo
     class="relative flex items-center gap-4 p-4 bg-white rounded-lg border cursor-pointer transition-all duration-200 hover:shadow-md group"
     :class="isNext ? 'border-gray-200 shadow-sm' : 'border-gray-200'"
   >
-    <!-- Hora -->
-    <div class="flex-shrink-0 w-16 text-center">
-      <p class="text-2xl font-bold text-gray-900">{{ hora }}</p>
+    <!-- Fecha y Hora -->
+    <div class="flex-shrink-0 w-20 text-center">
+      <p
+        class="text-xs font-semibold uppercase tracking-wide mb-0.5"
+        :class="esHoy ? 'text-violet-600' : 'text-gray-500'"
+      >
+        {{ fechaFormateada }}
+      </p>
+      <p class="text-xl font-bold text-gray-900">{{ hora }}</p>
     </div>
 
     <!-- Separador vertical -->

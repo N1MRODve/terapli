@@ -350,6 +350,44 @@ export function useAgendaEnhanced() {
   }
 
   /**
+   * Mapea los datos de la vista a la interfaz Cita
+   * La vista usa nombres como cita_id, paciente_id, etc.
+   */
+  function mapViewDataToCita(row: any): Cita {
+    return {
+      id: row.cita_id,
+      fecha_cita: row.fecha_cita,
+      hora_inicio: row.hora_inicio,
+      hora_fin: row.hora_fin,
+      duracion_minutos: row.duracion_minutos || 60, // Default 60 min
+      estado: row.estado,
+      modalidad: row.modalidad,
+      observaciones: row.observaciones,
+      notas_terapeuta: row.notas_terapeuta,
+      enlace_videollamada: row.enlace_videollamada,
+      paciente_id: row.paciente_id,
+      terapeuta_id: row.terapeuta_id,
+      bono_id: row.bono_id,
+      sesion_descontada: row.sesion_descontada || false,
+      consumo_registrado: row.consumo_registrado || false,
+      ubicacion: row.ubicacion,
+      descontar_de_bono: row.descontar_de_bono,
+      paciente: {
+        id: row.paciente_id,
+        nombre_completo: row.paciente_nombre || 'Sin nombre',
+        telefono: row.paciente_telefono,
+        email: row.paciente_email
+      },
+      bono: row.bono_id ? {
+        id: row.bono_id,
+        sesiones_restantes: row.bono_sesiones_restantes || 0,
+        sesiones_totales: row.bono_sesiones_totales || 0,
+        estado: row.bono_estado || 'activo'
+      } : undefined
+    }
+  }
+
+  /**
    * Carga citas en un rango de fechas
    */
   async function loadAppointmentsInRange(from: string, to: string): Promise<void> {
@@ -369,7 +407,8 @@ export function useAgendaEnhanced() {
         throw fetchError
       }
 
-      citas.value = data as Cita[] || []
+      // Mapear datos de la vista a la interfaz Cita
+      citas.value = (data || []).map(mapViewDataToCita)
 
       agendaLogger.loadRange(from, to, citas.value.length)
 
@@ -379,6 +418,66 @@ export function useAgendaEnhanced() {
       const errorMsg = err.message || 'Error al cargar citas'
       error.value = errorMsg
       agendaLogger.error('api_error', errorMsg, err)
+
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Elimina una cita permanentemente
+   */
+  async function deleteAppointment(citaId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      loading.value = true
+      error.value = null
+
+      agendaLogger.info('delete', `Eliminando cita ${citaId}`)
+
+      // 1. Verificar que la cita existe
+      const citaIndex = citas.value.findIndex(c => c.id === citaId)
+      if (citaIndex === -1) {
+        throw new Error('Cita no encontrada')
+      }
+
+      const cita = citas.value[citaIndex]
+
+      // 2. Si la cita tiene bono y ya descontó sesión, reintegrar
+      if (cita.bono_id && cita.sesion_descontada) {
+        const { error: reintegrarError } = await supabase.rpc('reintegrar_sesion_bono', {
+          p_cita_id: citaId
+        })
+
+        if (reintegrarError) {
+          agendaLogger.warn('delete', `No se pudo reintegrar sesión del bono: ${reintegrarError.message}`)
+          // Continuamos con la eliminación aunque falle el reintegro
+        }
+      }
+
+      // 3. Eliminar la cita de la base de datos
+      const { error: deleteError } = await supabase
+        .from('citas')
+        .delete()
+        .eq('id', citaId)
+
+      if (deleteError) {
+        throw deleteError
+      }
+
+      // 4. Eliminar de la lista local
+      citas.value.splice(citaIndex, 1)
+
+      agendaLogger.info('delete', `Cita ${citaId} eliminada correctamente`)
+
+      lastUpdate.value = new Date()
+
+      return { success: true }
+
+    } catch (err: any) {
+      const errorMsg = err.message || 'Error al eliminar la cita'
+      error.value = errorMsg
+      agendaLogger.error('api_error', errorMsg, err)
+      return { success: false, error: errorMsg }
 
     } finally {
       loading.value = false
@@ -419,7 +518,8 @@ export function useAgendaEnhanced() {
         throw fetchError
       }
 
-      citas.value = data as Cita[] || []
+      // Mapear datos de la vista a la interfaz Cita
+      citas.value = (data || []).map(mapViewDataToCita)
 
       agendaLogger.info('load_range', `Citas del terapeuta cargadas: ${citas.value.length}`)
 
@@ -453,7 +553,8 @@ export function useAgendaEnhanced() {
         throw fetchError
       }
 
-      citas.value = data as Cita[] || []
+      // Mapear datos de la vista a la interfaz Cita
+      citas.value = (data || []).map(mapViewDataToCita)
 
       agendaLogger.info('load_range', `Todas las citas cargadas (coordinadora): ${citas.value.length}`)
 
@@ -524,6 +625,7 @@ export function useAgendaEnhanced() {
     validateAppointment,
     createAppointment,
     updateAppointment,
+    deleteAppointment,
     moveAppointment,
     changeAppointmentStatus,
     loadAppointmentsInRange,

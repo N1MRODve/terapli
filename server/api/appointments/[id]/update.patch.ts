@@ -214,6 +214,49 @@ export default defineEventHandler(async (event) => {
     if (observaciones !== undefined) updates.observaciones = observaciones
     if (notas_terapeuta !== undefined) updates.notas_terapeuta = notas_terapeuta
 
+    // 9.1 DESCUENTO AUTOMATICO DE BONO: Si la cita pasa a 'confirmada' o 'realizada'
+    // y tiene bono asignado, descontar sesion automaticamente
+    const estadoAnterior = existingCita.estado
+    const estadoNuevo = estado || estadoAnterior
+    const debeDescontarSesion = (
+      existingCita.bono_id &&
+      !existingCita.sesion_descontada &&
+      (estadoAnterior === 'pendiente') &&
+      (estadoNuevo === 'confirmada' || estadoNuevo === 'realizada')
+    )
+
+    if (debeDescontarSesion) {
+      // Obtener bono actual
+      const { data: bonoActual, error: bonoError } = await supabaseClient
+        .from('bonos')
+        .select('id, sesiones_restantes, estado')
+        .eq('id', existingCita.bono_id)
+        .single()
+
+      if (!bonoError && bonoActual && bonoActual.sesiones_restantes > 0) {
+        const nuevasSesionesRestantes = bonoActual.sesiones_restantes - 1
+        const nuevoEstadoBono = nuevasSesionesRestantes <= 0 ? 'completado' : 'activo'
+
+        // Actualizar bono
+        const { error: updateBonoError } = await supabaseClient
+          .from('bonos')
+          .update({
+            sesiones_restantes: nuevasSesionesRestantes,
+            estado: nuevoEstadoBono,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingCita.bono_id)
+
+        if (!updateBonoError) {
+          // Marcar sesion como descontada en la cita
+          updates.sesion_descontada = true
+          console.info(`[UPDATE] Sesion descontada del bono ${existingCita.bono_id}: ${bonoActual.sesiones_restantes} -> ${nuevasSesionesRestantes}`)
+        } else {
+          console.error('[UPDATE] Error al descontar sesion del bono:', updateBonoError)
+        }
+      }
+    }
+
     // 10. Actualizar en la base de datos
     const { data: updatedCita, error: updateError } = await supabaseClient
       .from('citas')

@@ -31,6 +31,10 @@
       "dest": "/terapeuta/recursos"
     },
     {
+      "src": "/terapeuta/pagos",
+      "dest": "/terapeuta/pagos"
+    },
+    {
       "src": "/terapeuta/pacientes",
       "dest": "/terapeuta/pacientes"
     },
@@ -49,6 +53,10 @@
     {
       "src": "/terapeuta/configuracion",
       "dest": "/terapeuta/configuracion"
+    },
+    {
+      "src": "/terapeuta/bonos",
+      "dest": "/terapeuta/bonos"
     },
     {
       "src": "/terapeuta/agenda",
@@ -209,10 +217,6 @@
     {
       "src": "/api/admin/crear-terapeuta",
       "dest": "/api/admin/crear-terapeuta"
-    },
-    {
-      "src": "/agenda",
-      "dest": "/agenda"
     },
     {
       "src": "/admin/terapeutas",

@@ -7,10 +7,10 @@
       <!-- Logo / Brand -->
       <div class="p-6 border-b border-gray-100">
         <h1 class="text-2xl font-serif font-bold text-cafe">
-          Psicóloga Karem
+          {{ nombreTerapeuta }}
         </h1>
         <p class="text-sm text-purple-600 mt-1">
-          Espacio de gestión
+          Panel de gestión
         </p>
       </div>
 
@@ -39,7 +39,7 @@
           </li>
           <li>
             <NuxtLink
-              to="/agenda"
+              to="/terapeuta/agenda"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-purple-600 text-white hover:bg-purple-600"
             >
@@ -75,6 +75,26 @@
             >
               <BookOpenIcon class="w-5 h-5" />
               <span class="font-medium">Recursos</span>
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink
+              to="/terapeuta/bonos"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
+            >
+              <TicketIcon class="w-5 h-5" />
+              <span class="font-medium">Bonos</span>
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink
+              to="/terapeuta/pagos"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
+            >
+              <BanknotesIcon class="w-5 h-5" />
+              <span class="font-medium">Pagos</span>
             </NuxtLink>
           </li>
         </ul>
@@ -118,10 +138,10 @@
       <div class="p-6 border-b border-gray-100 flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-serif font-bold text-cafe">
-            Karem Peña
+            {{ nombreTerapeuta }}
           </h1>
           <p class="text-sm text-purple-600 mt-1">
-            Espacio Clínico
+            Panel de gestión
           </p>
         </div>
         <button
@@ -159,7 +179,7 @@
           </li>
           <li>
             <NuxtLink
-              to="/agenda"
+              to="/terapeuta/agenda"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-purple-600 text-white hover:bg-purple-600"
               @click="mobileMenuOpen = false"
@@ -201,6 +221,28 @@
               <span class="font-medium">Recursos</span>
             </NuxtLink>
           </li>
+          <li>
+            <NuxtLink
+              to="/terapeuta/bonos"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
+              @click="mobileMenuOpen = false"
+            >
+              <TicketIcon class="w-5 h-5" />
+              <span class="font-medium">Bonos</span>
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink
+              to="/terapeuta/pagos"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
+              active-class="bg-purple-600 text-white hover:bg-purple-600"
+              @click="mobileMenuOpen = false"
+            >
+              <BanknotesIcon class="w-5 h-5" />
+              <span class="font-medium">Pagos</span>
+            </NuxtLink>
+          </li>
         </ul>
       </nav>
 
@@ -215,7 +257,7 @@
           <Cog6ToothIcon class="w-5 h-5" />
           <span class="font-medium">Configuración</span>
         </NuxtLink>
-        
+
         <!-- Botón de Cerrar Sesión -->
         <button
           @click="handleLogout"
@@ -245,11 +287,11 @@
             <div class="hidden lg:flex items-center gap-3">
               <div class="text-right">
                 <h2 class="font-serif font-semibold text-cafe">
-                  Karem Peña
+                  {{ nombreTerapeuta }}
                 </h2>
                 <p class="text-sm text-purple-600 flex items-center gap-1.5">
                   <span class="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                  Online hoy
+                  Online
                 </p>
               </div>
             </div>
@@ -277,7 +319,7 @@
               <div
                 class="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold text-sm"
               >
-                KP
+                {{ inicialesTerapeuta }}
               </div>
             </div>
           </div>
@@ -300,6 +342,8 @@ import {
   ChatBubbleLeftRightIcon,
   EnvelopeIcon,
   BookOpenIcon,
+  TicketIcon,
+  BanknotesIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   XMarkIcon,
@@ -307,7 +351,24 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const mobileMenuOpen = ref(false)
-const { signOut } = useSupabase()
+const { signOut, userProfile } = useSupabase()
+
+// Nombre del terapeuta (dinámico según usuario logueado)
+const nombreTerapeuta = computed(() => {
+  return userProfile.value?.nombre || 'Terapeuta'
+})
+
+// Iniciales para el avatar
+const inicialesTerapeuta = computed(() => {
+  const nombre = nombreTerapeuta.value
+  if (!nombre || nombre === 'Terapeuta') return 'T'
+
+  const palabras = nombre.split(' ').filter(p => p.length > 0)
+  if (palabras.length >= 2) {
+    return (palabras[0][0] + palabras[1][0]).toUpperCase()
+  }
+  return nombre.substring(0, 2).toUpperCase()
+})
 
 // Close mobile menu on route change
 const route = useRoute()

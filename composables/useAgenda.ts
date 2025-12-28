@@ -20,6 +20,7 @@ export interface Cita {
   fecha_cita: string
   hora_inicio: string
   hora_fin: string
+  duracion_minutos?: number
   estado: 'pendiente' | 'confirmada' | 'completada' | 'cancelada' | 'realizada'
   modalidad: string
   observaciones?: string

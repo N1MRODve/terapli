@@ -6,9 +6,15 @@
  * Nueva vista de agenda basada en el diseño de referencia.
  * Soporta vistas: Día, 5 Días, Semana, Mes
  * Incluye: navegación, búsqueda, filtros de estado, grid horario
+ *
+ * MEJORAS DE VISUALIZACIÓN TEMPORAL:
+ * - Línea de tiempo actual con chip de hora
+ * - Sombreado de horas pasadas
+ * - Botón "Ahora" con scroll suave
+ * - Barra de progreso del día laboral
  */
 
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useAgendaEnhanced } from '~/composables/useAgendaEnhanced'
 
 // Props
@@ -34,6 +40,7 @@ const {
   loadTerapeutaAppointments,
   changeAppointmentStatus,
   moveAppointment,
+  deleteAppointment,
   refreshAppointments
 } = useAgendaEnhanced()
 
@@ -76,6 +83,11 @@ const reprogramarNuevaFecha = ref('')
 const reprogramarNuevaHoraInicio = ref('')
 const reprogramarNuevaHoraFin = ref('')
 
+// Modal eliminar
+const mostrarModalEliminar = ref(false)
+const citaParaEliminar = ref<any>(null)
+const citaEliminandoId = ref<string | null>(null)
+
 // Toast notifications
 const toastMessage = ref('')
 const toastType = ref<'success' | 'error' | 'info'>('info')
@@ -90,12 +102,25 @@ const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info')
   }, 4000)
 }
 
+// ============================================================================
+// CONFIGURACIÓN DE TIEMPO Y AGENDA
+// ============================================================================
+
+// Altura de cada slot de 30 minutos (h-11 = 2.75rem = 44px)
+const SLOT_HEIGHT_PX = 44
+// Hora de inicio de la agenda
+const HORA_INICIO_AGENDA = 9
+// Hora de fin de la agenda
+const HORA_FIN_AGENDA = 21
+// Minutos por slot
+const MINUTOS_POR_SLOT = 30
+
 // Horas del día (cada 30 min desde 09:00 hasta 21:00)
 const horasDelDia = computed(() => {
   const horas: string[] = []
-  for (let h = 9; h <= 21; h++) {
+  for (let h = HORA_INICIO_AGENDA; h <= HORA_FIN_AGENDA; h++) {
     horas.push(`${String(h).padStart(2, '0')}:00`)
-    if (h < 21) {
+    if (h < HORA_FIN_AGENDA) {
       horas.push(`${String(h).padStart(2, '0')}:30`)
     }
   }
@@ -106,53 +131,61 @@ const horasDelDia = computed(() => {
 const diasVisibles = computed(() => {
   const inicio = new Date(fechaSeleccionada.value)
   const dias: Array<{ fecha: string; diaSemana: string; numeroDia: number; mes: string; esHoy: boolean }> = []
-  const hoy = new Date().toISOString().split('T')[0]
+  const hoy = new Date()
+  const hoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
 
   if (vistaActiva.value === 'dia') {
-    const fecha = inicio.toISOString().split('T')[0]
+    const fechaStr = `${inicio.getFullYear()}-${String(inicio.getMonth() + 1).padStart(2, '0')}-${String(inicio.getDate()).padStart(2, '0')}`
     dias.push({
-      fecha,
+      fecha: fechaStr,
       diaSemana: inicio.toLocaleDateString('es-ES', { weekday: 'long' }).toUpperCase(),
       numeroDia: inicio.getDate(),
       mes: inicio.toLocaleDateString('es-ES', { month: 'short' }),
-      esHoy: fecha === hoy
+      esHoy: fechaStr === hoyStr
     })
   } else if (vistaActiva.value === '5dias') {
-    // Empezar desde el día actual
     for (let i = 0; i < 5; i++) {
       const fecha = new Date(inicio)
       fecha.setDate(inicio.getDate() + i)
-      const fechaStr = fecha.toISOString().split('T')[0]
+      const fechaStr = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`
       dias.push({
         fecha: fechaStr,
         diaSemana: fecha.toLocaleDateString('es-ES', { weekday: 'long' }).toUpperCase(),
         numeroDia: fecha.getDate(),
         mes: fecha.toLocaleDateString('es-ES', { month: 'short' }),
-        esHoy: fechaStr === hoy
+        esHoy: fechaStr === hoyStr
       })
     }
   } else if (vistaActiva.value === 'semana') {
-    // Empezar desde el sábado de la semana
     const diaSemana = inicio.getDay()
-    const diff = diaSemana === 0 ? -1 : 6 - diaSemana // Sábado como inicio
     const sabado = new Date(inicio)
     sabado.setDate(inicio.getDate() - (diaSemana === 6 ? 0 : diaSemana + 1))
 
     for (let i = 0; i < 7; i++) {
       const fecha = new Date(sabado)
       fecha.setDate(sabado.getDate() + i)
-      const fechaStr = fecha.toISOString().split('T')[0]
+      const fechaStr = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`
       dias.push({
         fecha: fechaStr,
         diaSemana: fecha.toLocaleDateString('es-ES', { weekday: 'long' }).toUpperCase(),
         numeroDia: fecha.getDate(),
         mes: fecha.toLocaleDateString('es-ES', { month: 'short' }),
-        esHoy: fechaStr === hoy
+        esHoy: fechaStr === hoyStr
       })
     }
   }
 
   return dias
+})
+
+// Verificar si el día actual está visible en la vista
+const diaActualVisible = computed(() => {
+  return diasVisibles.value.some(d => d.esHoy)
+})
+
+// Obtener el índice de la columna del día actual (para posicionar la línea)
+const indiceDiaActual = computed(() => {
+  return diasVisibles.value.findIndex(d => d.esHoy)
 })
 
 // Título del periodo
@@ -161,7 +194,6 @@ const tituloPeriodo = computed(() => {
   const mes = fecha.toLocaleDateString('es-ES', { month: 'long' })
   const año = fecha.getFullYear()
 
-  // Calcular número de semana
   const inicioAño = new Date(fecha.getFullYear(), 0, 1)
   const dias = Math.floor((fecha.getTime() - inicioAño.getTime()) / (24 * 60 * 60 * 1000))
   const semana = Math.ceil((dias + inicioAño.getDay() + 1) / 7)
@@ -173,24 +205,20 @@ const tituloPeriodo = computed(() => {
 const citasFiltradas = computed(() => {
   let resultado = citas.value
 
-  // Filtrar por terapeuta (solo coordinadora)
   if (props.modoCoordinadora && terapeutaSeleccionado.value) {
     resultado = resultado.filter(c => c.terapeuta_id === terapeutaSeleccionado.value)
   }
 
-  // Filtrar por estado
   if (estadosFiltro.value.length > 0 && estadosFiltro.value.length < 4) {
     resultado = resultado.filter(c => estadosFiltro.value.includes(c.estado))
   }
 
-  // Filtrar por búsqueda
   if (busqueda.value.trim()) {
     const termino = busqueda.value.toLowerCase()
     resultado = resultado.filter(c => {
-      const nombre = (c.paciente_nombre || c.paciente?.nombre_completo || '').toLowerCase()
-      const terapeuta = (c.terapeuta_nombre || c.terapeuta?.nombre_completo || '').toLowerCase()
+      const nombre = (c.paciente?.nombre_completo || '').toLowerCase()
       const notas = (c.observaciones || '').toLowerCase()
-      return nombre.includes(termino) || terapeuta.includes(termino) || notas.includes(termino)
+      return nombre.includes(termino) || notas.includes(termino)
     })
   }
 
@@ -214,25 +242,178 @@ const citasPorDiaHora = (fecha: string, hora: string) => {
   })
 }
 
-// Calcular posición de la hora actual
+/**
+ * Calcula la altura visual de una cita basada en su duración
+ * @param cita - La cita con duracion_minutos
+ * @returns altura en píxeles
+ */
+const calcularAlturaCita = (cita: any): number => {
+  // Por defecto, usar duración de 60 minutos si no está definida
+  const duracion = cita.duracion_minutos || 60
+  // Cada 30 minutos = SLOT_HEIGHT_PX (44px)
+  // Entonces 60 min = 88px, 90 min = 132px, etc.
+  const altura = (duracion / MINUTOS_POR_SLOT) * SLOT_HEIGHT_PX
+  // Mínimo 40px para que se vea contenido
+  return Math.max(altura - 4, 40) // -4px para margin/padding
+}
+
+/**
+ * Calcula cuántos slots ocupa una cita (para z-index y overflow)
+ */
+const slotsOcupados = (cita: any): number => {
+  const duracion = cita.duracion_minutos || 60
+  return Math.ceil(duracion / MINUTOS_POR_SLOT)
+}
+
+// ============================================================================
+// INDICADOR DE HORA ACTUAL
+// ============================================================================
+
 const horaActual = ref(new Date())
+
+// Referencia al contenedor del grid de horas
+const gridHorasRef = ref<HTMLElement | null>(null)
+const scrollContainerRef = ref<HTMLElement | null>(null)
+
+// Referencia al indicador de hora actual para scroll
+const nowIndicatorRef = ref<HTMLElement | null>(null)
+
+/**
+ * Calcula la posición vertical (en píxeles) del indicador de hora actual
+ * basándose en la hora actual y la configuración del grid.
+ *
+ * Fórmula: posición = (minutosDesdeInicio / minutosTotal) * alturaTotal
+ * donde minutosDesdeInicio = (hora - horaInicio) * 60 + minutos
+ */
 const posicionHoraActual = computed(() => {
   const ahora = horaActual.value
   const horas = ahora.getHours()
   const minutos = ahora.getMinutes()
 
   // Solo mostrar si está dentro del rango visible (9:00 - 21:00)
-  if (horas < 9 || horas >= 21) return null
+  if (horas < HORA_INICIO_AGENDA || horas >= HORA_FIN_AGENDA) return null
 
-  // Calcular posición relativa (cada fila de 30min = 44px aprox)
-  const minutosDesde9 = (horas - 9) * 60 + minutos
-  const posicion = (minutosDesde9 / 30) * 44 // 44px por slot de 30min
+  // Calcular el tiempo total en minutos desde el inicio de la agenda
+  const minutosDesdeInicio = (horas - HORA_INICIO_AGENDA) * 60 + minutos
+
+  // Calcular la posición proporcional
+  // Cada slot de 30 minutos tiene SLOT_HEIGHT_PX de altura
+  const posicion = (minutosDesdeInicio / MINUTOS_POR_SLOT) * SLOT_HEIGHT_PX
 
   return posicion
 })
 
-// Actualizar hora actual cada minuto
-let intervaloHora: ReturnType<typeof setInterval> | null = null
+/**
+ * Formatea la hora actual para mostrar en el chip
+ */
+const horaActualFormateada = computed(() => {
+  return horaActual.value.toLocaleTimeString('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  })
+})
+
+/**
+ * Determina si un slot de hora ya ha pasado (para sombreado)
+ */
+const esHoraPasada = (hora: string, fecha: string): boolean => {
+  const hoy = new Date()
+  const hoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
+
+  // Si no es hoy, no aplicar sombreado
+  if (fecha !== hoyStr) return false
+
+  // Parsear la hora del slot
+  const [horaSlot, minutosSlot] = hora.split(':').map(Number)
+  const ahora = horaActual.value
+
+  // Comparar: el slot ha pasado si su hora de FIN (slot + 30min) es menor o igual a la hora actual
+  const minutosActuales = ahora.getHours() * 60 + ahora.getMinutes()
+  const minutosSlotFin = horaSlot * 60 + minutosSlot + MINUTOS_POR_SLOT
+
+  return minutosSlotFin <= minutosActuales
+}
+
+/**
+ * Determina si un slot es el slot actual (para destacarlo)
+ */
+const esSlotActual = (hora: string, fecha: string): boolean => {
+  const hoy = new Date()
+  const hoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
+
+  if (fecha !== hoyStr) return false
+
+  const [horaSlot, minutosSlot] = hora.split(':').map(Number)
+  const ahora = horaActual.value
+  const minutosActuales = ahora.getHours() * 60 + ahora.getMinutes()
+  const minutosSlotInicio = horaSlot * 60 + minutosSlot
+  const minutosSlotFin = minutosSlotInicio + MINUTOS_POR_SLOT
+
+  return minutosActuales >= minutosSlotInicio && minutosActuales < minutosSlotFin
+}
+
+// ============================================================================
+// BARRA DE PROGRESO DEL DÍA LABORAL
+// ============================================================================
+
+/**
+ * Calcula el porcentaje del día laboral transcurrido
+ * Rango: 09:00 - 21:00 (12 horas = 720 minutos)
+ */
+const progresoDiaLaboral = computed(() => {
+  const ahora = horaActual.value
+  const horas = ahora.getHours()
+  const minutos = ahora.getMinutes()
+
+  // Si es antes del inicio, 0%
+  if (horas < HORA_INICIO_AGENDA) return 0
+
+  // Si es después del fin, 100%
+  if (horas >= HORA_FIN_AGENDA) return 100
+
+  // Calcular progreso
+  const minutosDesdeInicio = (horas - HORA_INICIO_AGENDA) * 60 + minutos
+  const minutosTotales = (HORA_FIN_AGENDA - HORA_INICIO_AGENDA) * 60
+
+  return Math.round((minutosDesdeInicio / minutosTotales) * 100)
+})
+
+// ============================================================================
+// SCROLL Y NAVEGACIÓN
+// ============================================================================
+
+/**
+ * Navega al día actual y hace scroll suave hacia la hora actual
+ */
+const irAhora = async () => {
+  // Primero, asegurarse de que estamos en el día actual
+  fechaSeleccionada.value = new Date()
+
+  // Esperar a que el DOM se actualice
+  await nextTick()
+
+  // Hacer scroll hacia el indicador de hora actual
+  scrollHaciaHoraActual()
+}
+
+/**
+ * Hace scroll suave hacia el indicador de hora actual
+ */
+const scrollHaciaHoraActual = () => {
+  if (!scrollContainerRef.value || posicionHoraActual.value === null) return
+
+  const container = scrollContainerRef.value
+  const containerHeight = container.clientHeight
+
+  // Calcular la posición de scroll para centrar el indicador
+  const scrollTarget = posicionHoraActual.value - (containerHeight / 2) + SLOT_HEIGHT_PX
+
+  container.scrollTo({
+    top: Math.max(0, scrollTarget),
+    behavior: 'smooth'
+  })
+}
 
 // Navegación
 const navegarFecha = (direccion: number) => {
@@ -333,9 +514,6 @@ const horasFinDisponibles = computed(() => {
 // ACCIONES DE CITAS
 // ============================================================================
 
-/**
- * Confirmar cita rápidamente
- */
 const handleConfirmarCita = async (citaId: string, event: Event) => {
   event.stopPropagation()
   if (citaConfirmandoId.value) return
@@ -356,9 +534,6 @@ const handleConfirmarCita = async (citaId: string, event: Event) => {
   }
 }
 
-/**
- * Abrir modal de cancelación
- */
 const handleAbrirModalCancelar = (citaId: string, event: Event) => {
   event.stopPropagation()
   const cita = citas.value.find(c => c.id === citaId)
@@ -372,9 +547,6 @@ const handleAbrirModalCancelar = (citaId: string, event: Event) => {
   mostrarModalCancelar.value = true
 }
 
-/**
- * Ejecutar cancelación de cita
- */
 const ejecutarCancelacion = async () => {
   if (!citaParaCancelar.value || citaCancelandoId.value) return
 
@@ -395,18 +567,12 @@ const ejecutarCancelacion = async () => {
   }
 }
 
-/**
- * Cerrar modal de cancelar
- */
 const cerrarModalCancelar = () => {
   mostrarModalCancelar.value = false
   citaParaCancelar.value = null
   motivoCancelacion.value = ''
 }
 
-/**
- * Abrir modal de reprogramación
- */
 const handleAbrirModalReprogramar = (citaId: string, event: Event) => {
   event.stopPropagation()
   const cita = citas.value.find(c => c.id === citaId)
@@ -422,9 +588,6 @@ const handleAbrirModalReprogramar = (citaId: string, event: Event) => {
   mostrarModalReprogramar.value = true
 }
 
-/**
- * Ejecutar reprogramación de cita
- */
 const ejecutarReprogramacion = async () => {
   if (!citaParaReprogramar.value || citaReprogramandoId.value) return
 
@@ -460,9 +623,6 @@ const ejecutarReprogramacion = async () => {
   }
 }
 
-/**
- * Cerrar modal de reprogramar
- */
 const cerrarModalReprogramar = () => {
   mostrarModalReprogramar.value = false
   citaParaReprogramar.value = null
@@ -471,7 +631,61 @@ const cerrarModalReprogramar = () => {
   reprogramarNuevaHoraFin.value = ''
 }
 
-// Lifecycle
+// ============================================================================
+// ELIMINAR CITA
+// ============================================================================
+
+const handleAbrirModalEliminar = (citaId: string, event: Event) => {
+  event.stopPropagation()
+  const cita = citas.value.find(c => c.id === citaId)
+  if (!cita) {
+    showToast('Cita no encontrada', 'error')
+    return
+  }
+
+  citaParaEliminar.value = cita
+  mostrarModalEliminar.value = true
+}
+
+const ejecutarEliminacion = async () => {
+  if (!citaParaEliminar.value || citaEliminandoId.value) return
+
+  citaEliminandoId.value = citaParaEliminar.value.id
+
+  try {
+    const result = await deleteAppointment(citaParaEliminar.value.id)
+    if (result.success) {
+      showToast('Cita eliminada correctamente', 'success')
+      cerrarModalEliminar()
+    } else {
+      showToast(result.error || 'Error al eliminar la cita', 'error')
+    }
+  } catch (err: any) {
+    showToast(err.message || 'Error al eliminar la cita', 'error')
+  } finally {
+    citaEliminandoId.value = null
+  }
+}
+
+const cerrarModalEliminar = () => {
+  mostrarModalEliminar.value = false
+  citaParaEliminar.value = null
+}
+
+// ============================================================================
+// LIFECYCLE Y TIMERS
+// ============================================================================
+
+let intervaloHora: ReturnType<typeof setInterval> | null = null
+
+// Manejar visibilidad de la pestaña para evitar que el indicador se desactualice
+const handleVisibilityChange = () => {
+  if (!document.hidden) {
+    // La pestaña volvió a estar activa, actualizar la hora
+    horaActual.value = new Date()
+  }
+}
+
 onMounted(async () => {
   if (props.modoCoordinadora) {
     await loadAllAppointments()
@@ -484,10 +698,33 @@ onMounted(async () => {
   intervaloHora = setInterval(() => {
     horaActual.value = new Date()
   }, 60000)
+
+  // Escuchar cambios de visibilidad de la pestaña
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+
+  // Scroll inicial hacia la hora actual si es hoy
+  await nextTick()
+  if (diaActualVisible.value && posicionHoraActual.value !== null) {
+    // Pequeño delay para asegurar que el DOM esté listo
+    setTimeout(() => {
+      scrollHaciaHoraActual()
+    }, 300)
+  }
 })
 
 onUnmounted(() => {
   if (intervaloHora) clearInterval(intervaloHora)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
+})
+
+// Watch para scroll automático cuando se cambia a una vista que incluye el día actual
+watch([vistaActiva, fechaSeleccionada], async () => {
+  await nextTick()
+  if (diaActualVisible.value && posicionHoraActual.value !== null) {
+    setTimeout(() => {
+      scrollHaciaHoraActual()
+    }, 100)
+  }
 })
 </script>
 
@@ -503,12 +740,14 @@ onUnmounted(() => {
           <button
             @click="navegarFecha(-1)"
             class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-all"
+            aria-label="Semana anterior"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
+          <!-- Botón Hoy -->
           <button
             @click="irHoy"
             class="px-4 py-2 rounded-full border-2 border-violet-500 text-violet-600 font-semibold text-sm hover:bg-violet-50 transition-all"
@@ -516,9 +755,23 @@ onUnmounted(() => {
             Hoy
           </button>
 
+          <!-- Botón Ahora (solo si hay día actual visible) -->
+          <button
+            v-if="diaActualVisible && posicionHoraActual !== null"
+            @click="irAhora"
+            class="px-3 py-2 rounded-full bg-red-500 text-white font-semibold text-sm hover:bg-red-600 transition-all flex items-center gap-1.5 shadow-sm"
+            title="Ir a la hora actual"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Ahora
+          </button>
+
           <button
             @click="navegarFecha(1)"
             class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-all"
+            aria-label="Semana siguiente"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -526,10 +779,23 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <!-- Título del periodo -->
-        <h1 class="text-xl font-bold text-gray-800 tracking-tight">
-          {{ tituloPeriodo }}
-        </h1>
+        <!-- Título del periodo con barra de progreso -->
+        <div class="flex flex-col items-center">
+          <h1 class="text-xl font-bold text-gray-800 tracking-tight">
+            {{ tituloPeriodo }}
+          </h1>
+
+          <!-- Barra de progreso del día (solo si es hoy) -->
+          <div v-if="diaActualVisible" class="flex items-center gap-2 mt-1">
+            <div class="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full transition-all duration-1000"
+                :style="{ width: `${progresoDiaLaboral}%` }"
+              ></div>
+            </div>
+            <span class="text-xs text-gray-500 font-medium">{{ progresoDiaLaboral }}%</span>
+          </div>
+        </div>
 
         <!-- Selector de vista + Acciones -->
         <div class="flex items-center gap-4">
@@ -552,13 +818,6 @@ onUnmounted(() => {
               {{ vista.label }}
             </button>
           </div>
-
-          <!-- Botón modo oscuro (placeholder) -->
-          <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          </button>
 
           <!-- Botón Nueva Cita -->
           <button
@@ -612,10 +871,8 @@ onUnmounted(() => {
     <!-- CHIPS DE ESTADO + LEYENDA -->
     <!-- ================================================================= -->
     <div class="bg-white border-b border-gray-100 px-6 py-4">
-      <!-- Label ESTADO -->
       <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Estado</p>
 
-      <!-- Chips -->
       <div class="flex flex-wrap items-center gap-3 mb-4">
         <button
           @click="toggleEstado('pendiente')"
@@ -666,7 +923,6 @@ onUnmounted(() => {
         </button>
       </div>
 
-      <!-- Leyenda de colores -->
       <div class="flex items-center gap-6 text-xs font-medium text-gray-500">
         <div class="flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-amber-400"></span>
@@ -690,7 +946,11 @@ onUnmounted(() => {
     <!-- ================================================================= -->
     <!-- GRID CALENDARIO -->
     <!-- ================================================================= -->
-    <div class="flex-1 overflow-auto" style="height: calc(100vh - 320px);">
+    <div
+      ref="scrollContainerRef"
+      class="flex-1 overflow-auto scroll-smooth"
+      style="height: calc(100vh - 320px);"
+    >
       <!-- Loading -->
       <div v-if="loading" class="flex items-center justify-center h-full">
         <div class="flex items-center gap-3 text-gray-500">
@@ -723,36 +983,55 @@ onUnmounted(() => {
             >
               {{ dia.numeroDia }}
             </p>
-            <!-- Indicador día actual -->
             <div v-if="dia.esHoy" class="w-6 h-0.5 bg-violet-500 mx-auto mt-1 rounded-full"></div>
           </div>
         </div>
 
         <!-- Grid de horas -->
-        <div class="relative">
-          <!-- Línea de hora actual -->
+        <div ref="gridHorasRef" class="relative">
+          <!-- ========================================================= -->
+          <!-- LÍNEA DE HORA ACTUAL (Now Indicator) -->
+          <!-- ========================================================= -->
           <div
-            v-if="posicionHoraActual !== null"
-            class="absolute left-0 right-0 z-10 flex items-center pointer-events-none"
-            :style="{ top: `${posicionHoraActual}px` }"
+            v-if="posicionHoraActual !== null && diaActualVisible"
+            ref="nowIndicatorRef"
+            class="absolute z-30 flex items-center pointer-events-none"
+            :style="{
+              top: `${posicionHoraActual}px`,
+              left: '70px',
+              right: '0'
+            }"
           >
-            <div class="flex items-center">
-              <span class="px-1.5 py-0.5 bg-red-500 text-white text-xs font-bold rounded">
-                {{ horaActual.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }}
+            <!-- Círculo indicador al inicio -->
+            <div class="absolute -left-1.5 w-3 h-3 bg-red-500 rounded-full shadow-sm ring-2 ring-red-200"></div>
+
+            <!-- Chip con hora actual -->
+            <div class="absolute -left-16 -top-2.5 flex items-center">
+              <span class="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-md shadow-sm whitespace-nowrap">
+                {{ horaActualFormateada }}
               </span>
             </div>
-            <div class="flex-1 h-0.5 bg-red-500"></div>
+
+            <!-- Línea horizontal -->
+            <div class="flex-1 h-0.5 bg-red-500 shadow-sm"></div>
           </div>
 
           <!-- Filas de horas -->
           <div
-            v-for="hora in horasDelDia"
+            v-for="(hora, horaIndex) in horasDelDia"
             :key="hora"
             class="grid border-b border-gray-100"
             :style="{ gridTemplateColumns: `70px repeat(${diasVisibles.length}, 1fr)` }"
           >
             <!-- Columna hora -->
-            <div class="px-3 py-2 text-xs font-medium text-gray-400 text-right border-r border-gray-100 h-11">
+            <div
+              class="px-3 py-2 text-xs font-medium text-right border-r border-gray-100 h-11 flex items-start justify-end"
+              :class="[
+                esSlotActual(hora, diasVisibles.find(d => d.esHoy)?.fecha || '')
+                  ? 'text-red-500 font-semibold'
+                  : 'text-gray-400'
+              ]"
+            >
               {{ hora }}
             </div>
 
@@ -760,13 +1039,18 @@ onUnmounted(() => {
             <div
               v-for="dia in diasVisibles"
               :key="`${dia.fecha}-${hora}`"
-              class="relative border-r border-gray-100 last:border-r-0 h-11 hover:bg-violet-50/30 transition-colors cursor-pointer group"
-              :class="{ 'bg-violet-50/20': dia.esHoy }"
+              class="relative border-r border-gray-100 last:border-r-0 h-11 transition-colors cursor-pointer group"
+              :class="[
+                dia.esHoy ? 'bg-violet-50/20' : '',
+                esHoraPasada(hora, dia.fecha) ? 'bg-gray-100/60' : '',
+                esSlotActual(hora, dia.fecha) ? 'bg-red-50/30 ring-1 ring-inset ring-red-100' : '',
+                !esHoraPasada(hora, dia.fecha) && !esSlotActual(hora, dia.fecha) ? 'hover:bg-violet-50/30' : 'hover:bg-gray-200/40'
+              ]"
               @click="citasPorDiaHora(dia.fecha, hora).length === 0 ? handleSlotClick(dia.fecha, hora) : null"
             >
               <!-- Indicador para crear cita (hover) -->
               <div
-                v-if="citasPorDiaHora(dia.fecha, hora).length === 0"
+                v-if="citasPorDiaHora(dia.fecha, hora).length === 0 && !esHoraPasada(hora, dia.fecha)"
                 class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <div class="w-6 h-6 rounded-full bg-violet-500/80 text-white flex items-center justify-center">
@@ -776,7 +1060,7 @@ onUnmounted(() => {
                 </div>
               </div>
 
-              <!-- Tarjetas de citas -->
+              <!-- Tarjetas de citas - ALTURA DINÁMICA según duración -->
               <div
                 v-for="cita in citasPorDiaHora(dia.fecha, hora)"
                 :key="cita.id"
@@ -785,73 +1069,103 @@ onUnmounted(() => {
                 @keydown.space.prevent.stop="handleCitaClick(cita.id)"
                 role="button"
                 tabindex="0"
-                :aria-label="`Cita ${cita.estado} de ${cita.paciente_nombre || cita.paciente?.nombre_completo || 'paciente'}, ${formatearHora(cita.hora_inicio)} a ${formatearHora(cita.hora_fin)}`"
-                class="absolute inset-x-1 top-0.5 p-2 rounded-lg border-l-4 cursor-pointer hover:shadow-md transition-all z-10 group/card"
+                :aria-label="`Cita ${cita.estado} de ${cita.paciente?.nombre_completo || 'paciente'}, ${formatearHora(cita.hora_inicio)} a ${formatearHora(cita.hora_fin)}`"
+                class="absolute inset-x-0.5 top-0.5 p-2 rounded-lg border-l-4 cursor-pointer hover:shadow-lg hover:z-30 transition-all z-10 group/card overflow-hidden"
                 :class="[getColorEstado(cita.estado).bg, getColorEstado(cita.estado).border]"
-                :style="{ minHeight: '40px' }"
+                :style="{ height: `${calcularAlturaCita(cita)}px` }"
               >
-                <!-- Barra de acciones (aparece en hover) -->
-                <div class="absolute top-0.5 right-0.5 flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity z-20">
+                <!-- Barra de acciones (aparece en hover) - posicionada fuera -->
+                <div class="absolute -top-1 -right-1 flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity z-40">
                   <!-- Botón confirmar (solo pendientes) -->
                   <button
                     v-if="cita.estado === 'pendiente'"
                     @click="handleConfirmarCita(cita.id, $event)"
                     @keydown.enter.stop="handleConfirmarCita(cita.id, $event)"
-                    class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 hover:scale-110 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1"
+                    class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 hover:scale-110 shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1"
                     :class="{ 'animate-pulse': citaConfirmandoId === cita.id }"
                     :disabled="citaConfirmandoId === cita.id"
                     :title="citaConfirmandoId === cita.id ? 'Confirmando...' : 'Confirmar cita'"
-                    :aria-label="`Confirmar cita de ${cita.paciente_nombre || 'paciente'}`"
+                    :aria-label="`Confirmar cita de ${cita.paciente?.nombre_completo || 'paciente'}`"
                     type="button"
                   >
-                    <svg v-if="citaConfirmandoId === cita.id" class="w-2.5 h-2.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg v-if="citaConfirmandoId === cita.id" class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <svg v-else class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg v-else class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                   </button>
 
-                  <!-- Botón reprogramar (no canceladas ni completadas) -->
+                  <!-- Botón reprogramar -->
                   <button
                     v-if="cita.estado !== 'cancelada' && cita.estado !== 'realizada' && cita.estado !== 'completada'"
                     @click="handleAbrirModalReprogramar(cita.id, $event)"
                     @keydown.enter.stop="handleAbrirModalReprogramar(cita.id, $event)"
-                    class="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 hover:scale-110 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
+                    class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 hover:scale-110 shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
                     title="Reprogramar cita"
-                    :aria-label="`Reprogramar cita de ${cita.paciente_nombre || 'paciente'}`"
+                    :aria-label="`Reprogramar cita de ${cita.paciente?.nombre_completo || 'paciente'}`"
                     type="button"
                   >
-                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </button>
 
-                  <!-- Botón cancelar (no canceladas ni completadas) -->
+                  <!-- Botón cancelar -->
                   <button
                     v-if="cita.estado !== 'cancelada' && cita.estado !== 'realizada' && cita.estado !== 'completada'"
                     @click="handleAbrirModalCancelar(cita.id, $event)"
                     @keydown.enter.stop="handleAbrirModalCancelar(cita.id, $event)"
-                    class="w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 hover:scale-110 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1"
+                    class="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 hover:scale-110 shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1"
                     title="Cancelar cita"
-                    :aria-label="`Cancelar cita de ${cita.paciente_nombre || 'paciente'}`"
+                    :aria-label="`Cancelar cita de ${cita.paciente?.nombre_completo || 'paciente'}`"
                     type="button"
                   >
-                    <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+
+                  <!-- Botón eliminar (icono papelera) -->
+                  <button
+                    @click="handleAbrirModalEliminar(cita.id, $event)"
+                    @keydown.enter.stop="handleAbrirModalEliminar(cita.id, $event)"
+                    class="w-6 h-6 rounded-full bg-gray-600 text-white flex items-center justify-center hover:bg-gray-700 hover:scale-110 shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                    title="Eliminar cita"
+                    :aria-label="`Eliminar cita de ${cita.paciente?.nombre_completo || 'paciente'}`"
+                    type="button"
+                  >
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
                 </div>
 
-                <!-- Contenido de la tarjeta -->
-                <div class="pr-16">
-                  <p class="text-xs text-gray-500 font-medium">
-                    {{ formatearHora(cita.hora_inicio) }} - {{ formatearHora(cita.hora_fin) }}
+                <!-- Contenido de la tarjeta - NOMBRE PROMINENTE -->
+                <div class="flex flex-col h-full min-h-[34px]">
+                  <!-- Nombre del paciente - GRANDE Y VISIBLE -->
+                  <p
+                    class="text-sm font-bold text-gray-900 leading-tight"
+                    :class="{ 'line-clamp-2': vistaActiva === 'semana', 'line-clamp-1': vistaActiva === '5dias' }"
+                    :title="cita.paciente?.nombre_completo || 'Sin paciente'"
+                  >
+                    {{ cita.paciente?.nombre_completo || 'Sin paciente' }}
                   </p>
-                  <p class="text-sm font-semibold text-gray-800 truncate mt-0.5">
-                    {{ cita.paciente_nombre || cita.paciente?.nombre_completo || 'Sin paciente' }}
+                  <!-- Hora en formato compacto -->
+                  <p class="text-[10px] text-gray-500 font-medium mt-auto">
+                    {{ formatearHora(cita.hora_inicio) }}–{{ formatearHora(cita.hora_fin) }}
                   </p>
+                </div>
+
+                <!-- Tooltip expandido en hover (para ver nombre completo) -->
+                <div class="absolute left-full ml-2 top-0 hidden group-hover/card:block z-50 pointer-events-none">
+                  <div class="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-xl whitespace-nowrap max-w-xs">
+                    <p class="font-bold text-sm">{{ cita.paciente?.nombre_completo || 'Sin paciente' }}</p>
+                    <p class="text-gray-300 mt-1">{{ formatearHora(cita.hora_inicio) }} - {{ formatearHora(cita.hora_fin) }}</p>
+                    <p class="text-gray-400 mt-0.5 capitalize">{{ cita.estado }}</p>
+                    <p v-if="cita.modalidad" class="text-gray-400">{{ cita.modalidad === 'online' ? 'Online' : 'Presencial' }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -898,7 +1212,6 @@ onUnmounted(() => {
         aria-labelledby="modal-cancelar-titulo"
       >
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-modal-enter">
-          <!-- Header -->
           <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-red-50 to-rose-50">
             <div class="flex items-center justify-between">
               <div>
@@ -917,9 +1230,7 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Contenido -->
           <div class="p-6 space-y-5">
-            <!-- Resumen de la cita -->
             <div class="bg-gray-50 rounded-xl p-4">
               <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Resumen de la cita</p>
               <div class="space-y-3">
@@ -930,7 +1241,7 @@ onUnmounted(() => {
                     </svg>
                   </div>
                   <div>
-                    <p class="font-medium text-gray-900">{{ citaParaCancelar.paciente_nombre || citaParaCancelar.paciente?.nombre_completo || 'Paciente' }}</p>
+                    <p class="font-medium text-gray-900">{{ citaParaCancelar.paciente?.nombre_completo || 'Paciente' }}</p>
                     <p class="text-sm text-gray-500">Paciente</p>
                   </div>
                 </div>
@@ -948,7 +1259,6 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <!-- Motivo de cancelación (opcional) -->
             <div>
               <label for="motivo-cancelacion" class="block text-sm font-medium text-gray-700 mb-2">
                 Motivo de cancelación <span class="text-gray-400">(opcional)</span>
@@ -962,18 +1272,16 @@ onUnmounted(() => {
               ></textarea>
             </div>
 
-            <!-- Advertencia -->
             <div class="flex items-start gap-3 p-4 bg-amber-50 rounded-xl border border-amber-200">
               <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
               </svg>
               <p class="text-sm text-amber-800">
-                Al cancelar esta cita, el paciente podría recibir una notificación y se actualizará el estado en el sistema.
+                Al cancelar esta cita, el paciente podría recibir una notificación.
               </p>
             </div>
           </div>
 
-          <!-- Footer -->
           <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3">
             <button
               @click="cerrarModalCancelar"
@@ -1011,13 +1319,12 @@ onUnmounted(() => {
         aria-labelledby="modal-reprogramar-titulo"
       >
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-modal-enter">
-          <!-- Header -->
           <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div class="flex items-center justify-between">
               <div>
                 <h2 id="modal-reprogramar-titulo" class="text-lg font-semibold text-gray-900">Reprogramar Cita</h2>
                 <p class="text-sm text-gray-500 mt-0.5">
-                  {{ citaParaReprogramar.paciente_nombre || citaParaReprogramar.paciente?.nombre_completo || 'Paciente' }}
+                  {{ citaParaReprogramar.paciente?.nombre_completo || 'Paciente' }}
                 </p>
               </div>
               <button
@@ -1032,9 +1339,7 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Contenido -->
           <div class="p-6 space-y-5">
-            <!-- Info de cita actual -->
             <div class="bg-gray-50 rounded-xl p-4">
               <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Cita actual</p>
               <div class="flex items-center gap-3">
@@ -1050,7 +1355,6 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <!-- Flecha indicadora -->
             <div class="flex justify-center">
               <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1059,7 +1363,6 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <!-- Nueva fecha -->
             <div>
               <label for="nueva-fecha" class="block text-sm font-medium text-gray-700 mb-2">Nueva fecha</label>
               <input
@@ -1071,7 +1374,6 @@ onUnmounted(() => {
               />
             </div>
 
-            <!-- Nueva hora inicio y fin -->
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label for="nueva-hora-inicio" class="block text-sm font-medium text-gray-700 mb-2">Hora inicio</label>
@@ -1096,7 +1398,6 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Footer -->
           <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3">
             <button
               @click="cerrarModalReprogramar"
@@ -1114,6 +1415,115 @@ onUnmounted(() => {
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
               </svg>
               {{ citaReprogramandoId ? 'Reprogramando...' : 'Confirmar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- ================================================================= -->
+    <!-- MODAL ELIMINAR CITA -->
+    <!-- ================================================================= -->
+    <Teleport to="body">
+      <div
+        v-if="mostrarModalEliminar && citaParaEliminar"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        @click.self="cerrarModalEliminar"
+        @keydown.escape="cerrarModalEliminar"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-eliminar-titulo"
+      >
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-modal-enter">
+          <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-slate-50">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 id="modal-eliminar-titulo" class="text-lg font-semibold text-gray-900">Eliminar Cita</h2>
+                <p class="text-sm text-gray-500 mt-0.5">Esta acción eliminará la cita permanentemente</p>
+              </div>
+              <button
+                @click="cerrarModalEliminar"
+                class="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
+                aria-label="Cerrar modal"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-6 space-y-5">
+            <div class="bg-gray-50 rounded-xl p-4">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Cita a eliminar</p>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900">{{ citaParaEliminar.paciente?.nombre_completo || 'Paciente' }}</p>
+                    <p class="text-sm text-gray-500">Paciente</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900">{{ formatearFecha(citaParaEliminar.fecha_cita) }}</p>
+                    <p class="text-sm text-gray-500">{{ formatearHora(citaParaEliminar.hora_inicio) }} - {{ formatearHora(citaParaEliminar.hora_fin) }}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900 capitalize">{{ citaParaEliminar.estado }}</p>
+                    <p class="text-sm text-gray-500">Estado actual</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 p-4 bg-red-50 rounded-xl border border-red-200">
+              <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <div class="text-sm text-red-800">
+                <p class="font-semibold">Esta acción no se puede deshacer</p>
+                <p class="mt-1">La cita se eliminará permanentemente del sistema. Si la cita tiene un bono asociado, la sesión se reintegrará automáticamente.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3">
+            <button
+              @click="cerrarModalEliminar"
+              class="px-5 py-2.5 text-gray-700 font-medium rounded-xl hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+            >
+              Cancelar
+            </button>
+            <button
+              @click="ejecutarEliminacion"
+              :disabled="citaEliminandoId !== null"
+              class="px-5 py-2.5 bg-gray-700 text-white font-medium rounded-xl hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            >
+              <svg v-if="citaEliminandoId" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              {{ citaEliminandoId ? 'Eliminando...' : 'Eliminar cita' }}
             </button>
           </div>
         </div>
@@ -1146,7 +1556,6 @@ onUnmounted(() => {
               'bg-blue-50 border-blue-200 text-blue-800': toastType === 'info'
             }"
           >
-            <!-- Icono -->
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
               :class="{
@@ -1166,10 +1575,8 @@ onUnmounted(() => {
               </svg>
             </div>
 
-            <!-- Mensaje -->
             <p class="text-sm font-medium flex-1">{{ toastMessage }}</p>
 
-            <!-- Botón cerrar -->
             <button
               @click="mostrarToast = false"
               class="w-6 h-6 rounded-full flex items-center justify-center hover:bg-black/5 transition-colors"
@@ -1233,5 +1640,10 @@ onUnmounted(() => {
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scroll suave nativo */
+.scroll-smooth {
+  scroll-behavior: smooth;
 }
 </style>

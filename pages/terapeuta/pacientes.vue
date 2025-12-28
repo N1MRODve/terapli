@@ -1,170 +1,187 @@
 <template>
   <div>
-    <!-- Header with counters -->
+    <!-- Header minimalista -->
     <header class="mb-6">
-      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+        <!-- Título con contador del filtro activo -->
         <div>
-          <h1 class="text-3xl font-serif font-bold text-cafe mb-1">
+          <h1 class="text-2xl font-semibold text-gray-900">
             Pacientes
+            <span class="text-gray-400 font-normal">({{ contadorFiltroActivo }})</span>
           </h1>
-          <div class="flex flex-wrap items-center gap-2 text-sm text-cafe/60">
-            <span>Activos: <strong class="text-cafe font-semibold">{{ contadores.activos }}</strong></span>
-            <span class="text-gray-300">·</span>
-            <span>En pausa: <strong class="text-cafe font-semibold">{{ contadores.enPausa }}</strong></span>
-            <span class="text-gray-300">·</span>
-            <span>Finalizados: <strong class="text-cafe font-semibold">{{ contadores.finalizados }}</strong></span>
-          </div>
         </div>
 
-        <!-- Botones de acción -->
-        <div class="flex flex-wrap gap-2">
+        <!-- Botones de acción compactos -->
+        <div class="flex items-center gap-2">
           <button
             @click="abrirModalImportar"
-            class="min-h-[44px] px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 whitespace-nowrap font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"
+            class="min-h-[40px] px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium"
             aria-label="Importar pacientes"
           >
-            <ArrowUpTrayIcon class="w-5 h-5" aria-hidden="true" />
-            <span>Importar</span>
+            <ArrowUpTrayIcon class="w-4 h-4" aria-hidden="true" />
+            <span class="hidden sm:inline">Importar</span>
           </button>
 
           <button
             @click="abrirModalExportar"
-            class="min-h-[44px] px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 whitespace-nowrap font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"
+            class="min-h-[40px] px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium"
             aria-label="Exportar pacientes"
           >
-            <ArrowDownTrayIcon class="w-5 h-5" aria-hidden="true" />
-            <span>Exportar</span>
+            <ArrowDownTrayIcon class="w-4 h-4" aria-hidden="true" />
+            <span class="hidden sm:inline">Exportar</span>
           </button>
 
           <button
             @click="abrirModalNuevoPaciente"
-            class="min-h-[44px] px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-all flex items-center gap-2 whitespace-nowrap font-medium shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300"
+            class="min-h-[40px] px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm"
             aria-label="Añadir nuevo paciente"
           >
-            <span class="text-lg leading-none">+</span>
-            <span>Nuevo Paciente</span>
+            <PlusIcon class="w-4 h-4" aria-hidden="true" />
+            <span>Nuevo</span>
           </button>
         </div>
       </div>
 
-      <!-- Buscador y filtros unificados -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-        <!-- Buscador principal -->
-        <div class="mb-4">
-          <div class="relative">
-            <input
-              v-model="busquedaDebounced"
-              @input="handleBusquedaInput"
-              type="text"
-              placeholder="Buscar paciente por nombre o email..."
-              class="min-h-[44px] w-full px-4 py-3 pl-11 bg-gray-50 border border-gray-200 rounded-lg focus:border-purple-600 focus:ring-2 focus:ring-purple-300/20 focus:bg-white transition-all text-cafe placeholder-gray-400"
-              aria-label="Buscar pacientes"
-            />
-            <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true"></MagnifyingGlassIcon>
-          </div>
+      <!-- Buscador y filtros -->
+      <div class="space-y-4">
+        <!-- Buscador -->
+        <div class="relative">
+          <input
+            v-model="busquedaDebounced"
+            @input="handleBusquedaInput"
+            type="text"
+            placeholder="Buscar por nombre, email o teléfono..."
+            class="w-full h-11 px-4 pl-10 bg-white border border-gray-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all text-sm placeholder-gray-400"
+            aria-label="Buscar pacientes"
+          />
+          <MagnifyingGlassIcon class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true" />
+          <button
+            v-if="busqueda"
+            @click="busqueda = ''; busquedaDebounced = ''"
+            class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded"
+            aria-label="Limpiar búsqueda"
+          >
+            <XMarkIcon class="w-4 h-4" />
+          </button>
         </div>
 
-        <!-- Filtros de estado como chips interactivos -->
-        <div class="flex flex-col gap-3">
-          <div class="flex items-center gap-2 text-xs text-gray-500 font-medium uppercase tracking-wide">
-            <span>Estado</span>
-          </div>
-          <div class="flex flex-wrap gap-2">
+        <!-- Tabs de estado con underline -->
+        <div class="flex items-center justify-between border-b border-gray-100">
+          <nav class="flex gap-1 -mb-px" role="tablist">
             <button
               v-for="filtro in filtrosEstadoConContadores"
               :key="filtro.valor"
               @click="estadoSeleccionado = filtro.valor"
-              class="min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
+              class="px-4 py-2.5 text-sm font-medium transition-colors relative"
               :class="estadoSeleccionado === filtro.valor
-                ? 'bg-purple-600 text-white shadow-sm'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
-              :aria-pressed="estadoSeleccionado === filtro.valor"
-              :aria-label="`Filtrar por ${filtro.label.toLowerCase()}: ${filtro.count} pacientes`"
+                ? 'text-purple-600'
+                : 'text-gray-500 hover:text-gray-700'"
+              :aria-selected="estadoSeleccionado === filtro.valor"
+              role="tab"
             >
               <span>{{ filtro.label }}</span>
-              <span
-                class="px-2 py-0.5 rounded-full text-xs font-semibold"
-                :class="estadoSeleccionado === filtro.valor
-                  ? 'bg-white/20 text-white'
-                  : 'bg-gray-200 text-gray-600'"
-              >
+              <span class="ml-1.5 text-xs" :class="estadoSeleccionado === filtro.valor ? 'text-purple-500' : 'text-gray-400'">
                 {{ filtro.count }}
               </span>
+              <!-- Underline activo -->
+              <span
+                v-if="estadoSeleccionado === filtro.valor"
+                class="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 rounded-full"
+              ></span>
             </button>
-          </div>
+          </nav>
+
+          <!-- Botón de filtros avanzados -->
+          <button
+            @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
+            class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+            :class="hayFiltrosActivos
+              ? 'text-purple-600 bg-purple-50'
+              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
+          >
+            <FunnelIcon class="w-4 h-4" />
+            <span class="hidden sm:inline">Filtros</span>
+            <span
+              v-if="contadorFiltrosActivos > 0"
+              class="w-5 h-5 flex items-center justify-center text-xs font-semibold bg-purple-600 text-white rounded-full"
+            >
+              {{ contadorFiltrosActivos }}
+            </span>
+            <ChevronDownIcon
+              class="w-4 h-4 transition-transform"
+              :class="{ 'rotate-180': mostrarFiltrosAvanzados }"
+            />
+          </button>
         </div>
 
-        <!-- Filtros avanzados -->
-        <div class="mt-4 pt-4 border-t border-gray-100">
-          <div class="flex items-center gap-2 text-xs text-gray-500 font-medium uppercase tracking-wide mb-3">
-            <span>Filtros Avanzados</span>
+        <!-- Panel de filtros avanzados (colapsable) -->
+        <Transition
+          enter-active-class="transition-all duration-200 ease-out"
+          enter-from-class="opacity-0 -translate-y-2"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition-all duration-150 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-2"
+        >
+          <div v-if="mostrarFiltrosAvanzados" class="bg-gray-50 rounded-lg p-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Filtro por área -->
+              <select
+                v-model="areaSeleccionada"
+                class="h-9 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
+                aria-label="Filtrar por área"
+              >
+                <option value="">Todas las áreas</option>
+                <option v-for="area in areasDisponibles" :key="area" :value="area">
+                  {{ area }}
+                </option>
+              </select>
+
+              <!-- Chips de filtros -->
+              <button
+                @click="toggleFiltro('sinProximaCita')"
+                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+                :class="filtrosActivos.sinProximaCita
+                  ? 'bg-orange-100 text-orange-700 border border-orange-200'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+              >
+                <CalendarDaysIcon class="w-4 h-4" />
+                Sin próxima cita
+              </button>
+
+              <button
+                @click="toggleFiltro('sinSesionRegistrada')"
+                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+                :class="filtrosActivos.sinSesionRegistrada
+                  ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+              >
+                <ClipboardDocumentListIcon class="w-4 h-4" />
+                Sin sesión
+              </button>
+
+              <button
+                @click="toggleFiltro('requiereAtencion')"
+                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+                :class="filtrosActivos.requiereAtencion
+                  ? 'bg-red-100 text-red-700 border border-red-200'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+              >
+                <ExclamationTriangleIcon class="w-4 h-4" />
+                Requiere atención
+              </button>
+
+              <!-- Limpiar filtros -->
+              <button
+                v-if="hayFiltrosActivos"
+                @click="limpiarFiltrosAvanzados"
+                class="h-9 px-3 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Limpiar
+              </button>
+            </div>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <!-- Filtro por área -->
-            <select
-              v-model="areaSeleccionada"
-              class="min-h-[44px] px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-cafe focus:border-purple-600 focus:ring-2 focus:ring-purple-300/20 transition-all"
-              aria-label="Filtrar por área de acompañamiento"
-            >
-              <option value="">Todas las áreas</option>
-              <option v-for="area in areasDisponibles" :key="area" :value="area">
-                {{ area }}
-              </option>
-            </select>
-
-            <!-- Sin próxima cita -->
-            <button
-              @click="toggleFiltro('sinProximaCita')"
-              class="min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
-              :class="filtrosActivos.sinProximaCita
-                ? 'bg-orange-100 text-orange-700 border border-orange-300'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
-              :aria-pressed="filtrosActivos.sinProximaCita"
-              aria-label="Filtrar pacientes sin próxima cita programada"
-            >
-              <CalendarDaysIcon class="w-4 h-4" aria-hidden="true"></CalendarDaysIcon>
-              <span>Sin próxima cita</span>
-            </button>
-
-            <!-- Sin sesión registrada -->
-            <button
-              @click="toggleFiltro('sinSesionRegistrada')"
-              class="min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
-              :class="filtrosActivos.sinSesionRegistrada
-                ? 'bg-amber-100 text-amber-700 border border-amber-300'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
-              :aria-pressed="filtrosActivos.sinSesionRegistrada"
-              aria-label="Filtrar pacientes sin sesión registrada"
-            >
-              <ClipboardDocumentListIcon class="w-4 h-4" aria-hidden="true"></ClipboardDocumentListIcon>
-              <span>Sin sesión registrada</span>
-            </button>
-
-            <!-- Requiere atención -->
-            <button
-              @click="toggleFiltro('requiereAtencion')"
-              class="min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
-              :class="filtrosActivos.requiereAtencion
-                ? 'bg-red-100 text-red-700 border border-red-300'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
-              :aria-pressed="filtrosActivos.requiereAtencion"
-              aria-label="Filtrar pacientes que requieren atención"
-            >
-              <ExclamationTriangleIcon class="w-4 h-4" aria-hidden="true"></ExclamationTriangleIcon>
-              <span>Requiere atención</span>
-            </button>
-
-            <!-- Limpiar filtros -->
-            <button
-              v-if="hayFiltrosActivos"
-              @click="limpiarFiltros"
-              class="min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-              aria-label="Limpiar todos los filtros"
-            >
-              Limpiar filtros
-            </button>
-          </div>
-        </div>
+        </Transition>
       </div>
     </header>
 
@@ -173,48 +190,40 @@
       <!-- Estado de carga -->
       <div
         v-if="loading"
-        class="flex flex-col items-center justify-center py-16"
+        class="flex flex-col items-center justify-center py-20"
         role="status"
-        aria-live="polite"
       >
-        <div
-          class="animate-spin w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full mb-6"
-          aria-hidden="true"
-        ></div>
-        <p class="text-gray-500 font-medium">Cargando pacientes...</p>
+        <div class="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-sm text-gray-500">Cargando pacientes...</p>
       </div>
 
       <!-- Estado vacío -->
       <div
         v-else-if="pacientesFiltrados.length === 0"
-        class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center"
-        role="status"
-        aria-live="polite"
+        class="flex flex-col items-center justify-center py-20 text-center"
       >
-        <UserGroupIcon class="w-20 h-20 mx-auto mb-6 text-gray-300" aria-hidden="true"></UserGroupIcon>
-        <h3 class="text-xl font-serif font-semibold text-cafe mb-3">
-          {{ hayFiltrosActivos || busqueda || estadoSeleccionado !== 'todos'
-            ? 'No se encontraron pacientes'
-            : 'Aún no tienes pacientes registrados' }}
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <UserGroupIcon class="w-8 h-8 text-gray-400" />
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-1">
+          {{ tieneAlgunFiltro ? 'Sin resultados' : 'Sin pacientes' }}
         </h3>
-        <p class="text-gray-500 mb-6 max-w-md mx-auto">
-          {{ hayFiltrosActivos || busqueda || estadoSeleccionado !== 'todos'
-            ? 'Intenta ajustar los filtros de búsqueda para encontrar lo que buscas'
-            : 'Comienza añadiendo tu primer paciente para gestionar su proceso terapéutico' }}
+        <p class="text-sm text-gray-500 mb-4 max-w-sm">
+          {{ tieneAlgunFiltro
+            ? 'Prueba ajustando los filtros de búsqueda'
+            : 'Comienza añadiendo tu primer paciente' }}
         </p>
         <button
-          v-if="!hayFiltrosActivos && !busqueda && estadoSeleccionado === 'todos'"
+          v-if="!tieneAlgunFiltro"
           @click="abrirModalNuevoPaciente"
-          class="min-h-[44px] px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-all font-medium shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300"
-          aria-label="Añadir tu primer paciente"
+          class="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
         >
-          + Añadir Primer Paciente
+          Añadir paciente
         </button>
         <button
           v-else
-          @click="limpiarFiltros"
-          class="min-h-[44px] px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"
-          aria-label="Limpiar todos los filtros de búsqueda"
+          @click="limpiarTodosFiltros"
+          class="px-4 py-2 text-gray-600 text-sm font-medium hover:text-gray-900 transition-colors"
         >
           Limpiar filtros
         </button>
@@ -223,14 +232,13 @@
       <!-- Grid de pacientes -->
       <div
         v-else
-        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
         role="list"
-        aria-label="Lista de pacientes"
       >
         <div
           v-for="paciente in pacientesFiltrados"
           :key="paciente.id"
-          class="relative group cursor-pointer"
+          class="relative group"
           @click="irAFichaPaciente(paciente.id)"
           @keydown.enter="irAFichaPaciente(paciente.id)"
           role="listitem"
@@ -242,103 +250,78 @@
             @ver-citas="verCitasPaciente"
             @gestionar-bonos="gestionarBonosPaciente"
             @editar-cita="abrirModalEditarCita"
-          ></PacienteCard>
+          />
 
-          <!-- Botón flotante "Asignar Cita" - Visible al hover en desktop -->
+          <!-- Botón Asignar Cita -->
           <button
             v-if="paciente.activo && !paciente.en_pausa"
             @click.stop="abrirModalAsignarCita(paciente)"
-            class="hidden md:flex absolute bottom-4 right-4 min-h-[44px] px-4 py-2.5 bg-gradient-to-r from-purple-600 to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 items-center gap-2 z-10 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto focus:outline-none focus:ring-2 focus:ring-purple-300"
-            :aria-label="`Asignar nueva cita a ${paciente.nombre}`"
+            class="absolute bottom-4 right-4 h-9 px-3 bg-purple-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-purple-700 transition-all flex items-center gap-1.5 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto z-10"
+            :aria-label="`Asignar cita a ${paciente.nombre}`"
           >
-            <CalendarDaysIcon class="w-4 h-4" aria-hidden="true"></CalendarDaysIcon>
-            <span>Asignar Cita</span>
-          </button>
-
-          <!-- Versión visible siempre en móvil -->
-          <button
-            v-if="paciente.activo && !paciente.en_pausa"
-            @click.stop="abrirModalAsignarCita(paciente)"
-            class="md:hidden absolute bottom-4 right-4 min-h-[44px] px-4 py-2.5 bg-gradient-to-r from-purple-600 to-rosa text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2 z-10 focus:outline-none focus:ring-2 focus:ring-purple-300"
-            :aria-label="`Asignar nueva cita a ${paciente.nombre}`"
-          >
-            <CalendarDaysIcon class="w-4 h-4" aria-hidden="true"></CalendarDaysIcon>
-            <span>Asignar Cita</span>
+            <CalendarDaysIcon class="w-4 h-4" />
+            <span class="hidden sm:inline">Cita</span>
           </button>
         </div>
       </div>
 
-      <!-- Paginación (si es necesaria) -->
+      <!-- Footer con contador -->
       <footer
         v-if="pacientesFiltrados.length > 0"
-        class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between flex-wrap gap-4"
-        role="contentinfo"
+        class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500"
       >
-        <p class="text-sm text-gray-500" aria-live="polite">
-          Mostrando {{ pacientesFiltrados.length }} de {{ totalPacientes }} pacientes
-        </p>
-        <div v-if="totalPacientes > pacientesFiltrados.length" class="flex gap-2">
-          <button
-            class="min-h-[44px] px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"
-            aria-label="Ver más pacientes"
-          >
-            Ver más
-          </button>
-        </div>
+        <span>
+          {{ pacientesFiltrados.length === totalPacientes
+            ? `${totalPacientes} pacientes`
+            : `${pacientesFiltrados.length} de ${totalPacientes} pacientes` }}
+        </span>
       </footer>
     </section>
 
-    <!-- Modal Asignar Cita -->
+    <!-- Modales -->
     <ModalNuevaCita
       :mostrar="mostrarModalAsignarCita"
       :paciente-preseleccionado="pacienteSeleccionadoCita"
       @cerrar="cerrarModalAsignarCita"
       @cita-creada="manejarCitaCreada"
-    ></ModalNuevaCita>
+    />
 
-    <!-- Modal Nuevo Paciente -->
     <ModalNuevoPaciente
       :mostrar="mostrarModalNuevo"
       @cerrar="cerrarModalNuevo"
       @paciente-creado="manejarPacienteCreado"
-    ></ModalNuevoPaciente>
+    />
 
-    <!-- Modal Editar Paciente -->
     <ModalEditarPaciente
       :mostrar="mostrarModalEditar"
       :paciente="pacienteSeleccionado"
       @cerrar="cerrarModalEditar"
       @paciente-actualizado="manejarPacienteActualizado"
-    ></ModalEditarPaciente>
+    />
 
-    <!-- Modal Eliminar Paciente -->
     <ModalEliminarPaciente
       :mostrar="mostrarModalEliminar"
       :paciente="pacienteSeleccionado"
       @cerrar="cerrarModalEliminar"
       @paciente-eliminado="manejarPacienteEliminado"
       @paciente-desactivado="manejarPacienteDesactivado"
-    ></ModalEliminarPaciente>
+    />
 
-    <!-- Modal Editar Cita -->
     <ModalEditarCita
       :isOpen="mostrarModalEditarCita"
       :citaId="citaIdSeleccionada"
       @close="cerrarModalEditarCita"
       @actualizado="handleCitaActualizada"
-    ></ModalEditarCita>
+    />
 
-    <!-- Toast notifications -->
     <ToastContainer />
 
-    <!-- Modal Importar Pacientes -->
     <PatientsImportModal
       v-model="mostrarModalImportar"
       :existing-patients="pacientes"
       @import-complete="handleImportComplete"
     />
 
-    <!-- Modal Exportar Pacientes -->
     <PatientsExportModal
       v-model="mostrarModalExportar"
       :total-patients="totalPacientes"
@@ -350,7 +333,19 @@
 </template>
 
 <script setup>
-import { MagnifyingGlassIcon, UserGroupIcon, CalendarDaysIcon, ExclamationTriangleIcon, ClipboardDocumentListIcon, ArrowUpTrayIcon, ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
+import {
+  MagnifyingGlassIcon,
+  UserGroupIcon,
+  CalendarDaysIcon,
+  ExclamationTriangleIcon,
+  ClipboardDocumentListIcon,
+  ArrowUpTrayIcon,
+  ArrowDownTrayIcon,
+  PlusIcon,
+  XMarkIcon,
+  FunnelIcon,
+  ChevronDownIcon
+} from '@heroicons/vue/24/outline'
 
 definePageMeta({
   layout: 'terapeuta'
@@ -362,23 +357,7 @@ const { getUserId, waitForUser } = useSupabase()
 const user = useSupabaseUser()
 const toast = useToast()
 
-// Log inicial del estado del usuario
-console.log('[Pacientes] Estado inicial del usuario:', {
-  existe: !!user.value,
-  id: getUserId(),
-  email: user.value?.email
-})
-
-// Watch para detectar cambios en el usuario
-watch(user, (newUser, oldUser) => {
-  console.log('[Pacientes] Usuario cambió:', {
-    antes: oldUser?.email || 'null',
-    ahora: newUser?.email || 'null',
-    id: getUserId()
-  })
-})
-
-// Estado del modal
+// Estado de modales
 const mostrarModalNuevo = ref(false)
 const mostrarModalEditar = ref(false)
 const mostrarModalEliminar = ref(false)
@@ -390,13 +369,14 @@ const citaIdSeleccionada = ref(null)
 const pacienteSeleccionado = ref(null)
 const pacienteSeleccionadoCita = ref(null)
 
-// Estado
+// Estado principal
 const pacientes = ref([])
 const loading = ref(true)
 const busqueda = ref('')
 const busquedaDebounced = ref('')
 const estadoSeleccionado = ref('todos')
 const areaSeleccionada = ref('')
+const mostrarFiltrosAvanzados = ref(false)
 const filtrosActivos = ref({
   sinProximaCita: false,
   sinSesionRegistrada: false,
@@ -412,7 +392,7 @@ const handleBusquedaInput = (event) => {
   }, 300)
 }
 
-// Filtros disponibles
+// Filtros de estado
 const filtrosEstado = [
   { valor: 'todos', label: 'Todos' },
   { valor: 'activo', label: 'Activos' },
@@ -420,43 +400,39 @@ const filtrosEstado = [
   { valor: 'finalizado', label: 'Finalizados' }
 ]
 
-// Contadores dinámicos
-const contadores = computed(() => {
-  return {
-    activos: pacientes.value.filter(p => p.activo && !p.en_pausa).length,
-    enPausa: pacientes.value.filter(p => p.activo && p.en_pausa).length,
-    finalizados: pacientes.value.filter(p => !p.activo).length
-  }
-})
+// Contadores
+const contadores = computed(() => ({
+  activos: pacientes.value.filter(p => p.activo && !p.en_pausa).length,
+  enPausa: pacientes.value.filter(p => p.activo && p.en_pausa).length,
+  finalizados: pacientes.value.filter(p => !p.activo).length
+}))
 
-// Filtros de estado con contadores
 const filtrosEstadoConContadores = computed(() => {
   return filtrosEstado.map(filtro => {
     let count = 0
-    if (filtro.valor === 'todos') {
-      count = pacientes.value.length
-    } else if (filtro.valor === 'activo') {
-      count = contadores.value.activos
-    } else if (filtro.valor === 'pausa') {
-      count = contadores.value.enPausa
-    } else if (filtro.valor === 'finalizado') {
-      count = contadores.value.finalizados
-    }
+    if (filtro.valor === 'todos') count = pacientes.value.length
+    else if (filtro.valor === 'activo') count = contadores.value.activos
+    else if (filtro.valor === 'pausa') count = contadores.value.enPausa
+    else if (filtro.valor === 'finalizado') count = contadores.value.finalizados
     return { ...filtro, count }
   })
 })
 
-// Áreas disponibles (dinámicamente extraídas de los pacientes)
+// Contador del filtro activo (para el header)
+const contadorFiltroActivo = computed(() => {
+  const filtro = filtrosEstadoConContadores.value.find(f => f.valor === estadoSeleccionado.value)
+  return filtro?.count || 0
+})
+
+// Áreas disponibles
 const areasDisponibles = computed(() => {
   const areas = new Set(
-    pacientes.value
-      .map(p => p.area_de_acompanamiento)
-      .filter(Boolean)
+    pacientes.value.map(p => p.area_de_acompanamiento).filter(Boolean)
   )
   return Array.from(areas).sort()
 })
 
-// Verificar si hay filtros activos
+// Verificar filtros activos
 const hayFiltrosActivos = computed(() => {
   return areaSeleccionada.value !== '' ||
     filtrosActivos.value.sinProximaCita ||
@@ -464,46 +440,50 @@ const hayFiltrosActivos = computed(() => {
     filtrosActivos.value.requiereAtencion
 })
 
-// Toggle filtros avanzados
+const contadorFiltrosActivos = computed(() => {
+  let count = 0
+  if (areaSeleccionada.value) count++
+  if (filtrosActivos.value.sinProximaCita) count++
+  if (filtrosActivos.value.sinSesionRegistrada) count++
+  if (filtrosActivos.value.requiereAtencion) count++
+  return count
+})
+
+const tieneAlgunFiltro = computed(() => {
+  return hayFiltrosActivos.value || busqueda.value || estadoSeleccionado.value !== 'todos'
+})
+
+// Funciones de filtros
 const toggleFiltro = (filtro) => {
   filtrosActivos.value[filtro] = !filtrosActivos.value[filtro]
 }
 
-// Limpiar todos los filtros
-const limpiarFiltros = () => {
+const limpiarFiltrosAvanzados = () => {
   areaSeleccionada.value = ''
   filtrosActivos.value = {
     sinProximaCita: false,
     sinSesionRegistrada: false,
     requiereAtencion: false
   }
+}
+
+const limpiarTodosFiltros = () => {
+  limpiarFiltrosAvanzados()
   estadoSeleccionado.value = 'todos'
   busqueda.value = ''
   busquedaDebounced.value = ''
 }
 
-// Cargar pacientes desde Supabase
+// Cargar pacientes
 const cargarPacientes = async () => {
   loading.value = true
   try {
     const userId = getUserId()
-    console.log('[Pacientes] Iniciando carga de pacientes...')
-    console.log('[Pacientes] Usuario actual:', {
-      existe: !!user.value,
-      id: userId,
-      email: user.value?.email
-    })
-    
-    // Verificar que el usuario esté autenticado
     if (!userId) {
-      console.error('[Pacientes] Usuario no autenticado')
       loading.value = false
       return
     }
 
-    console.log('✅ [Pacientes] Usuario verificado, consultando database...')
-    
-    // Obtener pacientes del terapeuta autenticado
     const { data: pacientesData, error: pacientesError } = await supabase
       .from('pacientes')
       .select(`
@@ -519,13 +499,11 @@ const cargarPacientes = async () => {
       `)
       .eq('terapeuta_id', userId)
       .order('created_at', { ascending: false })
-    
+
     if (pacientesError) throw pacientesError
 
-    // Enriquecer datos con información de citas y emociones
     const pacientesEnriquecidos = await Promise.all(
       pacientesData.map(async (paciente) => {
-        // Obtener última sesión (de tabla 'citas')
         const { data: ultimaCita } = await supabase
           .from('citas')
           .select('fecha_cita')
@@ -535,7 +513,6 @@ const cargarPacientes = async () => {
           .limit(1)
           .maybeSingle()
 
-        // Obtener próxima sesión (de tabla 'citas')
         const { data: proximaCita } = await supabase
           .from('citas')
           .select('id, fecha_cita, hora_inicio')
@@ -547,26 +524,15 @@ const cargarPacientes = async () => {
           .limit(1)
           .maybeSingle()
 
-        // Contar total de sesiones (de tabla 'citas')
         const { count: totalSesiones } = await supabase
           .from('citas')
           .select('*', { count: 'exact', head: true })
           .eq('paciente_id', paciente.id)
           .eq('estado', 'realizada')
 
-        // Obtener bono activo o pendiente (con manejo seguro de errores)
         let bonoActivo = null
         try {
-          // Primero buscar todos los bonos del paciente para debug
-          const { data: todosLosBonos } = await supabase
-            .from('bonos')
-            .select('id, tipo, estado, sesiones_totales, sesiones_restantes, fecha_fin, created_at')
-            .eq('paciente_id', paciente.id)
-            .order('created_at', { ascending: false })
-
-          console.log(`[Bonos] Paciente ${paciente.nombre_completo}:`, todosLosBonos)
-
-          const { data: bonoData, error: bonoError } = await supabase
+          const { data: bonoData } = await supabase
             .from('bonos')
             .select('id, tipo, estado, sesiones_totales, sesiones_restantes, fecha_fin, created_at')
             .eq('paciente_id', paciente.id)
@@ -574,18 +540,11 @@ const cargarPacientes = async () => {
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle()
-
-          if (bonoError) {
-            console.warn('[Bonos] Error en consulta:', bonoError.message)
-          } else {
-            bonoActivo = bonoData
-            console.log(`✅ [Bonos] Bono activo encontrado:`, bonoActivo)
-          }
+          bonoActivo = bonoData
         } catch (error) {
-          console.warn('[Bonos] Error inesperado:', error)
+          console.warn('[Bonos] Error:', error)
         }
 
-        // Contar sesiones completadas desde la última renovación de bono
         let sesionesCompletadasBono = 0
         let totalSesionesBono = 0
         if (bonoActivo) {
@@ -593,10 +552,9 @@ const cargarPacientes = async () => {
           sesionesCompletadasBono = totalSesionesBono - bonoActivo.sesiones_restantes
         }
 
-        // Obtener promedio emocional de últimos 7 días
         const hace7Dias = new Date()
         hace7Dias.setDate(hace7Dias.getDate() - 7)
-        
+
         const { data: emocionesRecientes } = await supabase
           .from('metricas_bienestar')
           .select('estado_animo, nivel_energia, nivel_estres')
@@ -610,24 +568,21 @@ const cargarPacientes = async () => {
         if (emocionesRecientes && emocionesRecientes.length > 0) {
           const promedioAnimo = emocionesRecientes.reduce((sum, e) => sum + e.estado_animo, 0) / emocionesRecientes.length
           estadoEmocionalPromedio = promedioAnimo
-          evolucionPorcentaje = Math.round((promedioAnimo / 10) * 100) // Estado de ánimo es 1-10
-          
-          // Detectar si requiere atención (3 o más registros bajos consecutivos)
+          evolucionPorcentaje = Math.round((promedioAnimo / 10) * 100)
+
           const ultimosTres = emocionesRecientes.slice(-3)
           if (ultimosTres.length >= 3) {
-            requiereAtencion = ultimosTres.every(e => e.estado_animo <= 4) // Bajo es 4 o menos en escala 1-10
+            requiereAtencion = ultimosTres.every(e => e.estado_animo <= 4)
           }
         }
 
-        // Obtener el nombre completo del paciente
-        const nombreCompleto = paciente.nombre_completo || 
-                              paciente.metadata?.nombre_completo ||
-                              paciente.email
+        const nombreCompleto = paciente.nombre_completo ||
+          paciente.metadata?.nombre_completo ||
+          paciente.email
 
         return {
           id: paciente.id,
           nombre: nombreCompleto,
-          apellidos: '', // Deprecado - ya no se usa
           email: paciente.email,
           telefono: paciente.telefono,
           activo: paciente.activo,
@@ -636,7 +591,7 @@ const cargarPacientes = async () => {
           frecuencia: paciente.frecuencia,
           ultima_sesion: ultimaCita?.fecha_cita || null,
           proxima_sesion: proximaCita ? `${proximaCita.fecha_cita}T${proximaCita.hora_inicio}` : null,
-          proxima_cita_id: proximaCita?.id || null, // ID de la próxima cita para edición
+          proxima_cita_id: proximaCita?.id || null,
           total_sesiones: totalSesiones || 0,
           estado_emocional_promedio: estadoEmocionalPromedio,
           evolucion_porcentaje: evolucionPorcentaje,
@@ -657,7 +612,7 @@ const cargarPacientes = async () => {
     pacientes.value = pacientesEnriquecidos
   } catch (error) {
     console.error('Error al cargar pacientes:', error)
-    toast.error('Error al cargar los pacientes. Por favor, recarga la página.')
+    toast.error('Error al cargar los pacientes')
   } finally {
     loading.value = false
   }
@@ -667,37 +622,31 @@ const cargarPacientes = async () => {
 const pacientesFiltrados = computed(() => {
   let resultado = pacientes.value
 
-  // Filtrar por búsqueda
   if (busqueda.value) {
     const busquedaLower = busqueda.value.toLowerCase()
     resultado = resultado.filter(p => {
-      // Buscar en el nombre completo del paciente
-      const nombreCompleto = (p.nombre || '').toLowerCase()
-      return nombreCompleto.includes(busquedaLower) ||
-             (p.email || '').toLowerCase().includes(busquedaLower)
+      const nombre = (p.nombre || '').toLowerCase()
+      const email = (p.email || '').toLowerCase()
+      const telefono = (p.telefono || '').toLowerCase()
+      return nombre.includes(busquedaLower) ||
+        email.includes(busquedaLower) ||
+        telefono.includes(busquedaLower)
     })
   }
 
-  // Filtrar por estado
   if (estadoSeleccionado.value !== 'todos') {
     resultado = resultado.filter(p => {
-      if (estadoSeleccionado.value === 'activo') {
-        return p.activo && !p.en_pausa
-      } else if (estadoSeleccionado.value === 'pausa') {
-        return p.activo && p.en_pausa
-      } else if (estadoSeleccionado.value === 'finalizado') {
-        return !p.activo
-      }
+      if (estadoSeleccionado.value === 'activo') return p.activo && !p.en_pausa
+      if (estadoSeleccionado.value === 'pausa') return p.activo && p.en_pausa
+      if (estadoSeleccionado.value === 'finalizado') return !p.activo
       return true
     })
   }
 
-  // Filtrar por área
   if (areaSeleccionada.value) {
     resultado = resultado.filter(p => p.area_de_acompanamiento === areaSeleccionada.value)
   }
 
-  // Filtros avanzados
   if (filtrosActivos.value.sinProximaCita) {
     resultado = resultado.filter(p => !p.proxima_sesion)
   }
@@ -720,221 +669,120 @@ const irAFichaPaciente = (id) => {
   router.push(`/terapeuta/pacientes/${id}`)
 }
 
-// Gestión del modal
-const abrirModalNuevoPaciente = () => {
-  mostrarModalNuevo.value = true
-}
-
-const cerrarModalNuevo = () => {
-  mostrarModalNuevo.value = false
-}
+// Gestión de modales
+const abrirModalNuevoPaciente = () => { mostrarModalNuevo.value = true }
+const cerrarModalNuevo = () => { mostrarModalNuevo.value = false }
 
 const abrirModalEditar = (paciente) => {
-  console.log('Abriendo modal de edición para:', paciente)
   pacienteSeleccionado.value = paciente
   mostrarModalEditar.value = true
 }
-
 const cerrarModalEditar = () => {
   mostrarModalEditar.value = false
   pacienteSeleccionado.value = null
 }
 
 const abrirModalEliminar = (paciente) => {
-  console.log('Abriendo modal de eliminación para:', paciente)
   pacienteSeleccionado.value = paciente
   mostrarModalEliminar.value = true
 }
-
 const cerrarModalEliminar = () => {
   mostrarModalEliminar.value = false
   pacienteSeleccionado.value = null
 }
 
-const manejarPacienteCreado = async (nuevoPaciente) => {
-  console.log('Nuevo paciente creado:', nuevoPaciente)
-
-  // Recargar la lista de pacientes
+const manejarPacienteCreado = async () => {
   await cargarPacientes()
-
-  // Mostrar notificación de éxito
-  toast.success('Paciente creado exitosamente')
+  toast.success('Paciente creado')
 }
 
-const manejarPacienteActualizado = async (pacienteActualizado) => {
-  console.log('Paciente actualizado:', pacienteActualizado)
-
-  // Recargar la lista de pacientes
+const manejarPacienteActualizado = async () => {
   await cargarPacientes()
-
-  // Mostrar notificación de éxito
-  toast.success('Información del paciente actualizada correctamente')
+  toast.success('Paciente actualizado')
 }
 
 const manejarPacienteEliminado = async (pacienteId) => {
-  console.log('Paciente eliminado:', pacienteId)
-
-  // Eliminar de la lista local
   pacientes.value = pacientes.value.filter(p => p.id !== pacienteId)
-
-  // Mostrar notificación de éxito
-  toast.success('Paciente eliminado exitosamente')
+  toast.success('Paciente eliminado')
 }
 
-const manejarPacienteDesactivado = async (pacienteId) => {
-  console.log('Paciente desactivado:', pacienteId)
-
-  // Recargar la lista de pacientes
+const manejarPacienteDesactivado = async () => {
   await cargarPacientes()
-
-  // Mostrar notificación de éxito
-  toast.success('Paciente desactivado correctamente')
+  toast.success('Paciente desactivado')
 }
 
-// Gestión del modal de asignar cita
+// Modal asignar cita
 const abrirModalAsignarCita = (paciente) => {
-  console.log('Abriendo modal de asignación de cita para:', paciente)
   pacienteSeleccionadoCita.value = paciente
   mostrarModalAsignarCita.value = true
 }
-
 const cerrarModalAsignarCita = () => {
   mostrarModalAsignarCita.value = false
   pacienteSeleccionadoCita.value = null
 }
-
-const manejarCitaCreada = async (nuevaCita) => {
-  console.log('Nueva cita creada:', nuevaCita)
-
-  // Recargar la lista de pacientes para actualizar próxima sesión y bonos
+const manejarCitaCreada = async () => {
   await cargarPacientes()
-
-  // Cerrar el modal
   cerrarModalAsignarCita()
-
-  // Mostrar notificación de éxito
-  toast.success('Cita asignada exitosamente')
+  toast.success('Cita asignada')
 }
 
-// Función para ver las citas de un paciente
+// Ver citas y gestionar bonos
 const verCitasPaciente = (paciente) => {
-  // Redirigir a la nueva agenda con filtro de paciente
   router.push(`/agenda?paciente=${paciente.id}`)
 }
-
-// Función para gestionar bonos de un paciente
 const gestionarBonosPaciente = (paciente) => {
   router.push(`/terapeuta/pacientes/${paciente.id}/bonos`)
 }
 
-// Gestión de modales de import/export
-const abrirModalImportar = () => {
-  mostrarModalImportar.value = true
-}
-
-const abrirModalExportar = () => {
-  mostrarModalExportar.value = true
-}
-
+// Import/Export
+const abrirModalImportar = () => { mostrarModalImportar.value = true }
+const abrirModalExportar = () => { mostrarModalExportar.value = true }
 const handleImportComplete = async () => {
-  // Reload patients after import
   await cargarPacientes()
-  toast.success('Importación completada. Lista de pacientes actualizada.')
+  toast.success('Importación completada')
 }
 
-// Computed property for current filters in export format
 const filtrosActualesParaExport = computed(() => {
   const filters = {}
-
-  if (estadoSeleccionado.value !== 'todos') {
-    filters.estado = estadoSeleccionado.value
-  }
-
-  if (areaSeleccionada.value) {
-    filters.area = areaSeleccionada.value
-  }
-
+  if (estadoSeleccionado.value !== 'todos') filters.estado = estadoSeleccionado.value
+  if (areaSeleccionada.value) filters.area = areaSeleccionada.value
   return filters
 })
 
-// Gestión del modal de editar cita
+// Modal editar cita
 const abrirModalEditarCita = (citaId) => {
-  console.log('Abriendo modal de edición de cita:', citaId)
   citaIdSeleccionada.value = citaId
   mostrarModalEditarCita.value = true
 }
-
 const cerrarModalEditarCita = () => {
   mostrarModalEditarCita.value = false
   citaIdSeleccionada.value = null
 }
-
 const handleCitaActualizada = async () => {
-  console.log('Cita actualizada, recargando pacientes...')
-
-  // Recargar la lista de pacientes para actualizar próxima sesión
   await cargarPacientes()
-
-  // Cerrar el modal
   cerrarModalEditarCita()
-
-  // Mostrar notificación de éxito
-  toast.success('Cita actualizada correctamente')
+  toast.success('Cita actualizada')
 }
 
 // Lifecycle
 onMounted(async () => {
-  console.log('[Pacientes] Componente montado')
-  
   try {
-    // Esperar a que el usuario y el perfil estén completamente cargados
-    console.log('[Pacientes] Esperando a que el usuario esté disponible...')
     await waitForUser()
-    
     const userId = getUserId()
-    console.log('[Pacientes] Usuario después de waitForUser:', {
-      existe: !!user.value,
-      id: userId,
-      email: user.value?.email
-    })
-    
     if (userId) {
-      console.log('✅ [Pacientes] Usuario disponible, cargando pacientes...')
       await cargarPacientes()
     } else {
-      console.error('❌ [Pacientes] No se pudo obtener el usuario autenticado')
       loading.value = false
     }
   } catch (error) {
-    console.error('❌ [Pacientes] Error en onMounted:', error)
+    console.error('Error en onMounted:', error)
     loading.value = false
   }
 })
 
-// Watch para recargar si el usuario cambia
-watch(() => getUserId(), (newUserId, oldUserId) => {
-  console.log('[Pacientes] ID de usuario cambió:', {
-    antes: oldUserId,
-    ahora: newUserId
-  })
+watch(() => getUserId(), (newUserId) => {
   if (newUserId && pacientes.value.length === 0) {
-    console.log('[Pacientes] Recargando pacientes por cambio de usuario...')
     cargarPacientes()
   }
 })
 </script>
-
-<style scoped>
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>

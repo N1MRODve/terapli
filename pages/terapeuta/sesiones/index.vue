@@ -1,553 +1,317 @@
 <template>
-  <div class="min-h-screen bg-base-bg">
-    <!-- Encabezado -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-serif font-bold text-cafe mb-2">
-        Gestión de Sesiones
-      </h1>
-      <p class="text-purple-600">
-        Visualiza y gestiona todas tus sesiones con información financiera
-      </p>
-    </div>
-
-    <!-- Cards de Resumen Financiero -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <!-- Sesiones Pendientes -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <ClockIcon class="w-6 h-6 text-yellow-600" />
-          </div>
-          <span class="text-sm font-medium text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">
-            Pendientes
-          </span>
-        </div>
-        <p class="text-sm text-cafe/60 mb-1">Sesiones pendientes</p>
-        <p class="text-3xl font-bold text-cafe mb-2">{{ resumenFinanciero.pendientes }}</p>
-        <div class="pt-3 border-t border-gray-100">
-          <p class="text-xs text-cafe/50 mb-1">Monto estimado</p>
-          <p class="text-xl font-semibold text-yellow-600">
-            {{ formatearPrecio(resumenFinanciero.montoPendiente) }}€
-          </p>
-        </div>
+  <div>
+    <!-- Header minimalista -->
+    <header class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-2xl font-semibold text-gray-900">
+          Sesiones
+          <span class="text-gray-400 font-normal">({{ sesionesFiltradas.length }})</span>
+        </h1>
+        <button
+          @click="navegarAAgenda"
+          class="h-10 px-4 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 shadow-sm"
+        >
+          <PlusIcon class="w-4 h-4" />
+          Nueva Sesión
+        </button>
       </div>
 
-      <!-- Sesiones Confirmadas -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-            <CheckCircleIcon class="w-6 h-6 text-green-600" />
+      <!-- KPI Bar compacta -->
+      <div class="bg-white border border-gray-100 rounded-lg p-4 mb-4">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+          <!-- Pendientes -->
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+            <span class="text-gray-600">Pendientes:</span>
+            <span class="font-semibold text-gray-900">{{ resumenFinanciero.pendientes }}</span>
+            <span class="text-gray-400">({{ formatearPrecio(resumenFinanciero.montoPendiente) }}€)</span>
           </div>
-          <span class="text-sm font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
-            Confirmadas
-          </span>
-        </div>
-        <p class="text-sm text-cafe/60 mb-1">Sesiones confirmadas</p>
-        <p class="text-3xl font-bold text-cafe mb-2">{{ resumenFinanciero.confirmadas }}</p>
-        <div class="pt-3 border-t border-gray-100">
-          <p class="text-xs text-cafe/50 mb-1">Monto asegurado</p>
-          <p class="text-xl font-semibold text-green-600">
-            {{ formatearPrecio(resumenFinanciero.montoConfirmado) }}€
-          </p>
-        </div>
-      </div>
 
-      <!-- Sesiones Completadas -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-            <CheckCircleIcon class="w-6 h-6 text-blue-600" />
-          </div>
-          <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-            Completadas
-          </span>
-        </div>
-        <p class="text-sm text-cafe/60 mb-1">Sesiones realizadas</p>
-        <p class="text-3xl font-bold text-cafe mb-2">{{ resumenFinanciero.completadas }}</p>
-        <div class="pt-3 border-t border-gray-100">
-          <p class="text-xs text-cafe/50 mb-1">Monto por cobrar</p>
-          <p class="text-xl font-semibold text-blue-600">
-            {{ formatearPrecio(resumenFinanciero.montoCompletado) }}€
-          </p>
-        </div>
-      </div>
+          <span class="hidden sm:block text-gray-200">|</span>
 
-      <!-- Sesiones Canceladas -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-            <span class="text-2xl">✕</span>
+          <!-- Confirmadas -->
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+            <span class="text-gray-600">Confirmadas:</span>
+            <span class="font-semibold text-gray-900">{{ resumenFinanciero.confirmadas }}</span>
+            <span class="text-gray-400">({{ formatearPrecio(resumenFinanciero.montoConfirmado) }}€)</span>
           </div>
-          <span class="text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full">
-            Canceladas
-          </span>
-        </div>
-        <p class="text-sm text-cafe/60 mb-1">Sesiones canceladas</p>
-        <p class="text-3xl font-bold text-cafe mb-2">{{ resumenFinanciero.canceladas }}</p>
-        <div class="pt-3 border-t border-gray-100">
-          <p class="text-xs text-cafe/50 mb-1">Monto perdido</p>
-          <p class="text-xl font-semibold text-red-600">
-            {{ formatearPrecio(resumenFinanciero.montoCancelado) }}€
-          </p>
-        </div>
-      </div>
-    </div>
 
-    <!-- Sección de Pagos Confirmados - Rediseño Profesional -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-      <!-- Header con resumen financiero integrado -->
-      <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 px-6 py-5">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center">
-              <CheckCircleIcon class="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-cafe">Pagos Confirmados</h2>
-              <p class="text-sm text-cafe/60 mt-0.5">Bonos procesados por coordinación</p>
-            </div>
+          <span class="hidden sm:block text-gray-200">|</span>
+
+          <!-- Realizadas -->
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-600"></span>
+            <span class="text-gray-600">Realizadas:</span>
+            <span class="font-semibold text-gray-900">{{ resumenFinanciero.completadas }}</span>
+            <span class="text-gray-400">({{ formatearPrecio(resumenFinanciero.montoCompletado) }}€)</span>
           </div>
-          
-          <!-- Resumen financiero compacto -->
-          <div class="flex items-center gap-6">
-            <div class="text-right">
-              <p class="text-xs text-cafe/50 uppercase font-semibold tracking-wide">Total Confirmado</p>
-              <p class="text-3xl font-bold text-green-700">{{ formatearPrecio(totalConfirmadoTerapeuta) }}€</p>
-              <p class="text-xs text-cafe/60 mt-0.5">{{ bonosPagados.length }} {{ bonosPagados.length === 1 ? 'bono' : 'bonos' }}</p>
-            </div>
-            <button
-              @click="mostrarPagosConfirmados = !mostrarPagosConfirmados"
-              class="w-10 h-10 rounded-lg bg-white/80 hover:bg-white border border-green-200 flex items-center justify-center text-green-700 hover:text-green-800 transition-all duration-200"
-              :class="{ 'rotate-180': mostrarPagosConfirmados }"
-            >
-              <span class="text-lg">▼</span>
-            </button>
+
+          <span class="hidden sm:block text-gray-200">|</span>
+
+          <!-- Canceladas -->
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="text-gray-600">Canceladas:</span>
+            <span class="font-semibold text-gray-900">{{ resumenFinanciero.canceladas }}</span>
+          </div>
+
+          <!-- Total por cobrar -->
+          <div class="ml-auto flex items-center gap-2 pl-4 border-l border-gray-200">
+            <span class="text-gray-600">Por cobrar:</span>
+            <span class="font-bold text-green-600 text-base">{{ formatearPrecio(totalPorCobrar) }}€</span>
           </div>
         </div>
       </div>
 
-      <!-- Lista de bonos expandible -->
-      <transition
-        enter-active-class="transition-all duration-300 ease-out"
-        leave-active-class="transition-all duration-200 ease-in"
-        enter-from-class="opacity-0 max-h-0"
-        enter-to-class="opacity-100 max-h-[2000px]"
-        leave-from-class="opacity-100 max-h-[2000px]"
-        leave-to-class="opacity-0 max-h-0"
-      >
-        <div v-show="mostrarPagosConfirmados">
-          <!-- Estado vacío -->
-          <div v-if="bonosPagados.length === 0" class="text-center py-12 px-6">
-            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-cafe/5 flex items-center justify-center">
-              <span class="text-4xl">📭</span>
-            </div>
-            <p class="text-cafe/60 font-medium">No hay pagos confirmados aún</p>
-            <p class="text-sm text-cafe/40 mt-1">Los bonos pagados aparecerán aquí</p>
-          </div>
-
-          <!-- Listado de pagos -->
-          <div v-else class="divide-y divide-gray-100">
-            <div
-              v-for="(pago, index) in bonosPagados"
-              :key="pago.bono_id"
-              class="group hover:bg-green-50/30 transition-colors duration-150"
-            >
-              <!-- Fila compacta (siempre visible) -->
-              <div
-                @click="toggleDetallePago(pago.bono_id)"
-                class="px-6 py-4 cursor-pointer flex items-center gap-4"
-              >
-                <!-- Indicador visual de estado -->
-                <div class="flex-shrink-0 w-1 h-12 rounded-full bg-green-500"></div>
-
-                <!-- Avatar y nombre del paciente -->
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                  {{ obtenerIniciales(pago.paciente_nombre) }}
-                </div>
-
-                <div class="flex-1 min-w-0 grid grid-cols-5 gap-4 items-center">
-                  <!-- Nombre del paciente -->
-                  <div class="col-span-2">
-                    <p class="font-semibold text-cafe truncate">{{ pago.paciente_nombre }}</p>
-                    <p class="text-xs text-cafe/50 truncate">{{ pago.tipo_bono || 'Bono Estándar' }}</p>
-                  </div>
-
-                  <!-- Sesiones -->
-                  <div class="text-center">
-                    <p class="text-sm font-semibold text-cafe">{{ pago.sesiones_usadas }}/{{ pago.bono_sesiones_totales }}</p>
-                    <p class="text-xs text-cafe/50">sesiones</p>
-                  </div>
-
-                  <!-- Tu parte -->
-                  <div class="text-right">
-                    <p class="text-lg font-bold text-green-700">{{ formatearPrecio(pago.monto_total_terapeuta) }}€</p>
-                    <p class="text-xs text-cafe/50">tu parte (70%)</p>
-                  </div>
-
-                  <!-- Fecha y método -->
-                  <div class="text-right">
-                    <p class="text-sm font-medium text-cafe flex items-center justify-end gap-1.5">
-                      {{ formatearFecha(pago.bono_fecha_pago) }}
-                    </p>
-                    <p class="text-xs text-cafe/50 capitalize flex items-center justify-end gap-1.5 mt-0.5">
-                      {{ pago.bono_metodo_pago || 'No especificado' }}
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Icono expandir -->
-                <div class="flex-shrink-0 ml-2">
-                  <span
-                    class="block w-6 h-6 rounded-full bg-cafe/5 group-hover:bg-cafe/10 flex items-center justify-center text-cafe/40 text-xs transition-all duration-200"
-                    :class="{ 'rotate-180': pagoExpandido === pago.bono_id }"
-                  >
-                    ▼
-                  </span>
-                </div>
-              </div>
-
-              <!-- Panel de detalles expandible -->
-              <transition
-                enter-active-class="transition-all duration-300 ease-out"
-                leave-active-class="transition-all duration-200 ease-in"
-                enter-from-class="opacity-0 max-h-0"
-                enter-to-class="opacity-100 max-h-96"
-                leave-from-class="opacity-100 max-h-96"
-                leave-to-class="opacity-0 max-h-0"
-              >
-                <div v-show="pagoExpandido === pago.bono_id" class="bg-gradient-to-b from-green-50/50 to-transparent">
-                  <div class="px-6 pb-6 pt-2 ml-16">
-                    <div class="bg-white rounded-xl border border-green-100 p-5 shadow-sm">
-                      <div class="grid grid-cols-3 gap-6">
-                        <!-- Columna 1: Información del paciente -->
-                        <div class="space-y-3">
-                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">📋 Paciente</p>
-                          <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Nombre:</span>
-                              <span class="font-medium text-cafe">{{ pago.paciente_nombre }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Email:</span>
-                              <span class="font-medium text-cafe text-xs truncate max-w-[150px]" :title="pago.paciente_email">{{ pago.paciente_email }}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Columna 2: Detalles del bono -->
-                        <div class="space-y-3">
-                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">🧾 Detalles del Bono</p>
-                          <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Tipo:</span>
-                              <span class="font-medium text-cafe">{{ pago.tipo_bono || 'Estándar' }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Sesiones totales:</span>
-                              <span class="font-medium text-cafe">{{ pago.bono_sesiones_totales }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Sesiones usadas:</span>
-                              <span class="font-medium text-cafe">{{ pago.sesiones_usadas }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Sesiones restantes:</span>
-                              <span class="font-semibold text-green-700">{{ pago.bono_sesiones_restantes }}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Columna 3: Información financiera -->
-                        <div class="space-y-3">
-                          <p class="text-xs text-cafe/40 uppercase font-bold tracking-wider mb-3">Financiero</p>
-                          <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Monto total:</span>
-                              <span class="font-bold text-cafe">{{ formatearPrecio(pago.bono_monto_total) }}€</span>
-                            </div>
-                            <div class="flex justify-between text-sm bg-green-50 px-2 py-1.5 rounded-lg">
-                              <span class="text-cafe/60 font-medium">Tu parte (70%):</span>
-                              <span class="font-bold text-green-700">{{ formatearPrecio(pago.monto_total_terapeuta) }}€</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                              <span class="text-cafe/60">Por sesión:</span>
-                              <span class="font-medium text-cafe/80">{{ formatearPrecio(pago.precio_por_sesion) }}€</span>
-                            </div>
-                            <div class="pt-2 border-t border-green-100 mt-3">
-                              <div class="flex justify-between text-xs text-cafe/50 mb-1">
-                                <span>Método de pago:</span>
-                                <span class="font-medium capitalize">{{ pago.bono_metodo_pago || 'No especificado' }}</span>
-                              </div>
-                              <div class="flex justify-between text-xs text-cafe/50">
-                                <span>Fecha de pago:</span>
-                                <span class="font-medium">{{ formatearFecha(pago.bono_fecha_pago) }}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </transition>
-            </div>
-          </div>
-        </div>
-      </transition>
-    </div>
-
-    <!-- Filtros y Búsqueda -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <!-- Búsqueda -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-cafe mb-2">
-            Buscar paciente
-          </label>
-          <div class="relative">
+      <!-- Filtros -->
+      <div class="space-y-3">
+        <!-- Buscador y filtros inline -->
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Búsqueda -->
+          <div class="relative flex-1 min-w-[200px] max-w-md">
             <input
               v-model="filtros.busqueda"
               type="text"
-              placeholder="Nombre del paciente..."
-              class="w-full px-4 py-2 pl-10 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20"
+              placeholder="Buscar sesión..."
+              class="w-full h-10 px-4 pl-9 bg-white border border-gray-200 rounded-lg text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
             />
-            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-cafe/50" />
+            <MagnifyingGlassIcon class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
-        </div>
 
-        <!-- Filtro por Estado -->
-        <div>
-          <label class="block text-sm font-medium text-cafe mb-2">
-            Estado
-          </label>
+          <!-- Quick filters - Período -->
+          <div class="flex items-center bg-gray-100 rounded-lg p-1">
+            <button
+              v-for="periodo in periodos"
+              :key="periodo.valor"
+              @click="filtros.periodo = periodo.valor"
+              class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
+              :class="filtros.periodo === periodo.valor
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'"
+            >
+              {{ periodo.label }}
+            </button>
+          </div>
+
+          <!-- Filtro estado -->
           <select
             v-model="filtros.estado"
-            class="w-full px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20 text-cafe"
+            class="h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
           >
             <option value="">Todos los estados</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="confirmada">Confirmada</option>
-            <option value="realizada">Completada</option>
-            <option value="cancelada">Cancelada</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="confirmada">Confirmadas</option>
+            <option value="realizada">Realizadas</option>
+            <option value="cancelada">Canceladas</option>
           </select>
-        </div>
 
-        <!-- Filtro por Mes -->
-        <div>
-          <label class="block text-sm font-medium text-cafe mb-2">
-            Período
-          </label>
-          <select
-            v-model="filtros.periodo"
-            class="w-full px-4 py-2 bg-base-bg rounded-lg border border-transparent focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300/20 text-cafe"
+          <!-- Limpiar filtros -->
+          <button
+            v-if="tieneFiltrosActivos"
+            @click="limpiarFiltros"
+            class="h-10 px-3 text-sm text-gray-500 hover:text-gray-700 transition-colors"
           >
-            <option value="mes-actual">Mes actual</option>
-            <option value="mes-anterior">Mes anterior</option>
-            <option value="trimestre">Último trimestre</option>
-            <option value="todos">Todos</option>
-          </select>
+            Limpiar
+          </button>
         </div>
       </div>
+    </header>
+
+    <!-- Loading -->
+    <div v-if="cargando" class="flex items-center justify-center py-20">
+      <div class="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
-    <!-- Loading State -->
-    <div v-if="cargando" class="flex items-center justify-center py-12">
-      <div class="text-center">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
-        <p class="text-cafe/60">Cargando sesiones...</p>
+    <!-- Error -->
+    <div v-else-if="error" class="bg-red-50 border border-red-100 rounded-lg p-4 flex items-start gap-3">
+      <ExclamationTriangleIcon class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+      <div>
+        <p class="font-medium text-red-800">Error al cargar sesiones</p>
+        <p class="text-sm text-red-600">{{ error }}</p>
       </div>
     </div>
 
-    <!-- Error State -->
-    <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-xl p-6">
-      <div class="flex items-start gap-3">
-        <ExclamationTriangleIcon class="w-6 h-6 text-red-600" />
-        <div>
-          <h3 class="font-semibold text-red-800 mb-1">Error al cargar sesiones</h3>
-          <p class="text-sm text-red-600">{{ error }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Lista de Sesiones -->
-    <div v-else class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <!-- Header de la tabla -->
-      <div class="bg-gray-50 border-b border-gray-100 px-6 py-4">
-        <h3 class="font-semibold text-cafe">
-          Listado de Sesiones
-          <span class="text-sm font-normal text-cafe/60 ml-2">
-            ({{ sesionesFiltradas.length }} sesiones)
-          </span>
-        </h3>
-      </div>
-
+    <!-- Contenido -->
+    <div v-else>
       <!-- Empty State -->
-      <div v-if="sesionesFiltradas.length === 0" class="p-12 text-center">
-        <div class="w-16 h-16 bg-cafe-claro/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CalendarDaysIcon class="w-8 h-8 text-cafe/40" />
+      <div v-if="sesionesFiltradas.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <CalendarDaysIcon class="w-8 h-8 text-gray-400" />
         </div>
-        <h3 class="text-lg font-semibold text-cafe mb-2">
-          No hay sesiones para mostrar
+        <h3 class="text-lg font-medium text-gray-900 mb-1">
+          {{ tieneFiltrosActivos ? 'Sin resultados' : 'Sin sesiones' }}
         </h3>
-        <p class="text-cafe/60 mb-6">
-          {{ filtros.busqueda || filtros.estado 
-            ? 'Intenta ajustar los filtros de búsqueda' 
-            : 'No tienes sesiones programadas aún' }}
+        <p class="text-sm text-gray-500 mb-4 max-w-sm">
+          {{ tieneFiltrosActivos
+            ? 'Prueba ajustando los filtros de búsqueda'
+            : 'Programa tu primera sesión desde la agenda' }}
         </p>
+        <button
+          v-if="!tieneFiltrosActivos"
+          @click="navegarAAgenda"
+          class="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Ir a la agenda
+        </button>
+        <button
+          v-else
+          @click="limpiarFiltros"
+          class="px-4 py-2 text-gray-600 text-sm font-medium hover:text-gray-900 transition-colors"
+        >
+          Limpiar filtros
+        </button>
       </div>
 
       <!-- Tabla de Sesiones -->
-      <div v-else class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Fecha
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Hora
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Paciente
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Modalidad
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Estado
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Bono
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Monto
-              </th>
-              <th class="px-6 py-3 text-center text-xs font-semibold text-cafe/70 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-100">
-            <tr
-              v-for="sesion in sesionesFiltradas"
-              :key="sesion.id"
-              class="hover:bg-gray-50 transition-colors duration-150"
-            >
-              <!-- Fecha -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-cafe">
-                  {{ formatearFecha(sesion.fecha_cita) }}
-                </div>
-                <div class="text-xs text-cafe/50">
-                  {{ formatearDiaSemana(sesion.fecha_cita) }}
-                </div>
-              </td>
+      <div v-else class="bg-white border border-gray-100 rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-100 bg-gray-50/50">
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paciente</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bono</th>
+                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                <th class="px-4 py-3 w-10"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr
+                v-for="sesion in sesionesFiltradas"
+                :key="sesion.id"
+                class="hover:bg-gray-50/50 transition-colors cursor-pointer"
+                @click="verDetalles(sesion)"
+              >
+                <!-- Fecha -->
+                <td class="px-4 py-3">
+                  <div class="text-sm font-medium text-gray-900">{{ formatearFechaCorta(sesion.fecha_cita) }}</div>
+                  <div class="text-xs text-gray-500">{{ formatearHora(sesion.hora_inicio) }}</div>
+                </td>
 
-              <!-- Hora -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-cafe">
-                  {{ formatearHora(sesion.hora_inicio) }}
-                </div>
-                <div class="text-xs text-cafe/50">
-                  {{ sesion.duracion_minutos || 50 }} min
-                </div>
-              </td>
+                <!-- Paciente -->
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-semibold flex-shrink-0"
+                    >
+                      {{ obtenerIniciales(sesion.paciente?.nombre_completo || 'NN') }}
+                    </div>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-gray-900 truncate">
+                        {{ sesion.paciente?.nombre_completo || 'Sin nombre' }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
 
-              <!-- Paciente -->
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-10 h-10 rounded-full bg-purple-600/20 text-purple-600 flex items-center justify-center font-semibold text-sm flex-shrink-0"
+                <!-- Tipo -->
+                <td class="px-4 py-3">
+                  <span class="text-sm text-gray-600">
+                    {{ sesion.modalidad === 'online' ? 'Online' : 'Presencial' }}
+                  </span>
+                </td>
+
+                <!-- Estado -->
+                <td class="px-4 py-3">
+                  <span
+                    class="inline-flex items-center gap-1.5 text-sm"
+                    :class="obtenerColorTextoEstado(sesion.estado)"
                   >
-                    {{ obtenerIniciales(sesion.paciente?.nombre_completo || 'NN') }}
-                  </div>
-                  <div>
-                    <div class="text-sm font-medium text-cafe">
-                      {{ sesion.paciente?.nombre_completo || 'Sin nombre' }}
-                    </div>
-                    <div v-if="sesion.paciente?.email" class="text-xs text-cafe/50">
-                      {{ sesion.paciente.email }}
-                    </div>
-                  </div>
-                </div>
-              </td>
+                    <span class="w-1.5 h-1.5 rounded-full" :class="obtenerColorPuntoEstado(sesion.estado)"></span>
+                    {{ obtenerTextoEstado(sesion.estado) }}
+                  </span>
+                </td>
 
-              <!-- Modalidad -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  :class="[
-                    'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
-                    sesion.modalidad === 'online' 
-                      ? 'bg-blue-50 text-blue-700' 
-                      : 'bg-purple-50 text-purple-700'
-                  ]"
-                >
-                  <span>{{ sesion.modalidad === 'online' ? '💻' : '🏢' }}</span>
-                  {{ sesion.modalidad === 'online' ? 'Online' : 'Presencial' }}
-                </span>
-              </td>
-
-              <!-- Estado -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  :class="[
-                    'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium',
-                    obtenerClaseEstado(sesion.estado)
-                  ]"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full" :class="obtenerColorPuntoEstado(sesion.estado)"></span>
-                  {{ obtenerTextoEstado(sesion.estado) }}
-                </span>
-              </td>
-
-              <!-- Bono -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div v-if="sesion.bono" class="text-xs space-y-1">
-                  <div class="flex items-center gap-1 text-green-600">
-                    <CheckCircleIcon class="w-4 h-4" />
-                    <span>Con bono</span>
+                <!-- Bono -->
+                <td class="px-4 py-3">
+                  <div v-if="sesion.bono" class="text-sm">
+                    <span class="text-gray-700">{{ sesion.bono.sesiones_restantes }}/{{ sesion.bono.sesiones_totales }}</span>
+                    <span
+                      v-if="sesion.bono.pagado"
+                      class="ml-1.5 text-xs text-green-600 font-medium"
+                    >Pagado</span>
+                    <span
+                      v-else
+                      class="ml-1.5 text-xs text-amber-600 font-medium"
+                    >Pend.</span>
                   </div>
-                  <div class="text-cafe/50">
-                    {{ sesion.bono.sesiones_restantes || 0 }}/{{ sesion.bono.sesiones_totales || 0 }} restantes
-                  </div>
-                  <!-- Estado de pago del bono -->
-                  <div v-if="sesion.bono.pagado" class="flex items-center gap-1 text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
-                    <CheckCircleIcon class="w-4 h-4" />
-                    <span class="font-semibold">Pagado</span>
-                  </div>
-                  <div v-else class="flex items-center gap-1 text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full animate-pulse">
-                    <ClockIcon class="w-4 h-4" />
-                    <span class="font-semibold">Pend. pago</span>
-                  </div>
-                </div>
-                <div v-else class="text-xs text-cafe/50">
-                  Sin bono
-                </div>
-              </td>
+                  <span v-else class="text-sm text-gray-400">—</span>
+                </td>
 
-              <!-- Monto -->
-              <td class="px-6 py-4 whitespace-nowrap text-right">
-                <div class="text-sm font-semibold text-cafe">
-                  {{ formatearPrecio(sesion.precio_estimado || PRECIO_SESION_DEFAULT) }}€
-                </div>
-                <div class="text-xs text-cafe/50">
-                  Tu parte: {{ formatearPrecio((sesion.precio_estimado || PRECIO_SESION_DEFAULT) * 0.7) }}€
-                </div>
-              </td>
+                <!-- Monto -->
+                <td class="px-4 py-3 text-right">
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ formatearPrecio(sesion.precio_estimado || PRECIO_SESION_DEFAULT) }}€
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    {{ formatearPrecio((sesion.precio_estimado || PRECIO_SESION_DEFAULT) * 0.7) }}€ tu parte
+                  </div>
+                </td>
 
-              <!-- Acciones -->
-              <td class="px-6 py-4 whitespace-nowrap text-center">
-                <button
-                  @click="verDetalles(sesion)"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-purple-600 hover:bg-purple-600/10 rounded-lg transition-colors duration-200"
-                >
-                  <EyeIcon class="w-4 h-4" />
-                  Ver detalles
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <!-- Acción -->
+                <td class="px-4 py-3 text-right">
+                  <ChevronRightIcon class="w-4 h-4 text-gray-400" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagos confirmados (colapsado por defecto) -->
+      <div v-if="bonosPagados.length > 0" class="mt-6">
+        <button
+          @click="mostrarPagosConfirmados = !mostrarPagosConfirmados"
+          class="w-full flex items-center justify-between px-4 py-3 bg-green-50 border border-green-100 rounded-lg text-left hover:bg-green-100/50 transition-colors"
+        >
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+              <CheckCircleIcon class="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <span class="font-medium text-green-800">Pagos confirmados</span>
+              <span class="text-sm text-green-600 ml-2">{{ bonosPagados.length }} bonos · {{ formatearPrecio(totalConfirmadoTerapeuta) }}€</span>
+            </div>
+          </div>
+          <ChevronDownIcon
+            class="w-5 h-5 text-green-600 transition-transform"
+            :class="{ 'rotate-180': mostrarPagosConfirmados }"
+          />
+        </button>
+
+        <Transition
+          enter-active-class="transition-all duration-200 ease-out"
+          enter-from-class="opacity-0 max-h-0"
+          enter-to-class="opacity-100 max-h-[1000px]"
+          leave-active-class="transition-all duration-150 ease-in"
+          leave-from-class="opacity-100 max-h-[1000px]"
+          leave-to-class="opacity-0 max-h-0"
+        >
+          <div v-show="mostrarPagosConfirmados" class="mt-2 bg-white border border-gray-100 rounded-lg overflow-hidden">
+            <div class="divide-y divide-gray-50">
+              <div
+                v-for="pago in bonosPagados"
+                :key="pago.bono_id"
+                class="px-4 py-3 flex items-center gap-4 hover:bg-gray-50/50"
+              >
+                <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-semibold">
+                  {{ obtenerIniciales(pago.paciente_nombre || 'NN') }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-gray-900 truncate">{{ pago.paciente_nombre }}</div>
+                  <div class="text-xs text-gray-500">{{ pago.tipo_bono || 'Bono' }} · {{ pago.sesiones_usadas }}/{{ pago.bono_sesiones_totales }} sesiones</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-semibold text-green-600">{{ formatearPrecio(pago.monto_total_terapeuta) }}€</div>
+                  <div class="text-xs text-gray-500">{{ formatearFecha(pago.bono_fecha_pago) }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Transition>
       </div>
     </div>
 
@@ -563,14 +327,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { 
+import {
   CalendarDaysIcon,
   CheckCircleIcon,
   ClockIcon,
-  EyeIcon,
   ExclamationTriangleIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  PlusIcon,
+  ChevronRightIcon,
+  ChevronDownIcon
 } from '@heroicons/vue/24/outline'
 import ModalDetallesCita from '~/components/ModalDetallesCita.vue'
 
@@ -579,10 +344,9 @@ definePageMeta({
   middleware: 'auth'
 })
 
-// Constantes
 const PRECIO_SESION_DEFAULT = 50
 
-// Composables
+const router = useRouter()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
@@ -590,60 +354,75 @@ const user = useSupabaseUser()
 const cargando = ref(true)
 const error = ref<string | null>(null)
 const sesiones = ref<any[]>([])
-const bonosPagadosDirectos = ref<any[]>([]) // Bonos pagados cargados directamente
+const bonosPagadosDirectos = ref<any[]>([])
+const mostrarPagosConfirmados = ref(false)
+const mostrarModalDetalles = ref(false)
+const citaSeleccionada = ref<string | null>(null)
+
 const filtros = ref({
   busqueda: '',
   estado: '',
   periodo: 'todos'
 })
-const mostrarModalDetalles = ref(false)
-const citaSeleccionada = ref<string | null>(null)
-const mostrarPagosConfirmados = ref(true) // Mostrar por defecto la sección de pagos
-const pagoExpandido = ref<string | null>(null) // ID del pago que está expandido
 
-// Computed - Filtrar sesiones
+const periodos = [
+  { valor: 'hoy', label: 'Hoy' },
+  { valor: 'semana', label: 'Semana' },
+  { valor: 'mes', label: 'Mes' },
+  { valor: 'todos', label: 'Todos' }
+]
+
+// Computed
+const tieneFiltrosActivos = computed(() => {
+  return filtros.value.busqueda !== '' ||
+    filtros.value.estado !== '' ||
+    filtros.value.periodo !== 'todos'
+})
+
 const sesionesFiltradas = computed(() => {
   let resultado = [...sesiones.value]
 
-  // Filtrar por búsqueda
+  // Búsqueda
   if (filtros.value.busqueda) {
     const busqueda = filtros.value.busqueda.toLowerCase()
-    resultado = resultado.filter(s => 
+    resultado = resultado.filter(s =>
       s.paciente?.nombre_completo?.toLowerCase().includes(busqueda)
     )
   }
 
-  // Filtrar por estado
+  // Estado
   if (filtros.value.estado) {
     resultado = resultado.filter(s => s.estado === filtros.value.estado)
   }
 
-  // Filtrar por período
+  // Período
   const ahora = new Date()
-  if (filtros.value.periodo === 'mes-actual') {
+  const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate())
+
+  if (filtros.value.periodo === 'hoy') {
+    resultado = resultado.filter(s => {
+      const fecha = new Date(s.fecha_cita)
+      return fecha.toDateString() === hoy.toDateString()
+    })
+  } else if (filtros.value.periodo === 'semana') {
+    const inicioSemana = new Date(hoy)
+    inicioSemana.setDate(hoy.getDate() - hoy.getDay() + 1) // Lunes
+    const finSemana = new Date(inicioSemana)
+    finSemana.setDate(inicioSemana.getDate() + 6) // Domingo
+    resultado = resultado.filter(s => {
+      const fecha = new Date(s.fecha_cita)
+      return fecha >= inicioSemana && fecha <= finSemana
+    })
+  } else if (filtros.value.periodo === 'mes') {
     const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1)
     const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0)
     resultado = resultado.filter(s => {
       const fecha = new Date(s.fecha_cita)
       return fecha >= inicioMes && fecha <= finMes
     })
-  } else if (filtros.value.periodo === 'mes-anterior') {
-    const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth() - 1, 1)
-    const finMes = new Date(ahora.getFullYear(), ahora.getMonth(), 0)
-    resultado = resultado.filter(s => {
-      const fecha = new Date(s.fecha_cita)
-      return fecha >= inicioMes && fecha <= finMes
-    })
-  } else if (filtros.value.periodo === 'trimestre') {
-    const hace3Meses = new Date(ahora)
-    hace3Meses.setMonth(ahora.getMonth() - 3)
-    resultado = resultado.filter(s => {
-      const fecha = new Date(s.fecha_cita)
-      return fecha >= hace3Meses
-    })
   }
 
-  // Ordenar por fecha (más recientes primero)
+  // Ordenar por fecha
   resultado.sort((a, b) => {
     const fechaA = new Date(a.fecha_cita + 'T' + a.hora_inicio)
     const fechaB = new Date(b.fecha_cita + 'T' + b.hora_inicio)
@@ -653,7 +432,6 @@ const sesionesFiltradas = computed(() => {
   return resultado
 })
 
-// Computed - Resumen financiero
 const resumenFinanciero = computed(() => {
   const resultado = {
     pendientes: 0,
@@ -667,13 +445,11 @@ const resumenFinanciero = computed(() => {
   }
 
   sesionesFiltradas.value.forEach(sesion => {
-    // Usar el monto calculado para la terapeuta desde la vista
     const montoTerapeuta = sesion.monto_terapeuta || (sesion.precio_estimado || PRECIO_SESION_DEFAULT) * 0.7
 
     switch (sesion.estado) {
       case 'pendiente':
         resultado.pendientes++
-        // Si tiene bono pagado, suma a confirmado, si no a pendiente
         if (sesion.esta_pagado || sesion.bono?.pagado) {
           resultado.montoConfirmado += montoTerapeuta
         } else {
@@ -682,7 +458,6 @@ const resumenFinanciero = computed(() => {
         break
       case 'confirmada':
         resultado.confirmadas++
-        // Si tiene bono pagado, es ingreso confirmado
         if (sesion.esta_pagado || sesion.bono?.pagado) {
           resultado.montoConfirmado += montoTerapeuta
         } else {
@@ -692,7 +467,6 @@ const resumenFinanciero = computed(() => {
       case 'realizada':
       case 'completada':
         resultado.completadas++
-        // Las completadas con bono pagado van a confirmado, si no a por cobrar
         if (sesion.esta_pagado || sesion.bono?.pagado) {
           resultado.montoConfirmado += montoTerapeuta
         } else {
@@ -709,184 +483,131 @@ const resumenFinanciero = computed(() => {
   return resultado
 })
 
-// Computed - Bonos pagados (usa datos cargados directamente de la tabla bonos)
+const totalPorCobrar = computed(() => {
+  return resumenFinanciero.value.montoCompletado + resumenFinanciero.value.montoPendiente
+})
+
 const bonosPagados = computed(() => {
   return bonosPagadosDirectos.value.map(bono => {
-    // Calcular sesiones usadas
     const sesionesUsadas = (bono.sesiones_totales || 0) - (bono.sesiones_restantes || 0)
-    
-    // Calcular precio por sesión y monto para terapeuta
-    const precioSesion = bono.sesiones_totales > 0 ? bono.monto_total / bono.sesiones_totales : 0
     const montoTerapeuta = bono.monto_total * 0.7
-    
+
     return {
       bono_id: bono.id,
-      paciente_id: bono.paciente_id,
       paciente_nombre: bono.paciente_nombre,
-      paciente_email: bono.paciente_email,
       bono_sesiones_totales: bono.sesiones_totales,
-      bono_sesiones_restantes: bono.sesiones_restantes,
       bono_monto_total: bono.monto_total,
       bono_fecha_pago: bono.fecha_pago,
-      bono_metodo_pago: bono.metodo_pago,
       tipo_bono: bono.tipo_bono || 'Estándar',
       sesiones_usadas: sesionesUsadas,
-      precio_por_sesion: precioSesion,
       monto_total_terapeuta: montoTerapeuta
     }
   }).sort((a, b) => {
-    // Ordenar por fecha de pago (más reciente primero)
     const fechaA = new Date(a.bono_fecha_pago || 0)
     const fechaB = new Date(b.bono_fecha_pago || 0)
     return fechaB.getTime() - fechaA.getTime()
   })
 })
 
-// Computed - Total confirmado para la terapeuta
 const totalConfirmadoTerapeuta = computed(() => {
-  return bonosPagados.value.reduce((total, bono) => {
-    return total + (bono.monto_total_terapeuta || 0)
-  }, 0)
+  return bonosPagados.value.reduce((total, bono) => total + (bono.monto_total_terapeuta || 0), 0)
 })
 
-// Cargar sesiones
+// Métodos
+const limpiarFiltros = () => {
+  filtros.value = { busqueda: '', estado: '', periodo: 'todos' }
+}
+
+const navegarAAgenda = () => {
+  router.push('/terapeuta/agenda')
+}
+
 const cargarSesiones = async () => {
   try {
     cargando.value = true
     error.value = null
 
-    // Esperar a que el usuario esté disponible
     let intentos = 0
     while (!user.value && intentos < 50) {
       await new Promise(resolve => setTimeout(resolve, 100))
       intentos++
     }
 
-    if (!user.value) {
-      throw new Error('Usuario no autenticado')
-    }
+    if (!user.value) throw new Error('Usuario no autenticado')
 
-    console.log('👤 Usuario verificado:', user.value.id)
-
-    // Obtener el terapeuta usando el email del usuario
     const { data: terapeuta, error: errorTerapeuta } = await supabase
       .from('terapeutas')
       .select('id')
       .eq('email', user.value.email)
       .single()
 
-    if (errorTerapeuta) {
-      console.error('Error al buscar terapeuta:', errorTerapeuta)
-      throw errorTerapeuta
-    }
-    
-    if (!terapeuta) {
-      throw new Error('No se encontró el terapeuta asociado a este usuario')
-    }
-    
-    console.log('Terapeuta encontrado:', terapeuta)
+    if (errorTerapeuta) throw errorTerapeuta
+    if (!terapeuta) throw new Error('No se encontró el terapeuta')
 
-    // Cargar todas las sesiones usando la vista con información de pago
+    // Usar vista_agenda_terapeutas que ya existe y tiene todos los datos
     const { data, error: errorSesiones } = await supabase
-      .from('vista_sesiones_psicologa')
+      .from('vista_agenda_terapeutas')
       .select('*')
       .eq('terapeuta_id', terapeuta.id)
-      .order('fecha', { ascending: false })
+      .order('fecha_cita', { ascending: false })
 
-    if (errorSesiones) {
-      console.error('Error al cargar sesiones:', errorSesiones)
-      throw errorSesiones
-    }
-    
-    console.log('Sesiones cargadas:', data?.length || 0, data)
+    if (errorSesiones) throw errorSesiones
 
-    // Mapear las sesiones con la información de pago
-    sesiones.value = (data || []).map(sesion => {
-      console.log('Sesión individual:', {
-        id: sesion.id,
-        bono_id: sesion.bono_id,
-        bono_pagado: sesion.bono_pagado,
-        esta_pagado: sesion.esta_pagado,
-        categoria_financiera: sesion.categoria_financiera,
-        precio_sesion: sesion.precio_sesion,
-        monto_terapeuta: sesion.monto_terapeuta,
-        paciente: sesion.paciente_nombre
-      })
-      
-      return {
-        ...sesion,
-        // Mantener compatibilidad con código existente
-        precio_estimado: sesion.precio_sesion || PRECIO_SESION_DEFAULT,
-        paciente: {
-          id: sesion.paciente_id,
-          nombre_completo: sesion.paciente_nombre,
-          email: sesion.paciente_email,
-          telefono: sesion.paciente_telefono
-        },
-        bono: sesion.bono_id ? {
-          id: sesion.bono_id,
-          sesiones_totales: sesion.bono_sesiones_totales,
-          sesiones_restantes: sesion.bono_sesiones_restantes,
-          monto_total: sesion.bono_monto_total,
-          pagado: sesion.bono_pagado,
-          fecha_pago: sesion.bono_fecha_pago,
-          metodo_pago: sesion.bono_metodo_pago
-        } : null
-      }
-    })
-    
-    console.log('Sesiones procesadas:', sesiones.value.length)
+    sesiones.value = (data || []).map(sesion => ({
+      id: sesion.cita_id,
+      fecha_cita: sesion.fecha_cita,
+      hora_inicio: sesion.hora_inicio,
+      hora_fin: sesion.hora_fin,
+      duracion_minutos: sesion.duracion_minutos,
+      modalidad: sesion.modalidad,
+      estado: sesion.estado,
+      observaciones: sesion.observaciones,
+      notas_terapeuta: sesion.notas_terapeuta,
+      precio_estimado: sesion.cita_metadata?.precio_sesion || PRECIO_SESION_DEFAULT,
+      esta_pagado: sesion.cita_metadata?.metodo_pago === 'bono' || sesion.bono_estado === 'activo',
+      paciente: {
+        id: sesion.paciente_id,
+        nombre_completo: sesion.paciente_nombre,
+        email: sesion.paciente_email
+      },
+      bono: sesion.bono_id ? {
+        id: sesion.bono_id,
+        sesiones_totales: sesion.bono_sesiones_totales,
+        sesiones_restantes: sesion.bono_sesiones_restantes,
+        pagado: sesion.bono_estado === 'activo' || sesion.bono_estado === 'pagado'
+      } : null
+    }))
 
   } catch (err: any) {
-    console.error('Error al cargar sesiones:', err)
-    error.value = err.message || 'Error desconocido al cargar las sesiones'
+    error.value = err.message || 'Error desconocido'
   } finally {
     cargando.value = false
   }
 }
 
-// Cargar bonos pagados directamente
 const cargarBonosPagados = async () => {
   try {
-    // Esperar a que el usuario esté disponible
-    if (!user.value) {
-      console.log('Usuario no disponible aún para cargar bonos')
-      return
-    }
+    if (!user.value) return
 
-    console.log('Cargando bonos pagados...')
-
-    // Obtener el terapeuta usando el email del usuario
-    const { data: terapeuta, error: errorTerapeuta } = await supabase
+    const { data: terapeuta } = await supabase
       .from('terapeutas')
       .select('id')
       .eq('email', user.value.email)
       .single()
 
-    if (errorTerapeuta || !terapeuta) {
-      console.error('Error al buscar terapeuta:', errorTerapeuta)
-      return
-    }
+    if (!terapeuta) return
 
-    console.log('Terapeuta encontrado:', terapeuta.id)
-
-    // Primero obtener los IDs de los pacientes de este terapeuta
-    const { data: pacientes, error: errorPacientes } = await supabase
+    const { data: pacientes } = await supabase
       .from('pacientes')
       .select('id')
       .eq('terapeuta_id', terapeuta.id)
 
-    if (errorPacientes || !pacientes || pacientes.length === 0) {
-      console.log('No hay pacientes asignados a este terapeuta')
+    if (!pacientes || pacientes.length === 0) {
       bonosPagadosDirectos.value = []
       return
     }
 
-    const pacienteIds = pacientes.map(p => p.id)
-    console.log('📋 Pacientes encontrados:', pacienteIds.length)
-
-    // Cargar bonos pagados de estos pacientes
-    const { data: bonos, error: errorBonos } = await supabase
+    const { data: bonos } = await supabase
       .from('bonos')
       .select(`
         id,
@@ -896,148 +617,94 @@ const cargarBonosPagados = async () => {
         monto_total,
         tipo_bono,
         fecha_pago,
-        metodo_pago,
         pagado,
         paciente:pacientes!bonos_paciente_id_fkey (
-          nombre_completo,
-          email
+          nombre_completo
         )
       `)
       .eq('pagado', true)
-      .in('paciente_id', pacienteIds)
+      .in('paciente_id', pacientes.map(p => p.id))
       .order('fecha_pago', { ascending: false })
 
-    if (errorBonos) {
-      console.error('Error al cargar bonos pagados:', errorBonos)
-      return
-    }
-
-    console.log('Bonos pagados encontrados:', bonos?.length || 0)
-
-    // Transformar los datos
     bonosPagadosDirectos.value = (bonos || []).map(bono => ({
       ...bono,
-      paciente_nombre: bono.paciente?.nombre_completo,
-      paciente_email: bono.paciente?.email
+      paciente_nombre: bono.paciente?.nombre_completo
     }))
 
-    console.log('Bonos pagados cargados:', bonosPagadosDirectos.value.length)
-
-  } catch (err: any) {
-    console.error('Error al cargar bonos pagados:', err)
+  } catch (err) {
+    console.error('Error cargando bonos:', err)
   }
 }
 
-// Ver detalles de sesión
 const verDetalles = (sesion: any) => {
   citaSeleccionada.value = sesion.id
   mostrarModalDetalles.value = true
 }
 
-// Cerrar modal de detalles
 const cerrarModalDetalles = () => {
   mostrarModalDetalles.value = false
   citaSeleccionada.value = null
 }
 
-// Toggle detalles de pago
-const toggleDetallePago = (bonoId: string) => {
-  if (pagoExpandido.value === bonoId) {
-    pagoExpandido.value = null
-  } else {
-    pagoExpandido.value = bonoId
-  }
-}
+// Helpers
+const formatearPrecio = (precio: number) => precio?.toFixed(2) || '0.00'
 
-// Formatear precio
-const formatearPrecio = (precio: number) => {
-  return precio.toFixed(2)
-}
-
-// Formatear fecha
 const formatearFecha = (fecha: string) => {
   if (!fecha) return '-'
   const date = new Date(fecha)
-  if (isNaN(date.getTime())) return '-'
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
+  return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
-// Formatear fecha con hora
-const formatearFechaHora = (fecha: string) => {
+const formatearFechaCorta = (fecha: string) => {
   if (!fecha) return '-'
-  const date = new Date(fecha)
-  if (isNaN(date.getTime())) return '-'
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
-
-// Formatear día de la semana
-const formatearDiaSemana = (fecha: string) => {
   const date = new Date(fecha + 'T00:00:00')
-  return date.toLocaleDateString('es-ES', {
-    weekday: 'long'
-  })
+  const hoy = new Date()
+  const ayer = new Date(hoy)
+  ayer.setDate(hoy.getDate() - 1)
+
+  if (date.toDateString() === hoy.toDateString()) return 'Hoy'
+  if (date.toDateString() === ayer.toDateString()) return 'Ayer'
+
+  return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
 }
 
-// Formatear hora
-const formatearHora = (hora: string) => {
-  if (!hora) return '-'
-  return hora.substring(0, 5) // HH:MM
-}
+const formatearHora = (hora: string) => hora?.substring(0, 5) || '-'
 
-// Obtener iniciales
 const obtenerIniciales = (nombre: string) => {
-  return nombre
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
-    .substring(0, 2)
+  return nombre?.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || '??'
 }
 
-// Obtener clase CSS del estado
-const obtenerClaseEstado = (estado: string) => {
-  const clases = {
-    pendiente: 'bg-yellow-50 text-yellow-700',
-    confirmada: 'bg-green-50 text-green-700',
-    realizada: 'bg-blue-50 text-blue-700',
-    completada: 'bg-blue-50 text-blue-700',
-    cancelada: 'bg-red-50 text-red-700'
-  }
-  return clases[estado as keyof typeof clases] || 'bg-gray-50 text-gray-700'
-}
-
-// Obtener color del punto de estado
-const obtenerColorPuntoEstado = (estado: string) => {
-  const colores = {
-    pendiente: 'bg-yellow-500',
-    confirmada: 'bg-green-500',
-    realizada: 'bg-blue-500',
-    completada: 'bg-blue-500',
-    cancelada: 'bg-red-500'
-  }
-  return colores[estado as keyof typeof colores] || 'bg-gray-500'
-}
-
-// Obtener texto del estado
 const obtenerTextoEstado = (estado: string) => {
-  const textos = {
+  const textos: Record<string, string> = {
     pendiente: 'Pendiente',
     confirmada: 'Confirmada',
-    realizada: 'Completada',
-    completada: 'Completada',
+    realizada: 'Realizada',
+    completada: 'Realizada',
     cancelada: 'Cancelada'
   }
-  return textos[estado as keyof typeof textos] || estado
+  return textos[estado] || estado
+}
+
+const obtenerColorTextoEstado = (estado: string) => {
+  const colores: Record<string, string> = {
+    pendiente: 'text-gray-600',
+    confirmada: 'text-green-600',
+    realizada: 'text-green-700',
+    completada: 'text-green-700',
+    cancelada: 'text-red-600'
+  }
+  return colores[estado] || 'text-gray-600'
+}
+
+const obtenerColorPuntoEstado = (estado: string) => {
+  const colores: Record<string, string> = {
+    pendiente: 'bg-gray-400',
+    confirmada: 'bg-green-500',
+    realizada: 'bg-green-600',
+    completada: 'bg-green-600',
+    cancelada: 'bg-red-500'
+  }
+  return colores[estado] || 'bg-gray-400'
 }
 
 // Lifecycle

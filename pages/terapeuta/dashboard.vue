@@ -101,6 +101,7 @@
                 v-for="(cita, index) in sesionesVisibles"
                 :key="cita.id"
                 :id="cita.id"
+                :fecha="cita.fecha_cita"
                 :hora="cita.hora_inicio"
                 :paciente-nombre="cita.paciente_nombre"
                 :modalidad="cita.modalidad"
@@ -199,56 +200,20 @@
       </div>
 
       <!-- ================================================================= -->
-      <!-- FILA INFERIOR: Analítica + Recordatorios -->
+      <!-- FILA INTERMEDIA: Pagos Hoy + Recordatorios -->
       <!-- ================================================================= -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-8">
 
         <!-- =============================================================== -->
-        <!-- ANALÍTICA DEL PROFESIONAL (2/3 del ancho) -->
+        <!-- PAGOS HOY (1/2 del ancho) -->
         <!-- =============================================================== -->
-        <section class="lg:col-span-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <!-- Header -->
-          <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
-            <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <h2 class="text-lg font-semibold text-gray-900">Analítica del Profesional</h2>
-          </div>
-
-          <!-- Grid de métricas -->
-          <div class="p-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <DashboardMetricCard
-                :value="totalPacientes"
-                label="Pacientes activos"
-                icon-type="users"
-              />
-              <DashboardMetricCard
-                :value="totalSesionesMes"
-                label="Sesiones este mes"
-                icon-type="calendar"
-              />
-              <DashboardMetricCard
-                :value="`${porcentajeAsistencia}%`"
-                label="Asistencia promedio"
-                icon-type="check"
-              />
-              <DashboardMetricCard
-                :value="`${formatearPrecio(totalConfirmado)}€`"
-                label="Pagos confirmados"
-                :sublabel="`${totalBonosPagados} ${totalBonosPagados === 1 ? 'bono' : 'bonos'}`"
-                icon-type="euro"
-                :highlight="true"
-                to="/terapeuta/sesiones"
-              />
-            </div>
-          </div>
-        </section>
+        <DashboardPaymentsTodayCard
+          ref="paymentsTodayCardRef"
+          @abrir-cita="abrirDetalles"
+        />
 
         <!-- =============================================================== -->
-        <!-- RECORDATORIOS (1/3 del ancho) -->
+        <!-- RECORDATORIOS (1/2 del ancho) -->
         <!-- =============================================================== -->
         <section class="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <!-- Header -->
@@ -320,6 +285,52 @@
           </div>
         </section>
       </div>
+
+      <!-- ================================================================= -->
+      <!-- FILA INFERIOR: Analítica del Profesional -->
+      <!-- ================================================================= -->
+      <div class="mt-8">
+        <section class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
+            <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900">Analítica del Profesional</h2>
+          </div>
+
+          <!-- Grid de métricas -->
+          <div class="p-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <DashboardMetricCard
+                :value="totalPacientes"
+                label="Pacientes activos"
+                icon-type="users"
+              />
+              <DashboardMetricCard
+                :value="totalSesionesMes"
+                label="Sesiones este mes"
+                icon-type="calendar"
+              />
+              <DashboardMetricCard
+                :value="`${porcentajeAsistencia}%`"
+                label="Asistencia promedio"
+                icon-type="check"
+              />
+              <DashboardMetricCard
+                :value="`${formatearPrecio(totalConfirmado)}€`"
+                label="Ingresos este mes"
+                :sublabel="`${totalBonosPagados} ${totalBonosPagados === 1 ? 'pago' : 'pagos'}`"
+                icon-type="euro"
+                :highlight="true"
+                to="/terapeuta/sesiones"
+              />
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
 
     <!-- ================================================================= -->
@@ -362,6 +373,9 @@ const modalDetallesAbierto = ref(false)
 const citaSeleccionada = ref<string | null>(null)
 const mostrarTodasSesiones = ref(false)
 const mostrarTodosRecordatorios = ref(false)
+
+// Referencia al componente de pagos del día
+const paymentsTodayCardRef = ref<{ refrescar: () => Promise<void> } | null>(null)
 
 // Estado de pagos confirmados
 const totalConfirmado = ref(0)
@@ -665,6 +679,7 @@ async function cargarSesiones() {
 
     proximasSesiones.value = (data || []).map((c: any) => ({
       id: c.id,
+      fecha_cita: c.fecha_cita,
       hora_inicio: c.hora_inicio ? c.hora_inicio.substring(0, 5) : '--:--',
       paciente_nombre: c.pacientes?.nombre_completo || c.pacientes?.email || 'Paciente',
       modalidad: c.modalidad || 'presencial',
@@ -918,11 +933,15 @@ async function cargarPagosConfirmados() {
 
     const { data: terapeutaData } = await supabase
       .from('terapeutas')
-      .select('id')
+      .select('id, porcentaje_comision')
       .eq('email', user.value.email)
       .single()
 
     if (!terapeutaData) return
+
+    // Porcentaje que recibe el terapeuta (default 70% si comision es 30%)
+    const porcentajeComision = terapeutaData.porcentaje_comision || 30
+    const porcentajeTerapeuta = (100 - porcentajeComision) / 100
 
     const { data: pacientes } = await supabase
       .from('pacientes')
@@ -937,20 +956,44 @@ async function cargarPagosConfirmados() {
 
     const pacienteIds = pacientes.map((p: any) => p.id)
 
+    // 1. Obtener pagos de bonos
     const { data: bonos } = await supabase
       .from('bonos')
       .select('id, monto_total')
       .eq('pagado', true)
       .in('paciente_id', pacienteIds)
 
+    let montoBonos = 0
+    let cantidadBonos = 0
     if (bonos && bonos.length > 0) {
-      totalBonosPagados.value = bonos.length
-      const montoTotal = bonos.reduce((sum: number, bono: any) => sum + (bono.monto_total || 0), 0)
-      totalConfirmado.value = montoTotal * 0.7
-    } else {
-      totalConfirmado.value = 0
-      totalBonosPagados.value = 0
+      cantidadBonos = bonos.length
+      montoBonos = bonos.reduce((sum: number, bono: any) => sum + (bono.monto_total || 0), 0)
     }
+
+    // 2. Obtener pagos de sesiones individuales (nuevo sistema)
+    const primerDiaMes = new Date()
+    primerDiaMes.setDate(1)
+    primerDiaMes.setHours(0, 0, 0, 0)
+
+    const { data: sesionesPagadas } = await supabase
+      .from('citas')
+      .select('id, precio_sesion')
+      .eq('estado_pago', 'pagado')
+      .in('paciente_id', pacienteIds)
+      .gte('fecha_pago', primerDiaMes.toISOString())
+
+    let montoSesiones = 0
+    let cantidadSesiones = 0
+    if (sesionesPagadas && sesionesPagadas.length > 0) {
+      cantidadSesiones = sesionesPagadas.length
+      montoSesiones = sesionesPagadas.reduce((sum: number, cita: any) => sum + (cita.precio_sesion || 0), 0)
+    }
+
+    // Calcular total (aplicando porcentaje del terapeuta)
+    const montoTotalBruto = montoBonos + montoSesiones
+    totalConfirmado.value = montoTotalBruto * porcentajeTerapeuta
+    totalBonosPagados.value = cantidadBonos + cantidadSesiones // Mostrar total de pagos
+
   } catch (error) {
     console.error('Error al cargar pagos confirmados:', error)
     totalConfirmado.value = 0

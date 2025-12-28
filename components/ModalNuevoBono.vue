@@ -74,22 +74,50 @@
           </div>
         </div>
 
-        <!-- Sesiones Totales -->
-        <div>
-          <label class="block text-sm font-medium text-[#2D3748] mb-2">
-            Sesiones Totales <span class="text-red-500">*</span>
-          </label>
-          <input
-            v-model.number="formData.sesiones_totales"
-            type="number"
-            min="1"
-            max="100"
-            required
-            placeholder="Ej: 4, 8, 12..."
-            class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
-          />
-          <p class="text-xs text-[#2D3748]/60 mt-1">
-            Número de sesiones incluidas en el bono
+        <!-- Sesiones: Totales y Ya Usadas -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
+              Sesiones Totales <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model.number="formData.sesiones_totales"
+              type="number"
+              min="1"
+              max="100"
+              required
+              placeholder="Ej: 4, 8, 12..."
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
+            />
+            <p class="text-xs text-[#2D3748]/60 mt-1">
+              Sesiones incluidas en el bono
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-[#2D3748] mb-2">
+              Sesiones Ya Usadas
+            </label>
+            <input
+              v-model.number="formData.sesiones_usadas"
+              type="number"
+              min="0"
+              :max="formData.sesiones_totales - 1"
+              placeholder="0"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
+            />
+            <p class="text-xs text-[#2D3748]/60 mt-1">
+              Para migración desde otra plataforma
+            </p>
+          </div>
+        </div>
+
+        <!-- Indicador de sesiones restantes -->
+        <div v-if="formData.sesiones_usadas > 0" class="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <span class="text-blue-600">ℹ️</span>
+          <p class="text-sm text-blue-800">
+            <strong>{{ sesionesRestantesCalculadas }}</strong> de {{ formData.sesiones_totales }} sesiones disponibles
+            ({{ formData.sesiones_usadas }} ya consumidas)
           </p>
         </div>
 
@@ -227,7 +255,9 @@
             </div>
             <div>
               <span class="text-[#2D3748]/60">Sesiones:</span>
-              <span class="font-medium text-[#2D3748] ml-1">{{ formData.sesiones_totales || 0 }}</span>
+              <span class="font-medium text-[#2D3748] ml-1">
+                {{ sesionesRestantesCalculadas }}/{{ formData.sesiones_totales || 0 }}
+              </span>
             </div>
             <div>
               <span class="text-[#2D3748]/60">Monto:</span>
@@ -301,6 +331,7 @@ const formData = ref({
   tipo: 'mensual',
   frecuencia: 'semanal',
   sesiones_totales: 4,
+  sesiones_usadas: 0,
   monto: 0,
   fecha_inicio: new Date().toISOString().split('T')[0],
   fecha_fin: '',
@@ -321,6 +352,10 @@ const precioSesion = computed(() => {
   if (!formData.value.sesiones_totales || !formData.value.monto) return '0.00'
   const precio = formData.value.monto / formData.value.sesiones_totales
   return precio.toFixed(2)
+})
+
+const sesionesRestantesCalculadas = computed(() => {
+  return Math.max(0, formData.value.sesiones_totales - (formData.value.sesiones_usadas || 0))
 })
 
 const formularioValido = computed(() => {
@@ -351,16 +386,20 @@ const guardarBono = async () => {
     guardando.value = true
     errorMensaje.value = ''
 
+    const sesionesUsadas = formData.value.sesiones_usadas || 0
+    const sesionesRestantes = formData.value.sesiones_totales - sesionesUsadas
+
     const bonoData = {
       paciente_id: props.pacienteId,
       terapeuta_id: props.psicologaId || userProfile.value?.id,
       tipo: formData.value.tipo,
       frecuencia: formData.value.frecuencia,
       sesiones_totales: formData.value.sesiones_totales,
-      sesiones_restantes: formData.value.sesiones_totales, // Inicialmente todas disponibles
+      sesiones_usadas: sesionesUsadas,
+      sesiones_restantes: sesionesRestantes,
       fecha_inicio: formData.value.fecha_inicio || null,
       fecha_fin: formData.value.fecha_fin || null,
-      estado: formData.value.estado,
+      estado: sesionesRestantes <= 0 ? 'agotado' : formData.value.estado,
       monto: formData.value.monto,
       pagado: formData.value.estado === 'activo', // Si es activo, ya está pagado
       renovacion_automatica: formData.value.renovacion_automatica,
@@ -377,6 +416,7 @@ const guardarBono = async () => {
       tipo: 'mensual',
       frecuencia: 'semanal',
       sesiones_totales: 4,
+      sesiones_usadas: 0,
       monto: 0,
       fecha_inicio: new Date().toISOString().split('T')[0],
       fecha_fin: '',

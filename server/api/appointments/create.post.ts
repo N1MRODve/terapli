@@ -157,7 +157,58 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // 7. Preparar datos de la cita
+    // 7. Validar limites de sesiones por frecuencia de bono (no acumulables)
+    if (bono_id) {
+      // Obtener informacion del bono
+      const { data: bonoData, error: bonoError } = await supabaseClient
+        .from('bonos')
+        .select('id, tipo, sesiones_restantes, sesiones_totales, estado')
+        .eq('id', bono_id)
+        .single()
+
+      if (!bonoError && bonoData) {
+        // Determinar limite mensual segun frecuencia
+        const tipoBono = bonoData.tipo?.toLowerCase() || ''
+        let limiteMensual = 0
+
+        if (tipoBono.includes('semanal')) {
+          limiteMensual = 4 // Maximo 4 sesiones/mes (1 por semana)
+        } else if (tipoBono.includes('quincenal')) {
+          limiteMensual = 2 // Maximo 2 sesiones/mes (1 cada 2 semanas)
+        }
+
+        if (limiteMensual > 0) {
+          // Calcular rango del mes actual de la cita
+          const fechaCitaDate = new Date(fecha_cita + 'T00:00:00')
+          const inicioMes = new Date(fechaCitaDate.getFullYear(), fechaCitaDate.getMonth(), 1)
+          const finMes = new Date(fechaCitaDate.getFullYear(), fechaCitaDate.getMonth() + 1, 0)
+          const inicioMesStr = inicioMes.toISOString().split('T')[0]
+          const finMesStr = finMes.toISOString().split('T')[0]
+
+          // Contar citas del bono en este mes (confirmadas o realizadas)
+          const { data: citasMes, error: citasMesError } = await supabaseClient
+            .from('citas')
+            .select('id')
+            .eq('bono_id', bono_id)
+            .gte('fecha_cita', inicioMesStr)
+            .lte('fecha_cita', finMesStr)
+            .in('estado', ['confirmada', 'realizada', 'pendiente'])
+            .neq('estado', 'cancelada')
+
+          const citasEnMes = citasMes?.length || 0
+
+          if (citasEnMes >= limiteMensual) {
+            const frecuencia = tipoBono.includes('semanal') ? 'semanal' : 'quincenal'
+            throw createError({
+              statusCode: 422,
+              statusMessage: `Limite de sesiones alcanzado: el bono ${frecuencia} permite maximo ${limiteMensual} sesiones por mes. Ya hay ${citasEnMes} sesiones programadas en este mes.`
+            })
+          }
+        }
+      }
+    }
+
+    // 8. Preparar datos de la cita
     const citaData: any = {
       paciente_id,
       terapeuta_id,

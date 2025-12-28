@@ -126,3 +126,7 @@ const accionLabels = {
     </svg>
   </div>
 </template>
+
+<style scoped>
+/* Estilos del componente ReminderCard */
+</style>

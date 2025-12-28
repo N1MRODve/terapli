@@ -84,18 +84,36 @@ export function usePacientes() {
         throw new Error('Usuario no autenticado')
       }
 
-      // Obtener terapeuta_id
-      const { data: perfil, error: perfilError } = await supabase
-        .from('perfiles')
-        .select('terapeuta_id')
-        .eq('id', user.value.id)
-        .single()
+      // Obtener terapeuta_id desde la tabla profiles o directamente del auth
+      // El ID del usuario autenticado puede ser directamente el terapeuta_id
+      // o puede estar vinculado a través del email en la tabla terapeutas
+      let terapeutaId: string | null = null
 
-      if (perfilError || !perfil?.terapeuta_id) {
-        throw new Error('No se pudo obtener el perfil del terapeuta')
+      // Primero intentamos obtener el terapeuta por el ID del usuario (si el auth.uid es el terapeuta)
+      const { data: terapeutaDirecto } = await supabase
+        .from('terapeutas')
+        .select('id')
+        .eq('id', user.value.id)
+        .maybeSingle()
+
+      if (terapeutaDirecto?.id) {
+        terapeutaId = terapeutaDirecto.id
+      } else {
+        // Si no, buscamos por email
+        const { data: terapeutaPorEmail } = await supabase
+          .from('terapeutas')
+          .select('id')
+          .eq('email', user.value.email)
+          .maybeSingle()
+
+        if (terapeutaPorEmail?.id) {
+          terapeutaId = terapeutaPorEmail.id
+        }
       }
 
-      const terapeutaId = perfil.terapeuta_id
+      if (!terapeutaId) {
+        throw new Error('No se pudo obtener el perfil del terapeuta')
+      }
 
       // Buscar pacientes con información de bonos
       let queryBuilder = supabase
@@ -106,10 +124,10 @@ export function usePacientes() {
           email,
           telefono,
           fecha_nacimiento,
-          bonos:bonos_sesiones(
+          bonos(
             id,
             sesiones_restantes,
-            fecha_vencimiento,
+            fecha_fin,
             estado
           )
         `)
@@ -143,8 +161,8 @@ export function usePacientes() {
 
         // Encontrar próximo vencimiento
         const proximoVencimiento = bonosActivos
-          .filter((b: any) => b.fecha_vencimiento)
-          .map((b: any) => new Date(b.fecha_vencimiento).getTime())
+          .filter((b: any) => b.fecha_fin)
+          .map((b: any) => new Date(b.fecha_fin).getTime())
           .sort()
           [0] || null
 
@@ -236,17 +254,33 @@ export function usePacientes() {
       }
 
       // Obtener terapeuta_id
-      const { data: perfil, error: perfilError } = await supabase
-        .from('perfiles')
-        .select('terapeuta_id')
-        .eq('id', user.value.id)
-        .single()
+      let terapeutaId: string | null = null
 
-      if (perfilError || !perfil?.terapeuta_id) {
-        throw new Error('No se pudo obtener el perfil del terapeuta')
+      // Primero intentamos obtener el terapeuta por el ID del usuario
+      const { data: terapeutaDirecto } = await supabase
+        .from('terapeutas')
+        .select('id')
+        .eq('id', user.value.id)
+        .maybeSingle()
+
+      if (terapeutaDirecto?.id) {
+        terapeutaId = terapeutaDirecto.id
+      } else {
+        // Si no, buscamos por email
+        const { data: terapeutaPorEmail } = await supabase
+          .from('terapeutas')
+          .select('id')
+          .eq('email', user.value.email)
+          .maybeSingle()
+
+        if (terapeutaPorEmail?.id) {
+          terapeutaId = terapeutaPorEmail.id
+        }
       }
 
-      const terapeutaId = perfil.terapeuta_id
+      if (!terapeutaId) {
+        throw new Error('No se pudo obtener el perfil del terapeuta')
+      }
 
       // Verificar si el email ya existe para este terapeuta
       const { data: existente, error: checkError } = await supabase

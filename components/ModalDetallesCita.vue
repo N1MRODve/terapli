@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { useCitas } from '~/composables/useCitas'
 import {
-  CalendarIcon,
-  ClockIcon,
-  UserIcon,
-  VideoCameraIcon,
-  MapPinIcon,
-  TicketIcon,
-  DocumentTextIcon,
-  PencilSquareIcon,
   XMarkIcon,
   CheckCircleIcon,
-  ExclamationCircleIcon,
-  XCircleIcon,
-  ClockIcon as PendingIcon
+  PhoneIcon,
+  PencilIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CalendarDaysIcon,
+  ClockIcon,
+  MapPinIcon,
+  VideoCameraIcon,
+  TicketIcon,
+  ArrowTopRightOnSquareIcon,
+  ExclamationTriangleIcon,
+  PlusIcon
 } from '@heroicons/vue/24/outline'
+import type { PaymentMethod } from '~/components/Payment/PaymentMethodSelector.vue'
 
 const props = defineProps<{
   citaId: string | null
@@ -23,20 +24,33 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'cita-actualizada', 'cita-eliminada', 'actualizado', 'eliminado'])
 
-// Estado para confirmación rápida
+// Estados de UI
 const confirmando = ref(false)
+const marcandoRealizada = ref(false)
+const mostrarModalPago = ref(false)
+const modoEdicionPago = ref(false)
+const seccionBonoAbierta = ref(true) // Abierto por defecto
+const seccionObservacionesAbierta = ref(false)
+const modoEdicion = ref(false)
+const cargando = ref(false)
+const mostrarConfirmacionDeshacer = ref(false)
+const deshaciendoPago = ref(false)
+const consumiendoSesion = ref(false)
+const asignandoBono = ref(false)
 
-// Composables
-const supabase = useSupabaseClient()
-
-// Estado
+// Datos
 const cita = ref<any>(null)
 const paciente = ref<any>(null)
 const bono = ref<any>(null)
-const cargando = ref(false)
-const modoEdicion = ref(false)
+const bonoActivoPaciente = ref<any>(null) // Bono activo del paciente (si no tiene asignado a la cita)
 
-// Datos de edición
+// Router para navegación
+const router = useRouter()
+
+// Composable de pagos
+const { undoPayment } = usePayments()
+const { success: toastSuccess, error: toastError } = useToast()
+
 const formEdicion = ref({
   fecha_cita: '',
   hora_inicio: '',
@@ -46,19 +60,30 @@ const formEdicion = ref({
   estado: ''
 })
 
+// Composables
+const supabase = useSupabaseClient()
+
+// Cargar preferencias de secciones colapsables desde localStorage
+onMounted(() => {
+  const savedObs = localStorage.getItem('modal-seccion-observaciones')
+  seccionObservacionesAbierta.value = savedObs === 'true'
+})
+
+// Guardar preferencias cuando cambian
+watch(seccionBonoAbierta, (val) => {
+  localStorage.setItem('modal-seccion-bono', String(val))
+})
+watch(seccionObservacionesAbierta, (val) => {
+  localStorage.setItem('modal-seccion-observaciones', String(val))
+})
+
 // Cargar datos completos de la cita
 const cargarCita = async () => {
-  console.log('🔍 cargarCita - citaId:', props.citaId)
-  if (!props.citaId) {
-    console.log('⚠️ No hay citaId, cancelando carga')
-    return
-  }
-  
+  if (!props.citaId) return
+
   try {
     cargando.value = true
-    console.log('⏳ Cargando cita...')
-    
-    // Cargar cita con relaciones
+
     const { data: citaData, error: citaError } = await supabase
       .from('citas')
       .select(`
@@ -73,53 +98,60 @@ const cargarCita = async () => {
       `)
       .eq('id', props.citaId)
       .single()
-    
-    console.log('📊 Resultado query cita:', { citaData, citaError })
-    
-    if (citaError) {
-      console.error('❌ Error detallado:', JSON.stringify(citaError, null, 2))
-      throw citaError
-    }
+
+    if (citaError) throw citaError
     cita.value = citaData
     paciente.value = citaData.paciente
-    console.log('✅ Cita cargada:', cita.value)
-    console.log('👤 Paciente:', paciente.value)
-    
-    // Si tiene bono, cargar información del bono y calcular número de sesión
+
+    // Si tiene bono asignado, cargar información
     if (citaData.bono_id) {
-      console.log('🎟️ Cargando bono:', citaData.bono_id)
       const { data: bonoData, error: bonoError } = await supabase
         .from('bonos')
         .select('*')
         .eq('id', citaData.bono_id)
         .single()
-      
-      console.log('📊 Resultado query bono:', { bonoData, bonoError })
-      
+
       if (!bonoError) {
         bono.value = bonoData
-        console.log('✅ Bono cargado:', bono.value)
-        
-        // Calcular qué número de sesión es esta cita
-        const { data: citasAnteriores, error: citasError } = await supabase
+
+        // Calcular número de sesión
+        const { data: citasAnteriores } = await supabase
           .from('citas')
           .select('id, fecha_cita, hora_inicio')
           .eq('bono_id', citaData.bono_id)
           .eq('sesion_descontada', true)
           .order('fecha_cita', { ascending: true })
           .order('hora_inicio', { ascending: true })
-        
-        if (!citasError && citasAnteriores) {
+
+        if (citasAnteriores) {
           const indice = citasAnteriores.findIndex(c => c.id === props.citaId)
           if (indice !== -1) {
             bono.value.numero_sesion = indice + 1
-            console.log('📍 Número de sesión:', bono.value.numero_sesion)
           }
         }
       }
+    } else {
+      bono.value = null
     }
-    
-    // Inicializar formulario de edición
+
+    // Si no tiene bono asignado, buscar bono activo del paciente
+    if (!citaData.bono_id && citaData.paciente?.id) {
+      const { data: bonoActivo } = await supabase
+        .from('bonos')
+        .select('*')
+        .eq('paciente_id', citaData.paciente.id)
+        .in('estado', ['activo', 'pendiente'])
+        .gt('sesiones_restantes', 0)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      bonoActivoPaciente.value = bonoActivo
+    } else {
+      bonoActivoPaciente.value = null
+    }
+
+    // Inicializar formularios
     formEdicion.value = {
       fecha_cita: citaData.fecha_cita,
       hora_inicio: citaData.hora_inicio?.substring(0, 5) || '',
@@ -128,76 +160,88 @@ const cargarCita = async () => {
       observaciones: citaData.observaciones || '',
       estado: citaData.estado
     }
-    
+
+    mostrarModalPago.value = false
+    modoEdicionPago.value = false
+
   } catch (error) {
-    console.error('❌ Error al cargar cita:', error)
+    console.error('Error al cargar cita:', error)
   } finally {
     cargando.value = false
-    console.log('🏁 Carga finalizada. Estado:', { cita: cita.value, paciente: paciente.value, bono: bono.value })
   }
 }
 
 // Watch para cargar cuando cambia el ID
-watch(() => props.citaId, (newId, oldId) => {
-  console.log('👀 Watch citaId cambió:', { oldId, newId })
+watch(() => props.citaId, (newId) => {
   if (newId) {
     cargarCita()
   } else {
-    console.log('🧹 Limpiando estado del modal')
     cita.value = null
     paciente.value = null
     bono.value = null
+    bonoActivoPaciente.value = null
   }
 }, { immediate: true })
 
-// Formatear fecha
-const fechaFormateada = computed(() => {
+// Computed: Fecha formateada corta
+const fechaCorta = computed(() => {
   if (!cita.value?.fecha_cita) return ''
   const fecha = new Date(cita.value.fecha_cita + 'T00:00:00')
+  const hoy = new Date()
+  const manana = new Date(hoy)
+  manana.setDate(manana.getDate() + 1)
+
+  if (fecha.toDateString() === hoy.toDateString()) return 'Hoy'
+  if (fecha.toDateString() === manana.toDateString()) return 'Mañana'
+
   return fecha.toLocaleDateString('es-ES', {
-    weekday: 'long',
+    weekday: 'short',
     day: 'numeric',
-    month: 'long',
-    year: 'numeric'
+    month: 'short'
   })
 })
 
-// Clase CSS según estado
-const claseEstado = computed(() => {
-  const estado = cita.value?.estado
-  const clases = {
-    pendiente: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-    confirmada: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-    realizada: 'bg-blue-100 text-blue-800 border-blue-300',
-    cancelada: 'bg-red-100 text-red-800 border-red-300'
-  }
-  return clases[estado as keyof typeof clases] || 'bg-gray-100 text-gray-800'
+// Computed: Horario formateado
+const horarioFormateado = computed(() => {
+  if (!cita.value) return ''
+  const inicio = cita.value.hora_inicio?.substring(0, 5) || ''
+  const fin = cita.value.hora_fin?.substring(0, 5) || ''
+  return `${inicio} - ${fin}`
 })
 
-// Color del header según estado
-const colorHeader = computed(() => {
-  const estado = cita.value?.estado
-  const colores = {
-    pendiente: 'from-yellow-500 to-amber-600',
-    confirmada: 'from-emerald-500 to-teal-600',
-    realizada: 'from-blue-500 to-indigo-600',
-    cancelada: 'from-red-500 to-rose-600'
-  }
-  return colores[estado as keyof typeof colores] || 'from-indigo-500 to-purple-600'
+// Computed: Duración en minutos
+const duracionMinutos = computed(() => {
+  if (!cita.value?.hora_inicio || !cita.value?.hora_fin) return 60
+  const [hi, mi] = cita.value.hora_inicio.split(':').map(Number)
+  const [hf, mf] = cita.value.hora_fin.split(':').map(Number)
+  return (hf * 60 + mf) - (hi * 60 + mi)
 })
 
-// Icono según estado
-const iconoEstado = computed(() => {
-  const estado = cita.value?.estado
-  const iconos = {
-    pendiente: ExclamationCircleIcon,
-    confirmada: CheckCircleIcon,
-    realizada: CheckCircleIcon,
-    cancelada: XCircleIcon
+// Computed: Modalidad formateada
+const modalidadFormateada = computed(() => {
+  const modalidades: Record<string, string> = {
+    presencial: 'Presencial',
+    virtual: 'Online',
+    telefonica: 'Telefónica'
   }
-  return iconos[estado as keyof typeof iconos] || CalendarIcon
+  return modalidades[cita.value?.modalidad] || cita.value?.modalidad || '-'
 })
 
+// Computed: Estado de la cita
+const estadoCita = computed(() => cita.value?.estado || 'pendiente')
+
+// Computed: Clase del badge de estado
+const claseEstadoBadge = computed(() => {
+  const clases: Record<string, string> = {
+    pendiente: 'bg-amber-100 text-amber-700',
+    confirmada: 'bg-emerald-100 text-emerald-700',
+    realizada: 'bg-blue-100 text-blue-700',
+    cancelada: 'bg-gray-100 text-gray-500'
+  }
+  return clases[estadoCita.value] || 'bg-gray-100 text-gray-600'
+})
+
+// Computed: Label del estado
 const estadoLabel = computed(() => {
   const labels: Record<string, string> = {
     pendiente: 'Pendiente',
@@ -205,25 +249,152 @@ const estadoLabel = computed(() => {
     realizada: 'Realizada',
     cancelada: 'Cancelada'
   }
-  return labels[cita.value?.estado] || cita.value?.estado || ''
+  return labels[estadoCita.value] || estadoCita.value
 })
 
-// Computed: si la cita puede ser confirmada
+// Computed: Estado de pago
+const estadoPago = computed(() => cita.value?.estado_pago || 'pendiente')
+
+// Computed: Puede confirmar cita
 const puedeConfirmar = computed(() => cita.value?.estado === 'pendiente')
+
+// Computed: Puede registrar pago
+const puedeRegistrarPago = computed(() => {
+  if (!cita.value) return false
+  const estadoCitaVal = cita.value.estado
+  const estadoPagoVal = cita.value.estado_pago
+  return (estadoCitaVal === 'confirmada' || estadoCitaVal === 'realizada') &&
+         (estadoPagoVal === 'pendiente' || !estadoPagoVal)
+})
+
+// Computed: Puede marcar como realizada (solo si está confirmada y no cancelada)
+const puedeMarcarRealizada = computed(() => {
+  if (!cita.value) return false
+  const estado = cita.value.estado
+  return estado === 'confirmada' || estado === 'pendiente'
+})
+
+// Computed: Puede consumir sesión del bono
+const puedeConsumirSesion = computed(() => {
+  if (!bono.value) return false
+  if (cita.value?.sesion_descontada) return false // Ya consumida
+  if (bono.value.sesiones_restantes <= 0) return false // Sin sesiones
+  // Solo si la cita está realizada o confirmada
+  return cita.value?.estado === 'realizada' || cita.value?.estado === 'confirmada'
+})
+
+// Computed: Puede asignar bono a la cita
+const puedeAsignarBono = computed(() => {
+  if (bono.value) return false // Ya tiene bono
+  if (!bonoActivoPaciente.value) return false // No hay bono disponible
+  return bonoActivoPaciente.value.sesiones_restantes > 0
+})
+
+// Computed: Bono a mostrar (el asignado o el activo del paciente)
+const bonoMostrar = computed(() => bono.value || bonoActivoPaciente.value)
+
+// Computed: Sesiones usadas del bono
+const sesionesUsadas = computed(() => {
+  if (!bonoMostrar.value) return 0
+  return bonoMostrar.value.sesiones_totales - bonoMostrar.value.sesiones_restantes
+})
+
+// Computed: Progreso del bono
+const progresoBono = computed(() => {
+  if (!bonoMostrar.value) return 0
+  return (sesionesUsadas.value / bonoMostrar.value.sesiones_totales) * 100
+})
+
+// Computed: Fecha de vencimiento formateada
+const fechaVencimientoBono = computed(() => {
+  if (!bonoMostrar.value?.fecha_fin) return null
+  const fecha = new Date(bonoMostrar.value.fecha_fin)
+  return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+})
+
+// Computed: Bono próximo a vencer
+const bonoProximoVencer = computed(() => {
+  if (!bonoMostrar.value?.fecha_fin) return false
+  const fecha = new Date(bonoMostrar.value.fecha_fin)
+  const hoy = new Date()
+  const diasRestantes = Math.floor((fecha.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24))
+  return diasRestantes <= 7 && diasRestantes >= 0
+})
+
+// Computed: Bono vencido
+const bonoVencido = computed(() => {
+  if (!bonoMostrar.value?.fecha_fin) return false
+  const fecha = new Date(bonoMostrar.value.fecha_fin)
+  return fecha < new Date()
+})
+
+// Computed: Tipo de bono formateado
+const tipoBonoFormateado = computed(() => {
+  if (!bonoMostrar.value?.tipo) return 'Bono'
+  const tipos: Record<string, string> = {
+    semanal: 'Semanal',
+    quincenal: 'Quincenal',
+    mensual: 'Mensual',
+    otro: 'Personalizado'
+  }
+  return tipos[bonoMostrar.value.tipo] || bonoMostrar.value.tipo
+})
+
+// Computed: Precio de la sesion (usa precio del bono si existe)
+const precioSesion = computed(() => {
+  // Si tiene bono asignado, calcular precio por sesion del bono
+  if (bonoMostrar.value && bonoMostrar.value.monto_total && bonoMostrar.value.sesiones_totales) {
+    return bonoMostrar.value.monto_total / bonoMostrar.value.sesiones_totales
+  }
+  // Si tiene bono con precio_por_sesion en metadata
+  if (bonoMostrar.value?.metadata?.precio_por_sesion) {
+    return bonoMostrar.value.metadata.precio_por_sesion
+  }
+  // Precio de la cita o precio por defecto
+  return cita.value?.precio_sesion || 50
+})
+
+// Computed: Iniciales del paciente
+const inicialesPaciente = computed(() => {
+  if (!paciente.value?.nombre_completo) return '?'
+  const partes = paciente.value.nombre_completo.split(' ')
+  if (partes.length >= 2) {
+    return (partes[0][0] + partes[1][0]).toUpperCase()
+  }
+  return partes[0].substring(0, 2).toUpperCase()
+})
+
+// Computed: Info del bono para el modal de pago
+const bonoInfoParaPago = computed(() => {
+  if (!bono.value) return null
+  return {
+    id: bono.value.id,
+    nombre: bono.value.tipo || 'Bono',
+    sesionesRestantes: bono.value.sesiones_restantes,
+    sesionesTotales: bono.value.sesiones_totales,
+    numeroSesion: bono.value.numero_sesion
+  }
+})
 
 // Acciones
 const cerrar = () => {
   modoEdicion.value = false
+  mostrarModalPago.value = false
+  modoEdicionPago.value = false
+  mostrarConfirmacionDeshacer.value = false
   emit('close')
+}
+
+const llamarPaciente = () => {
+  if (paciente.value?.telefono) {
+    window.open(`tel:${paciente.value.telefono}`, '_self')
+  }
 }
 
 const activarModoEdicion = () => {
   modoEdicion.value = true
 }
 
-/**
- * Confirmación rápida desde el modal
- */
 const confirmarCitaRapido = async () => {
   if (!props.citaId || confirmando.value || !puedeConfirmar.value) return
 
@@ -240,28 +411,216 @@ const confirmarCitaRapido = async () => {
 
     if (error) throw error
 
-    // Actualizar el estado local
     if (cita.value) {
       cita.value.estado = 'confirmada'
     }
 
-    // Emitir evento de actualización
     emit('cita-actualizada')
     emit('actualizado')
-
-    // Mostrar feedback
-    alert('✅ Cita confirmada correctamente')
   } catch (error: any) {
     console.error('Error al confirmar cita:', error)
-    alert(`❌ Error al confirmar: ${error.message}`)
+    toastError(`Error al confirmar: ${error.message}`)
   } finally {
     confirmando.value = false
   }
 }
 
+// Marcar cita como realizada
+const marcarComoRealizada = async () => {
+  if (!props.citaId || marcandoRealizada.value || !puedeMarcarRealizada.value) return
+
+  marcandoRealizada.value = true
+
+  try {
+    const updateData: Record<string, any> = {
+      estado: 'realizada',
+      updated_at: new Date().toISOString()
+    }
+
+    if (!cita.value?.estado_pago || cita.value.estado_pago === 'pendiente') {
+      updateData.estado_pago = 'pendiente'
+    }
+
+    const { error } = await supabase
+      .from('citas')
+      .update(updateData)
+      .eq('id', props.citaId)
+
+    if (error) throw error
+
+    if (cita.value) {
+      cita.value.estado = 'realizada'
+      if (updateData.estado_pago) {
+        cita.value.estado_pago = updateData.estado_pago
+      }
+    }
+
+    toastSuccess('Sesión marcada como realizada')
+    emit('cita-actualizada')
+    emit('actualizado')
+  } catch (error: any) {
+    console.error('Error al marcar como realizada:', error)
+    toastError(`Error: ${error.message}`)
+  } finally {
+    marcandoRealizada.value = false
+  }
+}
+
+// Consumir sesión del bono
+const consumirSesionBono = async () => {
+  if (!props.citaId || !bono.value || consumiendoSesion.value) return
+
+  consumiendoSesion.value = true
+
+  try {
+    // Actualizar la cita para marcar sesión como descontada
+    const { error: citaError } = await supabase
+      .from('citas')
+      .update({
+        sesion_descontada: true,
+        descontar_de_bono: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', props.citaId)
+
+    if (citaError) throw citaError
+
+    // Actualizar sesiones restantes del bono
+    const nuevasSesionesRestantes = bono.value.sesiones_restantes - 1
+    const nuevoEstado = nuevasSesionesRestantes <= 0 ? 'agotado' : bono.value.estado
+
+    const { error: bonoError } = await supabase
+      .from('bonos')
+      .update({
+        sesiones_restantes: nuevasSesionesRestantes,
+        estado: nuevoEstado,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', bono.value.id)
+
+    if (bonoError) throw bonoError
+
+    // Actualizar estado local
+    cita.value.sesion_descontada = true
+    bono.value.sesiones_restantes = nuevasSesionesRestantes
+    bono.value.estado = nuevoEstado
+
+    toastSuccess('Sesión consumida del bono')
+    emit('cita-actualizada')
+    emit('actualizado')
+  } catch (error: any) {
+    console.error('Error al consumir sesión:', error)
+    toastError(`Error: ${error.message}`)
+  } finally {
+    consumiendoSesion.value = false
+  }
+}
+
+// Asignar bono activo a la cita
+const asignarBonoACita = async () => {
+  if (!props.citaId || !bonoActivoPaciente.value || asignandoBono.value) return
+
+  asignandoBono.value = true
+
+  try {
+    const { error } = await supabase
+      .from('citas')
+      .update({
+        bono_id: bonoActivoPaciente.value.id,
+        descontar_de_bono: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', props.citaId)
+
+    if (error) throw error
+
+    // Actualizar estado local
+    cita.value.bono_id = bonoActivoPaciente.value.id
+    bono.value = bonoActivoPaciente.value
+    bonoActivoPaciente.value = null
+
+    toastSuccess('Bono asignado a la cita')
+    emit('cita-actualizada')
+    emit('actualizado')
+  } catch (error: any) {
+    console.error('Error al asignar bono:', error)
+    toastError(`Error: ${error.message}`)
+  } finally {
+    asignandoBono.value = false
+  }
+}
+
+// Navegar a gestión de bonos del paciente
+const irAGestionBonos = () => {
+  if (paciente.value?.id) {
+    cerrar()
+    router.push(`/terapeuta/pacientes/${paciente.value.id}/bonos`)
+  }
+}
+
+// Abrir modal de pago (nuevo)
+const abrirModalPago = () => {
+  modoEdicionPago.value = false
+  mostrarModalPago.value = true
+}
+
+// Abrir modal de pago (edición de método)
+const abrirCambiarMetodo = () => {
+  modoEdicionPago.value = true
+  mostrarModalPago.value = true
+}
+
+// Manejar confirmación de pago desde el modal
+const handlePagoConfirmado = (metodo: PaymentMethod) => {
+  if (cita.value) {
+    cita.value.estado_pago = 'pagado'
+    cita.value.metodo_pago = metodo
+    cita.value.fecha_pago = new Date().toISOString()
+  }
+  mostrarModalPago.value = false
+  modoEdicionPago.value = false
+  emit('cita-actualizada')
+  emit('actualizado')
+}
+
+// Cancelar modal de pago
+const cancelarModalPago = () => {
+  mostrarModalPago.value = false
+  modoEdicionPago.value = false
+}
+
+// Deshacer pago
+const handleDeshacerPago = async () => {
+  if (!props.citaId || deshaciendoPago.value) return
+
+  deshaciendoPago.value = true
+
+  try {
+    const result = await undoPayment(props.citaId)
+
+    if (result.success) {
+      if (cita.value) {
+        cita.value.estado_pago = 'pendiente'
+        cita.value.metodo_pago = null
+        cita.value.fecha_pago = null
+      }
+      toastSuccess('Pago deshecho')
+      mostrarConfirmacionDeshacer.value = false
+      emit('cita-actualizada')
+      emit('actualizado')
+    } else {
+      toastError(result.error || 'Error al deshacer pago')
+    }
+  } catch (error: any) {
+    console.error('Error al deshacer pago:', error)
+    toastError('Error inesperado')
+  } finally {
+    deshaciendoPago.value = false
+  }
+}
+
 const cancelarEdicion = () => {
   modoEdicion.value = false
-  // Restaurar valores originales
   if (cita.value) {
     formEdicion.value = {
       fecha_cita: cita.value.fecha_cita,
@@ -280,34 +639,16 @@ const guardarCambios = async () => {
   try {
     cargando.value = true
 
-    // Validar que hora_fin sea mayor que hora_inicio
     const horaInicioMinutes = parseInt(formEdicion.value.hora_inicio.split(':')[0]) * 60 + parseInt(formEdicion.value.hora_inicio.split(':')[1])
     const horaFinMinutes = parseInt(formEdicion.value.hora_fin.split(':')[0]) * 60 + parseInt(formEdicion.value.hora_fin.split(':')[1])
 
     if (horaFinMinutes <= horaInicioMinutes) {
-      alert('❌ Error: La hora de fin debe ser posterior a la hora de inicio')
+      toastError('La hora de fin debe ser posterior a la hora de inicio')
       cargando.value = false
       return
     }
 
-    const duracionMinutos = horaFinMinutes - horaInicioMinutes
-    if (duracionMinutos < 15) {
-      alert('❌ Error: La duración mínima de una cita es de 15 minutos')
-      cargando.value = false
-      return
-    }
-
-    console.log('💾 Guardando cambios de cita:', {
-      id: props.citaId,
-      fecha_cita: formEdicion.value.fecha_cita,
-      hora_inicio: formEdicion.value.hora_inicio,
-      hora_fin: formEdicion.value.hora_fin,
-      modalidad: formEdicion.value.modalidad,
-      estado: formEdicion.value.estado,
-      duracion: `${duracionMinutos} minutos`
-    })
-
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('citas')
       .update({
         fecha_cita: formEdicion.value.fecha_cita,
@@ -319,386 +660,521 @@ const guardarCambios = async () => {
         updated_at: new Date().toISOString()
       })
       .eq('id', props.citaId)
-      .select()
-      .single()
 
-    if (error) {
-      console.error('❌ Error de Supabase:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code
-      })
-      throw error
-    }
-
-    console.log('✅ Cita actualizada exitosamente:', data)
+    if (error) throw error
 
     modoEdicion.value = false
     await cargarCita()
-
-    // Emitir ambos eventos para compatibilidad con diferentes páginas
+    toastSuccess('Cambios guardados')
     emit('cita-actualizada')
     emit('actualizado')
   } catch (error: any) {
-    console.error('❌ Error al actualizar cita:', error)
-    const errorMsg = error?.message || 'Error desconocido al actualizar la cita'
-    alert(`Error al actualizar la cita:\n${errorMsg}`)
+    console.error('Error al actualizar cita:', error)
+    toastError(`Error al actualizar: ${error.message}`)
   } finally {
     cargando.value = false
   }
 }
 
-// Auto-calcular hora_fin cuando cambia hora_inicio en modo edición
-// Solo se activa si estamos en modo edición
+// Auto-calcular hora_fin cuando cambia hora_inicio
 watch(() => formEdicion.value.hora_inicio, (newHora) => {
   if (modoEdicion.value && newHora) {
     const [hours, minutes] = newHora.split(':').map(Number)
-    const totalMinutes = hours * 60 + minutes + 60  // +60 minutos (1 hora)
+    const totalMinutes = hours * 60 + minutes + 60
     const endHours = Math.floor(totalMinutes / 60)
     const endMinutes = totalMinutes % 60
     formEdicion.value.hora_fin = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`
   }
 })
-
 </script>
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="citaId"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      @click.self="cerrar"
+    <Transition
+      enter-active-class="transition-opacity duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
-      <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden">
-        <!-- Header con color dinámico según estado -->
-        <div 
-          :class="[
-            'sticky top-0 bg-gradient-to-r px-6 py-4 flex items-center justify-between transition-all duration-300',
-            cita ? colorHeader : 'from-indigo-500 to-purple-600'
-          ]"
+      <div
+        v-if="citaId"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+        @click.self="cerrar"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <Transition
+          enter-active-class="transition-all duration-200"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition-all duration-150"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
         >
-          <div class="flex items-center gap-3">
-            <component :is="cita ? iconoEstado : CalendarIcon" class="w-7 h-7 text-white" />
-            <div>
-              <h2 class="text-xl font-bold text-white">
-                {{ modoEdicion ? 'Editar Cita' : 'Detalles de la Cita' }}
-              </h2>
-              <p class="text-xs text-white/80 mt-0.5">
-                {{ modoEdicion ? 'Modifica los datos de la sesión' : 'Información completa de la sesión' }}
-              </p>
-            </div>
-          </div>
-          <button
-            @click="cerrar"
-            class="text-white/90 hover:text-white transition-colors"
-            aria-label="Cerrar"
+          <div
+            class="bg-white rounded-xl shadow-xl w-full max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col"
+            @click.stop
           >
-            <XMarkIcon class="w-6 h-6" />
-          </button>
-        </div>
-
-        <!-- Loading -->
-        <div v-if="cargando" class="p-12 flex flex-col items-center justify-center bg-gray-50">
-          <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-          <p class="text-gray-600">Cargando detalles...</p>
-        </div>
-
-        <!-- Contenido -->
-        <div v-else-if="cita" class="px-6 py-5 overflow-y-auto max-h-[calc(90vh-180px)] space-y-4 bg-gray-50">
-          
-          <!-- MODO VISTA -->
-          <template v-if="!modoEdicion">
-            <!-- Estado y Paciente -->
-            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-              <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
-                    <UserIcon class="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-500 text-xs uppercase tracking-wide mb-1">Paciente</h3>
-                    <p class="text-xl font-bold text-gray-900">{{ paciente?.nombre_completo || 'Sin nombre' }}</p>
-                  </div>
+            <!-- HEADER -->
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-semibold text-gray-600"
+                >
+                  {{ inicialesPaciente }}
                 </div>
-                <span :class="['px-4 py-2 text-sm font-bold rounded-full shadow-md border-2', claseEstado]">
-                  {{ estadoLabel.toUpperCase() }}
-                </span>
-              </div>
-              <div class="flex flex-wrap gap-3 text-sm text-gray-600">
-                <div v-if="paciente?.email" class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>{{ paciente.email }}</span>
-                </div>
-                <div v-if="paciente?.telefono" class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  <span>{{ paciente.telefono }}</span>
-                </div>
-                <div v-if="paciente?.frecuencia" class="flex items-center gap-2 capitalize">
-                  <ClockIcon class="w-4 h-4 text-gray-400" />
-                  <span>{{ paciente.frecuencia }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Información de la Cita -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <!-- Fecha -->
-              <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                <div class="flex items-center gap-2 mb-2">
-                  <CalendarIcon class="w-5 h-5 text-blue-500" />
-                  <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Fecha</p>
-                </div>
-                <p class="font-bold text-gray-900 capitalize">{{ fechaFormateada }}</p>
-              </div>
-
-              <!-- Horario -->
-              <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                <div class="flex items-center gap-2 mb-2">
-                  <ClockIcon class="w-5 h-5 text-green-500" />
-                  <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Horario</p>
-                </div>
-                <p class="font-bold text-gray-900">
-                  {{ cita.hora_inicio?.substring(0, 5) }} - {{ cita.hora_fin?.substring(0, 5) }}
-                </p>
-              </div>
-
-              <!-- Modalidad -->
-              <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                <div class="flex items-center gap-2 mb-2">
-                  <component 
-                    :is="cita.modalidad === 'virtual' ? VideoCameraIcon : MapPinIcon" 
-                    class="w-5 h-5 text-purple-500" 
-                  />
-                  <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Modalidad</p>
-                </div>
-                <p class="font-bold text-gray-900 capitalize">{{ cita.modalidad || 'No especificada' }}</p>
-              </div>
-
-              <!-- Duración -->
-              <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                <div class="flex items-center gap-2 mb-2">
-                  <ClockIcon class="w-5 h-5 text-orange-500" />
-                  <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Duración</p>
-                </div>
-                <p class="font-bold text-gray-900">{{ cita.duracion_minutos || 60 }} minutos</p>
-              </div>
-            </div>
-
-            <!-- Información del Bono -->
-            <div v-if="bono" class="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 rounded-xl p-5 shadow-sm border border-emerald-200">
-              <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
-                    <TicketIcon class="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 class="font-bold text-emerald-900 text-lg">Bono Activo</h3>
-                    <p class="text-xs text-emerald-700">Información del paquete de sesiones</p>
-                  </div>
-                </div>
-                <div v-if="bono.numero_sesion" class="bg-white px-4 py-2 rounded-full border-2 border-emerald-400 shadow-sm">
-                  <span class="text-sm font-black text-emerald-700">Sesión #{{ bono.numero_sesion }}</span>
-                </div>
-              </div>
-              <div class="grid grid-cols-3 gap-4 mb-4">
-                <div class="bg-white rounded-lg p-3 text-center">
-                  <p class="text-xs text-emerald-600 mb-1 font-medium">Tipo</p>
-                  <p class="font-bold text-emerald-900 capitalize text-lg">{{ bono.tipo || 'Individual' }}</p>
-                </div>
-                <div class="bg-white rounded-lg p-3 text-center">
-                  <p class="text-xs text-emerald-600 mb-1 font-medium">Disponibles</p>
-                  <p class="font-bold text-emerald-900 text-lg">{{ bono.sesiones_restantes }}</p>
-                </div>
-                <div class="bg-white rounded-lg p-3 text-center">
-                  <p class="text-xs text-emerald-600 mb-1 font-medium">Total</p>
-                  <p class="font-bold text-emerald-900 text-lg">{{ bono.sesiones_totales }}</p>
-                </div>
-              </div>
-              <div class="bg-white/70 backdrop-blur rounded-lg p-3">
-                <div class="flex items-center justify-between text-xs text-emerald-700 mb-2">
-                  <span class="font-semibold">Progreso del bono</span>
-                  <span class="font-bold text-sm">
-                    {{ Math.round(((bono.sesiones_totales - bono.sesiones_restantes) / bono.sesiones_totales) * 100) }}%
+                <div>
+                  <h2 id="modal-title" class="text-base font-semibold text-gray-900">
+                    Sesión - {{ paciente?.nombre_completo || 'Cargando...' }}
+                  </h2>
+                  <span :class="['text-xs font-medium px-2 py-0.5 rounded-full', claseEstadoBadge]">
+                    {{ estadoLabel }}
                   </span>
                 </div>
-                <div class="h-3 bg-emerald-100 rounded-full overflow-hidden">
-                  <div 
-                    class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500 rounded-full"
-                    :style="{ width: `${((bono.sesiones_totales - bono.sesiones_restantes) / bono.sesiones_totales) * 100}%` }"
-                  ></div>
+              </div>
+              <button
+                @click="cerrar"
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Cerrar modal"
+              >
+                <XMarkIcon class="w-5 h-5" />
+              </button>
+            </div>
+
+            <!-- Loading -->
+            <div v-if="cargando" class="flex-1 flex items-center justify-center p-12">
+              <div class="w-8 h-8 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
+            </div>
+
+            <!-- CONTENIDO -->
+            <div v-else-if="cita" class="flex-1 overflow-y-auto">
+
+              <!-- MODO VISTA -->
+              <template v-if="!modoEdicion">
+
+                <!-- Acciones rápidas -->
+                <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2 flex-wrap">
+                  <button
+                    v-if="puedeMarcarRealizada"
+                    @click="marcarComoRealizada"
+                    :disabled="marcandoRealizada"
+                    class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    <CheckCircleIcon class="w-4 h-4" />
+                    {{ marcandoRealizada ? 'Marcando...' : 'Marcar realizada' }}
+                  </button>
+                  <button
+                    @click="activarModoEdicion"
+                    class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  >
+                    <PencilIcon class="w-4 h-4" />
+                    Editar
+                  </button>
+                  <button
+                    v-if="paciente?.telefono"
+                    @click="llamarPaciente"
+                    class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  >
+                    <PhoneIcon class="w-4 h-4" />
+                    Llamar
+                  </button>
                 </div>
-              </div>
-            </div>
 
-            <!-- Observaciones -->
-            <div v-if="cita.observaciones" class="bg-amber-50 rounded-xl p-5 shadow-sm border border-amber-200">
-              <div class="flex items-center gap-2 mb-3">
-                <DocumentTextIcon class="w-5 h-5 text-amber-600" />
-                <h3 class="font-bold text-amber-900">Observaciones</h3>
-              </div>
-              <p class="text-sm text-amber-900 whitespace-pre-wrap leading-relaxed">{{ cita.observaciones }}</p>
-            </div>
+                <!-- Info de la cita -->
+                <div class="px-5 py-4 border-b border-gray-100">
+                  <div class="flex items-center justify-between text-sm">
+                    <div class="flex items-center gap-4">
+                      <div class="flex items-center gap-1.5 text-gray-600">
+                        <CalendarDaysIcon class="w-4 h-4 text-gray-400" />
+                        <span>{{ fechaCorta }}</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 text-gray-600">
+                        <ClockIcon class="w-4 h-4 text-gray-400" />
+                        <span>{{ horarioFormateado }}</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 text-gray-600">
+                        <component
+                          :is="cita.modalidad === 'virtual' ? VideoCameraIcon : MapPinIcon"
+                          class="w-4 h-4 text-gray-400"
+                        />
+                        <span>{{ modalidadFormateada }}</span>
+                      </div>
+                    </div>
+                    <span class="text-gray-500">{{ duracionMinutos }} min</span>
+                  </div>
+                </div>
 
-            <!-- Metadatos -->
-            <div class="text-xs text-gray-400 space-y-1 pt-3 border-t border-gray-200">
-              <p class="font-mono">ID: {{ cita.id }}</p>
-              <p>Creada: {{ new Date(cita.created_at).toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'short' }) }}</p>
-              <p v-if="cita.updated_at">Última modificación: {{ new Date(cita.updated_at).toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'short' }) }}</p>
-            </div>
-          </template>
+                <!-- SECCIÓN DE PAGO -->
+                <div class="mx-5 my-4">
+                  <PaymentStatusBadge
+                    :estado-pago="estadoPago"
+                    :metodo-pago="cita.metodo_pago"
+                    :fecha-pago="cita.fecha_pago"
+                    :cantidad="precioSesion"
+                    :show-actions="puedeRegistrarPago || estadoPago === 'pagado'"
+                    @registrar="abrirModalPago"
+                    @cambiar="abrirCambiarMetodo"
+                    @deshacer="mostrarConfirmacionDeshacer = true"
+                  />
 
-          <!-- MODO EDICIÓN -->
-          <template v-else>
-            <form @submit.prevent="guardarCambios" class="space-y-4">
-              <!-- Fecha -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha de la cita</label>
-                <input
-                  v-model="formEdicion.fecha_cita"
-                  type="date"
-                  required
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-all"
+                  <p
+                    v-if="estadoPago === 'pendiente' && !puedeRegistrarPago && cita.estado === 'pendiente'"
+                    class="mt-2 text-xs text-amber-600 text-center"
+                  >
+                    Confirma la cita primero para poder registrar el pago
+                  </p>
+
+                  <!-- Confirmación de deshacer pago -->
+                  <div
+                    v-if="mostrarConfirmacionDeshacer"
+                    class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg"
+                  >
+                    <p class="text-sm text-red-800 mb-3">
+                      ¿Estás seguro de deshacer este pago?
+                    </p>
+                    <div class="flex gap-2">
+                      <button
+                        type="button"
+                        class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                        :disabled="deshaciendoPago"
+                        @click="mostrarConfirmacionDeshacer = false"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        class="flex-1 px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
+                        :disabled="deshaciendoPago"
+                        @click="handleDeshacerPago"
+                      >
+                        {{ deshaciendoPago ? 'Deshaciendo...' : 'Sí, deshacer' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Modal de pago rápido -->
+                <PaymentQuickModal
+                  v-if="mostrarModalPago"
+                  :cita-id="cita.id"
+                  :paciente-nombre="paciente?.nombre_completo || 'Paciente'"
+                  :cantidad="precioSesion"
+                  :tipo-transaccion="bono ? 'sesion_bono' : 'sesion_unica'"
+                  :bono-info="bonoInfoParaPago"
+                  :hora-inicio="cita.hora_inicio?.substring(0, 5)"
+                  :metodo-pago-actual="cita.metodo_pago"
+                  :modo-edicion="modoEdicionPago"
+                  @confirm="handlePagoConfirmado"
+                  @cancel="cancelarModalPago"
                 />
-              </div>
 
-              <!-- Horarios -->
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Hora de inicio</label>
-                  <input
-                    v-model="formEdicion.hora_inicio"
-                    type="time"
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-all"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Hora de fin</label>
-                  <input
-                    v-model="formEdicion.hora_fin"
-                    type="time"
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-all"
-                  />
-                </div>
-              </div>
-
-              <!-- Modalidad y Estado -->
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Modalidad</label>
-                  <select
-                    v-model="formEdicion.modalidad"
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-all"
+                <!-- SECCIÓN DE BONO MEJORADA -->
+                <div class="mx-5 mb-3">
+                  <!-- Header de la sección -->
+                  <button
+                    @click="seccionBonoAbierta = !seccionBonoAbierta"
+                    class="w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors"
+                    :class="bonoMostrar
+                      ? 'bg-purple-50 hover:bg-purple-100'
+                      : 'bg-gray-50 hover:bg-gray-100'"
                   >
-                    <option value="presencial">Presencial</option>
-                    <option value="virtual">Virtual</option>
-                    <option value="telefonica">Telefónica</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
-                  <select
-                    v-model="formEdicion.estado"
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-all"
-                  >
-                    <option value="pendiente">Pendiente</option>
-                    <option value="confirmada">Confirmada</option>
-                    <option value="realizada">Realizada</option>
-                    <option value="cancelada">Cancelada</option>
-                  </select>
-                </div>
-              </div>
+                    <div class="flex items-center gap-2">
+                      <TicketIcon class="w-4 h-4" :class="bonoMostrar ? 'text-purple-500' : 'text-gray-400'" />
+                      <span class="text-sm font-medium" :class="bonoMostrar ? 'text-purple-700' : 'text-gray-700'">
+                        {{ bonoMostrar ? 'Bono del paciente' : 'Sin bono asignado' }}
+                      </span>
+                      <template v-if="bonoMostrar">
+                        <span class="text-xs px-1.5 py-0.5 rounded" :class="bono ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'">
+                          {{ bono ? 'Asignado' : 'Disponible' }}
+                        </span>
+                      </template>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span v-if="bonoMostrar" class="text-xs text-gray-500">
+                        {{ sesionesUsadas }}/{{ bonoMostrar.sesiones_totales }}
+                      </span>
+                      <component :is="seccionBonoAbierta ? ChevronUpIcon : ChevronDownIcon" class="w-4 h-4 text-gray-400" />
+                    </div>
+                  </button>
 
-              <!-- Observaciones -->
+                  <!-- Contenido expandido -->
+                  <Transition
+                    enter-active-class="transition-all duration-200"
+                    enter-from-class="opacity-0 max-h-0"
+                    enter-to-class="opacity-100 max-h-96"
+                    leave-active-class="transition-all duration-150"
+                    leave-from-class="opacity-100 max-h-96"
+                    leave-to-class="opacity-0 max-h-0"
+                  >
+                    <div v-if="seccionBonoAbierta" class="mt-2 overflow-hidden">
+                      <!-- Si tiene bono (asignado o disponible) -->
+                      <div v-if="bonoMostrar" class="p-4 bg-white border border-gray-100 rounded-lg space-y-3">
+                        <!-- Info del bono -->
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <span class="text-sm font-medium text-gray-900">{{ tipoBonoFormateado }}</span>
+                            <span
+                              v-if="bonoMostrar.pagado"
+                              class="ml-2 text-xs text-green-600 font-medium"
+                            >Pagado</span>
+                            <span
+                              v-else
+                              class="ml-2 text-xs text-amber-600 font-medium"
+                            >Pago pendiente</span>
+                          </div>
+                          <div v-if="fechaVencimientoBono" class="text-xs" :class="bonoVencido ? 'text-red-600' : (bonoProximoVencer ? 'text-amber-600' : 'text-gray-500')">
+                            {{ bonoVencido ? 'Vencido' : `Vence ${fechaVencimientoBono}` }}
+                          </div>
+                        </div>
+
+                        <!-- Barra de progreso -->
+                        <div>
+                          <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
+                            <span>Sesiones usadas</span>
+                            <span class="font-medium">{{ sesionesUsadas }} de {{ bonoMostrar.sesiones_totales }}</span>
+                          </div>
+                          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                              class="h-full transition-all duration-300 rounded-full"
+                              :class="bonoMostrar.sesiones_restantes <= 1 ? 'bg-amber-500' : 'bg-purple-500'"
+                              :style="{ width: `${progresoBono}%` }"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <!-- Alertas -->
+                        <div v-if="bonoMostrar.sesiones_restantes === 1" class="flex items-center gap-2 p-2 bg-amber-50 border border-amber-100 rounded-lg">
+                          <ExclamationTriangleIcon class="w-4 h-4 text-amber-500 flex-shrink-0" />
+                          <span class="text-xs text-amber-700">Última sesión disponible</span>
+                        </div>
+
+                        <div v-if="bonoVencido" class="flex items-center gap-2 p-2 bg-red-50 border border-red-100 rounded-lg">
+                          <ExclamationTriangleIcon class="w-4 h-4 text-red-500 flex-shrink-0" />
+                          <span class="text-xs text-red-700">Este bono ha vencido</span>
+                        </div>
+
+                        <!-- Estado de sesión para esta cita -->
+                        <div v-if="bono" class="flex items-center gap-2 p-2 rounded-lg" :class="cita.sesion_descontada ? 'bg-green-50' : 'bg-gray-50'">
+                          <CheckCircleIcon v-if="cita.sesion_descontada" class="w-4 h-4 text-green-500" />
+                          <ClockIcon v-else class="w-4 h-4 text-gray-400" />
+                          <span class="text-xs" :class="cita.sesion_descontada ? 'text-green-700' : 'text-gray-600'">
+                            {{ cita.sesion_descontada ? 'Sesión consumida de este bono' : 'Sesión pendiente de consumir' }}
+                          </span>
+                        </div>
+
+                        <!-- Acciones del bono -->
+                        <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
+                          <!-- Asignar bono (si no está asignado pero hay disponible) -->
+                          <button
+                            v-if="puedeAsignarBono"
+                            @click="asignarBonoACita"
+                            :disabled="asignandoBono"
+                            class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            <PlusIcon class="w-4 h-4" />
+                            {{ asignandoBono ? 'Asignando...' : 'Asignar a esta cita' }}
+                          </button>
+
+                          <!-- Consumir sesión -->
+                          <button
+                            v-if="puedeConsumirSesion"
+                            @click="consumirSesionBono"
+                            :disabled="consumiendoSesion"
+                            class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            <CheckCircleIcon class="w-4 h-4" />
+                            {{ consumiendoSesion ? 'Consumiendo...' : 'Consumir sesión' }}
+                          </button>
+
+                          <!-- Ver detalles -->
+                          <button
+                            @click="irAGestionBonos"
+                            class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                          >
+                            <ArrowTopRightOnSquareIcon class="w-4 h-4" />
+                            <span class="hidden sm:inline">Ver detalles</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Si no tiene bono -->
+                      <div v-else class="p-4 bg-gray-50 border border-gray-100 rounded-lg text-center">
+                        <p class="text-sm text-gray-500 mb-3">Este paciente no tiene bono activo</p>
+                        <button
+                          @click="irAGestionBonos"
+                          class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+                        >
+                          <PlusIcon class="w-4 h-4" />
+                          Crear bono
+                        </button>
+                      </div>
+                    </div>
+                  </Transition>
+                </div>
+
+                <!-- SECCIÓN DE OBSERVACIONES -->
+                <div v-if="cita.observaciones" class="mx-5 mb-4">
+                  <button
+                    @click="seccionObservacionesAbierta = !seccionObservacionesAbierta"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-700">Observaciones</span>
+                    <component :is="seccionObservacionesAbierta ? ChevronUpIcon : ChevronDownIcon" class="w-4 h-4 text-gray-400" />
+                  </button>
+
+                  <Transition
+                    enter-active-class="transition-all duration-200"
+                    enter-from-class="opacity-0 max-h-0"
+                    enter-to-class="opacity-100 max-h-60"
+                    leave-active-class="transition-all duration-150"
+                    leave-from-class="opacity-100 max-h-60"
+                    leave-to-class="opacity-0 max-h-0"
+                  >
+                    <div v-if="seccionObservacionesAbierta" class="mt-2 px-4 py-3 bg-gray-50 rounded-lg overflow-hidden">
+                      <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ cita.observaciones }}</p>
+                    </div>
+                  </Transition>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="px-5 py-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
+                  <span>ID: {{ cita.id.substring(0, 8) }}...</span>
+                  <div class="flex items-center gap-3">
+                    <button class="hover:text-gray-600 transition-colors">Ver historial</button>
+                    <span>|</span>
+                    <button class="hover:text-red-500 transition-colors">Cancelar cita</button>
+                  </div>
+                </div>
+
+                <!-- Botón de confirmación -->
+                <div v-if="puedeConfirmar" class="px-5 pb-4">
+                  <button
+                    @click="confirmarCitaRapido"
+                    :disabled="confirmando"
+                    class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    <svg v-if="confirmando" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    <CheckCircleIcon v-else class="w-5 h-5" />
+                    {{ confirmando ? 'Confirmando...' : 'Confirmar cita' }}
+                  </button>
+                </div>
+
+              </template>
+
+              <!-- MODO EDICIÓN -->
+              <template v-else>
+                <form @submit.prevent="guardarCambios" class="p-5 space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+                    <input
+                      v-model="formEdicion.fecha_cita"
+                      type="date"
+                      required
+                      class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
+                    />
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Inicio</label>
+                      <input
+                        v-model="formEdicion.hora_inicio"
+                        type="time"
+                        required
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Fin</label>
+                      <input
+                        v-model="formEdicion.hora_fin"
+                        type="time"
+                        required
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Modalidad</label>
+                      <select
+                        v-model="formEdicion.modalidad"
+                        required
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
+                      >
+                        <option value="presencial">Presencial</option>
+                        <option value="virtual">Virtual</option>
+                        <option value="telefonica">Telefónica</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                      <select
+                        v-model="formEdicion.estado"
+                        required
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
+                      >
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="realizada">Realizada</option>
+                        <option value="cancelada">Cancelada</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                    <textarea
+                      v-model="formEdicion.observaciones"
+                      rows="3"
+                      class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 resize-none"
+                      placeholder="Notas adicionales..."
+                    ></textarea>
+                  </div>
+
+                  <div class="flex gap-3 pt-2">
+                    <button
+                      type="button"
+                      @click="cancelarEdicion"
+                      class="flex-1 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      :disabled="cargando"
+                      class="flex-1 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+                    >
+                      {{ cargando ? 'Guardando...' : 'Guardar' }}
+                    </button>
+                  </div>
+                </form>
+              </template>
+
+            </div>
+
+            <!-- Sin datos -->
+            <div v-else class="flex-1 flex items-center justify-center p-12 text-center">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
-                <textarea
-                  v-model="formEdicion.observaciones"
-                  rows="4"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white resize-none transition-all"
-                  placeholder="Notas adicionales sobre la cita..."
-                ></textarea>
+                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <XMarkIcon class="w-6 h-6 text-gray-400" />
+                </div>
+                <p class="text-gray-600 font-medium">No se encontraron datos</p>
+                <p class="text-gray-400 text-sm mt-1">ID: {{ citaId?.substring(0, 8) }}...</p>
               </div>
-            </form>
-          </template>
-        </div>
+            </div>
 
-        <!-- Sin datos -->
-        <div v-else class="p-12 text-center bg-gray-50">
-          <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
           </div>
-          <p class="text-gray-600 font-medium">No se encontraron datos de la cita</p>
-          <p class="text-gray-400 text-sm mt-1">ID: {{ citaId }}</p>
-          <div class="mt-4 text-xs text-left bg-white p-4 rounded border border-gray-200">
-            <p class="font-mono">DEBUG:</p>
-            <p class="font-mono">cargando: {{ cargando }}</p>
-            <p class="font-mono">cita: {{ cita ? 'existe' : 'null' }}</p>
-            <p class="font-mono">citaId prop: {{ citaId }}</p>
-          </div>
-        </div>
-
-        <!-- Footer con acciones -->
-        <div class="px-6 py-4 border-t border-gray-200 flex gap-3 bg-white">
-          <template v-if="!modoEdicion">
-            <button
-              @click="cerrar"
-              class="px-5 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-sm"
-            >
-              Cerrar
-            </button>
-            <!-- Botón de Confirmación Rápida (solo para citas pendientes) -->
-            <button
-              v-if="puedeConfirmar"
-              @click="confirmarCitaRapido"
-              :disabled="confirmando"
-              class="flex-1 px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg v-if="confirmando" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-              </svg>
-              <CheckCircleIcon v-else class="w-5 h-5" />
-              {{ confirmando ? 'Confirmando...' : 'Confirmar Cita' }}
-            </button>
-            <button
-              @click="activarModoEdicion"
-              class="flex-1 px-5 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
-            >
-              <PencilSquareIcon class="w-5 h-5" />
-              Editar Cita
-            </button>
-          </template>
-          <template v-else>
-            <button
-              @click="cancelarEdicion"
-              type="button"
-              class="flex-1 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-sm"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="guardarCambios"
-              type="button"
-              :disabled="cargando"
-              class="flex-1 px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-200"
-            >
-              {{ cargando ? 'Guardando...' : 'Guardar Cambios' }}
-            </button>
-          </template>
-        </div>
+        </Transition>
       </div>
-    </div>
+    </Transition>
   </Teleport>
 </template>
 
