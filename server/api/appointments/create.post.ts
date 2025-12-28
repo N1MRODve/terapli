@@ -157,13 +157,36 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // 7. Validar limites de sesiones por frecuencia de bono (no acumulables)
-    if (bono_id) {
+    // 7. Si no se especificó bono_id, buscar bono activo del paciente automáticamente
+    let bonoIdFinal = bono_id
+    let descontarDeBono = descontar_de_bono || false
+
+    if (!bonoIdFinal) {
+      // Buscar bono activo del paciente
+      const { data: bonoActivo, error: bonoActivoError } = await supabaseClient
+        .from('bonos')
+        .select('id, tipo, sesiones_restantes, sesiones_totales, estado, monto_total')
+        .eq('paciente_id', paciente_id)
+        .in('estado', ['activo', 'pendiente'])
+        .gt('sesiones_restantes', 0)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (!bonoActivoError && bonoActivo) {
+        bonoIdFinal = bonoActivo.id
+        descontarDeBono = true
+        console.info(`[CREATE] Bono activo encontrado para paciente: ${bonoIdFinal} (${bonoActivo.tipo})`)
+      }
+    }
+
+    // 8. Validar limites de sesiones por frecuencia de bono (no acumulables)
+    if (bonoIdFinal) {
       // Obtener informacion del bono
       const { data: bonoData, error: bonoError } = await supabaseClient
         .from('bonos')
         .select('id, tipo, sesiones_restantes, sesiones_totales, estado')
-        .eq('id', bono_id)
+        .eq('id', bonoIdFinal)
         .single()
 
       if (!bonoError && bonoData) {
@@ -189,7 +212,7 @@ export default defineEventHandler(async (event) => {
           const { data: citasMes, error: citasMesError } = await supabaseClient
             .from('citas')
             .select('id')
-            .eq('bono_id', bono_id)
+            .eq('bono_id', bonoIdFinal)
             .gte('fecha_cita', inicioMesStr)
             .lte('fecha_cita', finMesStr)
             .in('estado', ['confirmada', 'realizada', 'pendiente'])
@@ -220,8 +243,8 @@ export default defineEventHandler(async (event) => {
       ubicacion: ubicacion || null,
       enlace_videollamada: enlace_videollamada || null,
       observaciones: observaciones || null,
-      bono_id: bono_id || null,
-      descontar_de_bono: descontar_de_bono || false,
+      bono_id: bonoIdFinal || null,
+      descontar_de_bono: descontarDeBono,
       sesion_descontada: false,
       recordatorio_enviado: false
     }

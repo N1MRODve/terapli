@@ -7,7 +7,7 @@
  * para el modal de nueva cita.
  *
  * Características:
- * - Búsqueda por nombre, email, teléfono
+ * - Búsqueda por nombre, email, teléfono via API
  * - Debouncing automático
  * - Estado de bonos integrado
  * - Creación rápida de paciente
@@ -15,8 +15,17 @@
  */
 
 import { ref, computed, watch } from 'vue'
-import { useSupabaseClient, useSupabaseUser } from '#imports'
 import { agendaLogger } from '~/utils/agenda-logger'
+
+export interface BonoActivo {
+  id: string
+  tipo: string
+  sesiones_totales: number
+  sesiones_restantes: number
+  sesiones_usadas: number
+  fecha_inicio?: string
+  fecha_fin?: string
+}
 
 export interface PacienteBusqueda {
   id: string
@@ -28,6 +37,10 @@ export interface PacienteBusqueda {
   bonos_activos: number
   sesiones_restantes_total: number
   proximo_vencimiento: string | null
+  // Información detallada del bono activo principal
+  bono_activo: BonoActivo | null
+  // Lista de todos los bonos activos
+  bonos: BonoActivo[]
 }
 
 export interface CreatePacienteParams {
@@ -45,9 +58,6 @@ export interface CreatePacienteResult {
 }
 
 export function usePacientes() {
-  const supabase = useSupabaseClient()
-  const user = useSupabaseUser()
-
   // Estado
   const pacientes = ref<PacienteBusqueda[]>([])
   const loading = ref(false)
@@ -60,7 +70,7 @@ export function usePacientes() {
   const cacheExpiry = 5 * 60 * 1000 // 5 minutos
 
   /**
-   * Busca pacientes del terapeuta actual con filtros
+   * Busca pacientes del terapeuta actual con filtros via API
    */
   async function searchPacientes(query: string): Promise<void> {
     try {
@@ -75,125 +85,38 @@ export function usePacientes() {
       if (cachedResult) {
         pacientes.value = cachedResult
         agendaLogger.debug('search', `Resultados desde cache: ${cachedResult.length}`)
+        loading.value = false
         return
       }
 
-      agendaLogger.debug('search', `Buscando pacientes: "${normalizedQuery}"`)
+      agendaLogger.debug('search', `Buscando pacientes via API: "${normalizedQuery}"`)
 
-      if (!user.value?.id) {
-        throw new Error('Usuario no autenticado')
-      }
-
-      // Obtener terapeuta_id desde la tabla profiles o directamente del auth
-      // El ID del usuario autenticado puede ser directamente el terapeuta_id
-      // o puede estar vinculado a través del email en la tabla terapeutas
-      let terapeutaId: string | null = null
-
-      // Primero intentamos obtener el terapeuta por el ID del usuario (si el auth.uid es el terapeuta)
-      const { data: terapeutaDirecto } = await supabase
-        .from('terapeutas')
-        .select('id')
-        .eq('id', user.value.id)
-        .maybeSingle()
-
-      if (terapeutaDirecto?.id) {
-        terapeutaId = terapeutaDirecto.id
-      } else {
-        // Si no, buscamos por email
-        const { data: terapeutaPorEmail } = await supabase
-          .from('terapeutas')
-          .select('id')
-          .eq('email', user.value.email)
-          .maybeSingle()
-
-        if (terapeutaPorEmail?.id) {
-          terapeutaId = terapeutaPorEmail.id
-        }
-      }
-
-      if (!terapeutaId) {
-        throw new Error('No se pudo obtener el perfil del terapeuta')
-      }
-
-      // Buscar pacientes con información de bonos
-      let queryBuilder = supabase
-        .from('pacientes')
-        .select(`
-          id,
-          nombre_completo,
-          email,
-          telefono,
-          fecha_nacimiento,
-          bonos(
-            id,
-            sesiones_restantes,
-            fecha_fin,
-            estado
-          )
-        `)
-        .eq('terapeuta_id', terapeutaId)
-
-      // Aplicar filtros de búsqueda si hay query
-      if (normalizedQuery.length > 0) {
-        queryBuilder = queryBuilder.or(
-          `nombre_completo.ilike.%${normalizedQuery}%,email.ilike.%${normalizedQuery}%,telefono.ilike.%${normalizedQuery}%`
-        )
-      }
-
-      const { data, error: fetchError } = await queryBuilder
-        .order('nombre_completo', { ascending: true })
-        .limit(50)
-
-      if (fetchError) {
-        throw fetchError
-      }
-
-      // Transformar datos con información de bonos
-      const pacientesConBonos: PacienteBusqueda[] = (data || []).map((p: any) => {
-        const bonosActivos = (p.bonos || []).filter((b: any) =>
-          b.estado === 'activo' && b.sesiones_restantes > 0
-        )
-
-        const sesionesRestantesTotal = bonosActivos.reduce(
-          (sum: number, b: any) => sum + (b.sesiones_restantes || 0),
-          0
-        )
-
-        // Encontrar próximo vencimiento
-        const proximoVencimiento = bonosActivos
-          .filter((b: any) => b.fecha_fin)
-          .map((b: any) => new Date(b.fecha_fin).getTime())
-          .sort()
-          [0] || null
-
-        return {
-          id: p.id,
-          nombre_completo: p.nombre_completo,
-          email: p.email,
-          telefono: p.telefono,
-          fecha_nacimiento: p.fecha_nacimiento,
-          bonos_activos: bonosActivos.length,
-          sesiones_restantes_total: sesionesRestantesTotal,
-          proximo_vencimiento: proximoVencimiento
-            ? new Date(proximoVencimiento).toISOString()
-            : null
-        }
+      // Llamar a la API del servidor
+      const response = await $fetch('/api/patients/search', {
+        method: 'GET',
+        query: { q: normalizedQuery }
       })
 
-      pacientes.value = pacientesConBonos
+      if (!response.success) {
+        throw new Error('Error al buscar pacientes')
+      }
+
+      const pacientesEncontrados = response.data as PacienteBusqueda[]
+
+      pacientes.value = pacientesEncontrados
 
       // Guardar en cache
-      cache.value.set(normalizedQuery, pacientesConBonos)
+      cache.value.set(normalizedQuery, pacientesEncontrados)
 
       // Limpiar cache después de expiry time
       setTimeout(() => {
         cache.value.delete(normalizedQuery)
       }, cacheExpiry)
 
-      agendaLogger.info('search', `Pacientes encontrados: ${pacientesConBonos.length}`)
+      agendaLogger.info('search', `Pacientes encontrados: ${pacientesEncontrados.length}`)
 
     } catch (err: any) {
-      const errorMsg = err.message || 'Error al buscar pacientes'
+      const errorMsg = err.data?.message || err.message || 'Error al buscar pacientes'
       error.value = errorMsg
       agendaLogger.error('api_error', errorMsg, err)
       pacientes.value = []
@@ -232,13 +155,9 @@ export function usePacientes() {
       loading.value = true
       error.value = null
 
-      agendaLogger.debug('create', 'Creando paciente rápido', params)
+      agendaLogger.debug('create', 'Creando paciente rápido via API', params)
 
-      if (!user.value?.id) {
-        throw new Error('Usuario no autenticado')
-      }
-
-      // Validaciones básicas
+      // Validaciones básicas del cliente
       if (!params.nombre_completo || params.nombre_completo.trim().length < 2) {
         return {
           success: false,
@@ -253,82 +172,34 @@ export function usePacientes() {
         }
       }
 
-      // Obtener terapeuta_id
-      let terapeutaId: string | null = null
-
-      // Primero intentamos obtener el terapeuta por el ID del usuario
-      const { data: terapeutaDirecto } = await supabase
-        .from('terapeutas')
-        .select('id')
-        .eq('id', user.value.id)
-        .maybeSingle()
-
-      if (terapeutaDirecto?.id) {
-        terapeutaId = terapeutaDirecto.id
-      } else {
-        // Si no, buscamos por email
-        const { data: terapeutaPorEmail } = await supabase
-          .from('terapeutas')
-          .select('id')
-          .eq('email', user.value.email)
-          .maybeSingle()
-
-        if (terapeutaPorEmail?.id) {
-          terapeutaId = terapeutaPorEmail.id
-        }
-      }
-
-      if (!terapeutaId) {
-        throw new Error('No se pudo obtener el perfil del terapeuta')
-      }
-
-      // Verificar si el email ya existe para este terapeuta
-      const { data: existente, error: checkError } = await supabase
-        .from('pacientes')
-        .select('id, nombre_completo')
-        .eq('terapeuta_id', terapeutaId)
-        .eq('email', params.email.trim().toLowerCase())
-        .maybeSingle()
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError
-      }
-
-      if (existente) {
-        return {
-          success: false,
-          error: `Ya existe un paciente con el email ${params.email}: ${existente.nombre_completo}`
-        }
-      }
-
-      // Crear paciente
-      const { data: nuevoPaciente, error: insertError } = await supabase
-        .from('pacientes')
-        .insert({
-          terapeuta_id: terapeutaId,
+      // Llamar a la API del servidor para crear paciente
+      const response = await $fetch('/api/patients/create', {
+        method: 'POST',
+        body: {
           nombre_completo: params.nombre_completo.trim(),
           email: params.email.trim().toLowerCase(),
           telefono: params.telefono?.trim() || null,
           fecha_nacimiento: params.fecha_nacimiento || null,
           observaciones: params.observaciones?.trim() || null
-        })
-        .select()
-        .single()
+        }
+      })
 
-      if (insertError) {
-        throw insertError
+      if (!response.success) {
+        throw new Error(response.message || 'Error al crear paciente')
       }
 
       // Transformar a PacienteBusqueda
       const pacienteBusqueda: PacienteBusqueda = {
-        id: nuevoPaciente.id,
-        nombre_completo: nuevoPaciente.nombre_completo,
-        email: nuevoPaciente.email,
-        telefono: nuevoPaciente.telefono,
-        fecha_nacimiento: nuevoPaciente.fecha_nacimiento,
+        id: response.data.id,
+        nombre_completo: response.data.nombre_completo,
+        email: response.data.email,
+        telefono: response.data.telefono,
+        fecha_nacimiento: response.data.fecha_nacimiento,
         bonos_activos: 0,
         sesiones_restantes_total: 0,
-        proximo_vencimiento: null
+        proximo_vencimiento: null,
+        bono_activo: null,
+        bonos: []
       }
 
       // Agregar a la lista local
@@ -337,7 +208,7 @@ export function usePacientes() {
       // Invalidar cache
       cache.value.clear()
 
-      agendaLogger.info('create', `Paciente creado: ${nuevoPaciente.id}`)
+      agendaLogger.info('create', `Paciente creado: ${pacienteBusqueda.id}`)
 
       return {
         success: true,
@@ -345,7 +216,7 @@ export function usePacientes() {
       }
 
     } catch (err: any) {
-      const errorMsg = err.message || 'Error al crear paciente'
+      const errorMsg = err.data?.message || err.message || 'Error al crear paciente'
       error.value = errorMsg
       agendaLogger.error('api_error', errorMsg, err)
 

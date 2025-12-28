@@ -23,7 +23,7 @@ export interface CreateAppointmentParams {
   hora_inicio: string
   hora_fin: string
   modalidad?: 'presencial' | 'online' | 'telefonica'
-  estado?: 'pending' | 'confirmed'
+  estado?: 'pendiente' | 'confirmada'
   ubicacion?: string
   enlace_videollamada?: string
   observaciones?: string

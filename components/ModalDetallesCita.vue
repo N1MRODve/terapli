@@ -103,11 +103,24 @@ const cargarCita = async () => {
     cita.value = citaData
     paciente.value = citaData.paciente
 
-    // Si tiene bono asignado, cargar información
+    // Si tiene bono asignado, cargar información completa
     if (citaData.bono_id) {
       const { data: bonoData, error: bonoError } = await supabase
         .from('bonos')
-        .select('*')
+        .select(`
+          id,
+          tipo,
+          sesiones_totales,
+          sesiones_restantes,
+          monto_total,
+          precio_por_sesion,
+          fecha_inicio,
+          fecha_fin,
+          estado,
+          pagado,
+          created_at,
+          updated_at
+        `)
         .eq('id', citaData.bono_id)
         .single()
 
@@ -138,7 +151,20 @@ const cargarCita = async () => {
     if (!citaData.bono_id && citaData.paciente?.id) {
       const { data: bonoActivo } = await supabase
         .from('bonos')
-        .select('*')
+        .select(`
+          id,
+          tipo,
+          sesiones_totales,
+          sesiones_restantes,
+          monto_total,
+          precio_por_sesion,
+          fecha_inicio,
+          fecha_fin,
+          estado,
+          pagado,
+          created_at,
+          updated_at
+        `)
         .eq('paciente_id', citaData.paciente.id)
         .in('estado', ['activo', 'pendiente'])
         .gt('sesiones_restantes', 0)
@@ -342,16 +368,47 @@ const tipoBonoFormateado = computed(() => {
 
 // Computed: Precio de la sesion (usa precio del bono si existe)
 const precioSesion = computed(() => {
-  // Si tiene bono asignado, calcular precio por sesion del bono
+  // PRIORIDAD 1: Si la cita tiene precio_sesion asignado, usar ese
+  if (cita.value?.precio_sesion) {
+    return cita.value.precio_sesion
+  }
+
+  // PRIORIDAD 2: Si tiene bono con precio_por_sesion, usar ese
+  if (bonoMostrar.value?.precio_por_sesion) {
+    return bonoMostrar.value.precio_por_sesion
+  }
+
+  // PRIORIDAD 3: Si tiene bono, calcular precio por sesión del bono
   if (bonoMostrar.value && bonoMostrar.value.monto_total && bonoMostrar.value.sesiones_totales) {
-    return bonoMostrar.value.monto_total / bonoMostrar.value.sesiones_totales
+    return Math.round((bonoMostrar.value.monto_total / bonoMostrar.value.sesiones_totales) * 100) / 100
   }
-  // Si tiene bono con precio_por_sesion en metadata
-  if (bonoMostrar.value?.metadata?.precio_por_sesion) {
-    return bonoMostrar.value.metadata.precio_por_sesion
+
+  // PRIORIDAD 4: Precio por defecto
+  return 50
+})
+
+// Computed: Información detallada del bono para mostrar
+const infoBono = computed(() => {
+  if (!bonoMostrar.value) return null
+
+  const sesionesUsadasCalc = bonoMostrar.value.sesiones_totales - bonoMostrar.value.sesiones_restantes
+  const numeroSesionActual = sesionesUsadasCalc + 1 // La siguiente sesión
+
+  return {
+    tipo: bonoMostrar.value.tipo || 'Bono',
+    sesionesRestantes: bonoMostrar.value.sesiones_restantes,
+    sesionesTotales: bonoMostrar.value.sesiones_totales,
+    sesionesUsadas: sesionesUsadasCalc,
+    numeroSesionActual: cita.value?.sesion_descontada ? sesionesUsadasCalc : numeroSesionActual,
+    montoTotal: bonoMostrar.value.monto_total,
+    precioPorSesion: bonoMostrar.value.precio_por_sesion || (bonoMostrar.value.monto_total / bonoMostrar.value.sesiones_totales),
+    pagado: bonoMostrar.value.pagado,
+    estado: bonoMostrar.value.estado,
+    fechaInicio: bonoMostrar.value.fecha_inicio,
+    fechaFin: bonoMostrar.value.fecha_fin,
+    esAsignado: !!bono.value, // true si el bono está asignado a esta cita
+    sesionDescontada: cita.value?.sesion_descontada
   }
-  // Precio de la cita o precio por defecto
-  return cita.value?.precio_sesion || 50
 })
 
 // Computed: Iniciales del paciente
@@ -911,58 +968,90 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
                   >
                     <div v-if="seccionBonoAbierta" class="mt-2 overflow-hidden">
                       <!-- Si tiene bono (asignado o disponible) -->
-                      <div v-if="bonoMostrar" class="p-4 bg-white border border-gray-100 rounded-lg space-y-3">
-                        <!-- Info del bono -->
+                      <div v-if="bonoMostrar && infoBono" class="p-4 bg-white border border-gray-100 rounded-lg space-y-3">
+                        <!-- Info del bono con tipo y estado de pago -->
                         <div class="flex items-center justify-between">
-                          <div>
-                            <span class="text-sm font-medium text-gray-900">{{ tipoBonoFormateado }}</span>
+                          <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-purple-700">{{ tipoBonoFormateado }}</span>
                             <span
-                              v-if="bonoMostrar.pagado"
-                              class="ml-2 text-xs text-green-600 font-medium"
+                              v-if="infoBono.pagado"
+                              class="px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded-full font-medium"
                             >Pagado</span>
                             <span
                               v-else
-                              class="ml-2 text-xs text-amber-600 font-medium"
+                              class="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full font-medium"
                             >Pago pendiente</span>
                           </div>
-                          <div v-if="fechaVencimientoBono" class="text-xs" :class="bonoVencido ? 'text-red-600' : (bonoProximoVencer ? 'text-amber-600' : 'text-gray-500')">
+                          <div v-if="fechaVencimientoBono" class="text-xs font-medium" :class="bonoVencido ? 'text-red-600' : (bonoProximoVencer ? 'text-amber-600' : 'text-gray-500')">
                             {{ bonoVencido ? 'Vencido' : `Vence ${fechaVencimientoBono}` }}
                           </div>
                         </div>
 
-                        <!-- Barra de progreso -->
+                        <!-- Información económica del bono -->
+                        <div class="grid grid-cols-2 gap-3 p-3 bg-purple-50/50 rounded-lg">
+                          <div>
+                            <p class="text-xs text-gray-500">Valor del bono</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ infoBono.montoTotal?.toFixed(2) || '0.00' }}€</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-gray-500">Precio por sesión</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ infoBono.precioPorSesion?.toFixed(2) || '0.00' }}€</p>
+                          </div>
+                        </div>
+
+                        <!-- Barra de progreso con indicador de sesión actual -->
                         <div>
-                          <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-                            <span>Sesiones usadas</span>
-                            <span class="font-medium">{{ sesionesUsadas }} de {{ bonoMostrar.sesiones_totales }}</span>
+                          <div class="flex items-center justify-between text-xs text-gray-600 mb-1.5">
+                            <span class="font-medium">Sesiones del bono</span>
+                            <span class="font-semibold text-purple-700">{{ infoBono.sesionesUsadas }} de {{ infoBono.sesionesTotales }} usadas</span>
                           </div>
-                          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              class="h-full transition-all duration-300 rounded-full"
-                              :class="bonoMostrar.sesiones_restantes <= 1 ? 'bg-amber-500' : 'bg-purple-500'"
-                              :style="{ width: `${progresoBono}%` }"
-                            ></div>
+                          <div class="flex gap-1">
+                            <template v-for="i in infoBono.sesionesTotales" :key="i">
+                              <div
+                                class="flex-1 h-3 rounded transition-all"
+                                :class="[
+                                  i <= infoBono.sesionesUsadas ? 'bg-purple-600' : 'bg-purple-100',
+                                  i === infoBono.numeroSesionActual && !infoBono.sesionDescontada ? 'ring-2 ring-purple-400 ring-offset-1' : ''
+                                ]"
+                                :title="`Sesión ${i}${i <= infoBono.sesionesUsadas ? ' (usada)' : i === infoBono.numeroSesionActual ? ' (esta cita)' : ' (disponible)'}`"
+                              ></div>
+                            </template>
+                          </div>
+                          <p class="text-xs text-gray-500 mt-1.5">
+                            {{ infoBono.sesionesRestantes }} sesiones restantes
+                          </p>
+                        </div>
+
+                        <!-- Mensaje informativo sobre esta sesión -->
+                        <div v-if="infoBono.esAsignado" class="p-2.5 rounded-lg" :class="cita.sesion_descontada ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'">
+                          <div class="flex items-start gap-2">
+                            <CheckCircleIcon v-if="cita.sesion_descontada" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                            <ExclamationTriangleIcon v-else class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p class="text-xs font-medium" :class="cita.sesion_descontada ? 'text-green-800' : 'text-amber-800'">
+                                <template v-if="cita.sesion_descontada">
+                                  Sesión {{ infoBono.sesionesUsadas }}/{{ infoBono.sesionesTotales }} del bono (ya descontada)
+                                </template>
+                                <template v-else>
+                                  Esta será la sesión {{ infoBono.numeroSesionActual }}/{{ infoBono.sesionesTotales }} del bono
+                                </template>
+                              </p>
+                              <p v-if="!cita.sesion_descontada" class="text-xs text-amber-700 mt-0.5">
+                                Se descontará cuando confirmes o marques como realizada
+                              </p>
+                            </div>
                           </div>
                         </div>
 
-                        <!-- Alertas -->
-                        <div v-if="bonoMostrar.sesiones_restantes === 1" class="flex items-center gap-2 p-2 bg-amber-50 border border-amber-100 rounded-lg">
-                          <ExclamationTriangleIcon class="w-4 h-4 text-amber-500 flex-shrink-0" />
-                          <span class="text-xs text-amber-700">Última sesión disponible</span>
+                        <!-- Alertas importantes -->
+                        <div v-if="bonoMostrar.sesiones_restantes === 1 && !cita.sesion_descontada" class="flex items-center gap-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
+                          <ExclamationTriangleIcon class="w-4 h-4 text-orange-500 flex-shrink-0" />
+                          <span class="text-xs text-orange-700 font-medium">¡Última sesión disponible del bono!</span>
                         </div>
 
-                        <div v-if="bonoVencido" class="flex items-center gap-2 p-2 bg-red-50 border border-red-100 rounded-lg">
+                        <div v-if="bonoVencido" class="flex items-center gap-2 p-2 bg-red-50 border border-red-200 rounded-lg">
                           <ExclamationTriangleIcon class="w-4 h-4 text-red-500 flex-shrink-0" />
-                          <span class="text-xs text-red-700">Este bono ha vencido</span>
-                        </div>
-
-                        <!-- Estado de sesión para esta cita -->
-                        <div v-if="bono" class="flex items-center gap-2 p-2 rounded-lg" :class="cita.sesion_descontada ? 'bg-green-50' : 'bg-gray-50'">
-                          <CheckCircleIcon v-if="cita.sesion_descontada" class="w-4 h-4 text-green-500" />
-                          <ClockIcon v-else class="w-4 h-4 text-gray-400" />
-                          <span class="text-xs" :class="cita.sesion_descontada ? 'text-green-700' : 'text-gray-600'">
-                            {{ cita.sesion_descontada ? 'Sesión consumida de este bono' : 'Sesión pendiente de consumir' }}
-                          </span>
+                          <span class="text-xs text-red-700 font-medium">Este bono ha vencido</span>
                         </div>
 
                         <!-- Acciones del bono -->

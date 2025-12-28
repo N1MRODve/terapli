@@ -106,23 +106,20 @@ const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info')
 // CONFIGURACIÓN DE TIEMPO Y AGENDA
 // ============================================================================
 
-// Altura de cada slot de 30 minutos (h-11 = 2.75rem = 44px)
-const SLOT_HEIGHT_PX = 44
+// Altura de cada slot de 1 hora (88px = 2 slots de 44px)
+const SLOT_HEIGHT_PX = 88
 // Hora de inicio de la agenda
 const HORA_INICIO_AGENDA = 9
 // Hora de fin de la agenda
 const HORA_FIN_AGENDA = 21
-// Minutos por slot
-const MINUTOS_POR_SLOT = 30
+// Minutos por slot visual (1 hora)
+const MINUTOS_POR_SLOT = 60
 
-// Horas del día (cada 30 min desde 09:00 hasta 21:00)
+// Horas del día (cada hora desde 09:00 hasta 21:00)
 const horasDelDia = computed(() => {
   const horas: string[] = []
   for (let h = HORA_INICIO_AGENDA; h <= HORA_FIN_AGENDA; h++) {
     horas.push(`${String(h).padStart(2, '0')}:00`)
-    if (h < HORA_FIN_AGENDA) {
-      horas.push(`${String(h).padStart(2, '0')}:30`)
-    }
   }
   return horas
 })
@@ -233,13 +230,29 @@ const contadores = computed(() => ({
   cancelada: citas.value.filter(c => c.estado === 'cancelada').length
 }))
 
-// Obtener citas por día y hora
+// Obtener citas por día y hora (slot de 1 hora incluye :00 y :30)
 const citasPorDiaHora = (fecha: string, hora: string) => {
+  const horaSlot = parseInt(hora.substring(0, 2))
   return citasFiltradas.value.filter(c => {
     if (c.fecha_cita !== fecha) return false
     const horaInicio = c.hora_inicio?.substring(0, 5)
-    return horaInicio === hora
+    if (!horaInicio) return false
+    const horaCita = parseInt(horaInicio.substring(0, 2))
+    // La cita pertenece a este slot si su hora coincide (incluye :00 y :30)
+    return horaCita === horaSlot
   })
+}
+
+/**
+ * Calcula el offset vertical de una cita dentro del slot de 1 hora
+ * Si la cita empieza a :30, aparece a mitad del slot
+ */
+const calcularOffsetCita = (cita: any): number => {
+  const horaInicio = cita.hora_inicio?.substring(0, 5)
+  if (!horaInicio) return 0
+  const minutos = parseInt(horaInicio.substring(3, 5))
+  // Si empieza a :30, el offset es mitad del slot (44px)
+  return (minutos / 60) * SLOT_HEIGHT_PX
 }
 
 /**
@@ -250,7 +263,7 @@ const citasPorDiaHora = (fecha: string, hora: string) => {
 const calcularAlturaCita = (cita: any): number => {
   // Por defecto, usar duración de 60 minutos si no está definida
   const duracion = cita.duracion_minutos || 60
-  // Cada 30 minutos = SLOT_HEIGHT_PX (44px)
+  // Cada 60 minutos = SLOT_HEIGHT_PX (88px)
   // Entonces 60 min = 88px, 90 min = 132px, etc.
   const altura = (duracion / MINUTOS_POR_SLOT) * SLOT_HEIGHT_PX
   // Mínimo 40px para que se vea contenido
@@ -1025,27 +1038,29 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           >
             <!-- Columna hora -->
             <div
-              class="px-3 py-2 text-xs font-medium text-right border-r border-gray-100 h-11 flex items-start justify-end"
+              class="px-3 py-2 text-xs font-medium text-right border-r border-gray-100 flex items-start justify-end"
               :class="[
                 esSlotActual(hora, diasVisibles.find(d => d.esHoy)?.fecha || '')
                   ? 'text-red-500 font-semibold'
                   : 'text-gray-400'
               ]"
+              style="height: 88px;"
             >
               {{ hora }}
             </div>
 
-            <!-- Celdas por día -->
+            <!-- Celdas por día (1 hora = 88px de altura) -->
             <div
               v-for="dia in diasVisibles"
               :key="`${dia.fecha}-${hora}`"
-              class="relative border-r border-gray-100 last:border-r-0 h-11 transition-colors cursor-pointer group"
+              class="relative border-r border-gray-100 last:border-r-0 transition-colors cursor-pointer group"
               :class="[
                 dia.esHoy ? 'bg-violet-50/20' : '',
                 esHoraPasada(hora, dia.fecha) ? 'bg-gray-100/60' : '',
                 esSlotActual(hora, dia.fecha) ? 'bg-red-50/30 ring-1 ring-inset ring-red-100' : '',
                 !esHoraPasada(hora, dia.fecha) && !esSlotActual(hora, dia.fecha) ? 'hover:bg-violet-50/30' : 'hover:bg-gray-200/40'
               ]"
+              style="height: 88px;"
               @click="citasPorDiaHora(dia.fecha, hora).length === 0 ? handleSlotClick(dia.fecha, hora) : null"
             >
               <!-- Indicador para crear cita (hover) -->
@@ -1060,7 +1075,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 </div>
               </div>
 
-              <!-- Tarjetas de citas - ALTURA DINÁMICA según duración -->
+              <!-- Tarjetas de citas - ALTURA DINÁMICA según duración + offset para :30 -->
               <div
                 v-for="cita in citasPorDiaHora(dia.fecha, hora)"
                 :key="cita.id"
@@ -1070,9 +1085,12 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 role="button"
                 tabindex="0"
                 :aria-label="`Cita ${cita.estado} de ${cita.paciente?.nombre_completo || 'paciente'}, ${formatearHora(cita.hora_inicio)} a ${formatearHora(cita.hora_fin)}`"
-                class="absolute inset-x-0.5 top-0.5 p-2 rounded-lg border-l-4 cursor-pointer hover:shadow-lg hover:z-30 transition-all z-10 group/card overflow-hidden"
+                class="absolute inset-x-0.5 p-2 rounded-lg border-l-4 cursor-pointer hover:shadow-lg hover:z-30 transition-all z-10 group/card overflow-hidden"
                 :class="[getColorEstado(cita.estado).bg, getColorEstado(cita.estado).border]"
-                :style="{ height: `${calcularAlturaCita(cita)}px` }"
+                :style="{
+                  height: `${calcularAlturaCita(cita)}px`,
+                  top: `${calcularOffsetCita(cita) + 2}px`
+                }"
               >
                 <!-- Barra de acciones (aparece en hover) - posicionada fuera -->
                 <div class="absolute -top-1 -right-1 flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity z-40">

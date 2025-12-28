@@ -123,26 +123,100 @@
                     <!-- Paciente seleccionado -->
                     <div
                       v-if="formData.paciente_id && pacienteSeleccionado"
-                      class="flex items-center justify-between px-4 py-3 bg-emerald-50 border-2 border-emerald-200 rounded-xl"
+                      class="space-y-3"
                     >
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">
-                          {{ pacienteSeleccionado.nombre_completo.charAt(0).toUpperCase() }}
+                      <div class="flex items-center justify-between px-4 py-3 bg-emerald-50 border-2 border-emerald-200 rounded-xl">
+                        <div class="flex items-center gap-3">
+                          <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">
+                            {{ pacienteSeleccionado.nombre_completo.charAt(0).toUpperCase() }}
+                          </div>
+                          <div>
+                            <p class="font-semibold text-neutral-900">{{ pacienteSeleccionado.nombre_completo }}</p>
+                            <p class="text-sm text-neutral-600">{{ pacienteSeleccionado.email }}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p class="font-semibold text-neutral-900">{{ pacienteSeleccionado.nombre_completo }}</p>
-                          <p class="text-sm text-neutral-600">{{ pacienteSeleccionado.email }}</p>
+                        <button
+                          type="button"
+                          @click="limpiarSeleccion"
+                          class="p-2 hover:bg-emerald-100 rounded-lg transition-colors"
+                        >
+                          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      <!-- Información del Bono -->
+                      <div v-if="pacienteSeleccionado.bono_activo" class="px-4 py-3 bg-violet-50 border-2 border-violet-200 rounded-xl">
+                        <div class="flex items-start justify-between">
+                          <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p class="font-semibold text-violet-900">{{ pacienteSeleccionado.bono_activo.tipo }}</p>
+                              <p class="text-sm text-violet-700">
+                                {{ pacienteSeleccionado.bono_activo.sesiones_restantes }} de {{ pacienteSeleccionado.bono_activo.sesiones_totales }} sesiones disponibles
+                              </p>
+                            </div>
+                          </div>
+                          <!-- Indicador visual de sesiones -->
+                          <div class="flex items-center gap-1">
+                            <template v-for="i in pacienteSeleccionado.bono_activo.sesiones_totales" :key="i">
+                              <div
+                                class="w-3 h-3 rounded-full"
+                                :class="i <= pacienteSeleccionado.bono_activo.sesiones_usadas ? 'bg-violet-600' : 'bg-violet-200'"
+                                :title="i <= pacienteSeleccionado.bono_activo.sesiones_usadas ? 'Sesión usada' : 'Sesión disponible'"
+                              ></div>
+                            </template>
+                          </div>
+                        </div>
+
+                        <!-- Mensaje informativo sobre descuento -->
+                        <div class="mt-3 p-2 bg-amber-50 border border-amber-200 rounded-lg">
+                          <p class="text-xs text-amber-800 flex items-start gap-2">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span>
+                              Esta será la sesión <strong>{{ pacienteSeleccionado.bono_activo.sesiones_usadas + 1 }}/{{ pacienteSeleccionado.bono_activo.sesiones_totales }}</strong> del bono.
+                              Se descontará automáticamente cuando la cita sea <strong>confirmada</strong>.
+                            </span>
+                          </p>
+                        </div>
+
+                        <!-- Vencimiento si existe -->
+                        <p v-if="pacienteSeleccionado.bono_activo.fecha_fin" class="mt-2 text-xs text-violet-600">
+                          Vence: {{ formatDate(pacienteSeleccionado.bono_activo.fecha_fin) }}
+                        </p>
+                      </div>
+
+                      <!-- Sin bono activo -->
+                      <div v-else class="px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl">
+                        <div class="flex items-center gap-2 text-gray-600">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span class="text-sm">Este paciente no tiene un bono activo. La sesión se registrará sin bono.</span>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        @click="limpiarSeleccion"
-                        class="p-2 hover:bg-emerald-100 rounded-lg transition-colors"
-                      >
-                        <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
+
+                      <!-- Selector de bono si tiene múltiples -->
+                      <div v-if="pacienteSeleccionado.bonos && pacienteSeleccionado.bonos.length > 1" class="mt-2">
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">
+                          Seleccionar bono a usar
+                        </label>
+                        <select
+                          v-model="formData.bono_id"
+                          class="w-full px-3 py-2 border-2 border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm"
+                        >
+                          <option v-for="bono in pacienteSeleccionado.bonos" :key="bono.id" :value="bono.id">
+                            {{ bono.tipo }} - {{ bono.sesiones_restantes }}/{{ bono.sesiones_totales }} sesiones
+                          </option>
+                        </select>
+                      </div>
                     </div>
                   </div>
 
@@ -430,7 +504,7 @@ const formData = ref<CreateAppointmentParams>({
   hora_inicio: props.horaInicial || '',
   hora_fin: '',
   modalidad: 'online',
-  estado: 'pending'
+  estado: 'pendiente'
 })
 
 const nuevoPaciente = ref<CreatePacienteParams>({
@@ -470,7 +544,7 @@ function resetForm() {
     hora_inicio: props.horaInicial || '',
     hora_fin: '',
     modalidad: 'online',
-    estado: 'pending'
+    estado: 'pendiente'
   }
   pacienteSeleccionado.value = null
   clearSearch()
@@ -485,12 +559,39 @@ function selectPaciente(paciente: PacienteBusqueda) {
   searchQuery.value = paciente.nombre_completo
   showDropdown.value = false
 
-  agendaLogger.debug('patient_select', `Paciente seleccionado: ${paciente.nombre_completo}`)
+  // Asignar automáticamente el bono activo principal
+  if (paciente.bono_activo) {
+    formData.value.bono_id = paciente.bono_activo.id
+    formData.value.descontar_de_bono = true
+  } else {
+    formData.value.bono_id = undefined
+    formData.value.descontar_de_bono = false
+  }
+
+  agendaLogger.debug('patient_select', `Paciente seleccionado: ${paciente.nombre_completo}`, {
+    tiene_bono: !!paciente.bono_activo,
+    bono_id: paciente.bono_activo?.id
+  })
+}
+
+/**
+ * Formatea una fecha ISO a formato legible
+ */
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 }
 
 function limpiarSeleccion() {
   pacienteSeleccionado.value = null
   formData.value.paciente_id = ''
+  formData.value.bono_id = undefined
+  formData.value.descontar_de_bono = false
   searchQuery.value = ''
 }
 

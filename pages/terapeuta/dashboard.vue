@@ -719,8 +719,11 @@ async function cargarPacientes() {
             .from('bonos')
             .select('sesiones_totales, sesiones_restantes, estado')
             .eq('paciente_id', p.id)
-            .eq('estado', 'activo')
-            .single()
+            .in('estado', ['activo', 'pendiente'])
+            .gt('sesiones_restantes', 0)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
 
           if (bonoData) {
             sesionesTotales = bonoData.sesiones_totales || 0

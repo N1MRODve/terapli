@@ -90,16 +90,29 @@ export default defineEventHandler(async (event) => {
       fecha_cita,
       hora_inicio,
       hora_fin,
-      terapeuta_id,
       estado,
       previous_estado
     } = body
 
+    // Determinar terapeuta_id: usar el del body, o inferir del usuario autenticado si es terapeuta
+    let terapeuta_id = body.terapeuta_id
+    if (!terapeuta_id && isTerapeuta) {
+      // Si el usuario es terapeuta y no envió terapeuta_id, usar su propio ID
+      terapeuta_id = user.id
+    }
+
     // 4. Validar campos requeridos
-    if (!fecha_cita || !hora_inicio || !hora_fin || !terapeuta_id) {
+    if (!fecha_cita || !hora_inicio || !hora_fin) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Faltan campos obligatorios: fecha_cita, hora_inicio, hora_fin, terapeuta_id'
+        statusMessage: 'Faltan campos obligatorios: fecha_cita, hora_inicio, hora_fin'
+      })
+    }
+
+    if (!terapeuta_id) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Se requiere terapeuta_id para admin/coordinadora'
       })
     }
 
