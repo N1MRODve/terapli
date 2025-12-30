@@ -852,6 +852,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const toast = useToast()
 
 // Tipos
 interface PlantillaBono {
@@ -1077,9 +1078,19 @@ async function guardarSeccion(seccion: string) {
     ultimaActualizacion.value = new Date().toLocaleString('es-ES', {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     })
+
+    // Mostrar mensaje de confirmación según la sección
+    const mensajes: Record<string, string> = {
+      perfil: 'Perfil actualizado correctamente',
+      agenda: 'Configuración de agenda guardada',
+      tarifas: 'Tarifas y bonos actualizados',
+      metodos_pago: 'Métodos de pago guardados',
+      comunicacion: 'Preferencias de comunicación guardadas'
+    }
+    toast.success(mensajes[seccion] || 'Configuración guardada')
   } catch (error: any) {
     console.error('Error al guardar:', error)
-    alert(`Error al guardar: ${error.message}`)
+    toast.error(`Error al guardar: ${error.message}`)
   } finally {
     guardandoSeccion.value = null
   }
@@ -1109,9 +1120,10 @@ async function guardarDatosFiscales() {
     ultimaActualizacion.value = new Date().toLocaleString('es-ES', {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     })
+    toast.success('Datos fiscales guardados correctamente')
   } catch (error: any) {
     console.error('Error al guardar datos fiscales:', error)
-    alert(`Error al guardar: ${error.message}`)
+    toast.error(`Error al guardar: ${error.message}`)
   } finally {
     guardandoFiscales.value = false
   }

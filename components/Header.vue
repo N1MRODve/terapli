@@ -9,7 +9,7 @@
         class="flex items-center h-full hover:opacity-80 transition-opacity duration-300"
       >
         <span class="text-2xl md:text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
-          Teraplí
+          Terapli
         </span>
       </NuxtLink>
 
@@ -24,9 +24,6 @@
         <a href="/#waitlist" class="nav-link">
           Lista de espera
         </a>
-        <NuxtLink to="/contacto" class="nav-link">
-          Contacto
-        </NuxtLink>
       </div>
 
       <!-- Desktop Actions -->
@@ -114,13 +111,6 @@
             >
               Lista de espera
             </a>
-            <NuxtLink
-              to="/contacto"
-              class="mobile-nav-link"
-              @click="menuOpen = false"
-            >
-              Contacto
-            </NuxtLink>
 
             <!-- Divider -->
             <div class="h-px bg-[#5550F2]/20 my-2"></div>

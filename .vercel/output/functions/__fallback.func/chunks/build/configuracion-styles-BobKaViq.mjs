@@ -1,2 +1,0 @@
-const a=["@keyframes spin-fff5030a{to{transform:rotate(1turn)}}.animate-spin[data-v-fff5030a]{animation:spin-fff5030a 1s linear infinite}"];export{a as default};
-//# sourceMappingURL=configuracion-styles-BobKaViq.mjs.map
