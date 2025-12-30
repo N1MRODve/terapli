@@ -1243,7 +1243,7 @@ const horasDisponibles = computed(() => {
   const [hInicioT] = inicioTarde.split(':').map(Number)
   const [hFinT] = finTarde.split(':').map(Number)
 
-  // Generar slots de mañana (hasta 30 min antes del fin para permitir citas de 1h)
+  // Generar slots de mañana (hora inicio puede ser hasta 30 min antes del cierre)
   for (let h = hInicioM; h < hFinM; h++) {
     for (let m = 0; m < 60; m += 30) {
       const horaStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
@@ -1252,7 +1252,7 @@ const horasDisponibles = computed(() => {
     }
   }
 
-  // Generar slots de tarde
+  // Generar slots de tarde (hora inicio puede ser hasta 30 min antes del cierre)
   for (let h = hInicioT; h < hFinT; h++) {
     for (let m = 0; m < 60; m += 30) {
       const horaStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
@@ -1264,17 +1264,62 @@ const horasDisponibles = computed(() => {
   return horas
 })
 
-// Horas fin disponibles (después de hora inicio)
+// Horas fin disponibles (incluye hasta el cierre del horario)
 const horasFinDisponibles = computed(() => {
-  if (!formData.value.hora_inicio) return horasDisponibles.value
+  const horas: { value: string; label: string }[] = []
+  const horario = configAgenda.value?.horario
+
+  // Valores por defecto si no hay configuración
+  const finManana = horario?.fin_manana || '14:00'
+  const inicioTarde = horario?.inicio_tarde || '16:00'
+  const finTarde = horario?.fin_tarde || '21:00'
+
+  // Parsear horas
+  const [hFinM] = finManana.split(':').map(Number)
+  const [hInicioT] = inicioTarde.split(':').map(Number)
+  const [hFinT] = finTarde.split(':').map(Number)
+
+  // Determinar hora inicio seleccionada
+  if (!formData.value.hora_inicio) {
+    // Si no hay hora inicio, mostrar todas las horas posibles de fin
+    return horasDisponibles.value
+  }
 
   const [hInicio, mInicio] = formData.value.hora_inicio.split(':').map(Number)
   const minutosInicio = hInicio * 60 + mInicio
 
-  return horasDisponibles.value.filter(h => {
-    const [hFin, mFin] = h.value.split(':').map(Number)
-    return hFin * 60 + mFin > minutosInicio
-  })
+  // Determinar si estamos en mañana o tarde
+  const esManana = hInicio < hInicioT
+
+  if (esManana) {
+    // Generar horas de fin para mañana (desde hora inicio + 30min hasta fin mañana)
+    for (let h = hInicio; h <= hFinM; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const minutosActual = h * 60 + m
+        // Solo añadir si es después de la hora de inicio
+        if (minutosActual > minutosInicio && minutosActual <= hFinM * 60) {
+          const horaStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+          const label = `${h}:${m.toString().padStart(2, '0')}`
+          horas.push({ value: horaStr, label })
+        }
+      }
+    }
+  } else {
+    // Generar horas de fin para tarde (desde hora inicio + 30min hasta fin tarde)
+    for (let h = hInicio; h <= hFinT; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const minutosActual = h * 60 + m
+        // Solo añadir si es después de la hora de inicio
+        if (minutosActual > minutosInicio && minutosActual <= hFinT * 60) {
+          const horaStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+          const label = `${h}:${m.toString().padStart(2, '0')}`
+          horas.push({ value: horaStr, label })
+        }
+      }
+    }
+  }
+
+  return horas
 })
 
 // Calcular duración de la cita
