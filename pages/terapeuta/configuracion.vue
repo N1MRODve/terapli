@@ -286,6 +286,208 @@
                   </div>
                 </div>
 
+                <!-- Vacaciones y Bloqueos de Horario -->
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <h4 class="font-medium text-blue-900 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Vacaciones y bloqueos de horario
+                  </h4>
+                  <p class="text-sm text-blue-700 mb-4">Bloquea periodos donde no atenderas pacientes</p>
+
+                  <!-- Lista de bloqueos existentes -->
+                  <div v-if="agenda.bloqueos && agenda.bloqueos.length > 0" class="space-y-2 mb-4">
+                    <div
+                      v-for="bloqueo in agenda.bloqueos"
+                      :key="bloqueo.id"
+                      class="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-100"
+                    >
+                      <div class="flex items-center gap-3">
+                        <span class="text-lg">
+                          {{ bloqueo.tipo === 'vacaciones' ? '🏖️' : bloqueo.tipo === 'festivo' ? '🎉' : '🚫' }}
+                        </span>
+                        <div>
+                          <p class="font-medium text-gray-900">
+                            {{ formatearFechaBloqueo(bloqueo.fecha_inicio) }} - {{ formatearFechaBloqueo(bloqueo.fecha_fin) }}
+                          </p>
+                          <p class="text-sm text-gray-500">{{ bloqueo.descripcion || tipoBloqueoLabel(bloqueo.tipo) }}</p>
+                        </div>
+                      </div>
+                      <button
+                        @click="eliminarBloqueo(bloqueo.id)"
+                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Eliminar bloqueo"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <p v-else class="text-sm text-blue-600 mb-4 italic">No hay bloqueos configurados</p>
+
+                  <!-- Formulario para nuevo bloqueo -->
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 bg-white rounded-lg border border-blue-100">
+                    <div>
+                      <label class="text-xs text-blue-700 mb-1 block">Fecha inicio</label>
+                      <input
+                        v-model="nuevoBloqueo.fecha_inicio"
+                        type="date"
+                        class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label class="text-xs text-blue-700 mb-1 block">Fecha fin</label>
+                      <input
+                        v-model="nuevoBloqueo.fecha_fin"
+                        type="date"
+                        class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label class="text-xs text-blue-700 mb-1 block">Tipo</label>
+                      <select
+                        v-model="nuevoBloqueo.tipo"
+                        class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
+                      >
+                        <option value="vacaciones">Vacaciones</option>
+                        <option value="festivo">Festivo</option>
+                        <option value="personal">Personal</option>
+                        <option value="otro">Otro</option>
+                      </select>
+                    </div>
+                    <div class="flex items-end">
+                      <button
+                        @click="agregarBloqueo"
+                        :disabled="!nuevoBloqueo.fecha_inicio || !nuevoBloqueo.fecha_fin"
+                        class="w-full px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Anadir bloqueo
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <input
+                      v-model="nuevoBloqueo.descripcion"
+                      type="text"
+                      placeholder="Descripcion opcional (ej: Vacaciones de Navidad)"
+                      class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+
+                <!-- Horarios Personalizados por Dia -->
+                <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                  <h4 class="font-medium text-purple-900 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Horarios personalizados
+                  </h4>
+                  <p class="text-sm text-purple-700 mb-4">Define horarios especiales para dias concretos (ej: solo manana un viernes)</p>
+
+                  <!-- Lista de horarios personalizados -->
+                  <div v-if="agenda.horarios_personalizados && agenda.horarios_personalizados.length > 0" class="space-y-2 mb-4">
+                    <div
+                      v-for="hp in agenda.horarios_personalizados"
+                      :key="hp.fecha"
+                      class="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-100"
+                    >
+                      <div>
+                        <p class="font-medium text-gray-900">{{ formatearFechaBloqueo(hp.fecha) }}</p>
+                        <p v-if="hp.cerrado" class="text-sm text-red-500">Cerrado</p>
+                        <p v-else class="text-sm text-gray-500">
+                          {{ hp.inicio_manana || agenda.horario.inicio_manana }} - {{ hp.fin_manana || agenda.horario.fin_manana }}
+                          /
+                          {{ hp.inicio_tarde || agenda.horario.inicio_tarde }} - {{ hp.fin_tarde || agenda.horario.fin_tarde }}
+                        </p>
+                        <p v-if="hp.notas" class="text-xs text-purple-600">{{ hp.notas }}</p>
+                      </div>
+                      <button
+                        @click="eliminarHorarioPersonalizado(hp.fecha)"
+                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <p v-else class="text-sm text-purple-600 mb-4 italic">No hay horarios personalizados</p>
+
+                  <!-- Formulario para nuevo horario personalizado -->
+                  <div class="p-3 bg-white rounded-lg border border-purple-100 space-y-3">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      <div>
+                        <label class="text-xs text-purple-700 mb-1 block">Fecha</label>
+                        <input
+                          v-model="nuevoHorarioPersonalizado.fecha"
+                          type="date"
+                          class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm"
+                        />
+                      </div>
+                      <div class="flex items-end">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input
+                            v-model="nuevoHorarioPersonalizado.cerrado"
+                            type="checkbox"
+                            class="w-4 h-4 text-purple-600 rounded"
+                          />
+                          <span class="text-sm text-purple-700">Dia cerrado</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div v-if="!nuevoHorarioPersonalizado.cerrado" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div>
+                        <label class="text-xs text-purple-700 mb-1 block">Inicio manana</label>
+                        <select v-model="nuevoHorarioPersonalizado.inicio_manana" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
+                          <option value="">Por defecto</option>
+                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="text-xs text-purple-700 mb-1 block">Fin manana</label>
+                        <select v-model="nuevoHorarioPersonalizado.fin_manana" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
+                          <option value="">Por defecto</option>
+                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="text-xs text-purple-700 mb-1 block">Inicio tarde</label>
+                        <select v-model="nuevoHorarioPersonalizado.inicio_tarde" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
+                          <option value="">Por defecto</option>
+                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="text-xs text-purple-700 mb-1 block">Fin tarde</label>
+                        <select v-model="nuevoHorarioPersonalizado.fin_tarde" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
+                          <option value="">Por defecto</option>
+                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                      <input
+                        v-model="nuevoHorarioPersonalizado.notas"
+                        type="text"
+                        placeholder="Notas opcionales"
+                        class="flex-1 px-3 py-2 border border-purple-200 rounded-lg text-sm"
+                      />
+                      <button
+                        @click="agregarHorarioPersonalizado"
+                        :disabled="!nuevoHorarioPersonalizado.fecha"
+                        class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Anadir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="flex justify-end pt-4 border-t border-gray-100">
                   <button
                     @click="guardarSeccion('agenda')"
@@ -893,6 +1095,25 @@ const perfil = ref({
   formato_fecha: 'DD/MM/YYYY'
 })
 
+// Tipos para bloqueos y horarios personalizados
+interface Bloqueo {
+  id: string
+  fecha_inicio: string
+  fecha_fin: string
+  tipo: 'vacaciones' | 'festivo' | 'personal' | 'otro'
+  descripcion?: string
+}
+
+interface HorarioPersonalizado {
+  fecha: string
+  cerrado: boolean
+  inicio_manana?: string
+  fin_manana?: string
+  inicio_tarde?: string
+  fin_tarde?: string
+  notas?: string
+}
+
 // Datos de agenda
 const agenda = ref({
   buffer_minutos: 10,
@@ -904,7 +1125,28 @@ const agenda = ref({
   },
   dias_laborables: [1, 2, 3, 4, 5],
   limite_cancelacion_horas: 24,
-  penalizacion_cancelacion: 'ninguna'
+  penalizacion_cancelacion: 'ninguna',
+  bloqueos: [] as Bloqueo[],
+  horarios_personalizados: [] as HorarioPersonalizado[]
+})
+
+// Estado para nuevo bloqueo
+const nuevoBloqueo = ref({
+  fecha_inicio: '',
+  fecha_fin: '',
+  tipo: 'vacaciones' as 'vacaciones' | 'festivo' | 'personal' | 'otro',
+  descripcion: ''
+})
+
+// Estado para nuevo horario personalizado
+const nuevoHorarioPersonalizado = ref({
+  fecha: '',
+  cerrado: false,
+  inicio_manana: '',
+  fin_manana: '',
+  inicio_tarde: '',
+  fin_tarde: '',
+  notas: ''
 })
 
 // Datos de comunicacion
@@ -1000,6 +1242,125 @@ const agregarPlantillaPredefinida = (nombre: string, sesiones: number, precio: n
   if (!existe) {
     config.value.plantillas_bonos.push({ nombre, sesiones, precio, frecuencia })
   }
+}
+
+// ==========================================
+// Funciones para Bloqueos (Vacaciones, etc.)
+// ==========================================
+
+const agregarBloqueo = () => {
+  if (!nuevoBloqueo.value.fecha_inicio || !nuevoBloqueo.value.fecha_fin) {
+    toast.error('Debes seleccionar fecha de inicio y fin')
+    return
+  }
+
+  // Validar que fecha fin >= fecha inicio
+  if (nuevoBloqueo.value.fecha_fin < nuevoBloqueo.value.fecha_inicio) {
+    toast.error('La fecha de fin debe ser posterior a la de inicio')
+    return
+  }
+
+  const bloqueo: Bloqueo = {
+    id: crypto.randomUUID(),
+    fecha_inicio: nuevoBloqueo.value.fecha_inicio,
+    fecha_fin: nuevoBloqueo.value.fecha_fin,
+    tipo: nuevoBloqueo.value.tipo,
+    descripcion: nuevoBloqueo.value.descripcion || undefined
+  }
+
+  agenda.value.bloqueos.push(bloqueo)
+
+  // Limpiar formulario
+  nuevoBloqueo.value = {
+    fecha_inicio: '',
+    fecha_fin: '',
+    tipo: 'vacaciones',
+    descripcion: ''
+  }
+
+  toast.success('Bloqueo agregado. Recuerda guardar los cambios.')
+}
+
+const eliminarBloqueo = (bloqueoId: string) => {
+  agenda.value.bloqueos = agenda.value.bloqueos.filter(b => b.id !== bloqueoId)
+  toast.success('Bloqueo eliminado. Recuerda guardar los cambios.')
+}
+
+const formatearFechaBloqueo = (fecha: string) => {
+  return new Date(fecha).toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+}
+
+const tipoBloqueoLabel = (tipo: string) => {
+  const labels: Record<string, string> = {
+    vacaciones: 'Vacaciones',
+    festivo: 'Festivo',
+    personal: 'Personal',
+    otro: 'Otro'
+  }
+  return labels[tipo] || tipo
+}
+
+// ==========================================
+// Funciones para Horarios Personalizados
+// ==========================================
+
+const agregarHorarioPersonalizado = () => {
+  if (!nuevoHorarioPersonalizado.value.fecha) {
+    toast.error('Debes seleccionar una fecha')
+    return
+  }
+
+  // Verificar si ya existe para esa fecha
+  const existeIdx = agenda.value.horarios_personalizados.findIndex(
+    hp => hp.fecha === nuevoHorarioPersonalizado.value.fecha
+  )
+
+  const horario: HorarioPersonalizado = {
+    fecha: nuevoHorarioPersonalizado.value.fecha,
+    cerrado: nuevoHorarioPersonalizado.value.cerrado,
+    inicio_manana: nuevoHorarioPersonalizado.value.inicio_manana || undefined,
+    fin_manana: nuevoHorarioPersonalizado.value.fin_manana || undefined,
+    inicio_tarde: nuevoHorarioPersonalizado.value.inicio_tarde || undefined,
+    fin_tarde: nuevoHorarioPersonalizado.value.fin_tarde || undefined,
+    notas: nuevoHorarioPersonalizado.value.notas || undefined
+  }
+
+  if (existeIdx >= 0) {
+    // Actualizar existente
+    agenda.value.horarios_personalizados[existeIdx] = horario
+    toast.success('Horario actualizado. Recuerda guardar los cambios.')
+  } else {
+    // Agregar nuevo
+    agenda.value.horarios_personalizados.push(horario)
+    toast.success('Horario personalizado agregado. Recuerda guardar los cambios.')
+  }
+
+  // Limpiar formulario
+  nuevoHorarioPersonalizado.value = {
+    fecha: '',
+    cerrado: false,
+    inicio_manana: '',
+    fin_manana: '',
+    inicio_tarde: '',
+    fin_tarde: '',
+    notas: ''
+  }
+}
+
+const eliminarHorarioPersonalizado = (fecha: string) => {
+  agenda.value.horarios_personalizados = agenda.value.horarios_personalizados.filter(
+    hp => hp.fecha !== fecha
+  )
+  toast.success('Horario personalizado eliminado. Recuerda guardar los cambios.')
+}
+
+// Calculo de ingreso neto (sin comisiones)
+const calcularIngresoNeto = (precio: number) => {
+  return precio // 100% para el terapeuta, sin comisiones
 }
 
 // Validar NIF
@@ -1188,7 +1549,14 @@ async function cargarConfiguracion() {
 
       // Cargar agenda
       if (terapeutaData.configuracion_agenda) {
-        agenda.value = { ...agenda.value, ...terapeutaData.configuracion_agenda }
+        const agendaData = terapeutaData.configuracion_agenda as any
+        agenda.value = {
+          ...agenda.value,
+          ...agendaData,
+          // Asegurar que los arrays existan
+          bloqueos: agendaData.bloqueos || [],
+          horarios_personalizados: agendaData.horarios_personalizados || []
+        }
       }
 
       // Cargar comunicacion

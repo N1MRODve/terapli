@@ -1406,9 +1406,13 @@ watch(paginaFacturas, cargarFacturas)
 // Lifecycle
 onMounted(async () => {
   // Esperar a que el usuario esté autenticado antes de cargar datos
+  console.log('[Pagos] onMounted - esperando usuario...')
   await waitForUser()
+  console.log('[Pagos] Usuario autenticado:', userProfile.value?.email, 'ID:', userProfile.value?.id)
   await loadAllPacientes()
-  cargarPagos()
+  console.log('[Pagos] Pacientes cargados, cargando pagos...')
+  await cargarPagos()
+  console.log('[Pagos] Pagos cargados:', pagos.value.length, 'registros')
 })
 </script>
 

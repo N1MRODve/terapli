@@ -16,6 +16,7 @@
 
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useAgendaEnhanced } from '~/composables/useAgendaEnhanced'
+import { useConfiguracionAgenda } from '~/composables/useConfiguracionAgenda'
 
 // Props
 interface Props {
@@ -45,6 +46,19 @@ const {
 } = useAgendaEnhanced()
 
 const supabase = useSupabaseClient()
+
+// Configuración de agenda del terapeuta
+const {
+  configuracion: configAgenda,
+  cargarConfiguracion,
+  horaInicioLaboral,
+  horaFinLaboral,
+  esDiaLaborable,
+  estaBloqueda,
+  obtenerHorarioEfectivo,
+  estaEnHorarioLaboral,
+  calcularOcupacionDia
+} = useConfiguracionAgenda()
 
 // Estado local
 const vistaActiva = ref<'dia' | '5dias' | 'semana' | 'mes'>('semana')
@@ -113,12 +127,12 @@ const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info')
 
 // Altura de cada slot de 1 hora (88px = 2 slots de 44px)
 const SLOT_HEIGHT_PX = 88
-// Hora de inicio de la agenda (día completo)
-const HORA_INICIO_COMPLETO = 9
-// Hora de fin de la agenda (día completo)
-const HORA_FIN_COMPLETO = 21
 // Minutos por slot visual (1 hora)
 const MINUTOS_POR_SLOT = 60
+
+// Hora de inicio/fin de la agenda (dinámicos desde configuración)
+const HORA_INICIO_COMPLETO = computed(() => horaInicioLaboral.value || 9)
+const HORA_FIN_COMPLETO = computed(() => horaFinLaboral.value || 21)
 
 // ============================================================================
 // ZOOM INTELIGENTE - Ajusta vista a horas con actividad
@@ -127,12 +141,14 @@ const MINUTOS_POR_SLOT = 60
 // Preferencia de usuario: 'auto' (inteligente), 'activo' (solo horas con citas), 'completo' (9-21)
 const modoHorario = ref<'auto' | 'activo' | 'completo'>('auto')
 
-// Cargar preferencia del localStorage
-onMounted(() => {
+// Cargar preferencia del localStorage y configuración de agenda
+onMounted(async () => {
   const savedModo = localStorage.getItem('agenda-modo-horario')
   if (savedModo && ['auto', 'activo', 'completo'].includes(savedModo)) {
     modoHorario.value = savedModo as 'auto' | 'activo' | 'completo'
   }
+  // Cargar configuración de agenda del terapeuta (forzar recarga para obtener datos actualizados)
+  await cargarConfiguracion(true)
 })
 
 // Guardar preferencia cuando cambia
@@ -146,8 +162,8 @@ const rangoHorasConActividad = computed(() => {
   const citasEnVista = citas.value.filter(c => fechasVisibles.includes(c.fecha_cita))
 
   if (citasEnVista.length === 0) {
-    // Sin citas, mostrar horario típico de trabajo (10:00-20:00)
-    return { inicio: 10, fin: 20 }
+    // Sin citas, usar horario configurado
+    return { inicio: HORA_INICIO_COMPLETO.value, fin: HORA_FIN_COMPLETO.value }
   }
 
   let horaMin = 23
@@ -167,28 +183,28 @@ const rangoHorasConActividad = computed(() => {
 
   // Añadir margen de 1 hora antes y después
   return {
-    inicio: Math.max(HORA_INICIO_COMPLETO, horaMin - 1),
-    fin: Math.min(HORA_FIN_COMPLETO, horaMax + 1)
+    inicio: Math.max(HORA_INICIO_COMPLETO.value, horaMin - 1),
+    fin: Math.min(HORA_FIN_COMPLETO.value, horaMax + 1)
   }
 })
 
 // Determinar horas a mostrar según el modo
 const horaInicioActual = computed(() => {
-  if (modoHorario.value === 'completo') return HORA_INICIO_COMPLETO
+  if (modoHorario.value === 'completo') return HORA_INICIO_COMPLETO.value
   if (modoHorario.value === 'activo') return rangoHorasConActividad.value.inicio
   // Modo auto: usar rango activo si hay pocas horas, sino completo
   const rango = rangoHorasConActividad.value
   const horasActivas = rango.fin - rango.inicio
-  return horasActivas <= 8 ? rango.inicio : HORA_INICIO_COMPLETO
+  return horasActivas <= 8 ? rango.inicio : HORA_INICIO_COMPLETO.value
 })
 
 const horaFinActual = computed(() => {
-  if (modoHorario.value === 'completo') return HORA_FIN_COMPLETO
+  if (modoHorario.value === 'completo') return HORA_FIN_COMPLETO.value
   if (modoHorario.value === 'activo') return rangoHorasConActividad.value.fin
   // Modo auto
   const rango = rangoHorasConActividad.value
   const horasActivas = rango.fin - rango.inicio
-  return horasActivas <= 8 ? rango.fin : HORA_FIN_COMPLETO
+  return horasActivas <= 8 ? rango.fin : HORA_FIN_COMPLETO.value
 })
 
 // Horas del día (dinámicas según zoom)
@@ -206,7 +222,7 @@ const textoModoHorario = computed(() => {
     case 'activo':
       return `${horaInicioActual.value}:00 - ${horaFinActual.value}:00`
     case 'completo':
-      return '9:00 - 21:00'
+      return `${HORA_INICIO_COMPLETO.value}:00 - ${HORA_FIN_COMPLETO.value}:00`
     default:
       return 'Auto'
   }
@@ -485,13 +501,24 @@ const metricasContextuales = computed(() => {
   const fechasVisibles = diasVisibles.value.map(d => d.fecha)
   const citasEnVista = citas.value.filter(c => fechasVisibles.includes(c.fecha_cita))
 
-  // Horas disponibles en el período (asumiendo 8h/día laborable)
-  const diasLaborables = diasVisibles.value.filter(d => {
-    const fecha = new Date(d.fecha + 'T00:00:00')
-    const dia = fecha.getDay()
-    return dia !== 0 && dia !== 6 // Excluir fines de semana
-  }).length
-  const horasDisponibles = diasLaborables * 8
+  // Horas disponibles basadas en la configuración del terapeuta
+  let horasDisponibles = 0
+  diasVisibles.value.forEach(dia => {
+    const horario = obtenerHorarioEfectivo(dia.fecha)
+    if (horario) {
+      // Calcular horas de mañana
+      const [hInicioM, mInicioM] = horario.inicio_manana.split(':').map(Number)
+      const [hFinM, mFinM] = horario.fin_manana.split(':').map(Number)
+      const minutosManana = (hFinM * 60 + mFinM) - (hInicioM * 60 + mInicioM)
+
+      // Calcular horas de tarde
+      const [hInicioT, mInicioT] = horario.inicio_tarde.split(':').map(Number)
+      const [hFinT, mFinT] = horario.fin_tarde.split(':').map(Number)
+      const minutosTarde = (hFinT * 60 + mFinT) - (hInicioT * 60 + mInicioT)
+
+      horasDisponibles += (minutosManana + minutosTarde) / 60
+    }
+  })
 
   // Horas ocupadas (suma de duración de citas no canceladas)
   const minutosOcupados = citasEnVista
@@ -756,8 +783,33 @@ watch(bloquesNoDisponible, (val) => {
 
 /**
  * Verifica si un slot está bloqueado como "No disponible"
+ * Incluye: bloques manuales (localStorage) + vacaciones/bloqueos de configuración
  */
 const getBloqueEnSlot = (fecha: string, hora: string): BloqueNoDisponible | undefined => {
+  // 1. Verificar bloqueos de vacaciones/festivos desde la configuración
+  const bloqueoVacaciones = estaBloqueda(fecha)
+  if (bloqueoVacaciones) {
+    return {
+      fecha,
+      hora_inicio: '00:00',
+      hora_fin: '23:59',
+      nota: bloqueoVacaciones.descripcion || (bloqueoVacaciones.tipo === 'vacaciones' ? 'Vacaciones' : bloqueoVacaciones.tipo)
+    }
+  }
+
+  // 2. Verificar si es un día cerrado por horario personalizado
+  const horarioEfectivo = obtenerHorarioEfectivo(fecha)
+  if (horarioEfectivo === null) {
+    // Día completamente cerrado (no laborable o marcado como cerrado)
+    return {
+      fecha,
+      hora_inicio: '00:00',
+      hora_fin: '23:59',
+      nota: 'Día no laborable'
+    }
+  }
+
+  // 3. Verificar bloques manuales (localStorage)
   const horaNum = parseInt(hora.substring(0, 2))
   return bloquesNoDisponible.value.find(b => {
     if (b.fecha !== fecha) return false
@@ -1227,14 +1279,21 @@ const getEstiloCompletoCita = (cita: any) => {
 }
 
 // Click en slot vacío
-const handleSlotClick = (fecha: string, hora: string) => {
+const handleSlotClick = async (fecha: string, hora: string) => {
+  console.log('[AgendaCalendario] Click en slot:', { fecha, hora })
   fechaPreseleccionada.value = fecha
   horaPreseleccionada.value = hora
+  console.log('[AgendaCalendario] Valores establecidos:', {
+    fechaPreseleccionada: fechaPreseleccionada.value,
+    horaPreseleccionada: horaPreseleccionada.value
+  })
+  // Esperar a que Vue procese los cambios de props antes de abrir el modal
+  await nextTick()
   mostrarModalNuevaCita.value = true
 }
 
 // Click en slot con soporte para bloques (Ctrl+Click para toggle bloque)
-const handleSlotClickConBloques = (fecha: string, hora: string, event: MouseEvent) => {
+const handleSlotClickConBloques = async (fecha: string, hora: string, event: MouseEvent) => {
   // Si es Ctrl+Click o Cmd+Click, toggle bloque
   if (event.ctrlKey || event.metaKey) {
     toggleBloqueSlot(fecha, hora)
@@ -1248,7 +1307,7 @@ const handleSlotClickConBloques = (fecha: string, hora: string, event: MouseEven
 
   // Si no hay citas, abrir modal para crear
   if (citasPorDiaHora(fecha, hora).length === 0) {
-    handleSlotClick(fecha, hora)
+    await handleSlotClick(fecha, hora)
   }
 }
 
@@ -2040,10 +2099,11 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           <div
             v-for="dia in diasVisibles"
             :key="dia.fecha"
-            class="min-h-[80px] border rounded-lg p-1.5 cursor-pointer transition-all hover:border-violet-300 hover:shadow-sm"
+            class="min-h-[80px] border rounded-lg p-1.5 cursor-pointer transition-all hover:border-violet-300 hover:shadow-sm relative"
             :class="{
-              'bg-violet-50 border-violet-300': dia.esHoy,
-              'border-gray-200': !dia.esHoy
+              'bg-violet-50 border-violet-300': dia.esHoy && !estaBloqueda(dia.fecha),
+              'bg-amber-50 border-amber-300': estaBloqueda(dia.fecha),
+              'border-gray-200': !dia.esHoy && !estaBloqueda(dia.fecha)
             }"
             @click="seleccionarDiaMes(dia.fecha)"
           >
@@ -2051,21 +2111,40 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             <div class="flex items-center justify-between mb-1">
               <span
                 class="text-sm font-medium"
-                :class="dia.esHoy ? 'text-violet-600' : 'text-gray-700'"
+                :class="[
+                  dia.esHoy && !estaBloqueda(dia.fecha) ? 'text-violet-600' : '',
+                  estaBloqueda(dia.fecha) ? 'text-amber-600' : '',
+                  !dia.esHoy && !estaBloqueda(dia.fecha) ? 'text-gray-700' : ''
+                ]"
               >
                 {{ dia.numeroDia }}
               </span>
               <span
-                v-if="getCitasDelDia(dia.fecha).length > 0"
+                v-if="getCitasDelDia(dia.fecha).length > 0 && !estaBloqueda(dia.fecha)"
                 class="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
                 :class="dia.esHoy ? 'bg-violet-200 text-violet-700' : 'bg-gray-100 text-gray-600'"
               >
                 {{ getCitasDelDia(dia.fecha).length }}
               </span>
+              <!-- Badge de vacaciones en vista mes -->
+              <span
+                v-if="estaBloqueda(dia.fecha)"
+                class="text-[10px]"
+                :title="estaBloqueda(dia.fecha)?.descripcion || estaBloqueda(dia.fecha)?.tipo"
+              >
+                🏖️
+              </span>
             </div>
 
-            <!-- Mini lista de citas (máximo 3) -->
-            <div class="space-y-0.5 overflow-hidden">
+            <!-- Indicador de bloqueo para vista mensual -->
+            <div v-if="estaBloqueda(dia.fecha)" class="text-center py-2">
+              <span class="text-[10px] text-amber-600 font-medium">
+                {{ estaBloqueda(dia.fecha)?.tipo === 'vacaciones' ? 'Vacaciones' : estaBloqueda(dia.fecha)?.tipo }}
+              </span>
+            </div>
+
+            <!-- Mini lista de citas (máximo 3) - solo si no está bloqueado -->
+            <div v-else class="space-y-0.5 overflow-hidden">
               <div
                 v-for="cita in getCitasDelDia(dia.fecha).slice(0, 3)"
                 :key="cita.id"
@@ -2097,17 +2176,31 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           <div
             v-for="dia in diasVisibles"
             :key="dia.fecha"
-            class="px-4 py-3 text-center border-r border-gray-100 last:border-r-0"
-            :class="{ 'bg-violet-50/50': dia.esHoy }"
+            class="px-4 py-3 text-center border-r border-gray-100 last:border-r-0 relative"
+            :class="[
+              dia.esHoy ? 'bg-violet-50/50' : '',
+              estaBloqueda(dia.fecha) ? 'bg-amber-50/70' : ''
+            ]"
           >
-            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">{{ dia.diaSemana }}</p>
+            <p class="text-xs font-medium uppercase tracking-wider" :class="estaBloqueda(dia.fecha) ? 'text-amber-600' : 'text-gray-400'">{{ dia.diaSemana }}</p>
             <p
               class="text-2xl font-bold mt-1"
-              :class="dia.esHoy ? 'text-violet-600' : 'text-gray-800'"
+              :class="[
+                dia.esHoy ? 'text-violet-600' : '',
+                estaBloqueda(dia.fecha) ? 'text-amber-600' : '',
+                !dia.esHoy && !estaBloqueda(dia.fecha) ? 'text-gray-800' : ''
+              ]"
             >
               {{ dia.numeroDia }}
             </p>
-            <div v-if="dia.esHoy" class="w-6 h-0.5 bg-violet-500 mx-auto mt-1 rounded-full"></div>
+            <div v-if="dia.esHoy && !estaBloqueda(dia.fecha)" class="w-6 h-0.5 bg-violet-500 mx-auto mt-1 rounded-full"></div>
+            <!-- Badge de vacaciones/bloqueo -->
+            <div v-if="estaBloqueda(dia.fecha)" class="mt-1">
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded-full">
+                <span>🏖️</span>
+                <span class="truncate max-w-[60px]">{{ estaBloqueda(dia.fecha)?.tipo === 'vacaciones' ? 'Vacaciones' : estaBloqueda(dia.fecha)?.tipo }}</span>
+              </span>
+            </div>
           </div>
         </div>
 

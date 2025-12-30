@@ -194,7 +194,10 @@ export function usePagosRegistros() {
    */
   async function getPagos(filtros: FiltrosPagos = {}): Promise<PagosListResult> {
     const terapeutaId = userProfile.value?.terapeuta_id || userProfile.value?.id
+    console.log('[usePagosRegistros] getPagos - userProfile:', userProfile.value?.email, 'terapeuta_id:', terapeutaId)
+
     if (!terapeutaId) {
+      console.error('[usePagosRegistros] No se encontró terapeuta_id')
       return { success: false, error: 'No se encontró el terapeuta' }
     }
 
@@ -202,6 +205,7 @@ export function usePagosRegistros() {
     error.value = null
 
     try {
+      console.log('[usePagosRegistros] Consultando pagos_registros con terapeuta_id:', terapeutaId)
       let query = supabase
         .from('pagos_registros')
         .select(`
@@ -241,9 +245,11 @@ export function usePagosRegistros() {
       const { data, error: fetchError } = await query
 
       if (fetchError) {
+        console.error('[usePagosRegistros] Error de Supabase:', fetchError)
         throw new Error(fetchError.message)
       }
 
+      console.log('[usePagosRegistros] Pagos obtenidos:', data?.length || 0, 'registros')
       pagos.value = (data || []) as PagoRegistro[]
       return { success: true, data: pagos.value, total: pagos.value.length }
     } catch (err: any) {

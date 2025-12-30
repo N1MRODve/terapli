@@ -27,7 +27,7 @@
             <DialogPanel class="w-full max-w-2xl transform overflow-hidden rounded-3xl bg-white p-6 sm:p-8 text-left align-middle shadow-2xl transition-all max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
               <!-- Header -->
               <DialogTitle as="h3" id="modal-title" class="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-3">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#027368] to-[#025951] flex items-center justify-center text-white flex-shrink-0">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-violet-600 to-violet-700 flex items-center justify-center text-white flex-shrink-0">
                   <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -43,8 +43,8 @@
                 <!-- ═══════════════════════════════════════════════════════════════ -->
                 <section class="space-y-3">
                   <div class="flex items-center gap-2 pb-2 border-b border-neutral-100">
-                    <div class="w-6 h-6 rounded-lg bg-emerald-100 flex items-center justify-center">
-                      <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-6 h-6 rounded-lg bg-violet-100 flex items-center justify-center">
+                      <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -68,13 +68,13 @@
                         aria-describedby="patient-search-hint"
                         aria-expanded="showDropdown"
                         aria-haspopup="listbox"
-                        class="w-full px-4 py-3 pr-10 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#027368] focus:border-transparent transition-all"
+                        class="w-full px-4 py-3 pr-10 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all"
                         @focus="showDropdown = true"
                         @blur="handleBlur"
                       />
                       <span id="patient-search-hint" class="sr-only">Escribe para buscar pacientes existentes o crear uno nuevo</span>
                       <div class="absolute right-3 top-1/2 -translate-y-1/2">
-                        <svg v-if="loadingPacientes" class="animate-spin h-5 w-5 text-[#027368]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg v-if="loadingPacientes" class="animate-spin h-5 w-5 text-violet-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -101,12 +101,12 @@
                         v-for="paciente in pacientes"
                         :key="paciente.id"
                         type="button"
-                        class="w-full px-3 py-2.5 text-left hover:bg-[#027368]/5 transition-colors border-b border-neutral-100 last:border-0 group"
+                        class="w-full px-3 py-2.5 text-left hover:bg-violet-600/5 transition-colors border-b border-neutral-100 last:border-0 group"
                         @click="selectPaciente(paciente)"
                       >
                         <div class="flex items-center gap-3">
                           <!-- Avatar con inicial -->
-                          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#027368] to-[#025951] text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+                          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-[violet-700] text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
                             {{ paciente.nombre_completo.charAt(0).toUpperCase() }}
                           </div>
 
@@ -117,7 +117,7 @@
                               <!-- Indicador de cita reciente -->
                               <span
                                 v-if="paciente.prioridad_score >= 100"
-                                class="flex-shrink-0 w-2 h-2 rounded-full bg-emerald-500"
+                                class="flex-shrink-0 w-2 h-2 rounded-full bg-violet-500"
                                 title="Cita reciente"
                               ></span>
                             </div>
@@ -134,7 +134,7 @@
                           <!-- Badge de sesiones - más prominente -->
                           <div
                             v-if="paciente.sesiones_restantes_total > 0"
-                            class="flex-shrink-0 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold"
+                            class="flex-shrink-0 px-2.5 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-bold"
                           >
                             {{ paciente.sesiones_restantes_total }}
                             <span class="font-medium">ses.</span>
@@ -151,10 +151,10 @@
                       <!-- Opción de crear nuevo paciente - más destacada -->
                       <button
                         type="button"
-                        class="w-full px-3 py-3 text-left bg-gradient-to-r from-[#027368]/5 to-transparent hover:from-[#027368]/10 transition-colors border-t-2 border-[#027368]/20 font-medium text-[#027368] flex items-center gap-2"
+                        class="w-full px-3 py-3 text-left bg-gradient-to-r from-violet-600/5 to-transparent hover:from-violet-600/10 transition-colors border-t-2 border-violet-600/20 font-medium text-violet-600 flex items-center gap-2"
                         @click="activarModoCrearPaciente"
                       >
-                        <div class="w-9 h-9 rounded-full bg-[#027368]/10 flex items-center justify-center">
+                        <div class="w-9 h-9 rounded-full bg-violet-600/10 flex items-center justify-center">
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                           </svg>
@@ -183,27 +183,23 @@
                       class="space-y-3"
                     >
                       <!-- Header del paciente con alertas -->
-                      <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl overflow-hidden">
-                        <!-- Barra de alertas si aplica -->
+                      <div class="bg-gradient-to-r from-violet-50 to-purple-50 border-2 border-violet-200 rounded-xl overflow-hidden">
+                        <!-- Barra de alertas solo para paciente nuevo (sin bono se muestra abajo más detallado) -->
                         <div
-                          v-if="pacienteSeleccionado.total_citas === 0 || !pacienteSeleccionado.bono_activo"
-                          class="px-3 py-1.5 text-xs font-medium flex items-center gap-2"
-                          :class="pacienteSeleccionado.total_citas === 0
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-amber-100 text-amber-700'"
+                          v-if="pacienteSeleccionado.total_citas === 0"
+                          class="px-3 py-1.5 text-xs font-medium flex items-center gap-2 bg-blue-100 text-blue-700"
                         >
                           <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path v-if="pacienteSeleccionado.total_citas === 0" fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
-                            <path v-else fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
                           </svg>
-                          {{ pacienteSeleccionado.total_citas === 0 ? 'Paciente nuevo - Primera cita' : 'Sin bono activo' }}
+                          Paciente nuevo - Primera cita
                         </div>
 
                         <!-- Info principal del paciente -->
                         <div class="px-4 py-3">
                           <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                              <div class="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                              <div class="w-11 h-11 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
                                 {{ pacienteSeleccionado.nombre_completo.charAt(0).toUpperCase() }}
                               </div>
                               <div>
@@ -216,7 +212,7 @@
                               <a
                                 :href="`/terapeuta/pacientes/${pacienteSeleccionado.id}`"
                                 target="_blank"
-                                class="p-2 text-neutral-400 hover:text-[#027368] hover:bg-white rounded-lg transition-colors"
+                                class="p-2 text-neutral-400 hover:text-violet-600 hover:bg-white rounded-lg transition-colors"
                                 title="Ver perfil completo"
                               >
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,7 +246,7 @@
                             </div>
                             <div class="bg-white/60 rounded-lg px-2 py-1.5">
                               <p class="text-xs text-neutral-500">Sesiones</p>
-                              <p class="text-sm font-semibold" :class="pacienteSeleccionado.sesiones_restantes_total > 0 ? 'text-emerald-600' : 'text-neutral-400'">
+                              <p class="text-sm font-semibold" :class="pacienteSeleccionado.sesiones_restantes_total > 0 ? 'text-violet-600' : 'text-neutral-400'">
                                 {{ pacienteSeleccionado.sesiones_restantes_total || 0 }} disp.
                               </p>
                             </div>
@@ -432,9 +428,9 @@
                         :key="shortcut.label"
                         type="button"
                         @click="aplicarShortcutFecha(shortcut)"
-                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#027368] focus:ring-offset-1"
+                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-1"
                         :class="formData.fecha_cita === shortcut.fecha
-                          ? 'bg-[#027368] text-white'
+                          ? 'bg-violet-600 text-white'
                           : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'"
                         :aria-pressed="formData.fecha_cita === shortcut.fecha"
                       >
@@ -448,7 +444,7 @@
                       required
                       :min="hoyISO"
                       aria-required="true"
-                      class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#027368] focus:border-transparent transition-all"
+                      class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all"
                       @change="validateInRealTime"
                     />
                     <!-- Mostrar fecha formateada -->
@@ -486,7 +482,7 @@
                       <select
                         v-model="formData.hora_inicio"
                         required
-                        class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#027368] focus:border-transparent transition-all bg-white appearance-none cursor-pointer"
+                        class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all bg-white appearance-none cursor-pointer"
                         @change="onHoraInicioChange"
                       >
                         <option value="" disabled>Seleccionar hora</option>
@@ -503,7 +499,7 @@
                       <select
                         v-model="formData.hora_fin"
                         required
-                        class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#027368] focus:border-transparent transition-all bg-white appearance-none cursor-pointer"
+                        class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all bg-white appearance-none cursor-pointer"
                         @change="validateInRealTime"
                       >
                         <option value="" disabled>Seleccionar hora</option>
@@ -524,7 +520,7 @@
                       @click="aplicarDuracion(dur.minutos)"
                       class="px-2 py-1 text-xs rounded-md transition-all"
                       :class="calcularDuracionMinutos() === dur.minutos
-                        ? 'bg-[#027368]/10 text-[#027368] font-medium'
+                        ? 'bg-violet-600/10 text-violet-600 font-medium'
                         : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'"
                     >
                       {{ dur.label }}
@@ -538,7 +534,7 @@
                   :class="{
                     'bg-red-50 border-2 border-red-200': validationMessage.type === 'error',
                     'bg-yellow-50 border-2 border-yellow-200': validationMessage.type === 'warning',
-                    'bg-emerald-50 border-2 border-emerald-200': validationMessage.type === 'success'
+                    'bg-violet-50 border-2 border-violet-200': validationMessage.type === 'success'
                   }"
                 >
                   <svg
@@ -546,7 +542,7 @@
                     :class="{
                       'text-red-600': validationMessage.type === 'error',
                       'text-yellow-600': validationMessage.type === 'warning',
-                      'text-emerald-600': validationMessage.type === 'success'
+                      'text-violet-600': validationMessage.type === 'success'
                     }"
                     fill="currentColor"
                     viewBox="0 0 20 20"
@@ -558,7 +554,7 @@
                   <p class="text-sm font-medium flex-1" :class="{
                     'text-red-800': validationMessage.type === 'error',
                     'text-yellow-800': validationMessage.type === 'warning',
-                    'text-emerald-800': validationMessage.type === 'success'
+                    'text-violet-800': validationMessage.type === 'success'
                   }">
                     {{ validationMessage.text }}
                   </p>
@@ -598,13 +594,13 @@
                       @click="seleccionarModalidad(modalidad.value)"
                       class="relative px-4 py-4 rounded-xl border-2 transition-all font-medium flex flex-col items-center gap-2 group"
                       :class="formData.modalidad === modalidad.value
-                        ? 'border-[#027368] bg-gradient-to-br from-[#027368]/10 to-[#027368]/5 text-[#027368] shadow-md'
+                        ? 'border-violet-600 bg-gradient-to-br from-violet-600/10 to-violet-600/5 text-violet-600 shadow-md'
                         : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50'"
                     >
                       <!-- Indicador de selección -->
                       <div
                         v-if="formData.modalidad === modalidad.value"
-                        class="absolute top-2 right-2 w-5 h-5 bg-[#027368] rounded-full flex items-center justify-center"
+                        class="absolute top-2 right-2 w-5 h-5 bg-violet-600 rounded-full flex items-center justify-center"
                       >
                         <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -633,7 +629,7 @@
                         type="text"
                         aria-labelledby="ubicacion-label"
                         placeholder="Ej: Consultorio 3, Sala de terapia..."
-                        class="w-full pl-10 pr-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#027368] focus:border-transparent transition-all"
+                        class="w-full pl-10 pr-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all"
                       />
                     </div>
                   </div>
@@ -675,17 +671,17 @@
                         aria-labelledby="enlace-label"
                         :aria-invalid="enlaceValido === false"
                         placeholder="Pega el enlace de Meet, Zoom o Teams..."
-                        class="w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#027368] focus:border-transparent transition-all"
+                        class="w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all"
                         :class="enlaceValido === false
                           ? 'border-red-300 bg-red-50'
                           : enlaceValido === true
-                            ? 'border-emerald-300 bg-emerald-50'
+                            ? 'border-violet-300 bg-violet-50'
                             : 'border-neutral-200'"
                       />
                       <!-- Badge de plataforma detectada -->
                       <div
                         v-if="plataformaDetectada && enlaceValido"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-medium"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-violet-100 text-violet-700 rounded text-xs font-medium"
                       >
                         {{ plataformaNombre }}
                       </div>
@@ -742,9 +738,9 @@
                       :key="template.texto"
                       type="button"
                       @click="aplicarTemplateObservacion(template.texto)"
-                      class="px-2.5 py-1 text-xs rounded-lg transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-[#027368] focus:ring-offset-1"
+                      class="px-2.5 py-1 text-xs rounded-lg transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-1"
                       :class="formData.observaciones?.includes(template.texto)
-                        ? 'bg-[#027368]/10 text-[#027368] font-medium'
+                        ? 'bg-violet-600/10 text-violet-600 font-medium'
                         : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'"
                       :aria-pressed="formData.observaciones?.includes(template.texto)"
                     >
@@ -763,7 +759,7 @@
                       aria-label="Observaciones"
                       aria-describedby="observaciones-hint"
                       placeholder="Ej: Primera sesión de evaluación, seguimiento ansiedad, revisión de objetivos terapéuticos..."
-                      class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#027368] focus:border-transparent transition-all resize-none"
+                      class="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all resize-none"
                       @focus="observacionesExpandido = true"
                       @blur="observacionesExpandido = formData.observaciones?.length > 0"
                     ></textarea>
@@ -773,7 +769,7 @@
                       v-if="!observacionesExpandido && !formData.observaciones"
                       type="button"
                       @click="observacionesExpandido = true"
-                      class="absolute bottom-2 right-2 text-xs text-neutral-400 hover:text-neutral-600 flex items-center gap-1 focus:outline-none focus:text-[#027368]"
+                      class="absolute bottom-2 right-2 text-xs text-neutral-400 hover:text-neutral-600 flex items-center gap-1 focus:outline-none focus:text-violet-600"
                       aria-label="Expandir campo de observaciones"
                     >
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -804,7 +800,7 @@
                       type="button"
                       @click="handleSubmitAndNew"
                       :disabled="isSubmitting || !canSubmit"
-                      class="order-2 flex-1 px-4 py-3 border-2 border-[#027368] text-[#027368] rounded-xl hover:bg-[#027368]/5 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#027368] focus:ring-offset-2"
+                      class="order-2 flex-1 px-4 py-3 border-2 border-violet-600 text-violet-600 rounded-xl hover:bg-violet-600/5 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-2"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -817,7 +813,7 @@
                     <button
                       type="submit"
                       :disabled="isSubmitting || !canSubmit"
-                      class="order-1 sm:order-3 flex-1 px-6 py-3 bg-gradient-to-r from-[#027368] to-[#025951] text-white rounded-xl hover:shadow-lg hover:shadow-[#027368]/25 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#027368] focus:ring-offset-2"
+                      class="order-1 sm:order-3 flex-1 px-6 py-3 bg-gradient-to-r from-violet-600 to-[violet-700] text-white rounded-xl hover:shadow-lg hover:shadow-violet-600/25 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-2"
                     >
                       <svg v-if="isSubmitting" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1720,12 +1716,29 @@ watch(() => props.isOpen, (newVal) => {
 
     // Pre-llenar fecha y hora si se proporcionan (tienen prioridad sobre borrador)
     const tienePropsIniciales = props.fechaInicial || props.horaInicial
+    console.log('[ModalNuevaCita] Abriendo modal con props:', {
+      fechaInicial: props.fechaInicial,
+      horaInicial: props.horaInicial,
+      horaFinal: props.horaFinal
+    })
 
     if (props.fechaInicial) {
       formData.value.fecha_cita = props.fechaInicial
+      console.log('[ModalNuevaCita] Fecha establecida:', props.fechaInicial)
     }
     if (props.horaInicial) {
       formData.value.hora_inicio = props.horaInicial
+      console.log('[ModalNuevaCita] Hora inicio establecida:', props.horaInicial)
+
+      // Calcular hora_fin automáticamente (+1 hora por defecto)
+      if (!props.horaFinal) {
+        const [h, m] = props.horaInicial.split(':').map(Number)
+        const totalMinutes = h * 60 + m + 60 // +60 min por defecto
+        const endHours = Math.floor(totalMinutes / 60)
+        const endMinutes = totalMinutes % 60
+        formData.value.hora_fin = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`
+        console.log('[ModalNuevaCita] Hora fin calculada:', formData.value.hora_fin)
+      }
     }
     if (props.horaFinal) {
       formData.value.hora_fin = props.horaFinal
@@ -1738,8 +1751,11 @@ watch(() => props.isOpen, (newVal) => {
         restaurarBorrador(borrador)
       }
     }
+  } else {
+    // Limpiar al cerrar el modal
+    validationMessage.value = null
   }
-})
+}, { immediate: true })
 
 // Watch para auto-guardar borrador en cada cambio
 watch(
@@ -1840,17 +1856,17 @@ onUnmounted(() => {
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #027368;
+  background: violet-600;
   border-radius: 10px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #025951;
+  background: violet-700;
 }
 
 /* Accesibilidad - Focus visible mejorado */
 :focus-visible {
-  outline: 2px solid #027368;
+  outline: 2px solid violet-600;
   outline-offset: 2px;
 }
 
@@ -1878,13 +1894,13 @@ onUnmounted(() => {
   .text-red-600, .text-red-800 {
     color: #b91c1c !important;
   }
-  .border-emerald-300 {
+  .border-violet-300 {
     border-color: #059669 !important;
   }
-  .bg-emerald-50 {
+  .bg-violet-50 {
     background-color: #ecfdf5 !important;
   }
-  .text-emerald-600, .text-emerald-800 {
+  .text-violet-600, .text-violet-800 {
     color: #047857 !important;
   }
 }
