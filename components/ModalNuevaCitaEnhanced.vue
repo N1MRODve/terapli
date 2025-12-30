@@ -854,6 +854,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { usePacientes, type PacienteBusqueda, type CreatePacienteParams } from '~/composables/usePacientes'
 import { useAgendaEnhanced, type CreateAppointmentParams } from '~/composables/useAgendaEnhanced'
+import { useConfiguracionAgenda } from '~/composables/useConfiguracionAgenda'
 import { agendaLogger } from '~/utils/agenda-logger'
 
 // Props
@@ -885,6 +886,13 @@ const {
   createAppointment,
   validateAppointment
 } = useAgendaEnhanced()
+
+// Configuración de agenda del terapeuta (horarios)
+const {
+  configuracion: configAgenda,
+  cargarConfiguracion,
+  obtenerHorarioEfectivo
+} = useConfiguracionAgenda()
 
 // Estado
 const showDropdown = ref(false)
@@ -1218,16 +1226,41 @@ const fechaShortcuts = computed(() => {
   ]
 })
 
-// Generar horas disponibles (9:00 - 21:00, intervalos de 30 min)
+// Generar horas disponibles basadas en la configuración del terapeuta
 const horasDisponibles = computed(() => {
   const horas: { value: string; label: string }[] = []
-  for (let h = 9; h <= 20; h++) {
+  const horario = configAgenda.value?.horario
+
+  // Valores por defecto si no hay configuración
+  const inicioManana = horario?.inicio_manana || '09:00'
+  const finManana = horario?.fin_manana || '14:00'
+  const inicioTarde = horario?.inicio_tarde || '16:00'
+  const finTarde = horario?.fin_tarde || '21:00'
+
+  // Parsear horas
+  const [hInicioM] = inicioManana.split(':').map(Number)
+  const [hFinM] = finManana.split(':').map(Number)
+  const [hInicioT] = inicioTarde.split(':').map(Number)
+  const [hFinT] = finTarde.split(':').map(Number)
+
+  // Generar slots de mañana (hasta 30 min antes del fin para permitir citas de 1h)
+  for (let h = hInicioM; h < hFinM; h++) {
     for (let m = 0; m < 60; m += 30) {
       const horaStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
       const label = `${h}:${m.toString().padStart(2, '0')}`
       horas.push({ value: horaStr, label })
     }
   }
+
+  // Generar slots de tarde
+  for (let h = hInicioT; h < hFinT; h++) {
+    for (let m = 0; m < 60; m += 30) {
+      const horaStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+      const label = `${h}:${m.toString().padStart(2, '0')}`
+      horas.push({ value: horaStr, label })
+    }
+  }
+
   return horas
 })
 
@@ -1801,7 +1834,10 @@ watch(
 )
 
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
+  // Cargar configuración de agenda (horarios del terapeuta)
+  await cargarConfiguracion()
+
   // Cargar última modalidad usada
   formData.value.modalidad = cargarUltimaModalidad()
 
