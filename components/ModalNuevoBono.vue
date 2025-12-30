@@ -15,14 +15,16 @@
         <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-200/50 px-8 py-6 flex justify-between items-center z-10">
           <div class="flex items-center gap-4">
             <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center">
-              <span class="text-2xl">🎫</span>
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+              </svg>
             </div>
             <div>
               <h2 class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
-                Nuevo Bono
+                {{ modoEdicion ? 'Editar Bono' : 'Nuevo Bono' }}
               </h2>
               <p class="text-sm font-sans text-gray-600 mt-1">
-                Crea un nuevo bono para {{ pacienteNombre }}
+                {{ modoEdicion ? 'Modifica los datos del bono de' : 'Crea un nuevo bono para' }} {{ pacienteNombre }}
               </p>
             </div>
           </div>
@@ -178,8 +180,11 @@
             class="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
           />
           <label for="renovacion-auto" class="flex-1 cursor-pointer">
-            <div class="text-sm font-medium text-purple-900">
-              🔄 Renovación Automática
+            <div class="text-sm font-medium text-purple-900 flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Renovación Automática
             </div>
             <div class="text-xs text-purple-700 mt-1">
               El bono se renovará automáticamente cuando se complete o venza
@@ -301,7 +306,7 @@
             class="flex-1 px-6 py-3 bg-[#5550F2] text-white rounded-lg hover:bg-[#C89B8A] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="guardando || !formularioValido"
           >
-            {{ guardando ? 'Creando...' : 'Crear Bono' }}
+            {{ guardando ? (modoEdicion ? 'Guardando...' : 'Creando...') : (modoEdicion ? 'Guardar Cambios' : 'Crear Bono') }}
           </button>
         </div>
       </form>
@@ -316,15 +321,20 @@ const props = defineProps<{
   pacienteId: string
   pacienteNombre: string
   psicologaId?: string
+  bonoExistente?: any // Para modo edición
 }>()
 
 const emit = defineEmits<{
   close: []
   created: [bono: any]
+  updated: [bono: any]
 }>()
 
-const { crearBono } = useBonos()
+const { crearBono, actualizarBono } = useBonos()
 const { userProfile } = useSupabase()
+
+// Determinar si es modo edición
+const modoEdicion = computed(() => !!props.bonoExistente)
 
 // Estado del formulario
 const formData = ref({
@@ -339,6 +349,24 @@ const formData = ref({
   renovacion_automatica: false,
   notas: ''
 })
+
+// Cargar datos del bono existente cuando cambia
+watch(() => props.bonoExistente, (bono) => {
+  if (bono) {
+    formData.value = {
+      tipo: bono.tipo || 'mensual',
+      frecuencia: bono.frecuencia || 'semanal',
+      sesiones_totales: bono.sesiones_totales || 4,
+      sesiones_usadas: bono.sesiones_usadas || 0,
+      monto: bono.monto_total || 0,
+      fecha_inicio: bono.fecha_inicio || new Date().toISOString().split('T')[0],
+      fecha_fin: bono.fecha_fin || '',
+      estado: bono.estado || 'pendiente',
+      renovacion_automatica: bono.renovacion_automatica || false,
+      notas: bono.notas || ''
+    }
+  }
+}, { immediate: true })
 
 const guardando = ref(false)
 const errorMensaje = ref('')
@@ -390,8 +418,6 @@ const guardarBono = async () => {
     const sesionesRestantes = formData.value.sesiones_totales - sesionesUsadas
 
     const bonoData = {
-      paciente_id: props.pacienteId,
-      terapeuta_id: props.psicologaId || userProfile.value?.id,
       tipo: formData.value.tipo,
       frecuencia: formData.value.frecuencia,
       sesiones_totales: formData.value.sesiones_totales,
@@ -400,29 +426,43 @@ const guardarBono = async () => {
       fecha_inicio: formData.value.fecha_inicio || null,
       fecha_fin: formData.value.fecha_fin || null,
       estado: sesionesRestantes <= 0 ? 'agotado' : formData.value.estado,
-      monto: formData.value.monto,
+      monto_total: formData.value.monto, // Campo correcto en la BD
       pagado: formData.value.estado === 'activo', // Si es activo, ya está pagado
       renovacion_automatica: formData.value.renovacion_automatica,
       notas: formData.value.notas || null
     }
 
-    const nuevoBono = await crearBono(bonoData)
+    if (modoEdicion.value && props.bonoExistente?.id) {
+      // Modo edición: actualizar bono existente
+      const bonoActualizado = await actualizarBono(props.bonoExistente.id, bonoData)
+      emit('updated', bonoActualizado)
+    } else {
+      // Modo creación: crear nuevo bono
+      const bonoDataCompleto = {
+        ...bonoData,
+        paciente_id: props.pacienteId,
+        terapeuta_id: props.psicologaId || userProfile.value?.id
+      }
+      const nuevoBono = await crearBono(bonoDataCompleto)
+      emit('created', nuevoBono)
+    }
 
-    emit('created', nuevoBono)
     emit('close')
 
-    // Resetear formulario
-    formData.value = {
-      tipo: 'mensual',
-      frecuencia: 'semanal',
-      sesiones_totales: 4,
-      sesiones_usadas: 0,
-      monto: 0,
-      fecha_inicio: new Date().toISOString().split('T')[0],
-      fecha_fin: '',
-      estado: 'pendiente',
-      renovacion_automatica: false,
-      notas: ''
+    // Resetear formulario solo si no es edición
+    if (!modoEdicion.value) {
+      formData.value = {
+        tipo: 'mensual',
+        frecuencia: 'semanal',
+        sesiones_totales: 4,
+        sesiones_usadas: 0,
+        monto: 0,
+        fecha_inicio: new Date().toISOString().split('T')[0],
+        fecha_fin: '',
+        estado: 'pendiente',
+        renovacion_automatica: false,
+        notas: ''
+      }
     }
   } catch (err: any) {
     console.error('[ModalNuevoBono] Error al crear bono:', err)

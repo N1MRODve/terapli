@@ -394,8 +394,8 @@ const cargarPagos = async () => {
       .from('pagos' as any)
       .select(`
         *,
-        paciente:paciente_id(nombre),
-        terapeuta:terapeuta_id(nombre)
+        paciente:paciente_id(nombre_completo),
+        terapeuta:terapeuta_id(nombre_completo)
       `)
       .order('created_at', { ascending: false })
 
@@ -404,8 +404,8 @@ const cargarPagos = async () => {
     if (data) {
       pagos.value = data.map((p: any) => ({
         ...p,
-        paciente_nombre: p.paciente?.nombre || 'Sin paciente',
-        terapeuta_nombre: p.terapeuta?.nombre || 'Sin terapeuta'
+        paciente_nombre: p.paciente?.nombre_completo || 'Sin paciente',
+        terapeuta_nombre: p.terapeuta?.nombre_completo || 'Sin terapeuta'
       }))
     }
   } catch (error) {

@@ -1,1 +1,0 @@
-import{c as o,o as e,O as t,A as r}from"#entry";const l={__name:"DashboardCard",props:{customClass:{type:String,default:""}},setup(s){return(a,n)=>(e(),o("div",{class:r(["bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300",s.customClass])},[t(a.$slots,"default")],2))}};export{l as _};

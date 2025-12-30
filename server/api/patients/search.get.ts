@@ -81,7 +81,7 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event)
     const searchTerm = ((query.q as string) || '').trim().toLowerCase()
 
-    // 5. Construir consulta
+    // 5. Construir consulta - incluir última cita para priorización
     let queryBuilder = supabaseClient
       .from('pacientes')
       .select(`
@@ -90,6 +90,7 @@ export default defineEventHandler(async (event) => {
         email,
         telefono,
         fecha_nacimiento,
+        activo,
         bonos(
           id,
           tipo,
@@ -97,6 +98,10 @@ export default defineEventHandler(async (event) => {
           sesiones_restantes,
           fecha_inicio,
           fecha_fin,
+          estado
+        ),
+        citas(
+          fecha_cita,
           estado
         )
       `)
@@ -113,9 +118,11 @@ export default defineEventHandler(async (event) => {
       )
     }
 
+    // Límite inicial más bajo para rendimiento
     const { data: pacientes, error: fetchError } = await queryBuilder
+      .eq('activo', true) // Solo pacientes activos
       .order('nombre_completo', { ascending: true })
-      .limit(50)
+      .limit(30)
 
     if (fetchError) {
       console.error('[PATIENTS/SEARCH] Error al buscar pacientes:', fetchError)
@@ -125,15 +132,9 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // 6. Transformar datos con información de bonos
+    // 6. Transformar datos con información de bonos y recencia
+    const ahora = new Date()
     const pacientesConBonos = (pacientes || []).map((p: any) => {
-      // Log para debug: ver todos los bonos del paciente
-      if (p.bonos && p.bonos.length > 0) {
-        console.log(`[PATIENTS/SEARCH] Paciente ${p.nombre_completo} tiene ${p.bonos.length} bonos:`,
-          p.bonos.map((b: any) => ({ id: b.id, tipo: b.tipo, estado: b.estado, sesiones_restantes: b.sesiones_restantes }))
-        )
-      }
-
       // Incluir bonos activos y pendientes (pendiente = pagado pero no iniciado)
       const bonosActivos = (p.bonos || []).filter((b: any) => {
         const estadoValido = b.estado === 'activo' || b.estado === 'pendiente'
@@ -162,6 +163,34 @@ export default defineEventHandler(async (event) => {
           })[0]
         : null
 
+      // Calcular última cita y próxima cita para priorización
+      const citas = p.citas || []
+      const citasPasadas = citas
+        .filter((c: any) => new Date(c.fecha_cita) <= ahora && c.estado !== 'cancelada')
+        .sort((a: any, b: any) => new Date(b.fecha_cita).getTime() - new Date(a.fecha_cita).getTime())
+      const citasFuturas = citas
+        .filter((c: any) => new Date(c.fecha_cita) > ahora && c.estado !== 'cancelada')
+        .sort((a: any, b: any) => new Date(a.fecha_cita).getTime() - new Date(b.fecha_cita).getTime())
+
+      const ultimaCita = citasPasadas[0]?.fecha_cita || null
+      const proximaCita = citasFuturas[0]?.fecha_cita || null
+      const totalCitas = citas.filter((c: any) => c.estado !== 'cancelada').length
+
+      // Calcular score de priorización:
+      // - Más puntos si tiene cita reciente (últimos 30 días)
+      // - Más puntos si tiene sesiones restantes
+      // - Más puntos si tiene muchas citas históricas
+      let prioridadScore = 0
+      if (ultimaCita) {
+        const diasDesdeUltima = Math.floor((ahora.getTime() - new Date(ultimaCita).getTime()) / (1000 * 60 * 60 * 24))
+        if (diasDesdeUltima <= 7) prioridadScore += 100
+        else if (diasDesdeUltima <= 30) prioridadScore += 50
+        else if (diasDesdeUltima <= 90) prioridadScore += 20
+      }
+      if (sesionesRestantesTotal > 0) prioridadScore += 80
+      if (totalCitas >= 10) prioridadScore += 30
+      else if (totalCitas >= 5) prioridadScore += 15
+
       return {
         id: p.id,
         nombre_completo: p.nombre_completo,
@@ -173,6 +202,11 @@ export default defineEventHandler(async (event) => {
         proximo_vencimiento: proximoVencimiento
           ? new Date(proximoVencimiento).toISOString()
           : null,
+        // Nueva info de recencia
+        ultima_cita: ultimaCita,
+        proxima_cita: proximaCita,
+        total_citas: totalCitas,
+        prioridad_score: prioridadScore,
         // Información detallada del bono activo principal
         bono_activo: bonoActivo ? {
           id: bonoActivo.id,
@@ -195,10 +229,16 @@ export default defineEventHandler(async (event) => {
       }
     })
 
+    // 7. Ordenar por prioridad y limitar a 10 resultados
+    const pacientesOrdenados = pacientesConBonos
+      .sort((a, b) => b.prioridad_score - a.prioridad_score)
+      .slice(0, 10)
+
     return {
       success: true,
-      data: pacientesConBonos,
-      count: pacientesConBonos.length
+      data: pacientesOrdenados,
+      count: pacientesOrdenados.length,
+      total: pacientesConBonos.length
     }
 
   } catch (error: any) {

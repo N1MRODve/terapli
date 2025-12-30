@@ -37,6 +37,11 @@ export interface PacienteBusqueda {
   bonos_activos: number
   sesiones_restantes_total: number
   proximo_vencimiento: string | null
+  // Información de recencia y uso
+  ultima_cita: string | null
+  proxima_cita: string | null
+  total_citas: number
+  prioridad_score: number
   // Información detallada del bono activo principal
   bono_activo: BonoActivo | null
   // Lista de todos los bonos activos

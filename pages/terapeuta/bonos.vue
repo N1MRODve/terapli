@@ -9,6 +9,18 @@
           <!-- Tabs integrados -->
           <nav class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
             <button
+              @click="activeTab = 'pacientes'"
+              class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
+              :class="activeTab === 'pacientes'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'"
+            >
+              Por Paciente
+              <span class="ml-1 text-xs" :class="activeTab === 'pacientes' ? 'text-gray-500' : 'text-gray-400'">
+                {{ pacientesConBonos.length }}
+              </span>
+            </button>
+            <button
               @click="activeTab = 'resumen'"
               class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
               :class="activeTab === 'resumen'
@@ -57,33 +69,372 @@
         </button>
       </div>
 
-      <!-- Quick stats -->
-      <div v-if="activeTab === 'bonos' || activeTab === 'resumen'" class="bg-white border border-gray-100 rounded-lg p-3 mb-4">
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-green-500"></span>
-            <span class="text-gray-600">Activos:</span>
-            <span class="font-semibold text-gray-900">{{ estadisticasBonos.activos }}</span>
+      <!-- Quick stats mejoradas con cards -->
+      <div v-if="activeTab === 'bonos' || activeTab === 'resumen' || activeTab === 'pacientes'" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+        <!-- Por Cobrar (destacado) -->
+        <div
+          @click="filtrarPendientesCobro"
+          class="col-span-2 md:col-span-1 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all group"
+        >
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+              <CurrencyEuroIcon class="w-4 h-4 text-amber-600" />
+            </div>
+            <span class="text-xs font-medium text-amber-600 uppercase">Por Cobrar</span>
           </div>
-          <span class="text-gray-200">|</span>
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span class="text-gray-600">Pendientes:</span>
-            <span class="font-semibold text-gray-900">{{ estadisticasBonos.pendientes }}</span>
+          <p class="text-2xl font-bold text-amber-900">{{ formatearPrecio(estadisticasBonos.montoPendiente) }}€</p>
+          <div class="flex items-center justify-between mt-1">
+            <p class="text-xs text-amber-600">{{ estadisticasBonos.bonosSinPagar }} bonos</p>
+            <span class="text-xs text-amber-500 group-hover:text-amber-700 flex items-center gap-1">
+              Ver <ChevronRightIcon class="w-3 h-3" />
+            </span>
           </div>
-          <span class="text-gray-200">|</span>
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-gray-400"></span>
-            <span class="text-gray-600">Completados:</span>
-            <span class="font-semibold text-gray-900">{{ estadisticasBonos.completados }}</span>
+        </div>
+
+        <!-- Activos -->
+        <div class="bg-white border border-gray-100 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <CheckCircleIcon class="w-4 h-4 text-green-600" />
+            </div>
+            <span class="text-xs font-medium text-green-600 uppercase">Activos</span>
           </div>
-          <div class="ml-auto flex items-center gap-2 pl-4 border-l border-gray-200">
-            <span class="text-gray-600">Por cobrar:</span>
-            <span class="font-bold text-green-600">{{ formatearPrecio(estadisticasBonos.montoPendiente) }}€</span>
+          <p class="text-2xl font-bold text-gray-900">{{ estadisticasBonos.activos }}</p>
+          <p class="text-xs text-gray-500 mt-1">En uso actualmente</p>
+        </div>
+
+        <!-- Por Agotar (próximos a terminarse) -->
+        <div
+          v-if="estadisticasBonos.proximosAgotar > 0"
+          @click="filtrarProximosAgotar"
+          class="bg-gradient-to-br from-red-50 to-rose-50 border border-red-200 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all group"
+        >
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+              <ExclamationTriangleIcon class="w-4 h-4 text-red-600" />
+            </div>
+            <span class="text-xs font-medium text-red-600 uppercase">Por Agotar</span>
           </div>
+          <p class="text-2xl font-bold text-red-900">{{ estadisticasBonos.proximosAgotar }}</p>
+          <div class="flex items-center justify-between mt-1">
+            <p class="text-xs text-red-600">≤2 sesiones</p>
+            <span class="text-xs text-red-500 group-hover:text-red-700 flex items-center gap-1">
+              Ver <ChevronRightIcon class="w-3 h-3" />
+            </span>
+          </div>
+        </div>
+
+        <!-- Completados (si no hay por agotar) -->
+        <div v-else class="bg-white border border-gray-100 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <CheckIcon class="w-4 h-4 text-gray-600" />
+            </div>
+            <span class="text-xs font-medium text-gray-600 uppercase">Finalizados</span>
+          </div>
+          <p class="text-2xl font-bold text-gray-900">{{ estadisticasBonos.completados }}</p>
+          <p class="text-xs text-gray-500 mt-1">Este mes</p>
+        </div>
+
+        <!-- Urgentes (agotados sin pagar) -->
+        <div
+          v-if="estadisticasBonos.urgentes > 0"
+          @click="filtrarUrgentes"
+          class="bg-gradient-to-br from-red-100 to-rose-100 border-2 border-red-300 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all group animate-pulse-subtle"
+        >
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-8 h-8 bg-red-200 rounded-lg flex items-center justify-center">
+              <ExclamationCircleIcon class="w-4 h-4 text-red-700" />
+            </div>
+            <span class="text-xs font-medium text-red-700 uppercase">Urgente</span>
+          </div>
+          <p class="text-2xl font-bold text-red-900">{{ estadisticasBonos.urgentes }}</p>
+          <div class="flex items-center justify-between mt-1">
+            <p class="text-xs text-red-700">Agotados sin pagar</p>
+            <span class="text-xs text-red-600 group-hover:text-red-800 flex items-center gap-1">
+              Ver <ChevronRightIcon class="w-3 h-3" />
+            </span>
+          </div>
+        </div>
+
+        <!-- Finalizados (si hay urgentes, movemos completados aquí) -->
+        <div v-if="estadisticasBonos.proximosAgotar > 0" class="bg-white border border-gray-100 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <ArchiveBoxIcon class="w-4 h-4 text-gray-600" />
+            </div>
+            <span class="text-xs font-medium text-gray-600 uppercase">Finalizados</span>
+          </div>
+          <p class="text-2xl font-bold text-gray-900">{{ estadisticasBonos.completados }}</p>
+          <p class="text-xs text-gray-500 mt-1">Sesiones agotadas</p>
         </div>
       </div>
     </header>
+
+    <!-- Tab: Por Paciente (NUEVO) -->
+    <div v-if="activeTab === 'pacientes'" class="space-y-4">
+      <!-- Loading -->
+      <div v-if="cargandoBonos" class="flex items-center justify-center py-20">
+        <div class="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div v-else-if="pacientesConBonos.length === 0" class="bg-white border border-gray-100 rounded-lg py-12 text-center">
+        <UserGroupIcon class="w-12 h-12 text-gray-300 mx-auto mb-3" />
+        <p class="text-gray-600 font-medium mb-1">Sin bonos asignados</p>
+        <p class="text-sm text-gray-400">Los bonos de tus pacientes aparecerán aquí</p>
+      </div>
+
+      <!-- Lista de pacientes con bonos colapsables -->
+      <div v-else class="space-y-3">
+        <div
+          v-for="paciente in pacientesConBonos"
+          :key="paciente.id"
+          class="bg-white border border-gray-100 rounded-lg overflow-hidden"
+        >
+          <!-- Header del paciente (clickeable) -->
+          <div
+            @click="togglePacienteExpandido(paciente.id)"
+            class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-50/50 transition-colors"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-semibold">
+                {{ getIniciales(paciente.nombre) }}
+              </div>
+              <div>
+                <p class="font-medium text-gray-900">{{ paciente.nombre }}</p>
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                  <span>{{ paciente.bonos.length }} {{ paciente.bonos.length === 1 ? 'bono' : 'bonos' }}</span>
+                  <span class="text-gray-300">|</span>
+                  <span>{{ paciente.sesionesUsadas }}/{{ paciente.sesionesTotales }} sesiones</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <!-- Badge prioridad (basado en pago y sesiones) -->
+              <span
+                v-if="paciente.requiereAccion"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                :class="getPrioridadPacienteClase(paciente)"
+              >
+                <ExclamationCircleIcon v-if="paciente.prioridad === 'urgente'" class="w-3.5 h-3.5" />
+                <ClockIcon v-else-if="paciente.prioridad === 'atencion'" class="w-3.5 h-3.5" />
+                {{ getPrioridadPacienteTexto(paciente) }}
+              </span>
+
+              <!-- Total pendiente -->
+              <div class="text-right min-w-[80px]">
+                <p class="text-sm font-semibold text-gray-900">{{ formatearPrecio(paciente.montoTotal) }}€</p>
+                <p class="text-xs" :class="paciente.montoPendiente > 0 ? 'text-amber-600' : 'text-green-600'">
+                  {{ paciente.montoPendiente > 0 ? `${formatearPrecio(paciente.montoPendiente)}€ pend.` : 'Todo pagado' }}
+                </p>
+              </div>
+
+              <!-- Chevron -->
+              <ChevronDownIcon
+                class="w-5 h-5 text-gray-400 transition-transform"
+                :class="{ 'rotate-180': pacientesExpandidos.includes(paciente.id) }"
+              />
+            </div>
+          </div>
+
+          <!-- Lista de bonos del paciente (colapsable) -->
+          <Transition
+            enter-active-class="transition-all duration-200 ease-out"
+            enter-from-class="opacity-0 max-h-0"
+            enter-to-class="opacity-100 max-h-[500px]"
+            leave-active-class="transition-all duration-150 ease-in"
+            leave-from-class="opacity-100 max-h-[500px]"
+            leave-to-class="opacity-0 max-h-0"
+          >
+            <div v-if="pacientesExpandidos.includes(paciente.id)" class="border-t border-gray-100 overflow-hidden">
+              <div class="divide-y divide-gray-50">
+                <div
+                  v-for="bono in paciente.bonos"
+                  :key="bono.id"
+                  class="px-4 py-3 pl-16 hover:bg-gray-50/50 transition-colors group"
+                >
+                  <div class="flex items-center justify-between">
+                    <!-- Info del bono (clickeable para ir a detalle) -->
+                    <div
+                      @click.stop="irABonoPaciente(bono)"
+                      class="flex items-center gap-3 cursor-pointer flex-1"
+                    >
+                      <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="getTipoBonoColor(bono.tipo)">
+                        <TicketIcon class="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-medium text-gray-900">{{ frecuenciaLabel(bono.tipo) }}</span>
+                          <!-- Badge estado unificado con prioridad visual -->
+                          <span
+                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                            :class="getEstadoUnificadoClase(bono)"
+                          >
+                            <component :is="getEstadoUnificadoIcono(bono)" class="w-3 h-3" />
+                            {{ getEstadoUnificadoTexto(bono) }}
+                          </span>
+                        </div>
+                        <p class="text-xs text-gray-500">
+                          {{ bono.sesiones_totales - bono.sesiones_restantes }}/{{ bono.sesiones_totales }} sesiones
+                          <span v-if="bono.fecha_fin" class="ml-2">• Vence {{ formatearFechaCorta(bono.fecha_fin) }}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Acciones y monto -->
+                    <div class="flex items-center gap-3">
+                      <!-- Acción rápida según estado -->
+                      <button
+                        v-if="!bono.pagado"
+                        @click.stop="registrarPago(bono)"
+                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
+                        :class="bono.sesiones_restantes === 0
+                          ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                          : 'bg-amber-100 text-amber-700 hover:bg-amber-200'"
+                      >
+                        <CurrencyEuroIcon class="w-3.5 h-3.5" />
+                        {{ bono.sesiones_restantes === 0 ? 'Cobrar ahora' : 'Registrar pago' }}
+                      </button>
+
+                      <button
+                        v-else-if="bono.sesiones_restantes === 0"
+                        @click.stop="crearNuevoBono(bono)"
+                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition-all"
+                      >
+                        <PlusIcon class="w-3.5 h-3.5" />
+                        Nuevo bono
+                      </button>
+
+                      <!-- Barra de progreso -->
+                      <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden hidden md:block">
+                        <div
+                          class="h-full rounded-full transition-all"
+                          :class="getProgresoColorUnificado(bono)"
+                          :style="{ width: `${calcularPorcentajeUso(bono)}%` }"
+                        ></div>
+                      </div>
+
+                      <!-- Monto -->
+                      <div class="text-right min-w-[60px]">
+                        <p class="text-sm font-medium text-gray-900">{{ bono.monto_total }}€</p>
+                        <p class="text-xs" :class="bono.pagado ? 'text-green-600' : 'text-amber-600'">
+                          {{ bono.pagado ? 'Pagado' : 'Pendiente' }}
+                        </p>
+                      </div>
+
+                      <!-- Menú contextual -->
+                      <div class="relative">
+                        <button
+                          @click.stop="toggleMenuBono(bono.id)"
+                          class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                        >
+                          <EllipsisVerticalIcon class="w-5 h-5" />
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <Transition
+                          enter-active-class="transition-all duration-150 ease-out"
+                          enter-from-class="opacity-0 scale-95"
+                          enter-to-class="opacity-100 scale-100"
+                          leave-active-class="transition-all duration-100 ease-in"
+                          leave-from-class="opacity-100 scale-100"
+                          leave-to-class="opacity-0 scale-95"
+                        >
+                          <div
+                            v-if="menuBonoAbierto === bono.id"
+                            class="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50"
+                          >
+                            <!-- Ver historial -->
+                            <button
+                              @click.stop="verHistorialBono(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                            >
+                              <ClipboardDocumentListIcon class="w-4 h-4 text-gray-400" />
+                              Ver historial
+                            </button>
+
+                            <!-- Registrar pago -->
+                            <button
+                              v-if="!bono.pagado"
+                              @click.stop="registrarPago(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                            >
+                              <CurrencyEuroIcon class="w-4 h-4 text-gray-400" />
+                              Registrar pago
+                            </button>
+
+                            <!-- Añadir sesión (solo si activo) -->
+                            <button
+                              v-if="bono.estado === 'activo' && bono.sesiones_restantes > 0"
+                              @click.stop="anadirSesion(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                            >
+                              <CalendarIcon class="w-4 h-4 text-gray-400" />
+                              Añadir sesión
+                            </button>
+
+                            <!-- Editar bono -->
+                            <button
+                              @click.stop="editarBono(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                            >
+                              <PencilIcon class="w-4 h-4 text-gray-400" />
+                              Editar bono
+                            </button>
+
+                            <!-- Separador -->
+                            <div class="border-t border-gray-100 my-1"></div>
+
+                            <!-- Pausar/Reactivar -->
+                            <button
+                              v-if="bono.estado === 'activo'"
+                              @click.stop="pausarBono(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-amber-600 hover:bg-amber-50 flex items-center gap-2"
+                            >
+                              <PauseIcon class="w-4 h-4" />
+                              Pausar bono
+                            </button>
+                            <button
+                              v-else-if="bono.estado === 'pausado'"
+                              @click.stop="reactivarBono(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 flex items-center gap-2"
+                            >
+                              <PlayIcon class="w-4 h-4" />
+                              Reactivar bono
+                            </button>
+
+                            <!-- Crear nuevo bono (si agotado) -->
+                            <button
+                              v-if="bono.sesiones_restantes === 0"
+                              @click.stop="crearNuevoBono(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-purple-600 hover:bg-purple-50 flex items-center gap-2"
+                            >
+                              <PlusCircleIcon class="w-4 h-4" />
+                              Crear nuevo bono
+                            </button>
+
+                            <!-- Eliminar -->
+                            <button
+                              @click.stop="confirmarEliminarBono(bono)"
+                              class="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                            >
+                              <TrashIcon class="w-4 h-4" />
+                              Eliminar bono
+                            </button>
+                          </div>
+                        </Transition>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Transition>
+        </div>
+      </div>
+    </div>
 
     <!-- Tab: Por Tipo (Resumen) -->
     <div v-if="activeTab === 'resumen'" class="space-y-6">
@@ -137,65 +488,181 @@
             </div>
           </div>
 
-          <!-- Lista de pacientes -->
+          <!-- Lista de pacientes agrupados -->
           <div class="divide-y divide-gray-50">
             <div
               v-for="paciente in tipoBono.pacientes"
-              :key="paciente.bono_id"
-              class="px-5 py-3 hover:bg-gray-50/50 transition-colors cursor-pointer flex items-center justify-between"
-              @click="irABonoPaciente({ paciente_id: paciente.paciente_id })"
+              :key="paciente.paciente_id"
+              class="overflow-hidden"
             >
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-semibold">
-                  {{ getIniciales(paciente.nombre) }}
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ paciente.nombre }}</p>
-                  <div class="flex items-center gap-2 text-xs text-gray-500">
-                    <span>{{ paciente.sesiones_usadas }}/{{ paciente.sesiones_totales }} sesiones</span>
-                    <span class="text-gray-300">|</span>
-                    <span :class="paciente.estado === 'activo' ? 'text-green-600' : 'text-gray-500'">
-                      {{ getEstadoTexto(paciente.estado) }}
-                    </span>
+              <!-- Bono activo del paciente (siempre visible) -->
+              <div
+                v-if="paciente.bonoActivo"
+                class="px-5 py-3 hover:bg-gray-50/50 transition-colors flex items-center justify-between"
+              >
+                <div
+                  class="flex items-center gap-3 cursor-pointer flex-1"
+                  @click="irABonoPaciente({ paciente_id: paciente.paciente_id })"
+                >
+                  <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-semibold">
+                    {{ getIniciales(paciente.nombre) }}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm font-medium text-gray-900">{{ paciente.nombre }}</p>
+                      <!-- Badge de bono activo -->
+                      <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
+                        <CheckCircleIcon class="w-3 h-3" />
+                        Activo
+                      </span>
+                      <!-- Indicador de urgencia -->
+                      <span
+                        v-if="getUrgenciaPacienteTipo(paciente.bonoActivo)"
+                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium"
+                        :class="getUrgenciaPacienteTipo(paciente.bonoActivo).clase"
+                      >
+                        <component :is="getUrgenciaPacienteTipo(paciente.bonoActivo).icono" class="w-3 h-3" />
+                        {{ getUrgenciaPacienteTipo(paciente.bonoActivo).texto }}
+                      </span>
+                    </div>
+                    <p class="text-xs text-gray-500">
+                      Creado: {{ formatearFechaCorta(paciente.bonoActivo.created_at) }}
+                      <span v-if="paciente.totalBonos > 1" class="text-gray-400 ml-1">
+                        • {{ paciente.totalBonos }} bonos en total
+                      </span>
+                    </p>
                   </div>
                 </div>
-              </div>
-              <div class="flex items-center gap-4">
-                <!-- Barra de progreso -->
-                <div class="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    class="h-full rounded-full transition-all"
-                    :class="paciente.estado === 'activo' ? 'bg-purple-500' : 'bg-gray-400'"
-                    :style="{ width: `${(paciente.sesiones_usadas / paciente.sesiones_totales) * 100}%` }"
-                  ></div>
+                <div class="flex items-center gap-4">
+                  <!-- Barra de progreso semántica -->
+                  <div class="flex items-center gap-2">
+                    <div class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        class="h-full rounded-full transition-all"
+                        :class="getProgresoColorSemantico(paciente.bonoActivo)"
+                        :style="{ width: `${(paciente.bonoActivo.sesiones_usadas / paciente.bonoActivo.sesiones_totales) * 100}%` }"
+                      ></div>
+                    </div>
+                    <span class="text-xs text-gray-500 min-w-[40px]">
+                      {{ paciente.bonoActivo.sesiones_totales - paciente.bonoActivo.sesiones_usadas }}/{{ paciente.bonoActivo.sesiones_totales }}
+                    </span>
+                  </div>
+                  <!-- Monto y pago -->
+                  <div class="text-right min-w-[70px]">
+                    <p class="text-sm font-medium text-gray-900">{{ paciente.bonoActivo.monto }}€</p>
+                    <p class="text-xs" :class="paciente.bonoActivo.pagado ? 'text-green-600' : 'text-amber-600'">
+                      {{ paciente.bonoActivo.pagado ? 'Pagado' : 'Pendiente' }}
+                    </p>
+                  </div>
+                  <!-- Botón para ver historial si hay más bonos -->
+                  <button
+                    v-if="paciente.bonosHistoricos.length > 0"
+                    @click.stop="toggleHistorial(paciente.paciente_id, tipoBono.tipo)"
+                    class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                    :title="`Ver ${paciente.bonosHistoricos.length} bono(s) anterior(es)`"
+                  >
+                    <ChevronDownIcon
+                      class="w-4 h-4 transition-transform"
+                      :class="{ 'rotate-180': historialesExpandidos.includes(`${tipoBono.tipo}-${paciente.paciente_id}`) }"
+                    />
+                  </button>
+                  <ChevronRightIcon v-else class="w-4 h-4 text-gray-400" />
                 </div>
-                <!-- Monto y pago -->
-                <div class="text-right min-w-[80px]">
-                  <p class="text-sm font-medium text-gray-900">{{ paciente.monto }}€</p>
-                  <p class="text-xs" :class="paciente.pagado ? 'text-green-600' : 'text-amber-600'">
-                    {{ paciente.pagado ? 'Pagado' : 'Pendiente' }}
-                  </p>
-                </div>
-                <ChevronRightIcon class="w-4 h-4 text-gray-400" />
               </div>
+
+              <!-- Paciente sin bono activo (solo históricos) -->
+              <div
+                v-else-if="paciente.bonosHistoricos.length > 0"
+                class="px-5 py-3 hover:bg-gray-50/50 transition-colors flex items-center justify-between"
+              >
+                <div class="flex items-center gap-3 flex-1">
+                  <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-xs font-semibold">
+                    {{ getIniciales(paciente.nombre) }}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm font-medium text-gray-600">{{ paciente.nombre }}</p>
+                      <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                        <ArchiveBoxIcon class="w-3 h-3" />
+                        Solo histórico
+                      </span>
+                    </div>
+                    <p class="text-xs text-gray-400">
+                      {{ paciente.bonosHistoricos.length }} bono(s) completado(s)
+                    </p>
+                  </div>
+                </div>
+                <button
+                  @click.stop="toggleHistorial(paciente.paciente_id, tipoBono.tipo)"
+                  class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1"
+                >
+                  <span class="text-xs">Ver historial</span>
+                  <ChevronDownIcon
+                    class="w-4 h-4 transition-transform"
+                    :class="{ 'rotate-180': historialesExpandidos.includes(`${tipoBono.tipo}-${paciente.paciente_id}`) }"
+                  />
+                </button>
+              </div>
+
+              <!-- Historial de bonos (acordeón expandible) -->
+              <Transition
+                enter-active-class="transition-all duration-200 ease-out"
+                enter-from-class="opacity-0 max-h-0"
+                enter-to-class="opacity-100 max-h-[400px]"
+                leave-active-class="transition-all duration-150 ease-in"
+                leave-from-class="opacity-100 max-h-[400px]"
+                leave-to-class="opacity-0 max-h-0"
+              >
+                <div
+                  v-if="historialesExpandidos.includes(`${tipoBono.tipo}-${paciente.paciente_id}`) && paciente.bonosHistoricos.length > 0"
+                  class="bg-gray-50/50 border-t border-gray-100 overflow-hidden"
+                >
+                  <div class="px-5 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                    Historial de bonos
+                  </div>
+                  <div class="divide-y divide-gray-100">
+                    <div
+                      v-for="bono in paciente.bonosHistoricos"
+                      :key="bono.bono_id"
+                      class="px-5 py-2 pl-16 flex items-center justify-between text-sm hover:bg-gray-100/50 cursor-pointer"
+                      @click="irABonoPaciente({ paciente_id: bono.paciente_id })"
+                    >
+                      <div class="flex items-center gap-3">
+                        <div class="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
+                          <ArchiveBoxIcon class="w-3.5 h-3.5 text-gray-500" />
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-2">
+                            <span class="text-gray-600">{{ bono.sesiones_usadas }}/{{ bono.sesiones_totales }} sesiones</span>
+                            <span
+                              class="inline-flex items-center px-1.5 py-0.5 rounded text-xs"
+                              :class="bono.pagado ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+                            >
+                              {{ bono.pagado ? 'Pagado' : 'Pendiente' }}
+                            </span>
+                          </div>
+                          <p class="text-xs text-gray-400">
+                            Creado: {{ formatearFechaCorta(bono.created_at) }}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-gray-600">{{ bono.monto }}€</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
             </div>
           </div>
 
           <!-- Resumen del tipo -->
-          <div class="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between text-sm">
-            <div class="flex items-center gap-4">
-              <span class="text-gray-500">
-                Precio promedio: <span class="font-medium text-gray-700">{{ formatearPrecio(tipoBono.precioPromedio) }}€</span>
-              </span>
-              <span class="text-gray-300">|</span>
-              <span class="text-gray-500">
-                Sesiones promedio: <span class="font-medium text-gray-700">{{ tipoBono.sesionesPromedio }}</span>
-              </span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-gray-500">Por cobrar:</span>
-              <span class="font-semibold text-amber-600">{{ formatearPrecio(tipoBono.montoPendiente) }}€</span>
-            </div>
+          <div
+            v-if="tipoBono.montoPendiente > 0"
+            class="px-5 py-2 bg-amber-50/50 border-t border-amber-100 flex items-center justify-between text-sm"
+          >
+            <span class="text-amber-700 font-medium">Por cobrar en este tipo:</span>
+            <span class="font-semibold text-amber-700">{{ formatearPrecio(tipoBono.montoPendiente) }}€</span>
           </div>
         </div>
       </div>
@@ -356,18 +823,58 @@
           v-model="filtroEstado"
           class="h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
         >
-          <option value="">Todos</option>
+          <option value="">Estado: Todos</option>
           <option value="activo">Activos</option>
           <option value="pendiente">Pendientes</option>
           <option value="completado">Completados</option>
           <option value="vencido">Vencidos</option>
         </select>
 
-        <button
-          v-if="busquedaBono || filtroEstado"
-          @click="busquedaBono = ''; filtroEstado = ''"
-          class="h-10 px-3 text-sm text-gray-500 hover:text-gray-700"
+        <select
+          v-model="filtroPago"
+          class="h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
         >
+          <option value="">Pago: Todos</option>
+          <option value="pagado">Pagados</option>
+          <option value="pendiente">Pendientes cobro</option>
+        </select>
+
+        <select
+          v-model="ordenBonos"
+          class="h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
+        >
+          <option value="reciente">Más recientes</option>
+          <option value="antiguo">Más antiguos</option>
+          <option value="nombre">Nombre A-Z</option>
+          <option value="monto_desc">Mayor monto</option>
+          <option value="monto_asc">Menor monto</option>
+          <option value="progreso">Por progreso</option>
+        </select>
+
+        <!-- Indicador de filtro especial activo -->
+        <div
+          v-if="filtroEspecial"
+          class="flex items-center gap-2 h-10 px-3 rounded-lg text-sm font-medium"
+          :class="{
+            'bg-amber-100 text-amber-700': filtroEspecial === 'pendientes_cobro',
+            'bg-orange-100 text-orange-700': filtroEspecial === 'proximos_agotar',
+            'bg-red-100 text-red-700': filtroEspecial === 'urgentes'
+          }"
+        >
+          <span>
+            {{ filtroEspecial === 'pendientes_cobro' ? 'Pendientes de cobro' :
+               filtroEspecial === 'proximos_agotar' ? 'Por agotar (≤2 sesiones)' :
+               'Urgentes (agotados sin pagar)' }}
+          </span>
+          <span class="text-xs opacity-75">({{ bonosFiltrados.length }})</span>
+        </div>
+
+        <button
+          v-if="busquedaBono || filtroEstado || filtroEspecial || filtroPago || ordenBonos !== 'reciente'"
+          @click="limpiarFiltros"
+          class="h-10 px-3 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+        >
+          <XMarkIcon class="w-4 h-4" />
           Limpiar
         </button>
       </div>
@@ -584,7 +1091,20 @@ import {
   XMarkIcon,
   MagnifyingGlassIcon,
   ChevronRightIcon,
-  CheckCircleIcon
+  ChevronDownIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+  ClockIcon,
+  CurrencyEuroIcon,
+  ArchiveBoxIcon,
+  UserGroupIcon,
+  EllipsisVerticalIcon,
+  ClipboardDocumentListIcon,
+  CalendarIcon,
+  PauseIcon,
+  PlayIcon,
+  PlusCircleIcon
 } from '@heroicons/vue/24/outline'
 
 definePageMeta({
@@ -598,7 +1118,18 @@ const { user } = useSupabase()
 const { calcularPorcentajeUso } = useBonos()
 
 // Estado de tabs
-const activeTab = ref<'resumen' | 'plantillas' | 'bonos'>('resumen')
+const activeTab = ref<'pacientes' | 'resumen' | 'plantillas' | 'bonos'>('pacientes')
+
+// Estado para vista por paciente
+const pacientesExpandidos = ref<string[]>([])
+
+// Estado para menú contextual de bonos
+const menuBonoAbierto = ref<string | null>(null)
+
+// Estado para modales de acciones
+const mostrarModalPago = ref(false)
+const mostrarModalNuevoBono = ref(false)
+const bonoSeleccionado = ref<any>(null)
 
 // Estado para plantillas
 const plantillas = ref<any[]>([])
@@ -631,26 +1162,55 @@ const todosBonos = ref<any[]>([])
 const cargandoBonos = ref(false)
 const busquedaBono = ref('')
 const filtroEstado = ref('')
+const filtroPago = ref('')
+const ordenBonos = ref('reciente')
+const filtroEspecial = ref<'pendientes_cobro' | 'proximos_agotar' | 'urgentes' | null>(null)
 
 // Computed - Agrupacion por tipo de bono
+interface BonoEnTipo {
+  bono_id: string
+  paciente_id: string
+  nombre: string
+  sesiones_usadas: number
+  sesiones_totales: number
+  estado: string
+  monto: number
+  pagado: boolean
+  created_at: string
+}
+
+interface PacienteEnTipo {
+  paciente_id: string
+  nombre: string
+  bonoActivo: BonoEnTipo | null
+  bonosHistoricos: BonoEnTipo[]
+  totalBonos: number
+  montoTotal: number
+  montoPendiente: number
+}
+
 interface TipoBono {
   tipo: string
-  pacientes: Array<{
-    bono_id: string
-    paciente_id: string
-    nombre: string
-    sesiones_usadas: number
-    sesiones_totales: number
-    estado: string
-    monto: number
-    pagado: boolean
-  }>
+  pacientes: PacienteEnTipo[]
   activos: number
   completados: number
   montoTotal: number
   montoPendiente: number
   precioPromedio: number
   sesionesPromedio: number
+}
+
+// Estado para expandir historiales en vista Por Tipo
+const historialesExpandidos = ref<string[]>([])
+
+const toggleHistorial = (pacienteId: string, tipo: string) => {
+  const key = `${tipo}-${pacienteId}`
+  const index = historialesExpandidos.value.indexOf(key)
+  if (index >= 0) {
+    historialesExpandidos.value.splice(index, 1)
+  } else {
+    historialesExpandidos.value.push(key)
+  }
 }
 
 const tiposBonos = computed<TipoBono[]>(() => {
@@ -673,7 +1233,24 @@ const tiposBonos = computed<TipoBono[]>(() => {
     }
 
     const grupo = agrupados.get(tipo)!
-    grupo.pacientes.push({
+
+    // Buscar si ya existe este paciente en el grupo
+    let pacienteEnGrupo = grupo.pacientes.find(p => p.paciente_id === bono.paciente_id)
+
+    if (!pacienteEnGrupo) {
+      pacienteEnGrupo = {
+        paciente_id: bono.paciente_id,
+        nombre: bono.paciente_nombre || 'Desconocido',
+        bonoActivo: null,
+        bonosHistoricos: [],
+        totalBonos: 0,
+        montoTotal: 0,
+        montoPendiente: 0
+      }
+      grupo.pacientes.push(pacienteEnGrupo)
+    }
+
+    const bonoData: BonoEnTipo = {
       bono_id: bono.id,
       paciente_id: bono.paciente_id,
       nombre: bono.paciente_nombre || 'Desconocido',
@@ -681,46 +1258,185 @@ const tiposBonos = computed<TipoBono[]>(() => {
       sesiones_totales: bono.sesiones_totales,
       estado: bono.estado,
       monto: bono.monto_total || 0,
-      pagado: bono.pagado
-    })
+      pagado: bono.pagado,
+      created_at: bono.created_at
+    }
+
+    // Determinar si es activo o histórico
+    const esActivo = bono.estado === 'activo' || (bono.estado === 'pendiente' && bono.sesiones_restantes > 0)
+    const esHistorico = bono.estado === 'completado' || bono.estado === 'agotado' || bono.sesiones_restantes === 0
+
+    if (esActivo && !pacienteEnGrupo.bonoActivo) {
+      pacienteEnGrupo.bonoActivo = bonoData
+    } else if (esActivo && pacienteEnGrupo.bonoActivo) {
+      // Si ya hay un bono activo, el más reciente es el activo
+      if (new Date(bono.created_at) > new Date(pacienteEnGrupo.bonoActivo.created_at)) {
+        pacienteEnGrupo.bonosHistoricos.push(pacienteEnGrupo.bonoActivo)
+        pacienteEnGrupo.bonoActivo = bonoData
+      } else {
+        pacienteEnGrupo.bonosHistoricos.push(bonoData)
+      }
+    } else {
+      pacienteEnGrupo.bonosHistoricos.push(bonoData)
+    }
+
+    pacienteEnGrupo.totalBonos++
+    pacienteEnGrupo.montoTotal += bono.monto_total || 0
+    if (!bono.pagado) {
+      pacienteEnGrupo.montoPendiente += bono.monto_total || 0
+    }
 
     grupo.montoTotal += bono.monto_total || 0
     if (!bono.pagado) {
       grupo.montoPendiente += bono.monto_total || 0
     }
     if (bono.estado === 'activo') grupo.activos++
-    if (bono.estado === 'completado') grupo.completados++
+    if (bono.estado === 'completado' || bono.sesiones_restantes === 0) grupo.completados++
   }
 
-  // Calcular promedios
+  // Ordenar históricos por fecha (más recientes primero)
   for (const grupo of agrupados.values()) {
+    for (const paciente of grupo.pacientes) {
+      paciente.bonosHistoricos.sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+    }
+    // Calcular promedios
     if (grupo.pacientes.length > 0) {
-      grupo.precioPromedio = grupo.montoTotal / grupo.pacientes.length
-      const totalSesiones = grupo.pacientes.reduce((sum, p) => sum + p.sesiones_totales, 0)
-      grupo.sesionesPromedio = Math.round(totalSesiones / grupo.pacientes.length)
+      const totalBonos = grupo.pacientes.reduce((sum, p) => sum + p.totalBonos, 0)
+      grupo.precioPromedio = grupo.montoTotal / totalBonos
+      const totalSesiones = grupo.pacientes.reduce((sum, p) => {
+        const sesActivo = p.bonoActivo?.sesiones_totales || 0
+        const sesHistoricos = p.bonosHistoricos.reduce((s, b) => s + b.sesiones_totales, 0)
+        return sum + sesActivo + sesHistoricos
+      }, 0)
+      grupo.sesionesPromedio = Math.round(totalSesiones / totalBonos)
     }
   }
 
-  // Ordenar por cantidad de pacientes (descendente)
+  // Ordenar por cantidad de pacientes únicos (descendente)
   return Array.from(agrupados.values()).sort((a, b) => b.pacientes.length - a.pacientes.length)
 })
 
-// Computed
+// Computed - Agrupación por paciente (NUEVO)
+interface PacienteConBonos {
+  id: string
+  nombre: string
+  bonos: any[]
+  sesionesUsadas: number
+  sesionesTotales: number
+  montoTotal: number
+  montoPendiente: number
+  requiereAccion: boolean
+  prioridad: 'urgente' | 'atencion' | 'normal'
+}
+
+const pacientesConBonos = computed<PacienteConBonos[]>(() => {
+  const agrupados = new Map<string, PacienteConBonos>()
+
+  for (const bono of todosBonos.value) {
+    const pacienteId = bono.paciente_id
+    if (!pacienteId) continue
+
+    if (!agrupados.has(pacienteId)) {
+      agrupados.set(pacienteId, {
+        id: pacienteId,
+        nombre: bono.paciente_nombre || 'Desconocido',
+        bonos: [],
+        sesionesUsadas: 0,
+        sesionesTotales: 0,
+        montoTotal: 0,
+        montoPendiente: 0,
+        requiereAccion: false,
+        prioridad: 'normal'
+      })
+    }
+
+    const paciente = agrupados.get(pacienteId)!
+    paciente.bonos.push(bono)
+    paciente.sesionesUsadas += bono.sesiones_totales - bono.sesiones_restantes
+    paciente.sesionesTotales += bono.sesiones_totales
+    paciente.montoTotal += bono.monto_total || 0
+    if (!bono.pagado) {
+      paciente.montoPendiente += bono.monto_total || 0
+    }
+
+    // Determinar prioridad
+    const sesionesAgotadas = bono.sesiones_restantes === 0
+    const noPagado = !bono.pagado
+
+    if (sesionesAgotadas && noPagado) {
+      paciente.requiereAccion = true
+      paciente.prioridad = 'urgente'
+    } else if ((bono.sesiones_restantes <= 2 && bono.estado === 'activo') || noPagado) {
+      paciente.requiereAccion = true
+      if (paciente.prioridad !== 'urgente') {
+        paciente.prioridad = 'atencion'
+      }
+    }
+  }
+
+  // Ordenar: urgentes primero, luego por monto pendiente
+  return Array.from(agrupados.values()).sort((a, b) => {
+    const prioridadOrden = { urgente: 0, atencion: 1, normal: 2 }
+    const ordenA = prioridadOrden[a.prioridad]
+    const ordenB = prioridadOrden[b.prioridad]
+    if (ordenA !== ordenB) return ordenA - ordenB
+    return b.montoPendiente - a.montoPendiente
+  })
+})
+
+// Computed - Estadísticas mejoradas
 const bonosActivos = computed(() => todosBonos.value.filter(b => b.estado === 'activo').length)
 
 const estadisticasBonos = computed(() => {
   const activos = todosBonos.value.filter(b => b.estado === 'activo').length
   const pendientes = todosBonos.value.filter(b => b.estado === 'pendiente').length
-  const completados = todosBonos.value.filter(b => b.estado === 'completado').length
-  const montoPendiente = todosBonos.value
-    .filter(b => !b.pagado)
-    .reduce((sum, b) => sum + (b.monto_total || 0), 0)
+  const completados = todosBonos.value.filter(b =>
+    b.estado === 'completado' || b.estado === 'agotado' || b.sesiones_restantes === 0
+  ).length
 
-  return { activos, pendientes, completados, montoPendiente }
+  const bonosSinPagar = todosBonos.value.filter(b => !b.pagado)
+  const montoPendiente = bonosSinPagar.reduce((sum, b) => sum + (b.monto_total || 0), 0)
+
+  // Próximos a agotar: activos con ≤2 sesiones restantes
+  const proximosAgotar = todosBonos.value.filter(b =>
+    b.estado === 'activo' && b.sesiones_restantes <= 2 && b.sesiones_restantes > 0
+  ).length
+
+  // Urgentes: sesiones agotadas pero no pagados
+  const urgentes = todosBonos.value.filter(b =>
+    b.sesiones_restantes === 0 && !b.pagado
+  ).length
+
+  return {
+    activos,
+    pendientes,
+    completados,
+    montoPendiente,
+    bonosSinPagar: bonosSinPagar.length,
+    proximosAgotar,
+    urgentes
+  }
 })
 
 const bonosFiltrados = computed(() => {
-  let resultado = todosBonos.value
+  let resultado = [...todosBonos.value]
+
+  // Filtro especial desde tarjetas de estadísticas
+  if (filtroEspecial.value) {
+    if (filtroEspecial.value === 'pendientes_cobro') {
+      resultado = resultado.filter(b => !b.pagado)
+    } else if (filtroEspecial.value === 'proximos_agotar') {
+      resultado = resultado.filter(b =>
+        b.estado === 'activo' && b.sesiones_restantes <= 2 && b.sesiones_restantes > 0
+      )
+    } else if (filtroEspecial.value === 'urgentes') {
+      resultado = resultado.filter(b =>
+        b.sesiones_restantes === 0 && !b.pagado
+      )
+    }
+  }
 
   if (busquedaBono.value) {
     const busqueda = busquedaBono.value.toLowerCase()
@@ -731,6 +1447,35 @@ const bonosFiltrados = computed(() => {
 
   if (filtroEstado.value) {
     resultado = resultado.filter(b => b.estado === filtroEstado.value)
+  }
+
+  // Filtro por pago
+  if (filtroPago.value) {
+    if (filtroPago.value === 'pagado') {
+      resultado = resultado.filter(b => b.pagado)
+    } else if (filtroPago.value === 'pendiente') {
+      resultado = resultado.filter(b => !b.pagado)
+    }
+  }
+
+  // Ordenamiento
+  if (ordenBonos.value === 'reciente') {
+    resultado.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  } else if (ordenBonos.value === 'antiguo') {
+    resultado.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+  } else if (ordenBonos.value === 'nombre') {
+    resultado.sort((a, b) => (a.paciente_nombre || '').localeCompare(b.paciente_nombre || ''))
+  } else if (ordenBonos.value === 'monto_desc') {
+    resultado.sort((a, b) => (b.monto_total || 0) - (a.monto_total || 0))
+  } else if (ordenBonos.value === 'monto_asc') {
+    resultado.sort((a, b) => (a.monto_total || 0) - (b.monto_total || 0))
+  } else if (ordenBonos.value === 'progreso') {
+    // Ordenar por % de sesiones usadas (más usados primero)
+    resultado.sort((a, b) => {
+      const progresoA = a.sesiones_totales > 0 ? (a.sesiones_totales - a.sesiones_restantes) / a.sesiones_totales : 0
+      const progresoB = b.sesiones_totales > 0 ? (b.sesiones_totales - b.sesiones_restantes) / b.sesiones_totales : 0
+      return progresoB - progresoA
+    })
   }
 
   return resultado
@@ -887,6 +1632,53 @@ const getProgresoColor = (bono: any) => {
   return 'bg-gray-400'
 }
 
+// Color semántico para barra de progreso basado en sesiones restantes
+const getProgresoColorSemantico = (paciente: any) => {
+  const restantes = paciente.sesiones_totales - paciente.sesiones_usadas
+  const porcentajeRestante = (restantes / paciente.sesiones_totales) * 100
+
+  // Rojo: agotado o menos del 25%
+  if (restantes === 0 || porcentajeRestante < 25) return 'bg-red-500'
+  // Amarillo: entre 25% y 50%
+  if (porcentajeRestante <= 50) return 'bg-amber-500'
+  // Verde: más del 50%
+  return 'bg-green-500'
+}
+
+// Indicador de urgencia para vista Por Tipo
+const getUrgenciaPacienteTipo = (paciente: any) => {
+  const restantes = paciente.sesiones_totales - paciente.sesiones_usadas
+
+  // Urgente: agotado y no pagado
+  if (restantes === 0 && !paciente.pagado) {
+    return {
+      texto: 'Cobrar',
+      clase: 'bg-red-100 text-red-700',
+      icono: ExclamationCircleIcon
+    }
+  }
+
+  // Por agotar: pagado pero pocas sesiones
+  if (restantes <= 2 && restantes > 0 && paciente.pagado) {
+    return {
+      texto: 'Casi agotado',
+      clase: 'bg-orange-100 text-orange-700',
+      icono: ExclamationTriangleIcon
+    }
+  }
+
+  // Atención: no pagado con sesiones activas
+  if (!paciente.pagado && restantes > 0) {
+    return {
+      texto: 'Sin pagar',
+      clase: 'bg-amber-100 text-amber-700',
+      icono: ClockIcon
+    }
+  }
+
+  return null
+}
+
 const getTipoBonoNombre = (tipo: string) => {
   const nombres: Record<string, string> = {
     semanal: 'Bono Semanal',
@@ -911,6 +1703,253 @@ const getTipoBonoColor = (tipo: string) => {
     otro: 'bg-gray-100 text-gray-600'
   }
   return colores[tipo] || 'bg-gray-100 text-gray-600'
+}
+
+// === FUNCIONES NUEVAS PARA VISTA POR PACIENTE ===
+
+// Toggle paciente expandido
+const togglePacienteExpandido = (pacienteId: string) => {
+  const index = pacientesExpandidos.value.indexOf(pacienteId)
+  if (index >= 0) {
+    pacientesExpandidos.value.splice(index, 1)
+  } else {
+    pacientesExpandidos.value.push(pacienteId)
+  }
+}
+
+// Prioridad de paciente
+const getPrioridadPacienteClase = (paciente: any) => {
+  if (paciente.prioridad === 'urgente') return 'bg-red-100 text-red-700 border border-red-200'
+  if (paciente.prioridad === 'atencion') return 'bg-amber-100 text-amber-700 border border-amber-200'
+  return 'bg-gray-100 text-gray-600'
+}
+
+const getPrioridadPacienteTexto = (paciente: any) => {
+  if (paciente.prioridad === 'urgente') return 'Cobro urgente'
+  if (paciente.prioridad === 'atencion') return 'Requiere atención'
+  return ''
+}
+
+// Estado unificado de bonos (simplifica agotado/completado)
+const getEstadoUnificadoTexto = (bono: any) => {
+  // Priorizar estado de pago para urgencia
+  if (bono.sesiones_restantes === 0 && !bono.pagado) return 'Cobrar'
+  if (bono.sesiones_restantes === 0) return 'Finalizado'
+  if (bono.sesiones_restantes <= 2 && bono.estado === 'activo') return 'Por agotar'
+  if (bono.estado === 'activo') return 'Activo'
+  if (bono.estado === 'pendiente') return 'Sin iniciar'
+  return 'Finalizado'
+}
+
+const getEstadoUnificadoClase = (bono: any) => {
+  // Rojo: urgente (agotado + no pagado)
+  if (bono.sesiones_restantes === 0 && !bono.pagado) return 'bg-red-100 text-red-700'
+  // Verde: finalizado y pagado
+  if (bono.sesiones_restantes === 0 && bono.pagado) return 'bg-green-100 text-green-700'
+  // Naranja: por agotar
+  if (bono.sesiones_restantes <= 2 && bono.estado === 'activo') return 'bg-orange-100 text-orange-700'
+  // Azul: activo normal
+  if (bono.estado === 'activo') return 'bg-blue-100 text-blue-700'
+  // Amarillo: pendiente de inicio
+  if (bono.estado === 'pendiente') return 'bg-amber-100 text-amber-700'
+  // Gris: otros
+  return 'bg-gray-100 text-gray-600'
+}
+
+const getEstadoUnificadoIcono = (bono: any) => {
+  if (bono.sesiones_restantes === 0 && !bono.pagado) return ExclamationCircleIcon
+  if (bono.sesiones_restantes === 0) return CheckCircleIcon
+  if (bono.sesiones_restantes <= 2 && bono.estado === 'activo') return ExclamationTriangleIcon
+  if (bono.estado === 'activo') return CheckCircleIcon
+  if (bono.estado === 'pendiente') return ClockIcon
+  return CheckIcon
+}
+
+const getProgresoColorUnificado = (bono: any) => {
+  if (bono.sesiones_restantes === 0 && !bono.pagado) return 'bg-red-500'
+  if (bono.sesiones_restantes === 0) return 'bg-green-500'
+  if (bono.sesiones_restantes <= 2) return 'bg-orange-500'
+  return 'bg-purple-500'
+}
+
+// Formatear fecha corta
+const formatearFechaCorta = (fecha: string) => {
+  if (!fecha) return ''
+  return new Date(fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+}
+
+// Filtros desde cards de estadísticas
+const filtrarPendientesCobro = () => {
+  activeTab.value = 'bonos'
+  filtroEstado.value = ''
+  busquedaBono.value = ''
+  filtroEspecial.value = 'pendientes_cobro'
+}
+
+const filtrarProximosAgotar = () => {
+  activeTab.value = 'bonos'
+  filtroEstado.value = ''
+  busquedaBono.value = ''
+  filtroEspecial.value = 'proximos_agotar'
+}
+
+const filtrarUrgentes = () => {
+  activeTab.value = 'bonos'
+  filtroEstado.value = ''
+  busquedaBono.value = ''
+  filtroEspecial.value = 'urgentes'
+}
+
+// Limpiar filtro especial cuando se cambia de tab o se limpian filtros
+const limpiarFiltros = () => {
+  busquedaBono.value = ''
+  filtroEstado.value = ''
+  filtroPago.value = ''
+  ordenBonos.value = 'reciente'
+  filtroEspecial.value = null
+}
+
+// === FUNCIONES DEL MENÚ CONTEXTUAL DE BONOS ===
+
+// Toggle menú contextual
+const toggleMenuBono = (bonoId: string) => {
+  if (menuBonoAbierto.value === bonoId) {
+    menuBonoAbierto.value = null
+  } else {
+    menuBonoAbierto.value = bonoId
+  }
+}
+
+// Cerrar menú al hacer clic fuera
+const cerrarMenu = () => {
+  menuBonoAbierto.value = null
+}
+
+// Registrar pago
+const registrarPago = async (bono: any) => {
+  menuBonoAbierto.value = null
+
+  if (confirm(`¿Registrar el pago de ${bono.monto_total}€ para este bono?`)) {
+    try {
+      const { error } = await supabase
+        .from('bonos')
+        .update({ pagado: true })
+        .eq('id', bono.id)
+
+      if (error) throw error
+
+      // Actualizar localmente
+      const index = todosBonos.value.findIndex(b => b.id === bono.id)
+      if (index >= 0) {
+        todosBonos.value[index].pagado = true
+      }
+    } catch (error) {
+      console.error('Error al registrar pago:', error)
+      alert('Error al registrar el pago')
+    }
+  }
+}
+
+// Ver historial del bono
+const verHistorialBono = (bono: any) => {
+  menuBonoAbierto.value = null
+  router.push(`/terapeuta/pacientes/${bono.paciente_id}/bonos?bono=${bono.id}`)
+}
+
+// Añadir sesión al bono
+const anadirSesion = (bono: any) => {
+  menuBonoAbierto.value = null
+  // Navegar a la agenda con el paciente preseleccionado
+  router.push(`/terapeuta/agenda?paciente=${bono.paciente_id}&bono=${bono.id}`)
+}
+
+// Editar bono
+const editarBono = (bono: any) => {
+  menuBonoAbierto.value = null
+  router.push(`/terapeuta/pacientes/${bono.paciente_id}/bonos?editar=${bono.id}`)
+}
+
+// Pausar bono
+const pausarBono = async (bono: any) => {
+  menuBonoAbierto.value = null
+
+  if (confirm('¿Pausar este bono? El paciente no podrá usar las sesiones restantes mientras esté pausado.')) {
+    try {
+      const { error } = await supabase
+        .from('bonos')
+        .update({ estado: 'pausado' })
+        .eq('id', bono.id)
+
+      if (error) throw error
+
+      // Actualizar localmente
+      const index = todosBonos.value.findIndex(b => b.id === bono.id)
+      if (index >= 0) {
+        todosBonos.value[index].estado = 'pausado'
+      }
+    } catch (error) {
+      console.error('Error al pausar bono:', error)
+      alert('Error al pausar el bono')
+    }
+  }
+}
+
+// Reactivar bono
+const reactivarBono = async (bono: any) => {
+  menuBonoAbierto.value = null
+
+  try {
+    const { error } = await supabase
+      .from('bonos')
+      .update({ estado: 'activo' })
+      .eq('id', bono.id)
+
+    if (error) throw error
+
+    // Actualizar localmente
+    const index = todosBonos.value.findIndex(b => b.id === bono.id)
+    if (index >= 0) {
+      todosBonos.value[index].estado = 'activo'
+    }
+  } catch (error) {
+    console.error('Error al reactivar bono:', error)
+    alert('Error al reactivar el bono')
+  }
+}
+
+// Crear nuevo bono (para el mismo paciente)
+const crearNuevoBono = (bono: any) => {
+  menuBonoAbierto.value = null
+  router.push(`/terapeuta/pacientes/${bono.paciente_id}/bonos?nuevo=1&tipo=${bono.tipo}`)
+}
+
+// Confirmar eliminación de bono
+const confirmarEliminarBono = async (bono: any) => {
+  menuBonoAbierto.value = null
+
+  const sesionesUsadas = bono.sesiones_totales - bono.sesiones_restantes
+  if (sesionesUsadas > 0) {
+    if (!confirm(`Este bono tiene ${sesionesUsadas} sesiones utilizadas. ¿Estás seguro de eliminarlo? Esta acción no se puede deshacer.`)) {
+      return
+    }
+  } else if (!confirm('¿Eliminar este bono? Esta acción no se puede deshacer.')) {
+    return
+  }
+
+  try {
+    const { error } = await supabase
+      .from('bonos')
+      .delete()
+      .eq('id', bono.id)
+
+    if (error) throw error
+
+    // Eliminar localmente
+    todosBonos.value = todosBonos.value.filter(b => b.id !== bono.id)
+  } catch (error) {
+    console.error('Error al eliminar bono:', error)
+    alert('Error al eliminar el bono')
+  }
 }
 
 // Cargar datos

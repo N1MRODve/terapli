@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@babel/parser": "7.28.4",
+    "@kurkle/color": "0.3.4",
     "@supabase/auth-js": "2.75.1",
     "@supabase/functions-js": "2.75.1",
     "@supabase/node-fetch": "2.6.15",
@@ -20,6 +21,7 @@
     "@vue/runtime-core": "3.5.22",
     "@vue/runtime-dom": "3.5.22",
     "@vue/shared": "3.5.22",
+    "chart.js": "4.5.1",
     "entities": "4.5.0",
     "estree-walker": "2.0.2",
     "papaparse": "5.5.3",

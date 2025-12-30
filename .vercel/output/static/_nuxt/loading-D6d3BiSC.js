@@ -1,1 +1,0 @@
-import{e as o,c as t,o as s,O as a}from"#entry";import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";const n={class:"min-h-screen bg-gradient-to-br from-[#F2F2F2] via-[#FAFAFA] to-[#F8F9FA]"},c=o({__name:"loading",setup(_){return(e,d)=>(s(),t("div",n,[a(e.$slots,"default",{},void 0,!0)]))}}),m=r(c,[["__scopeId","data-v-e1d92311"]]);export{m as default};

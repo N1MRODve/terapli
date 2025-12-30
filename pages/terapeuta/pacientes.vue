@@ -13,6 +13,19 @@
 
         <!-- Botones de acción compactos -->
         <div class="flex items-center gap-2">
+          <!-- Toggle Resumen/Gráficos -->
+          <button
+            @click="mostrarResumen = !mostrarResumen"
+            class="min-h-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 border"
+            :class="mostrarResumen
+              ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
+              : 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50'"
+            title="Ver resumen y estadísticas"
+          >
+            <ChartBarIcon class="w-4 h-4" />
+            <span class="hidden sm:inline">Resumen</span>
+          </button>
+
           <button
             @click="abrirModalImportar"
             class="min-h-[40px] px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium"
@@ -41,6 +54,159 @@
           </button>
         </div>
       </div>
+
+      <!-- Panel de Resumen y Estadísticas (colapsable) -->
+      <Transition
+        enter-active-class="transition-all duration-300 ease-out"
+        enter-from-class="opacity-0 max-h-0"
+        enter-to-class="opacity-100 max-h-[800px]"
+        leave-active-class="transition-all duration-200 ease-in"
+        leave-from-class="opacity-100 max-h-[800px]"
+        leave-to-class="opacity-0 max-h-0"
+      >
+        <div v-if="mostrarResumen" class="bg-white border border-gray-100 rounded-xl p-4 mb-4 overflow-hidden">
+          <!-- Header del panel -->
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <ChartBarIcon class="w-5 h-5 text-indigo-500" />
+              Estadísticas de Pacientes
+            </h3>
+            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+              <button
+                v-for="periodo in periodosResumen"
+                :key="periodo.valor"
+                @click="periodoResumen = periodo.valor"
+                class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
+                :class="periodoResumen === periodo.valor
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'"
+              >
+                {{ periodo.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Grid de métricas -->
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-6">
+            <!-- Total Pacientes -->
+            <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-4 border border-purple-100">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <UserGroupIcon class="w-4 h-4 text-purple-600" />
+                </div>
+                <span class="text-xs font-medium text-purple-600 uppercase">Total</span>
+              </div>
+              <p class="text-2xl font-bold text-purple-900">{{ metricasPacientes.total }}</p>
+              <p class="text-xs text-purple-600 mt-1">{{ metricasPacientes.activos }} activos</p>
+            </div>
+
+            <!-- Nuevos este período -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <PlusIcon class="w-4 h-4 text-green-600" />
+                </div>
+                <span class="text-xs font-medium text-green-600 uppercase">Nuevos</span>
+              </div>
+              <p class="text-2xl font-bold text-green-900">{{ metricasPacientes.nuevos }}</p>
+              <p class="text-xs text-green-600 mt-1">
+                <span :class="metricasPacientes.tendenciaNuevos >= 0 ? 'text-green-600' : 'text-red-600'">
+                  {{ metricasPacientes.tendenciaNuevos >= 0 ? '+' : '' }}{{ metricasPacientes.tendenciaNuevos }}%
+                </span>
+                vs período ant.
+              </p>
+            </div>
+
+            <!-- Churn (bajas) -->
+            <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-4 border border-red-100">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                  <ArrowDownTrayIcon class="w-4 h-4 text-red-600 rotate-90" />
+                </div>
+                <span class="text-xs font-medium text-red-600 uppercase">Churn</span>
+              </div>
+              <p class="text-2xl font-bold text-red-900">{{ metricasPacientes.churn }}%</p>
+              <p class="text-xs text-red-600 mt-1">{{ metricasPacientes.finalizados }} finalizados</p>
+            </div>
+
+            <!-- Retención -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </div>
+                <span class="text-xs font-medium text-blue-600 uppercase">Retención</span>
+              </div>
+              <p class="text-2xl font-bold text-blue-900">{{ metricasPacientes.retencion }}%</p>
+              <p class="text-xs text-blue-600 mt-1">Pacientes que continúan</p>
+            </div>
+
+            <!-- Promedio Sesiones -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-100">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                  <ClipboardDocumentListIcon class="w-4 h-4 text-amber-600" />
+                </div>
+                <span class="text-xs font-medium text-amber-600 uppercase">Prom. Sesiones</span>
+              </div>
+              <p class="text-2xl font-bold text-amber-900">{{ metricasPacientes.promedioSesiones }}</p>
+              <p class="text-xs text-amber-600 mt-1">Por paciente</p>
+            </div>
+          </div>
+
+          <!-- Gráficos -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Gráfico de evolución de pacientes -->
+            <div class="bg-gray-50 rounded-xl p-4">
+              <h4 class="text-sm font-semibold text-gray-700 mb-3">Evolución de Pacientes</h4>
+              <div class="h-48">
+                <Line
+                  v-if="chartDataEvolucion"
+                  :data="chartDataEvolucion"
+                  :options="chartOptionsEvolucion"
+                />
+              </div>
+            </div>
+
+            <!-- Gráfico de distribución por estado -->
+            <div class="bg-gray-50 rounded-xl p-4">
+              <h4 class="text-sm font-semibold text-gray-700 mb-3">Distribución por Estado</h4>
+              <div class="h-48">
+                <Doughnut
+                  v-if="chartDataDistribucion"
+                  :data="chartDataDistribucion"
+                  :options="chartOptionsDistribucion"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Insights de Churn -->
+          <div class="mt-6 bg-gradient-to-r from-rose-50 to-red-50 rounded-xl p-4 border border-red-100">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <ExclamationTriangleIcon class="w-5 h-5 text-red-600" />
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-semibold text-gray-800 mb-1">Análisis de Churn</h4>
+                <p class="text-xs text-gray-600 mb-2">
+                  {{ metricasPacientes.pacientesEnRiesgo }} pacientes no han tenido sesión en los últimos 30 días y podrían estar en riesgo de abandono.
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-2 py-1 bg-white rounded text-xs font-medium text-red-700">
+                    {{ metricasPacientes.sinCitaProxima }} sin cita programada
+                  </span>
+                  <span class="px-2 py-1 bg-white rounded text-xs font-medium text-amber-700">
+                    {{ metricasPacientes.bonosPorVencer }} con bono por vencer
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
 
       <!-- Buscador y filtros -->
       <div class="space-y-4">
@@ -171,6 +337,40 @@
                 Requiere atención
               </button>
 
+              <!-- Nuevos filtros -->
+              <button
+                @click="toggleFiltro('citasEstaSemana')"
+                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+                :class="filtrosActivos.citasEstaSemana
+                  ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+              >
+                <CalendarDaysIcon class="w-4 h-4" />
+                Citas esta semana
+              </button>
+
+              <button
+                @click="toggleFiltro('bonosPorVencer')"
+                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+                :class="filtrosActivos.bonosPorVencer
+                  ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+              >
+                <TicketIcon class="w-4 h-4" />
+                Bonos por vencer
+              </button>
+
+              <button
+                @click="toggleFiltro('pagoPendiente')"
+                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+                :class="filtrosActivos.pagoPendiente
+                  ? 'bg-green-100 text-green-700 border border-green-200'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+              >
+                <CurrencyDollarIcon class="w-4 h-4" />
+                Pago pendiente
+              </button>
+
               <!-- Limpiar filtros -->
               <button
                 v-if="hayFiltrosActivos"
@@ -184,6 +384,37 @@
         </Transition>
       </div>
     </header>
+
+    <!-- Barra de vista y resultados -->
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-sm text-gray-500">
+        <span v-if="totalFiltrados === totalPacientes">{{ totalPacientes }} pacientes</span>
+        <span v-else>{{ totalFiltrados }} de {{ totalPacientes }} pacientes</span>
+        <span v-if="totalPaginas > 1" class="ml-2 text-gray-400">
+          (página {{ paginaActual }} de {{ totalPaginas }})
+        </span>
+      </p>
+
+      <!-- Toggle vista -->
+      <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+        <button
+          @click="vistaActual = 'cards'"
+          class="p-1.5 rounded transition-colors"
+          :class="vistaActual === 'cards' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500 hover:text-gray-700'"
+          title="Vista de tarjetas"
+        >
+          <Squares2X2Icon class="w-4 h-4" />
+        </button>
+        <button
+          @click="vistaActual = 'tabla'"
+          class="p-1.5 rounded transition-colors"
+          :class="vistaActual === 'tabla' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500 hover:text-gray-700'"
+          title="Vista de tabla"
+        >
+          <TableCellsIcon class="w-4 h-4" />
+        </button>
+      </div>
+    </div>
 
     <!-- Lista de pacientes -->
     <section>
@@ -229,53 +460,115 @@
         </button>
       </div>
 
-      <!-- Grid de pacientes -->
-      <div
-        v-else
-        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
-        role="list"
-      >
+      <!-- Vista de tarjetas -->
+      <template v-else-if="vistaActual === 'cards'">
         <div
-          v-for="paciente in pacientesFiltrados"
-          :key="paciente.id"
-          class="relative group"
-          @click="irAFichaPaciente(paciente.id)"
-          @keydown.enter="irAFichaPaciente(paciente.id)"
-          role="listitem"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
+          role="list"
         >
-          <PacienteCard
-            :paciente="paciente"
-            @editar="abrirModalEditar"
-            @eliminar="abrirModalEliminar"
-            @ver-citas="verCitasPaciente"
-            @gestionar-bonos="gestionarBonosPaciente"
-            @editar-cita="abrirModalEditarCita"
-          />
-
-          <!-- Botón Asignar Cita -->
-          <button
-            v-if="paciente.activo && !paciente.en_pausa"
-            @click.stop="abrirModalAsignarCita(paciente)"
-            class="absolute bottom-4 right-4 h-9 px-3 bg-purple-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-purple-700 transition-all flex items-center gap-1.5 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto z-10"
-            :aria-label="`Asignar cita a ${paciente.nombre}`"
+          <div
+            v-for="paciente in pacientesFiltrados"
+            :key="paciente.id"
+            class="relative group"
+            role="listitem"
           >
-            <CalendarDaysIcon class="w-4 h-4" />
-            <span class="hidden sm:inline">Cita</span>
+            <PacienteCard
+              :paciente="paciente"
+              @ver-ficha="irAFichaPaciente"
+              @editar="abrirModalEditar"
+              @eliminar="abrirModalEliminar"
+              @ver-citas="verCitasPaciente"
+              @gestionar-bonos="gestionarBonosPaciente"
+              @editar-cita="abrirModalEditarCita"
+            />
+
+            <!-- Botón Asignar Cita (min 44x44 para tablets) -->
+            <button
+              v-if="paciente.activo && !paciente.en_pausa"
+              @click.stop="abrirModalAsignarCita(paciente)"
+              class="absolute bottom-4 right-4 min-h-[44px] min-w-[44px] h-11 px-4 bg-purple-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-purple-700 active:bg-purple-800 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto z-10"
+              :aria-label="`Asignar cita a ${paciente.nombre}`"
+            >
+              <CalendarDaysIcon class="w-5 h-5" />
+              <span class="hidden sm:inline">Cita</span>
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- Vista de tabla -->
+      <template v-else-if="vistaActual === 'tabla'">
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <PacienteTabla
+            :pacientes="pacientesFiltrados"
+            @ver-ficha="irAFichaPaciente"
+            @editar="abrirModalEditar"
+            @gestionar-bonos="gestionarBonosPaciente"
+            @ver-preview="abrirPreview"
+          />
+        </div>
+      </template>
+
+      <!-- Paginación -->
+      <nav
+        v-if="totalPaginas > 1"
+        class="mt-6 flex items-center justify-center gap-2"
+        role="navigation"
+        aria-label="Paginación"
+      >
+        <button
+          @click="irAPagina(paginaActual - 1)"
+          :disabled="paginaActual === 1"
+          class="min-h-[44px] min-w-[44px] p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          aria-label="Página anterior"
+        >
+          <ChevronLeftIcon class="w-5 h-5" />
+        </button>
+
+        <div class="flex items-center gap-1">
+          <!-- Primera página -->
+          <button
+            v-if="paginaActual > 3"
+            @click="irAPagina(1)"
+            class="min-h-[44px] min-w-[44px] px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            1
+          </button>
+          <span v-if="paginaActual > 4" class="px-2 text-gray-400">...</span>
+
+          <!-- Páginas cercanas -->
+          <button
+            v-for="pagina in paginasVisibles"
+            :key="pagina"
+            @click="irAPagina(pagina)"
+            class="min-h-[44px] min-w-[44px] px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+            :class="pagina === paginaActual
+              ? 'bg-purple-600 text-white'
+              : 'text-gray-600 hover:bg-gray-50'"
+          >
+            {{ pagina }}
+          </button>
+
+          <!-- Última página -->
+          <span v-if="paginaActual < totalPaginas - 3" class="px-2 text-gray-400">...</span>
+          <button
+            v-if="paginaActual < totalPaginas - 2"
+            @click="irAPagina(totalPaginas)"
+            class="min-h-[44px] min-w-[44px] px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {{ totalPaginas }}
           </button>
         </div>
-      </div>
 
-      <!-- Footer con contador -->
-      <footer
-        v-if="pacientesFiltrados.length > 0"
-        class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500"
-      >
-        <span>
-          {{ pacientesFiltrados.length === totalPacientes
-            ? `${totalPacientes} pacientes`
-            : `${pacientesFiltrados.length} de ${totalPacientes} pacientes` }}
-        </span>
-      </footer>
+        <button
+          @click="irAPagina(paginaActual + 1)"
+          :disabled="paginaActual === totalPaginas"
+          class="min-h-[44px] min-w-[44px] p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          aria-label="Página siguiente"
+        >
+          <ChevronRightIcon class="w-5 h-5" />
+        </button>
+      </nav>
     </section>
 
     <!-- Modales -->
@@ -329,6 +622,16 @@
       :has-filters="hayFiltrosActivos || estadoSeleccionado !== 'todos' || busqueda !== ''"
       :current-filters="filtrosActualesParaExport"
     />
+
+    <!-- Modal de preview rápido -->
+    <ModalPreviewPaciente
+      :mostrar="mostrarPreview"
+      :paciente="pacientePreview"
+      @cerrar="cerrarPreview"
+      @ver-ficha="(p) => { cerrarPreview(); irAFichaPaciente(p) }"
+      @editar="(p) => { cerrarPreview(); abrirModalEditar(p) }"
+      @gestionar-bonos="(p) => { cerrarPreview(); gestionarBonosPaciente(p) }"
+    />
   </div>
 </template>
 
@@ -344,8 +647,40 @@ import {
   PlusIcon,
   XMarkIcon,
   FunnelIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  Squares2X2Icon,
+  TableCellsIcon,
+  TicketIcon,
+  CurrencyDollarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChartBarIcon
 } from '@heroicons/vue/24/outline'
+import { Line, Doughnut } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 definePageMeta({
   layout: 'terapeuta'
@@ -380,8 +715,31 @@ const mostrarFiltrosAvanzados = ref(false)
 const filtrosActivos = ref({
   sinProximaCita: false,
   sinSesionRegistrada: false,
-  requiereAtencion: false
+  requiereAtencion: false,
+  citasEstaSemana: false,
+  bonosPorVencer: false,
+  pagoPendiente: false
 })
+
+// Vista (cards o tabla)
+const vistaActual = ref('cards') // 'cards' | 'tabla'
+
+// Panel de Resumen
+const mostrarResumen = ref(false)
+const periodoResumen = ref<'semana' | 'mes' | 'trimestre'>('mes')
+const periodosResumen = [
+  { valor: 'semana', label: 'Semana' },
+  { valor: 'mes', label: 'Mes' },
+  { valor: 'trimestre', label: 'Trimestre' }
+]
+
+// Paginación
+const paginaActual = ref(1)
+const elementosPorPagina = ref(24)
+
+// Preview modal
+const mostrarPreview = ref(false)
+const pacientePreview = ref(null)
 
 // Debounce para búsqueda
 let debounceTimeout = null
@@ -437,7 +795,10 @@ const hayFiltrosActivos = computed(() => {
   return areaSeleccionada.value !== '' ||
     filtrosActivos.value.sinProximaCita ||
     filtrosActivos.value.sinSesionRegistrada ||
-    filtrosActivos.value.requiereAtencion
+    filtrosActivos.value.requiereAtencion ||
+    filtrosActivos.value.citasEstaSemana ||
+    filtrosActivos.value.bonosPorVencer ||
+    filtrosActivos.value.pagoPendiente
 })
 
 const contadorFiltrosActivos = computed(() => {
@@ -446,6 +807,9 @@ const contadorFiltrosActivos = computed(() => {
   if (filtrosActivos.value.sinProximaCita) count++
   if (filtrosActivos.value.sinSesionRegistrada) count++
   if (filtrosActivos.value.requiereAtencion) count++
+  if (filtrosActivos.value.citasEstaSemana) count++
+  if (filtrosActivos.value.bonosPorVencer) count++
+  if (filtrosActivos.value.pagoPendiente) count++
   return count
 })
 
@@ -463,7 +827,10 @@ const limpiarFiltrosAvanzados = () => {
   filtrosActivos.value = {
     sinProximaCita: false,
     sinSesionRegistrada: false,
-    requiereAtencion: false
+    requiereAtencion: false,
+    citasEstaSemana: false,
+    bonosPorVencer: false,
+    pagoPendiente: false
   }
 }
 
@@ -618,8 +985,37 @@ const cargarPacientes = async () => {
   }
 }
 
-// Filtrar pacientes
-const pacientesFiltrados = computed(() => {
+// Helper: verificar si fecha está en esta semana
+const estaEnEstaSemana = (fechaStr) => {
+  if (!fechaStr) return false
+  const fecha = new Date(fechaStr)
+  const ahora = new Date()
+  const inicioSemana = new Date(ahora)
+  inicioSemana.setDate(ahora.getDate() - ahora.getDay())
+  inicioSemana.setHours(0, 0, 0, 0)
+  const finSemana = new Date(inicioSemana)
+  finSemana.setDate(inicioSemana.getDate() + 7)
+  return fecha >= inicioSemana && fecha < finSemana
+}
+
+// Helper: verificar si bono está por vencer (menos de 7 días o menos de 2 sesiones)
+const bonoPorVencer = (paciente) => {
+  if (!paciente.bono_activo) return false
+  const bono = paciente.bono_activo
+  // Por sesiones restantes
+  if (bono.sesiones_restantes <= 2) return true
+  // Por fecha de vencimiento
+  if (bono.fecha_fin) {
+    const fechaFin = new Date(bono.fecha_fin)
+    const ahora = new Date()
+    const diasRestantes = Math.floor((fechaFin - ahora) / (1000 * 60 * 60 * 24))
+    if (diasRestantes <= 7) return true
+  }
+  return false
+}
+
+// Filtrar pacientes (sin paginación)
+const pacientesFiltradosSinPaginar = computed(() => {
   let resultado = pacientes.value
 
   if (busqueda.value) {
@@ -628,9 +1024,12 @@ const pacientesFiltrados = computed(() => {
       const nombre = (p.nombre || '').toLowerCase()
       const email = (p.email || '').toLowerCase()
       const telefono = (p.telefono || '').toLowerCase()
+      // También buscar en estado del bono y próxima cita
+      const proximaCita = (p.proxima_sesion || '').toLowerCase()
       return nombre.includes(busquedaLower) ||
         email.includes(busquedaLower) ||
-        telefono.includes(busquedaLower)
+        telefono.includes(busquedaLower) ||
+        proximaCita.includes(busquedaLower)
     })
   }
 
@@ -659,13 +1058,69 @@ const pacientesFiltrados = computed(() => {
     resultado = resultado.filter(p => p.requiere_atencion)
   }
 
+  // Nuevos filtros
+  if (filtrosActivos.value.citasEstaSemana) {
+    resultado = resultado.filter(p => estaEnEstaSemana(p.proxima_sesion))
+  }
+
+  if (filtrosActivos.value.bonosPorVencer) {
+    resultado = resultado.filter(p => bonoPorVencer(p))
+  }
+
+  if (filtrosActivos.value.pagoPendiente) {
+    // Pacientes con bono no pagado completamente
+    resultado = resultado.filter(p => {
+      if (!p.bono_activo) return false
+      return p.bono_activo.estado === 'pendiente'
+    })
+  }
+
   return resultado
 })
 
+// Paginación
+const totalPaginas = computed(() => {
+  return Math.ceil(pacientesFiltradosSinPaginar.value.length / elementosPorPagina.value)
+})
+
+const pacientesFiltrados = computed(() => {
+  const inicio = (paginaActual.value - 1) * elementosPorPagina.value
+  const fin = inicio + elementosPorPagina.value
+  return pacientesFiltradosSinPaginar.value.slice(inicio, fin)
+})
+
+// Reset página cuando cambian filtros
+watch([busqueda, estadoSeleccionado, areaSeleccionada, filtrosActivos], () => {
+  paginaActual.value = 1
+}, { deep: true })
+
+const irAPagina = (pagina) => {
+  if (pagina >= 1 && pagina <= totalPaginas.value) {
+    paginaActual.value = pagina
+    // Scroll al top de la lista
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
 const totalPacientes = computed(() => pacientes.value.length)
+const totalFiltrados = computed(() => pacientesFiltradosSinPaginar.value.length)
+
+// Páginas visibles para paginación
+const paginasVisibles = computed(() => {
+  const paginas = []
+  const inicio = Math.max(1, paginaActual.value - 2)
+  const fin = Math.min(totalPaginas.value, paginaActual.value + 2)
+  for (let i = inicio; i <= fin; i++) {
+    paginas.push(i)
+  }
+  return paginas
+})
 
 // Navegación
-const irAFichaPaciente = (id) => {
+const irAFichaPaciente = (pacienteOrId) => {
+  // Puede recibir el objeto paciente o directamente el ID
+  const id = typeof pacienteOrId === 'object' ? pacienteOrId.id : pacienteOrId
+  console.log('[Pacientes] Navegando a ficha:', id)
   router.push(`/terapeuta/pacientes/${id}`)
 }
 
@@ -734,6 +1189,16 @@ const gestionarBonosPaciente = (paciente) => {
   router.push(`/terapeuta/pacientes/${paciente.id}/bonos`)
 }
 
+// Preview modal
+const abrirPreview = (paciente) => {
+  pacientePreview.value = paciente
+  mostrarPreview.value = true
+}
+const cerrarPreview = () => {
+  mostrarPreview.value = false
+  pacientePreview.value = null
+}
+
 // Import/Export
 const abrirModalImportar = () => { mostrarModalImportar.value = true }
 const abrirModalExportar = () => { mostrarModalExportar.value = true }
@@ -762,6 +1227,227 @@ const handleCitaActualizada = async () => {
   await cargarPacientes()
   cerrarModalEditarCita()
   toast.success('Cita actualizada')
+}
+
+// === MÉTRICAS DE PACIENTES Y CHURN ===
+
+// Obtener fechas de inicio/fin según período
+const getFechasPeriodo = (periodo) => {
+  const ahora = new Date()
+  const fin = new Date(ahora)
+  const inicio = new Date(ahora)
+
+  if (periodo === 'semana') {
+    inicio.setDate(ahora.getDate() - 7)
+  } else if (periodo === 'mes') {
+    inicio.setMonth(ahora.getMonth() - 1)
+  } else {
+    inicio.setMonth(ahora.getMonth() - 3)
+  }
+
+  return { inicio, fin }
+}
+
+// Métricas principales de pacientes
+const metricasPacientes = computed(() => {
+  const { inicio, fin } = getFechasPeriodo(periodoResumen.value)
+  const inicioAnterior = new Date(inicio)
+  if (periodoResumen.value === 'semana') {
+    inicioAnterior.setDate(inicioAnterior.getDate() - 7)
+  } else if (periodoResumen.value === 'mes') {
+    inicioAnterior.setMonth(inicioAnterior.getMonth() - 1)
+  } else {
+    inicioAnterior.setMonth(inicioAnterior.getMonth() - 3)
+  }
+
+  const todos = pacientes.value
+  const total = todos.length
+  const activos = todos.filter(p => p.activo && !p.en_pausa).length
+  const finalizados = todos.filter(p => !p.activo).length
+  const enPausa = todos.filter(p => p.activo && p.en_pausa).length
+
+  // Nuevos en el período
+  const nuevos = todos.filter(p => {
+    const createdAt = new Date(p.created_at)
+    return createdAt >= inicio && createdAt <= fin
+  }).length
+
+  // Nuevos en período anterior (para tendencia)
+  const nuevosAnterior = todos.filter(p => {
+    const createdAt = new Date(p.created_at)
+    return createdAt >= inicioAnterior && createdAt < inicio
+  }).length
+
+  const tendenciaNuevos = nuevosAnterior > 0
+    ? Math.round(((nuevos - nuevosAnterior) / nuevosAnterior) * 100)
+    : (nuevos > 0 ? 100 : 0)
+
+  // Churn: pacientes que pasaron a finalizado en el período
+  // Como no tenemos fecha de finalización explícita, usamos una heurística:
+  // Pacientes finalizados cuya última sesión fue hace más de 30 días
+  const hace30Dias = new Date()
+  hace30Dias.setDate(hace30Dias.getDate() - 30)
+
+  const pacientesChurn = todos.filter(p => {
+    if (p.activo) return false // Solo finalizados
+    // Si tiene última sesión, verificamos que sea reciente (en el período)
+    if (p.ultima_sesion) {
+      const ultimaSesion = new Date(p.ultima_sesion)
+      return ultimaSesion >= inicio && ultimaSesion <= fin
+    }
+    return false
+  }).length
+
+  // Tasa de churn = pacientes que abandonaron / total activos al inicio del período
+  const activosInicioPeriodo = activos + pacientesChurn
+  const churn = activosInicioPeriodo > 0
+    ? Math.round((pacientesChurn / activosInicioPeriodo) * 100)
+    : 0
+
+  // Retención = 100 - churn
+  const retencion = 100 - churn
+
+  // Promedio de sesiones por paciente activo
+  const sesionesTotales = todos.reduce((sum, p) => sum + (p.total_sesiones || 0), 0)
+  const promedioSesiones = activos > 0 ? (sesionesTotales / activos).toFixed(1) : '0'
+
+  // Pacientes en riesgo (sin sesión en 30 días y sin cita programada)
+  const pacientesEnRiesgo = todos.filter(p => {
+    if (!p.activo || p.en_pausa) return false
+    const sinCitaProxima = !p.proxima_sesion
+    const ultimaSesionVieja = !p.ultima_sesion || new Date(p.ultima_sesion) < hace30Dias
+    return sinCitaProxima && ultimaSesionVieja
+  }).length
+
+  // Sin cita programada (activos)
+  const sinCitaProxima = todos.filter(p => p.activo && !p.en_pausa && !p.proxima_sesion).length
+
+  // Bonos por vencer
+  const bonosPorVencerCount = todos.filter(p => bonoPorVencer(p)).length
+
+  return {
+    total,
+    activos,
+    finalizados,
+    enPausa,
+    nuevos,
+    tendenciaNuevos,
+    churn,
+    retencion,
+    promedioSesiones,
+    pacientesEnRiesgo,
+    sinCitaProxima,
+    bonosPorVencer: bonosPorVencerCount
+  }
+})
+
+// Datos para gráfico de evolución de pacientes
+const chartDataEvolucion = computed(() => {
+  const { inicio } = getFechasPeriodo(periodoResumen.value)
+  const labels = []
+  const dataNuevos = []
+  const dataActivos = []
+
+  const numPuntos = periodoResumen.value === 'semana' ? 7 :
+                   periodoResumen.value === 'mes' ? 4 : 12
+
+  const intervalo = periodoResumen.value === 'semana' ? 1 :
+                   periodoResumen.value === 'mes' ? 7 : 7
+
+  for (let i = 0; i < numPuntos; i++) {
+    const fechaPunto = new Date(inicio)
+    fechaPunto.setDate(fechaPunto.getDate() + (i * intervalo))
+
+    if (periodoResumen.value === 'semana') {
+      labels.push(fechaPunto.toLocaleDateString('es-ES', { weekday: 'short' }))
+    } else {
+      labels.push(fechaPunto.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }))
+    }
+
+    // Contar pacientes nuevos hasta esa fecha
+    const nuevosHastaFecha = pacientes.value.filter(p => {
+      const createdAt = new Date(p.created_at)
+      return createdAt <= fechaPunto && createdAt >= inicio
+    }).length
+
+    // Activos acumulados
+    const activosAcum = pacientes.value.filter(p => {
+      const createdAt = new Date(p.created_at)
+      return createdAt <= fechaPunto && p.activo
+    }).length
+
+    dataNuevos.push(nuevosHastaFecha)
+    dataActivos.push(activosAcum)
+  }
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Nuevos',
+        data: dataNuevos,
+        borderColor: '#10B981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Activos',
+        data: dataActivos,
+        borderColor: '#8B5CF6',
+        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+        fill: true,
+        tension: 0.4
+      }
+    ]
+  }
+})
+
+const chartOptionsEvolucion = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: { boxWidth: 12, padding: 15 }
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: { stepSize: 1 }
+    }
+  }
+}
+
+// Datos para gráfico de distribución por estado
+const chartDataDistribucion = computed(() => {
+  const { activos, enPausa, finalizados } = metricasPacientes.value
+
+  return {
+    labels: ['Activos', 'En Pausa', 'Finalizados'],
+    datasets: [{
+      data: [activos, enPausa, finalizados],
+      backgroundColor: [
+        '#8B5CF6', // Purple para activos
+        '#F59E0B', // Amber para pausa
+        '#6B7280'  // Gray para finalizados
+      ],
+      borderWidth: 0
+    }]
+  }
+})
+
+const chartOptionsDistribucion = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: { boxWidth: 12, padding: 15 }
+    }
+  },
+  cutout: '60%'
 }
 
 // Lifecycle

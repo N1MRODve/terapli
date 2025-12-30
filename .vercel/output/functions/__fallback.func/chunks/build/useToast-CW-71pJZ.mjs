@@ -1,0 +1,2 @@
+import{v as e}from"./server.mjs";const s=e.ref([]);let r=0;const useToast=()=>{const addToast=(e,o,t=5e3)=>{const n=++r,a={id:n,type:e,message:o,duration:t};return s.value.push(a),t>0&&setTimeout(()=>{removeToast(n)},t),n},removeToast=e=>{const r=s.value.findIndex(s=>s.id===e);r>-1&&s.value.splice(r,1)};return{toasts:s,addToast:addToast,removeToast:removeToast,success:(e,s)=>addToast("success",e,s),error:(e,s)=>addToast("error",e,s),warning:(e,s)=>addToast("warning",e,s),info:(e,s)=>addToast("info",e,s)}};export{useToast as u};
+//# sourceMappingURL=useToast-CW-71pJZ.mjs.map

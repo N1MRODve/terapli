@@ -17,7 +17,7 @@
 
     <!-- Error -->
     <div v-else-if="error" class="text-center py-12">
-      <DashboardCard>
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
         <span class="text-6xl mb-4 block">❌</span>
         <h3 class="text-xl font-serif font-semibold text-cafe mb-2">
           No se pudo cargar la información
@@ -29,13 +29,13 @@
         >
           Volver a la lista
         </button>
-      </DashboardCard>
+      </div>
     </div>
 
     <!-- Contenido principal -->
     <div v-else-if="pacienteData">
       <!-- Encabezado del paciente -->
-      <DashboardCard class="mb-6">
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 mb-6">
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           <!-- Info principal -->
           <div class="flex items-start gap-4">
@@ -113,12 +113,12 @@
             </button>
           </div>
         </div>
-      </DashboardCard>
+      </div>
 
       <!-- Grid principal de información -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <!-- Resumen rápido -->
-        <DashboardCard>
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
           <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
             <span class="text-2xl">📊</span>
             Resumen
@@ -142,10 +142,10 @@
               <span class="font-bold text-blue-600 text-lg">{{ estadisticas.proximas }}</span>
             </div>
           </div>
-        </DashboardCard>
+        </div>
 
         <!-- Bono activo -->
-        <DashboardCard>
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
           <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
             <span class="text-2xl">🎫</span>
             Bono Contratado
@@ -196,7 +196,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-cafe/70">Precio por sesión:</span>
-                <span class="font-medium text-cafe">{{ formatearPrecio((bonoActivo.monto_total || bonoActivo.precio) / bonoActivo.sesiones_totales) }}</span>
+                <span class="font-medium text-cafe">{{ formatearPrecio(bonoActivo.precio_por_sesion || (bonoActivo.monto_total || bonoActivo.precio) / bonoActivo.sesiones_totales) }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-cafe/70">Estado:</span>
@@ -224,10 +224,10 @@
               Gestionar bonos →
             </button>
           </div>
-        </DashboardCard>
+        </div>
 
         <!-- Información del acompañamiento -->
-        <DashboardCard>
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
           <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
             <span class="text-2xl">📋</span>
             Datos del Proceso
@@ -296,7 +296,188 @@
               </div>
             </div>
           </div>
-        </DashboardCard>
+        </div>
+      </div>
+
+      <!-- Estadísticas y Deuda - Sección compacta -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Sesiones del año -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2">
+              <span class="text-2xl">📊</span>
+              Sesiones
+            </h2>
+            <select
+              v-model="anioSeleccionadoSesiones"
+              class="px-3 py-1.5 text-sm border border-purple-200 rounded-lg bg-white text-cafe focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            >
+              <option v-for="anio in aniosDisponibles" :key="anio" :value="anio">
+                {{ anio }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-3 bg-gradient-to-br from-purple-50 to-rosa/20 rounded-lg text-center">
+              <div class="text-3xl font-bold text-purple-600">{{ estadisticasPorAnio.total }}</div>
+              <div class="text-xs text-cafe/70">Total</div>
+            </div>
+            <div class="p-3 bg-red-50 rounded-lg text-center">
+              <div class="text-3xl font-bold text-red-500">{{ estadisticasPorAnio.canceladas }}</div>
+              <div class="text-xs text-cafe/70">Cancelaciones</div>
+            </div>
+            <div class="p-3 bg-yellow-50 rounded-lg text-center">
+              <div class="text-2xl font-bold text-yellow-600">{{ estadisticasPorAnio.programadas }}</div>
+              <div class="text-xs text-cafe/70">Programadas</div>
+            </div>
+            <div class="p-3 bg-green-50 rounded-lg text-center">
+              <div class="text-2xl font-bold text-green-600">{{ estadisticasPorAnio.realizadas }}</div>
+              <div class="text-xs text-cafe/70">Realizadas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deuda -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2">
+              <span class="text-2xl">💳</span>
+              Deuda
+            </h2>
+            <select
+              v-model="anioSeleccionadoDeuda"
+              class="px-3 py-1.5 text-sm border border-purple-200 rounded-lg bg-white text-cafe focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            >
+              <option v-for="anio in aniosDisponibles" :key="anio" :value="anio">
+                {{ anio }}
+              </option>
+            </select>
+          </div>
+
+          <div class="p-6 rounded-xl text-center" :class="deudaPorAnio.haDeuda ? 'bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200'">
+            <div v-if="deudaPorAnio.haDeuda">
+              <div class="text-4xl font-bold text-red-600 mb-2">{{ formatearPrecio(deudaPorAnio.totalPendiente) }}</div>
+              <div class="text-sm text-red-700">Pendiente de cobro</div>
+              <div class="text-xs text-red-500 mt-1">{{ deudaPorAnio.cantidadPendientes }} sesión(es) sin cobrar</div>
+            </div>
+            <div v-else>
+              <div class="text-4xl mb-2">✅</div>
+              <div class="text-lg font-semibold text-green-700">Sin deuda</div>
+              <div class="text-sm text-green-600">Todos los pagos al día</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historial de sesiones con tabla -->
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+          <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2">
+            <span class="text-2xl">📋</span>
+            Historial de Sesiones
+          </h2>
+
+          <!-- Filtros de fecha -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-cafe/70">Desde:</label>
+              <input
+                v-model="filtroFechaInicio"
+                type="date"
+                class="px-3 py-1.5 text-sm border border-purple-200 rounded-lg bg-white text-cafe focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-cafe/70">Hasta:</label>
+              <input
+                v-model="filtroFechaFin"
+                type="date"
+                class="px-3 py-1.5 text-sm border border-purple-200 rounded-lg bg-white text-cafe focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <button
+              v-if="filtroFechaInicio || filtroFechaFin"
+              @click="filtroFechaInicio = ''; filtroFechaFin = ''"
+              class="px-3 py-1.5 text-sm text-purple-600 hover:text-purple-800 transition-colors"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <div v-if="historialSesionesFiltrado.length > 0" class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gradient-to-r from-purple-50 to-rosa/20 text-cafe">
+                <th class="px-4 py-3 text-left font-semibold rounded-tl-lg">#</th>
+                <th class="px-4 py-3 text-left font-semibold">Fecha</th>
+                <th class="px-4 py-3 text-left font-semibold">Modalidad</th>
+                <th class="px-4 py-3 text-left font-semibold">Estado</th>
+                <th class="px-4 py-3 text-right font-semibold">Precio</th>
+                <th class="px-4 py-3 text-left font-semibold rounded-tr-lg">Pago</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(sesion, index) in historialSesionesFiltrado"
+                :key="sesion.id"
+                class="border-b border-gray-100 hover:bg-rosa/10 transition-colors"
+              >
+                <td class="px-4 py-3 text-cafe/60">{{ historialSesionesFiltrado.length - index }}</td>
+                <td class="px-4 py-3">
+                  <div class="font-medium text-cafe">{{ formatearFecha(sesion.fecha_cita) }}</div>
+                  <div class="text-xs text-cafe/60">{{ sesion.hora_inicio }} - {{ sesion.hora_fin }}</div>
+                </td>
+                <td class="px-4 py-3">
+                  <span
+                    class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full"
+                    :class="obtenerEstiloModalidad(sesion.modalidad)"
+                  >
+                    {{ obtenerIconoModalidad(sesion.modalidad) }}
+                    {{ sesion.modalidad }}
+                  </span>
+                </td>
+                <td class="px-4 py-3">
+                  <span
+                    class="px-2 py-1 text-xs rounded-full capitalize"
+                    :class="obtenerEstiloEstado(sesion.estado)"
+                  >
+                    {{ sesion.estado }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-right font-medium text-cafe">
+                  {{ formatearPrecio(sesion.precio_sesion || 0) }}
+                </td>
+                <td class="px-4 py-3">
+                  <span
+                    v-if="sesion.pagado"
+                    class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-green-100 text-green-700"
+                  >
+                    ✓ Pagado
+                  </span>
+                  <span
+                    v-else-if="sesion.estado === 'realizada'"
+                    class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-red-100 text-red-700"
+                  >
+                    ⏳ Pendiente
+                  </span>
+                  <span
+                    v-else
+                    class="text-xs text-cafe/50"
+                  >
+                    -
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-else class="text-center py-12">
+          <span class="text-5xl mb-3 block opacity-40">📋</span>
+          <p class="text-cafe/60">No hay sesiones en el período seleccionado</p>
+        </div>
       </div>
 
       <!-- Tabs de navegación -->
@@ -326,7 +507,7 @@
       <div class="space-y-6">
         <!-- Tab: Próximas Sesiones -->
         <div v-if="tabActiva === 'proximas'">
-          <DashboardCard>
+          <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-lg font-serif font-semibold text-cafe">Próximas Sesiones Agendadas</h3>
               <button
@@ -391,12 +572,12 @@
                 Agendar primera sesión
               </button>
             </div>
-          </DashboardCard>
+          </div>
         </div>
 
         <!-- Tab: Sesiones Completadas -->
         <div v-if="tabActiva === 'completadas'">
-          <DashboardCard>
+          <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
             <h3 class="text-lg font-serif font-semibold text-cafe mb-4">Historial de Sesiones Completadas</h3>
 
             <div v-if="sesionesCompletadas.length > 0" class="space-y-3">
@@ -443,12 +624,12 @@
               <span class="text-6xl mb-3 block opacity-40">📝</span>
               <p class="text-cafe/60">Aún no hay sesiones completadas</p>
             </div>
-          </DashboardCard>
+          </div>
         </div>
 
         <!-- Tab: Pendientes de Confirmar -->
         <div v-if="tabActiva === 'pendientes'">
-          <DashboardCard>
+          <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
             <h3 class="text-lg font-serif font-semibold text-cafe mb-4">Sesiones Pendientes de Confirmación</h3>
 
             <div v-if="sesionesPendientes.length > 0" class="space-y-3">
@@ -505,12 +686,12 @@
               <span class="text-6xl mb-3 block opacity-40">✅</span>
               <p class="text-cafe/60">No hay sesiones pendientes de confirmación</p>
             </div>
-          </DashboardCard>
+          </div>
         </div>
 
         <!-- Tab: Sesiones Anteriores -->
         <div v-if="tabActiva === 'anteriores'">
-          <DashboardCard>
+          <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
             <h3 class="text-lg font-serif font-semibold text-cafe mb-4">
               Historial Completo de Sesiones
             </h3>
@@ -554,13 +735,13 @@
               <span class="text-6xl mb-3 block opacity-40">📚</span>
               <p class="text-cafe/60">No hay sesiones registradas</p>
             </div>
-          </DashboardCard>
+          </div>
         </div>
       </div>
 
       <!-- Notas del terapeuta -->
       <div class="mt-6">
-        <DashboardCard>
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
           <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2 mb-4">
             <span class="text-2xl">📝</span>
             Notas Clínicas Privadas
@@ -572,7 +753,7 @@
             :ultima-actualizacion="notasActualizacion || undefined"
             @guardar="guardarNotas"
           />
-        </DashboardCard>
+        </div>
       </div>
     </div>
 
@@ -606,16 +787,13 @@ const user = useSupabaseUser()
 // Composables
 const { getCitas } = useCitas()
 
-// Variables de navegación - protegidas para SSR
-const route = computed(() => process.client ? useRoute() : null)
-const router = computed(() => process.client ? useRouter() : null)
+// Variables de navegación
+const route = useRoute()
+const router = useRouter()
 
-// ID del paciente - protegido para SSR
+// ID del paciente desde la ruta
 const pacienteId = computed(() => {
-  if (process.client && route.value) {
-    return route.value.params.id as string
-  }
-  return ''
+  return route.params.id as string || ''
 })
 
 // Estado
@@ -626,6 +804,25 @@ const bonoActivo = ref<any>(null)
 const todasLasCitas = ref<any[]>([])
 const notasClinicas = ref('')
 const notasActualizacion = ref<string | null>(null)
+const pagos = ref<any[]>([])
+
+// Filtros de año para estadísticas y deuda
+const anioActual = new Date().getFullYear()
+const anioSeleccionadoSesiones = ref(anioActual)
+const anioSeleccionadoDeuda = ref(anioActual)
+
+// Filtros de fecha para historial
+const filtroFechaInicio = ref('')
+const filtroFechaFin = ref('')
+
+// Lista de años disponibles (últimos 5 años)
+const aniosDisponibles = computed(() => {
+  const anios = []
+  for (let i = anioActual; i >= anioActual - 4; i--) {
+    anios.push(i)
+  }
+  return anios
+})
 
 // Tab activa
 const tabActiva = ref('proximas')
@@ -684,8 +881,8 @@ const cargarDatosPaciente = async () => {
 
     if (errorPaciente) throw errorPaciente
 
-    // Mapear datos
-    const nombreCompleto = (paciente as any).nombre || (paciente as any).email || 'Sin nombre'
+    // Mapear datos - el campo es nombre_completo en la BD
+    const nombreCompleto = (paciente as any).nombre_completo || (paciente as any).email || 'Sin nombre'
     pacienteData.value = {
       ...paciente,
       nombre_completo: nombreCompleto,
@@ -699,6 +896,9 @@ const cargarDatosPaciente = async () => {
 
     // Cargar bono activo
     await cargarBonoActivo()
+
+    // Cargar pagos
+    await cargarPagos()
 
     // Cargar notas
     await cargarNotas()
@@ -714,11 +914,15 @@ const cargarDatosPaciente = async () => {
 // Cargar bono activo
 const cargarBonoActivo = async () => {
   try {
+    // Buscar bono activo o pendiente con sesiones disponibles
     const { data: bono, error: bonoError } = await supabase
       .from('bonos')
       .select('*')
       .eq('paciente_id', pacienteId.value)
-      .eq('estado', 'activo')
+      .in('estado', ['activo', 'pendiente'])
+      .gt('sesiones_restantes', 0)
+      .order('created_at', { ascending: false })
+      .limit(1)
       .maybeSingle()
 
     if (bonoError) {
@@ -727,18 +931,46 @@ const cargarBonoActivo = async () => {
     }
 
     if (bono) {
-      const sesionesUsadas = bono.sesiones_usadas || 0
+      // Usar sesiones_restantes de la BD (no sesiones_usadas)
       const sesionesTotales = bono.sesiones_totales || 0
-      const sesionesDisponibles = sesionesTotales - sesionesUsadas
+      const sesionesRestantes = bono.sesiones_restantes || 0
+      const sesionesUsadas = sesionesTotales - sesionesRestantes
 
       bonoActivo.value = {
         ...bono,
-        sesiones_disponibles: sesionesDisponibles,
+        sesiones_usadas: sesionesUsadas,
+        sesiones_disponibles: sesionesRestantes,
         porcentaje_uso: sesionesTotales > 0 ? Math.round((sesionesUsadas / sesionesTotales) * 100) : 0
       }
+
+      console.info(`[Bonos] Bono activo cargado para paciente: ${bono.tipo} (${sesionesRestantes}/${sesionesTotales} disponibles)`)
+    } else {
+      bonoActivo.value = null
+      console.info('[Bonos] No se encontró bono activo para este paciente')
     }
   } catch (err) {
     console.warn('[Bonos] Error inesperado:', err)
+  }
+}
+
+// Cargar pagos del paciente
+const cargarPagos = async () => {
+  try {
+    const { data, error: pagoError } = await supabase
+      .from('pagos')
+      .select('*')
+      .eq('paciente_id', pacienteId.value)
+      .order('created_at', { ascending: false })
+
+    if (pagoError) {
+      console.warn('[Pagos] Error al cargar:', pagoError.message)
+      return
+    }
+
+    pagos.value = data || []
+    console.info(`[Pagos] Cargados ${pagos.value.length} pagos para el paciente`)
+  } catch (err) {
+    console.warn('[Pagos] Error inesperado:', err)
   }
 }
 
@@ -830,6 +1062,77 @@ const estadisticas = computed(() => ({
   pendientes: sesionesPendientes.value.length,
   proximas: sesionesProximas.value.length
 }))
+
+// Estadísticas filtradas por año seleccionado
+const estadisticasPorAnio = computed(() => {
+  const anio = anioSeleccionadoSesiones.value
+  const citasAnio = todasLasCitas.value.filter((c: any) => {
+    const fechaCita = new Date(c.fecha_cita)
+    return fechaCita.getFullYear() === anio
+  })
+
+  const total = citasAnio.length
+  const realizadas = citasAnio.filter((c: any) => c.estado === 'realizada').length
+  const canceladas = citasAnio.filter((c: any) => c.estado === 'cancelada').length
+  const programadas = citasAnio.filter((c: any) => ['pendiente', 'confirmada'].includes(c.estado)).length
+
+  return {
+    total,
+    realizadas,
+    canceladas,
+    programadas
+  }
+})
+
+// Deuda pendiente filtrada por año
+const deudaPorAnio = computed(() => {
+  const anio = anioSeleccionadoDeuda.value
+
+  // Filtrar pagos del año seleccionado
+  const pagosPendientes = pagos.value.filter((p: any) => {
+    const fechaPago = new Date(p.created_at || p.fecha)
+    return fechaPago.getFullYear() === anio && p.estado === 'pendiente'
+  })
+
+  // También considerar citas realizadas sin pago registrado
+  const citasSinPago = todasLasCitas.value.filter((c: any) => {
+    const fechaCita = new Date(c.fecha_cita)
+    return fechaCita.getFullYear() === anio &&
+           c.estado === 'realizada' &&
+           !c.pagado
+  })
+
+  const montoPendientePagos = pagosPendientes.reduce((acc: number, p: any) => acc + (p.monto || 0), 0)
+  const montoCitasSinPago = citasSinPago.reduce((acc: number, c: any) => acc + (c.precio_sesion || 0), 0)
+
+  return {
+    totalPendiente: montoPendientePagos + montoCitasSinPago,
+    cantidadPendientes: pagosPendientes.length + citasSinPago.length,
+    haDeuda: (montoPendientePagos + montoCitasSinPago) > 0
+  }
+})
+
+// Historial de sesiones filtrado
+const historialSesionesFiltrado = computed(() => {
+  let sesiones = [...todasLasCitas.value]
+
+  // Aplicar filtro de fecha inicio
+  if (filtroFechaInicio.value) {
+    const fechaInicio = new Date(filtroFechaInicio.value)
+    sesiones = sesiones.filter((s: any) => new Date(s.fecha_cita) >= fechaInicio)
+  }
+
+  // Aplicar filtro de fecha fin
+  if (filtroFechaFin.value) {
+    const fechaFin = new Date(filtroFechaFin.value)
+    sesiones = sesiones.filter((s: any) => new Date(s.fecha_cita) <= fechaFin)
+  }
+
+  // Ordenar por fecha descendente
+  return sesiones.sort((a: any, b: any) =>
+    new Date(b.fecha_cita).getTime() - new Date(a.fecha_cita).getTime()
+  )
+})
 
 const primeraSesion = computed(() => {
   const completadas = sesionesCompletadas.value
@@ -970,9 +1273,7 @@ const obtenerEstiloEstado = (estado: string) => {
 
 // Acciones
 const irABonos = () => {
-  if (router.value) {
-    router.value.push(`/terapeuta/pacientes/${pacienteId.value}/bonos`)
-  }
+  router.push(`/terapeuta/pacientes/${pacienteId.value}/bonos`)
 }
 
 const abrirWhatsApp = () => {
@@ -1077,8 +1378,8 @@ onMounted(() => {
   cargarDatosPaciente()
 })
 
-watch(() => route.value?.params.id, () => {
-  if (route.value?.params.id) {
+watch(() => route.params.id, () => {
+  if (route.params.id) {
     cargarDatosPaciente()
   }
 })

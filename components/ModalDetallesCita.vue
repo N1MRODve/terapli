@@ -29,6 +29,8 @@ const confirmando = ref(false)
 const marcandoRealizada = ref(false)
 const mostrarModalPago = ref(false)
 const modoEdicionPago = ref(false)
+const mostrarModalNuevoBono = ref(false)
+const bonoParaEditar = ref<any>(null) // Bono a editar (null = crear nuevo)
 const seccionBonoAbierta = ref(true) // Abierto por defecto
 const seccionObservacionesAbierta = ref(false)
 const modoEdicion = ref(false)
@@ -62,6 +64,9 @@ const formEdicion = ref({
 
 // Composables
 const supabase = useSupabaseClient()
+
+// Constante de precio por defecto
+const PRECIO_SESION_DEFAULT = 70
 
 // Cargar preferencias de secciones colapsables desde localStorage
 onMounted(() => {
@@ -607,7 +612,107 @@ const asignarBonoACita = async () => {
   }
 }
 
-// Navegar a gestión de bonos del paciente
+// Abrir modal para crear nuevo bono (sin salir de la pantalla)
+const abrirModalNuevoBono = () => {
+  if (paciente.value?.id) {
+    bonoParaEditar.value = null // Modo creación
+    mostrarModalNuevoBono.value = true
+  }
+}
+
+// Abrir modal para editar bono existente
+const abrirModalEditarBono = () => {
+  if (bonoMostrar.value) {
+    bonoParaEditar.value = bonoMostrar.value // Modo edición
+    mostrarModalNuevoBono.value = true
+  }
+}
+
+// Manejar bono creado desde el modal
+const handleBonoCreado = async (nuevoBono: any) => {
+  mostrarModalNuevoBono.value = false
+
+  try {
+    // Calcular precio por sesión del bono
+    const precioSesion = nuevoBono.monto_total && nuevoBono.sesiones_totales
+      ? Number(nuevoBono.monto_total) / Number(nuevoBono.sesiones_totales)
+      : PRECIO_SESION_DEFAULT
+
+    // Asignar automáticamente el bono a la cita actual y actualizar precio
+    if (props.citaId && cita.value) {
+      const { error: errorAsignar } = await supabase
+        .from('citas')
+        .update({
+          bono_id: nuevoBono.id,
+          descontar_de_bono: true,
+          precio_sesion: precioSesion,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', props.citaId)
+
+      if (errorAsignar) {
+        console.error('Error al asignar bono a cita:', errorAsignar)
+        toastError('Bono creado pero no se pudo asignar a la cita')
+      } else {
+        // Actualizar estado local
+        cita.value.bono_id = nuevoBono.id
+        cita.value.precio_sesion = precioSesion
+        bono.value = nuevoBono
+        toastSuccess(`Bono creado y asignado (${precioSesion.toFixed(0)}€/sesión)`)
+      }
+    } else {
+      toastSuccess('Bono creado correctamente')
+    }
+
+    // Recargar datos completos de la cita
+    if (props.citaId) {
+      await cargarCita(props.citaId)
+    }
+
+    // Emitir evento para que el padre pueda refrescar
+    emit('cita-actualizada')
+    emit('actualizado')
+  } catch (err: any) {
+    console.error('Error en handleBonoCreado:', err)
+    toastError('Error al procesar el bono')
+  }
+}
+
+// Manejar bono actualizado desde el modal
+const handleBonoActualizado = async (bonoActualizado: any) => {
+  mostrarModalNuevoBono.value = false
+  bonoParaEditar.value = null
+  toastSuccess('Bono actualizado correctamente')
+
+  // Actualizar precio de la cita si cambió el monto del bono
+  if (props.citaId && cita.value && bonoActualizado) {
+    const precioSesion = bonoActualizado.monto_total && bonoActualizado.sesiones_totales
+      ? Number(bonoActualizado.monto_total) / Number(bonoActualizado.sesiones_totales)
+      : PRECIO_SESION_DEFAULT
+
+    // Actualizar precio de la cita en la BD
+    await supabase
+      .from('citas')
+      .update({
+        precio_sesion: precioSesion,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', props.citaId)
+
+    // Actualizar estado local
+    cita.value.precio_sesion = precioSesion
+  }
+
+  // Recargar datos
+  if (props.citaId) {
+    await cargarCita(props.citaId)
+  }
+
+  emit('cita-actualizada')
+  emit('actualizado')
+}
+
+// Navegar a gestión de bonos del paciente (solo para ver detalles completos)
 const irAGestionBonos = () => {
   if (paciente.value?.id) {
     cerrar()
@@ -1078,13 +1183,22 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
                             {{ consumiendoSesion ? 'Consumiendo...' : 'Consumir sesión' }}
                           </button>
 
+                          <!-- Editar bono -->
+                          <button
+                            @click="abrirModalEditarBono"
+                            class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                          >
+                            <PencilIcon class="w-4 h-4" />
+                            <span class="hidden sm:inline">Editar</span>
+                          </button>
+
                           <!-- Ver detalles -->
                           <button
                             @click="irAGestionBonos"
                             class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                           >
                             <ArrowTopRightOnSquareIcon class="w-4 h-4" />
-                            <span class="hidden sm:inline">Ver detalles</span>
+                            <span class="hidden sm:inline">Ver más</span>
                           </button>
                         </div>
                       </div>
@@ -1093,7 +1207,7 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
                       <div v-else class="p-4 bg-gray-50 border border-gray-100 rounded-lg text-center">
                         <p class="text-sm text-gray-500 mb-3">Este paciente no tiene bono activo</p>
                         <button
-                          @click="irAGestionBonos"
+                          @click="abrirModalNuevoBono"
                           class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
                         >
                           <PlusIcon class="w-4 h-4" />
@@ -1264,6 +1378,18 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
         </Transition>
       </div>
     </Transition>
+
+    <!-- Modal para crear/editar bono (inline, sin salir de la pantalla) -->
+    <ModalNuevoBono
+      v-if="paciente"
+      :mostrar="mostrarModalNuevoBono"
+      :paciente-id="paciente.id"
+      :paciente-nombre="paciente.nombre_completo || 'Paciente'"
+      :bono-existente="bonoParaEditar"
+      @close="mostrarModalNuevoBono = false; bonoParaEditar = null"
+      @created="handleBonoCreado"
+      @updated="handleBonoActualizado"
+    />
   </Teleport>
 </template>
 

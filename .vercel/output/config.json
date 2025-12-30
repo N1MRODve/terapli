@@ -183,6 +183,10 @@
       "dest": "/api/patients/template"
     },
     {
+      "src": "/api/patients/search",
+      "dest": "/api/patients/search"
+    },
+    {
       "src": "/api/patients/import/validate-mapping",
       "dest": "/api/patients/import/validate-mapping"
     },
@@ -201,6 +205,10 @@
     {
       "src": "/api/patients/export",
       "dest": "/api/patients/export"
+    },
+    {
+      "src": "/api/patients/create",
+      "dest": "/api/patients/create"
     },
     {
       "src": "/api/pagos/confirmar",
