@@ -2,7 +2,7 @@
   <div class="pb-20">
     <!-- Navegación de regreso -->
     <button
-      @click="$router.push('/terapeuta/pacientes')"
+      @click="navigateTo('/terapeuta/pacientes')"
       class="mb-6 flex items-center gap-2 text-cafe hover:text-purple-600 transition-colors"
     >
       <span>←</span>
@@ -24,7 +24,7 @@
         </h3>
         <p class="text-cafe/60 mb-4">{{ error }}</p>
         <button
-          @click="$router.push('/terapeuta/pacientes')"
+          @click="navigateTo('/terapeuta/pacientes')"
           class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-600/90 transition-colors"
         >
           Volver a la lista
@@ -1273,7 +1273,12 @@ const obtenerEstiloEstado = (estado: string) => {
 
 // Acciones
 const irABonos = () => {
-  router.push(`/terapeuta/pacientes/${pacienteId.value}/bonos`)
+  if (!pacienteId.value) {
+    console.error('[Paciente/[id]] ERROR: ID de paciente no válido')
+    return
+  }
+  console.log('[Paciente/[id]] Navegando a bonos del paciente:', pacienteId.value)
+  navigateTo(`/terapeuta/pacientes/${pacienteId.value}/bonos`)
 }
 
 const abrirWhatsApp = () => {

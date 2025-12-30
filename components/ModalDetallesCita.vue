@@ -715,8 +715,11 @@ const handleBonoActualizado = async (bonoActualizado: any) => {
 // Navegar a gestión de bonos del paciente (solo para ver detalles completos)
 const irAGestionBonos = () => {
   if (paciente.value?.id) {
+    console.log('[ModalDetallesCita] Navegando a bonos del paciente:', paciente.value.id)
     cerrar()
-    router.push(`/terapeuta/pacientes/${paciente.value.id}/bonos`)
+    navigateTo(`/terapeuta/pacientes/${paciente.value.id}/bonos`)
+  } else {
+    console.error('[ModalDetallesCita] ERROR: No se encontró ID del paciente')
   }
 }
 

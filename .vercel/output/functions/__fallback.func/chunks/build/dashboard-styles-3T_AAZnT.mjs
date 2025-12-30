@@ -1,0 +1,2 @@
+const a=[".dashboard-terapeuta[data-v-21d99988]{font-family:system-ui,-apple-system,sans-serif}@keyframes spin-21d99988{to{transform:rotate(1turn)}}.animate-spin[data-v-21d99988]{animation:spin-21d99988 1s linear infinite}"];export{a as default};
+//# sourceMappingURL=dashboard-styles-3T_AAZnT.mjs.map

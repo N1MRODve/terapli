@@ -18,15 +18,12 @@
         <NuxtLink to="/" class="nav-link">
           Inicio
         </NuxtLink>
-        <NuxtLink to="/sentirse" class="nav-link">
-          Cómo te sientes
-        </NuxtLink>
-        <NuxtLink to="/conoceme" class="nav-link">
-          Conóceme
-        </NuxtLink>
-        <NuxtLink to="/como-empezar" class="nav-link">
-          Cómo empezar
-        </NuxtLink>
+        <a href="/#features" class="nav-link">
+          Características
+        </a>
+        <a href="/#waitlist" class="nav-link">
+          Lista de espera
+        </a>
         <NuxtLink to="/contacto" class="nav-link">
           Contacto
         </NuxtLink>
@@ -34,22 +31,22 @@
 
       <!-- Desktop Actions -->
       <div class="hidden md:flex items-center gap-4">
-        <NuxtLink 
-          to="/login" 
+        <NuxtLink
+          to="/login"
           class="flex items-center gap-1.5 text-[#2D3748] hover:text-[#5550F2] transition-colors duration-300 font-sans text-sm lg:text-base"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
-          <span>Tu espacio</span>
+          <span>Acceder</span>
         </NuxtLink>
 
-        <NuxtLink
-          to="/reservar"
-          class="px-6 py-2.5 bg-[#5550F2] hover:bg-[#C89B8A] text-white rounded-full font-sans font-medium transition-all duration-300 text-sm lg:text-base whitespace-nowrap"
+        <a
+          href="/#waitlist"
+          class="px-6 py-2.5 bg-[#5550F2] hover:bg-[#4440D0] text-white rounded-full font-sans font-medium transition-all duration-300 text-sm lg:text-base whitespace-nowrap shadow-lg shadow-[#5550F2]/25"
         >
-          Reservar cita
-        </NuxtLink>
+          Unirse a la lista
+        </a>
       </div>
 
       <!-- Mobile Menu Button -->
@@ -96,66 +93,59 @@
         >
           <!-- Navigation links -->
           <nav class="flex flex-col gap-3 w-full">
-            <NuxtLink 
-              to="/" 
+            <NuxtLink
+              to="/"
               class="mobile-nav-link"
               @click="menuOpen = false"
             >
               Inicio
             </NuxtLink>
-            <NuxtLink 
-              to="/sentirse" 
+            <a
+              href="/#features"
               class="mobile-nav-link"
               @click="menuOpen = false"
             >
-              Cómo te sientes
-            </NuxtLink>
-            <NuxtLink 
-              to="/conoceme" 
+              Características
+            </a>
+            <a
+              href="/#waitlist"
               class="mobile-nav-link"
               @click="menuOpen = false"
             >
-              Conóceme
-            </NuxtLink>
-            <NuxtLink 
-              to="/como-empezar" 
-              class="mobile-nav-link"
-              @click="menuOpen = false"
-            >
-              Cómo empezar
-            </NuxtLink>
-            <NuxtLink 
-              to="/contacto" 
+              Lista de espera
+            </a>
+            <NuxtLink
+              to="/contacto"
               class="mobile-nav-link"
               @click="menuOpen = false"
             >
               Contacto
             </NuxtLink>
-            
+
             <!-- Divider -->
             <div class="h-px bg-[#5550F2]/20 my-2"></div>
-            
-            <NuxtLink 
-              to="/login" 
+
+            <NuxtLink
+              to="/login"
               class="mobile-nav-link-therapeutic"
               @click="menuOpen = false"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span>Tu espacio terapéutico</span>
+              <span>Acceder a la plataforma</span>
             </NuxtLink>
           </nav>
 
           <!-- CTA Button -->
           <div class="mt-6">
-            <NuxtLink 
-              to="/reservar" 
-              class="block w-full px-6 py-3.5 bg-[#5550F2] hover:bg-[#C89B8A] text-white rounded-full font-sans font-semibold text-center transition-all duration-300 shadow-md"
+            <a
+              href="/#waitlist"
+              class="block w-full px-6 py-3.5 bg-[#5550F2] hover:bg-[#4440D0] text-white rounded-full font-sans font-semibold text-center transition-all duration-300 shadow-md"
               @click="menuOpen = false"
             >
-              Reservar cita
-            </NuxtLink>
+              Unirse a la lista de espera
+            </a>
           </div>
         </div>
       </div>

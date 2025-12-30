@@ -96,7 +96,7 @@ export type PacienteField =
 
   // Campos financieros
   | 'precio_sesion'
-  | 'comision'
+  | 'descuento'
 
   // Metadata y notas
   | 'notas'
@@ -256,9 +256,9 @@ export const PACIENTE_FIELDS_CATALOG: PacienteFieldMetadata[] = [
     group: 'financiero'
   },
   {
-    field: 'comision',
-    label: 'Comisión',
-    description: 'Comisión o descuento aplicable',
+    field: 'descuento',
+    label: 'Descuento',
+    description: 'Descuento aplicable al paciente',
     required: false,
     requiredForCompleteProfile: false,
     group: 'financiero'

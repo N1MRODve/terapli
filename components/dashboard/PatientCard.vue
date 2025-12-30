@@ -3,8 +3,8 @@
  * =============================================================================
  * COMPONENTE: PatientCard
  * =============================================================================
- * Tarjeta de paciente para el dashboard con diseno limpio y minimalista.
- * Avatares grises neutros, sin colores aleatorios.
+ * Tarjeta de paciente para el dashboard "Actividad reciente de pacientes".
+ * Muestra: nombre, último contacto (relativo), estado de bono con mini barra.
  */
 
 const props = defineProps<{
@@ -31,82 +31,136 @@ const iniciales = computed(() => {
   return palabras[0]?.substring(0, 2).toUpperCase() || '?'
 })
 
-// Progreso del bono
+// Progreso del bono (sesiones restantes)
+const sesionesRestantes = computed(() => {
+  if (!props.sesionesTotales) return 0
+  return props.sesionesTotales - (props.sesionesUsadas || 0)
+})
+
 const progresoBono = computed(() => {
   if (!props.sesionesTotales || props.sesionesTotales === 0) return 0
   return Math.round(((props.sesionesUsadas || 0) / props.sesionesTotales) * 100)
 })
 
-// Formatear ultima sesion
-const ultimaSesionFormateada = computed(() => {
-  if (!props.ultimaSesion) return 'Sin sesiones'
+// Formatear última sesión de forma relativa
+const ultimaSesionRelativa = computed(() => {
+  if (!props.ultimaSesion) return 'Sin actividad'
 
   const fecha = new Date(props.ultimaSesion)
   const hoy = new Date()
-  const diffDias = Math.floor((hoy.getTime() - fecha.getTime()) / (1000 * 60 * 60 * 24))
+  const diffMs = hoy.getTime() - fecha.getTime()
+  const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
   if (diffDias === 0) return 'Hoy'
   if (diffDias === 1) return 'Ayer'
-  if (diffDias < 7) return `Hace ${diffDias} dias`
+  if (diffDias < 7) return `Hace ${diffDias} días`
+  if (diffDias < 14) return 'Hace 1 semana'
+  if (diffDias < 30) return `Hace ${Math.floor(diffDias / 7)} semanas`
+  if (diffDias < 60) return 'Hace 1 mes'
+  return `Hace ${Math.floor(diffDias / 30)} meses`
+})
 
-  return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+// Fecha real formateada para tooltip
+const ultimaSesionFechaReal = computed(() => {
+  if (!props.ultimaSesion) return ''
+  const fecha = new Date(props.ultimaSesion)
+  return fecha.toLocaleDateString('es-ES', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
+})
+
+// Estado del bono con texto descriptivo
+const estadoBonoTexto = computed(() => {
+  if (!props.estadoBono || props.estadoBono === 'sin_bono') {
+    return { texto: 'Sin bono', color: 'text-gray-400' }
+  }
+  if (props.estadoBono === 'agotado') {
+    return { texto: 'Bono agotado', color: 'text-red-500' }
+  }
+  if (props.estadoBono === 'por_agotar') {
+    return {
+      texto: `Bono activo · ${sesionesRestantes.value}/${props.sesionesTotales}`,
+      color: 'text-amber-600'
+    }
+  }
+  // activo
+  return {
+    texto: `Bono activo · ${sesionesRestantes.value}/${props.sesionesTotales}`,
+    color: 'text-emerald-600'
+  }
+})
+
+// Color de la barra de progreso
+const barraColor = computed(() => {
+  if (props.estadoBono === 'por_agotar') return 'bg-amber-500'
+  if (props.estadoBono === 'agotado') return 'bg-red-400'
+  if (props.estadoBono === 'activo') return 'bg-emerald-500'
+  return 'bg-gray-300'
 })
 </script>
 
 <template>
   <div
     @click="emit('click', id)"
-    class="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:bg-gray-50 group"
+    class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200 group"
   >
-    <!-- Avatar - gris neutro uniforme -->
-    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-semibold text-sm">
+    <!-- Avatar -->
+    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-medium text-sm">
       {{ iniciales }}
     </div>
 
     <!-- Info principal -->
     <div class="flex-1 min-w-0">
       <!-- Nombre -->
-      <p class="font-semibold text-gray-900 truncate">{{ nombre }}</p>
+      <p class="font-semibold text-gray-900 truncate text-sm">{{ nombre }}</p>
 
-      <!-- Info secundaria -->
-      <div class="flex items-center gap-3 mt-1 text-sm text-gray-500">
-        <!-- Ultima sesion con icono -->
-        <span class="flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <!-- Último contacto con tooltip -->
+      <div class="flex items-center gap-2 mt-0.5">
+        <span
+          class="text-xs text-gray-500 flex items-center gap-1"
+          :title="ultimaSesionFechaReal"
+        >
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          {{ ultimaSesionFormateada }}
-        </span>
-
-        <!-- Estado bono - solo texto, sin badge de color -->
-        <span v-if="estadoBono" class="text-gray-400">
-          {{ estadoBono === 'activo' ? 'Bono activo' : estadoBono === 'por_agotar' ? 'Por agotar' : estadoBono === 'sin_bono' ? 'Sin bono' : 'Agotado' }}
+          {{ ultimaSesionRelativa }}
         </span>
       </div>
 
-      <!-- Barra de progreso del bono -->
-      <div v-if="sesionesTotales && sesionesTotales > 0" class="mt-2">
-        <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-          <span>Sesiones</span>
-          <span class="font-medium text-gray-700">{{ sesionesUsadas || 0 }}/{{ sesionesTotales }}</span>
-        </div>
-        <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <!-- Estado de bono con mini barra -->
+      <div class="flex items-center gap-2 mt-1.5">
+        <span class="text-xs font-medium" :class="estadoBonoTexto.color">
+          {{ estadoBonoTexto.texto }}
+        </span>
+
+        <!-- Mini barra de progreso (solo si hay bono) -->
+        <div
+          v-if="sesionesTotales && sesionesTotales > 0 && estadoBono !== 'sin_bono'"
+          class="flex-1 max-w-16 h-1 bg-gray-100 rounded-full overflow-hidden"
+        >
           <div
-            class="h-full rounded-full transition-all duration-500 bg-gray-400"
+            class="h-full rounded-full transition-all duration-300"
+            :class="barraColor"
             :style="{ width: `${Math.min(progresoBono, 100)}%` }"
           ></div>
         </div>
       </div>
     </div>
 
-    <!-- Boton ver perfil -->
+    <!-- Botón ver ficha -->
     <button
-      class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-      title="Ver perfil"
+      @click.stop="emit('click', id)"
+      class="flex-shrink-0 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
     >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
+      Ver ficha
     </button>
+
+    <!-- Chevron siempre visible en móvil -->
+    <svg class="w-4 h-4 text-gray-300 group-hover:text-gray-400 transition-colors flex-shrink-0 lg:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
   </div>
 </template>

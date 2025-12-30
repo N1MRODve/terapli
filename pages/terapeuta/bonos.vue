@@ -1561,7 +1561,12 @@ const guardarPrecios = async () => {
 
 // Navegación
 const irABonoPaciente = (bono: any) => {
-  router.push(`/terapeuta/pacientes/${bono.paciente_id}/bonos`)
+  if (!bono?.paciente_id) {
+    console.error('[Bonos] ERROR: ID de paciente no válido en bono:', bono)
+    return
+  }
+  console.log('[Bonos] Navegando a bonos del paciente:', bono.paciente_id)
+  navigateTo(`/terapeuta/pacientes/${bono.paciente_id}/bonos`)
 }
 
 // Helpers
@@ -1853,20 +1858,31 @@ const registrarPago = async (bono: any) => {
 // Ver historial del bono
 const verHistorialBono = (bono: any) => {
   menuBonoAbierto.value = null
-  router.push(`/terapeuta/pacientes/${bono.paciente_id}/bonos?bono=${bono.id}`)
+  if (!bono?.paciente_id) {
+    console.error('[Bonos] ERROR: ID de paciente no válido para historial:', bono)
+    return
+  }
+  console.log('[Bonos] Navegando a historial del bono:', bono.id)
+  navigateTo(`/terapeuta/pacientes/${bono.paciente_id}/bonos?bono=${bono.id}`)
 }
 
 // Añadir sesión al bono
 const anadirSesion = (bono: any) => {
   menuBonoAbierto.value = null
   // Navegar a la agenda con el paciente preseleccionado
-  router.push(`/terapeuta/agenda?paciente=${bono.paciente_id}&bono=${bono.id}`)
+  console.log('[Bonos] Navegando a agenda para añadir sesión:', bono.id)
+  navigateTo(`/terapeuta/agenda?paciente=${bono.paciente_id}&bono=${bono.id}`)
 }
 
 // Editar bono
 const editarBono = (bono: any) => {
   menuBonoAbierto.value = null
-  router.push(`/terapeuta/pacientes/${bono.paciente_id}/bonos?editar=${bono.id}`)
+  if (!bono?.paciente_id) {
+    console.error('[Bonos] ERROR: ID de paciente no válido para editar bono:', bono)
+    return
+  }
+  console.log('[Bonos] Navegando a editar bono:', bono.id)
+  navigateTo(`/terapeuta/pacientes/${bono.paciente_id}/bonos?editar=${bono.id}`)
 }
 
 // Pausar bono
@@ -1920,7 +1936,12 @@ const reactivarBono = async (bono: any) => {
 // Crear nuevo bono (para el mismo paciente)
 const crearNuevoBono = (bono: any) => {
   menuBonoAbierto.value = null
-  router.push(`/terapeuta/pacientes/${bono.paciente_id}/bonos?nuevo=1&tipo=${bono.tipo}`)
+  if (!bono?.paciente_id) {
+    console.error('[Bonos] ERROR: ID de paciente no válido para crear nuevo bono:', bono)
+    return
+  }
+  console.log('[Bonos] Navegando a crear nuevo bono para paciente:', bono.paciente_id)
+  navigateTo(`/terapeuta/pacientes/${bono.paciente_id}/bonos?nuevo=1&tipo=${bono.tipo}`)
 }
 
 // Confirmar eliminación de bono

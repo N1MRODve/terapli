@@ -1120,8 +1120,15 @@ const paginasVisibles = computed(() => {
 const irAFichaPaciente = (pacienteOrId) => {
   // Puede recibir el objeto paciente o directamente el ID
   const id = typeof pacienteOrId === 'object' ? pacienteOrId.id : pacienteOrId
-  console.log('[Pacientes] Navegando a ficha:', id)
-  router.push(`/terapeuta/pacientes/${id}`)
+  console.log('[Pacientes] Navegando a ficha de paciente:', id)
+
+  if (!id) {
+    console.error('[Pacientes] ERROR: ID de paciente no válido:', pacienteOrId)
+    return
+  }
+
+  // Usar navigateTo para mejor compatibilidad con Nuxt 3
+  navigateTo(`/terapeuta/pacientes/${id}`)
 }
 
 // Gestión de modales
@@ -1183,10 +1190,16 @@ const manejarCitaCreada = async () => {
 
 // Ver citas y gestionar bonos
 const verCitasPaciente = (paciente) => {
-  router.push(`/agenda?paciente=${paciente.id}`)
+  console.log('[Pacientes] Navegando a agenda del paciente:', paciente.id)
+  navigateTo(`/agenda?paciente=${paciente.id}`)
 }
 const gestionarBonosPaciente = (paciente) => {
-  router.push(`/terapeuta/pacientes/${paciente.id}/bonos`)
+  if (!paciente?.id) {
+    console.error('[Pacientes] ERROR: ID de paciente no válido para gestionar bonos:', paciente)
+    return
+  }
+  console.log('[Pacientes] Navegando a bonos del paciente:', paciente.id)
+  navigateTo(`/terapeuta/pacientes/${paciente.id}/bonos`)
 }
 
 // Preview modal

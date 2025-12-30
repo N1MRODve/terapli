@@ -512,10 +512,10 @@ function buildPatientData(
     }
   }
 
-  if (mappedRow.comision) {
-    const comision = parseFloat(mappedRow.comision)
-    if (!isNaN(comision)) {
-      data.comision = comision
+  if (mappedRow.descuento) {
+    const descuento = parseFloat(mappedRow.descuento)
+    if (!isNaN(descuento)) {
+      data.descuento = descuento
     }
   }
 

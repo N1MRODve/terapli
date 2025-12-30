@@ -181,12 +181,11 @@ const FIELD_SYNONYMS: Record<PacienteField, string[]> = {
     'fee'
   ],
 
-  // Comisión
-  comision: [
-    'comisión',
-    'comision',
+  // Descuento
+  descuento: [
     'descuento',
-    'commission'
+    'discount',
+    'rebaja'
   ],
 
   // Notas

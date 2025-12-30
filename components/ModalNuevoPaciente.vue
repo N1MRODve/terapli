@@ -1,425 +1,371 @@
 <template>
   <div
     v-if="mostrar"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    @click.self="cerrarModal"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+    @click.self="intentarCerrar"
+    @keydown.esc="intentarCerrar"
   >
-    <div class="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/30">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
       <!-- Header -->
-      <div class="sticky top-0 bg-gradient-to-r from-[#5550F2]/5 via-[#027368]/5 to-[#04BF9D]/5 backdrop-blur-md border-b border-neutral-200 px-6 py-4 flex justify-between items-center shadow-sm">
-        <h2 class="text-2xl font-['Elms_Sans'] text-neutral-800 font-semibold">
-          Nuevo Paciente
-        </h2>
+      <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">
+            {{ paso === 1 ? 'Nuevo Paciente' : 'Configurar Tratamiento' }}
+          </h2>
+          <p v-if="paso === 1" class="text-sm text-gray-500 mt-0.5">
+            Datos básicos del paciente
+          </p>
+          <p v-else class="text-sm text-gray-500 mt-0.5">
+            {{ formulario.nombre }} {{ formulario.apellido }}
+          </p>
+        </div>
         <button
-          @click="cerrarModal"
-          class="text-neutral-600 hover:text-[#027368] transition-colors p-2 hover:bg-white/50 rounded-lg"
-          aria-label="Cerrar modal"
+          @click="intentarCerrar"
+          class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Cerrar"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <!-- Formulario -->
-      <form @submit.prevent="guardarPaciente" class="px-6 py-6 space-y-6 bg-gradient-to-b from-white/50 to-transparent">
-        <!-- Información Personal -->
-        <div class="space-y-4">
-          <h3 class="text-lg font-['Elms_Sans'] text-neutral-800 font-semibold">
-            Información Personal
-          </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Nombre -->
-            <div>
-              <label for="nombre" class="block text-sm font-medium text-neutral-700 mb-1">
-                Nombre <span class="text-red-500">*</span>
-              </label>
-              <input
-                id="nombre"
-                v-model="formulario.nombre"
-                type="text"
-                required
-                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
-                placeholder="Nombre del paciente"
-              />
-            </div>
-
-            <!-- Apellido -->
-            <div>
-              <label for="apellido" class="block text-sm font-medium text-neutral-700 mb-1">
-                Apellido <span class="text-red-500">*</span>
-              </label>
-              <input
-                id="apellido"
-                v-model="formulario.apellido"
-                type="text"
-                required
-                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
-                placeholder="Apellido(s) del paciente"
-              />
-            </div>
-
-            <!-- Email -->
-            <div>
-              <label for="email" class="block text-sm font-medium text-neutral-700 mb-1">
-                Email <span class="text-red-500">*</span>
-              </label>
-              <input
-                id="email"
-                v-model="formulario.email"
-                type="email"
-                required
-                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
-                placeholder="correo@ejemplo.com"
-              />
-            </div>
-
-            <!-- Teléfono -->
-            <div>
-              <label for="telefono" class="block text-sm font-medium text-neutral-700 mb-1">
-                Teléfono
-              </label>
-              <input
-                id="telefono"
-                v-model="formulario.telefono"
-                type="tel"
-                class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-[#027368]/20 focus:border-[#027368] bg-white/90 backdrop-blur-sm transition-all shadow-sm"
-                placeholder="+52 123 456 7890"
-              />
-            </div>
-
-            <!-- Fecha de Nacimiento -->
-            <div>
-              <label for="fecha_nacimiento" class="block text-sm font-medium text-[#2D3748] mb-1">
-                Fecha de Nacimiento
-              </label>
-              <div class="relative">
-                <input
-                  id="fecha_nacimiento"
-                  v-model="formulario.fecha_nacimiento"
-                  type="date"
-                  class="w-full px-4 py-2 pr-12 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white cursor-pointer"
-                  @focus="abrirSelectorFecha($event)"
-                />
-                <button
-                  type="button"
-                  @click="abrirSelectorFecha($event, 'fecha_nacimiento')"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#5550F2] hover:text-[#2D3748] transition-colors"
-                  title="Abrir calendario"
-                >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </button>
-              </div>
-              <p class="text-xs text-cafe/60 mt-1">
-                💡 Puedes escribir la fecha o usar el calendario
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Información Terapéutica -->
-        <div class="space-y-4 pt-4 border-t border-neutral-200">
-          <h3 class="text-lg font-['Elms_Sans'] text-neutral-800 font-semibold">
-            Información Terapéutica
-          </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Tipo de Bono -->
-            <div>
-              <label for="tipo_bono" class="block text-sm font-medium text-[#2D3748] mb-1">
-                Tipo de Bono <span class="text-red-500">*</span>
-              </label>
-              <select
-                id="tipo_bono"
-                v-model="formulario.tipo_bono"
-                required
-                class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white"
-              >
-                <option value="">Selecciona tipo de bono</option>
-                <option value="otro">A Demanda (1 sesión - 60€ - sin compromiso)</option>
-                <option value="quincenal">Quincenal (2 sesiones/mes - 100€)</option>
-                <option value="semanal">Semanal (4 sesiones/mes - 160€)</option>
-                <option value="mensual">Mensual</option>
-              </select>
-              <p class="text-xs text-cafe/60 mt-1">
-                🎫 Define el tipo de bono del paciente
-              </p>
-            </div>
-
-            <!-- Primera Sesión -->
-            <div>
-              <label for="primera_sesion" class="block text-sm font-medium text-[#2D3748] mb-1">
-                Primera Sesión <span class="text-red-500">*</span>
-              </label>
-              <div class="relative">
-                <input
-                  id="primera_sesion"
-                  v-model="formulario.primera_sesion"
-                  type="datetime-local"
-                  required
-                  step="1800"
-                  class="w-full px-4 py-2 pr-12 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white cursor-pointer"
-                  @focus="abrirSelectorFecha($event)"
-                />
-                <button
-                  type="button"
-                  @click="abrirSelectorFecha($event, 'primera_sesion')"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#5550F2] hover:text-[#2D3748] transition-colors"
-                  title="Abrir selector de fecha y hora"
-                >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
-              </div>
-              
-              <!-- Accesos rápidos de fecha/hora -->
-              <div class="flex gap-2 flex-wrap mt-2">
-                <button
-                  v-for="(opcion, index) in opcionesHorarioRapido"
-                  :key="index"
-                  type="button"
-                  @click="formulario.primera_sesion = opcion.datetime"
-                  :class="[
-                    'text-xs px-3 py-1.5 rounded-lg border transition-all',
-                    formulario.primera_sesion === opcion.datetime
-                      ? 'bg-[#5550F2] text-white border-[#5550F2] font-semibold'
-                      : 'bg-white text-[#2D3748] border-[#5550F2]/30 hover:border-[#5550F2] hover:bg-[#5550F2]/10'
-                  ]"
-                >
-                  {{ opcion.label }}
-                </button>
-              </div>
-              
-              <p class="text-xs text-cafe/60 mt-1">
-                💡 Puedes escribir la fecha/hora o usar el selector
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Creación de Bono Inicial (Opcional) -->
-        <div class="space-y-4 pt-4 border-t border-[#5550F2]/30">
-                    <!-- Sección Bono Inicial -->
-          <div class="border-t pt-6">
-            <h3 class="text-lg font-serif text-[#2D3748] font-semibold mb-2">
-              💳 Bono Inicial (Opcional)
-            </h3>
-            
-            <!-- Mensaje especial para "A Demanda" -->
-            <div v-if="esADemanda" class="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 mb-3">
-              <div class="flex items-start gap-3">
-                <span class="text-2xl">ℹ️</span>
-                <div>
-                  <p class="text-sm font-semibold text-amber-900 mb-1">
-                    Sesión "A Demanda" seleccionada
-                  </p>
-                  <p class="text-sm text-amber-800">
-                    Las sesiones a demanda son <strong>sin compromiso</strong> y se pagan individualmente (60€ por sesión). 
-                    No es necesario crear un bono prepagado.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Mensaje normal para otros tipos -->
-            <p v-else class="text-sm text-cafe/70 mb-3">
-              Crea un bono prepagado para que el paciente empiece su tratamiento. Podrás confirmar el pago después.
-            </p>
-            
-            <label 
-              class="flex items-center gap-3 p-3 rounded-lg transition-colors"
-              :class="esADemanda 
-                ? 'bg-gray-100 border-2 border-gray-200 cursor-not-allowed opacity-60' 
-                : 'bg-purple-50 border-2 border-purple-200 cursor-pointer hover:bg-purple-100'"
+      <!-- Indicador de pasos -->
+      <div class="px-6 py-3 bg-gray-50 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <div
+            class="flex items-center gap-1.5"
+            :class="paso === 1 ? 'text-violet-600' : 'text-gray-400'"
+          >
+            <div
+              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+              :class="paso === 1 ? 'bg-violet-600 text-white' : 'bg-gray-200 text-gray-500'"
             >
-              <input
-                v-model="formulario.crear_bono"
-                type="checkbox"
-                :disabled="esADemanda"
-                class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-              <span class="text-sm font-semibold" :class="esADemanda ? 'text-gray-500' : 'text-purple-700'">
-                ✅ Sí, crear bono prepagado para este paciente
-              </span>
-            </label>
+              {{ paso > 1 ? '✓' : '1' }}
+            </div>
+            <span class="text-sm font-medium">Datos</span>
           </div>
-
-          <!-- Formulario de Bono (solo si checkbox está marcado) -->
-          <div v-if="formulario.crear_bono" class="border-2 border-purple-400/40 rounded-lg p-5 space-y-4 bg-gradient-to-br from-purple-50 to-purple-100/50">
-            <!-- Resumen del tipo de bono seleccionado -->
-            <div class="bg-white border-2 border-purple-300 rounded-lg p-4 shadow-sm">
-              <div class="flex items-start gap-3">
-                <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span class="text-white text-xl">🎟️</span>
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-semibold text-purple-900 mb-1">
-                    Tipo de Bono: {{ nombreTipoBono || 'Selecciona un tipo arriba' }}
-                  </h4>
-                  <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div class="flex items-center gap-2">
-                      <span class="text-purple-600">📊</span>
-                      <span class="text-purple-800">
-                        <strong>{{ sesionesSegunTipo }}</strong> {{ sesionesSegunTipo === 1 ? 'sesión' : 'sesiones' }}
-                      </span>
-                    </div>
-                    <div class="flex items-center gap-2" v-if="precioSugeridoBono > 0">
-                      <span class="text-purple-600">💰</span>
-                      <span class="text-purple-800">
-                        Precio sugerido: <strong>€{{ precioSugeridoBono }}</strong>
-                      </span>
-                    </div>
-                  </div>
-                  <p class="text-xs text-purple-600 mt-2 bg-purple-50 p-2 rounded">
-                    💡 <strong>Tip:</strong> Los precios se calcularán automáticamente según el tipo de bono
-                  </p>
-                </div>
-              </div>
+          <div class="flex-1 h-0.5 bg-gray-200 mx-2">
+            <div
+              class="h-full bg-violet-600 transition-all duration-300"
+              :style="{ width: paso > 1 ? '100%' : '0%' }"
+            ></div>
+          </div>
+          <div
+            class="flex items-center gap-1.5"
+            :class="paso === 2 ? 'text-violet-600' : 'text-gray-400'"
+          >
+            <div
+              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+              :class="paso === 2 ? 'bg-violet-600 text-white' : 'bg-gray-200 text-gray-500'"
+            >
+              2
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- Monto del Bono -->
-              <div>
-                <label for="bono_monto" class="block text-sm font-medium text-[#2D3748] mb-1">
-                  Monto Total <span class="text-red-500">*</span>
-                </label>
-                <div class="relative">
-                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#2D3748]/60">€</span>
-                  <input
-                    id="bono_monto"
-                    v-model.number="formulario.bono_monto"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    :required="formulario.crear_bono"
-                    placeholder="0.00"
-                    class="w-full pl-8 pr-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white"
-                  />
-                </div>
-              </div>
-
-              <!-- Precio por sesión (calculado) -->
-              <div>
-                <label class="block text-sm font-medium text-[#2D3748] mb-1">
-                  Precio por Sesión
-                </label>
-                <div class="px-4 py-2 bg-purple-100 rounded-lg border border-purple-300">
-                  <span class="text-lg font-bold text-purple-700">€{{ precioPorSesionBono }}</span>
-                </div>
-              </div>
-
-              <!-- Renovación Automática -->
-              <div class="md:col-span-2">
-                <label class="flex items-start gap-3 p-4 bg-white border-2 border-purple-200 rounded-lg cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-all">
-                  <input
-                    v-model="formulario.bono_renovacion_automatica"
-                    type="checkbox"
-                    class="mt-1 w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-                  />
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="text-lg">🔄</span>
-                      <span class="text-sm font-semibold text-purple-900">
-                        Renovación Automática
-                      </span>
-                      <span class="ml-auto px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded">
-                        Recomendado
-                      </span>
-                    </div>
-                    <div class="text-xs text-[#2D3748]/70 space-y-1">
-                      <p>✓ El bono se renovará automáticamente cuando se agoten las sesiones o expire</p>
-                      <p>✓ Mantiene la continuidad del tratamiento sin interrupciones</p>
-                      <p>✓ Puedes desactivar la renovación en cualquier momento</p>
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- Resumen del bono -->
-            <div v-if="sesionesSegunTipo > 0 && formulario.bono_monto > 0" class="p-3 bg-white rounded-lg border border-purple-300">
-              <div class="text-xs font-medium text-purple-800 mb-2">📋 Resumen del Bono</div>
-              <div class="grid grid-cols-3 gap-2 text-xs">
-                <div>
-                  <span class="text-[#2D3748]/60">Tipo:</span>
-                  <span class="font-medium text-[#2D3748] ml-1">{{ nombreTipoBono }}</span>
-                </div>
-                <div>
-                  <span class="text-[#2D3748]/60">Sesiones:</span>
-                  <span class="font-medium text-[#2D3748] ml-1">{{ sesionesSegunTipo }}</span>
-                </div>
-                <div>
-                  <span class="text-[#2D3748]/60">Total:</span>
-                  <span class="font-medium text-[#2D3748] ml-1">€{{ formulario.bono_monto }}</span>
-                </div>
-              </div>
-            </div>
+            <span class="text-sm font-medium">Tratamiento</span>
           </div>
         </div>
+      </div>
 
-        <!-- Notas Iniciales -->
-        <div class="space-y-4 pt-4 border-t border-[#5550F2]/30">
-          <h3 class="text-lg font-serif text-[#2D3748] font-semibold">
-            Notas Iniciales
-          </h3>
-          <div>
-            <label for="notas_iniciales" class="block text-sm font-medium text-[#2D3748] mb-1">
-              Observaciones (Opcional)
-            </label>
-            <textarea
-              id="notas_iniciales"
-              v-model="formulario.notas_iniciales"
-              rows="3"
-              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:ring-2 focus:ring-[#5550F2] focus:border-transparent bg-white resize-none"
-              placeholder="Observaciones iniciales, motivo de consulta, etc."
-            ></textarea>
-          </div>
+      <!-- PASO 1: Datos Básicos -->
+      <form v-if="paso === 1" @submit.prevent="siguientePaso" class="p-6 space-y-4">
+        <!-- Nombre -->
+        <div>
+          <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">
+            Nombre <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="nombre"
+            v-model="formulario.nombre"
+            type="text"
+            required
+            autofocus
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow"
+            placeholder="Nombre del paciente"
+            :class="{ 'border-red-300 bg-red-50': erroresCampo.nombre }"
+          />
+          <p v-if="erroresCampo.nombre" class="text-xs text-red-500 mt-1">{{ erroresCampo.nombre }}</p>
+        </div>
+
+        <!-- Apellido -->
+        <div>
+          <label for="apellido" class="block text-sm font-medium text-gray-700 mb-1">
+            Apellido <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="apellido"
+            v-model="formulario.apellido"
+            type="text"
+            required
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow"
+            placeholder="Apellido(s) del paciente"
+            :class="{ 'border-red-300 bg-red-50': erroresCampo.apellido }"
+          />
+          <p v-if="erroresCampo.apellido" class="text-xs text-red-500 mt-1">{{ erroresCampo.apellido }}</p>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+            Email <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="email"
+            v-model="formulario.email"
+            type="email"
+            required
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow"
+            placeholder="correo@ejemplo.com"
+            :class="{ 'border-red-300 bg-red-50': erroresCampo.email }"
+          />
+          <p v-if="erroresCampo.email" class="text-xs text-red-500 mt-1">{{ erroresCampo.email }}</p>
+        </div>
+
+        <!-- Teléfono -->
+        <div>
+          <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">
+            Teléfono
+          </label>
+          <input
+            id="telefono"
+            v-model="formulario.telefono"
+            type="tel"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow"
+            placeholder="+34 600 000 000"
+          />
         </div>
 
         <!-- Mensaje de Error -->
-        <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-3">
           <p class="text-sm text-red-600">{{ error }}</p>
         </div>
 
-        <!-- Botones de Acción - Fijos al fondo -->
-        <div class="sticky bottom-0 bg-gradient-to-r from-white/95 via-white/90 to-white/95 backdrop-blur-md pt-4 pb-2 border-t border-neutral-200 -mx-6 px-6 mt-6 shadow-sm">
-          <div class="flex justify-between items-center gap-3">
-            <div class="text-xs text-neutral-600">
-              <span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1"></span>
-              Los campos con * son obligatorios
-            </div>
-            <div class="flex gap-3">
-              <button
-                type="button"
-                @click="cerrarModal"
-                :disabled="guardando"
-                class="px-6 py-2.5 border-2 border-neutral-300 text-neutral-700 font-medium rounded-xl hover:bg-neutral-50 hover:border-[#027368] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="guardando || !formularioValido"
-                class="px-8 py-2.5 bg-gradient-to-r from-[#04BF9D] to-[#027368] text-white font-semibold rounded-xl hover:from-[#027368] hover:to-[#04BF9D] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm hover:shadow-md"
-              >
-                <span v-if="guardando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                <span v-else>✓</span>
-                {{ guardando ? 'Creando paciente...' : 'Crear Paciente' }}
-              </button>
-            </div>
-          </div>
+        <!-- Botones Paso 1 -->
+        <div class="flex flex-col gap-2 pt-4 border-t border-gray-100">
+          <button
+            type="submit"
+            :disabled="!formularioPaso1Valido"
+            class="w-full px-4 py-3 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Crear y configurar tratamiento
+          </button>
+          <button
+            type="button"
+            @click="crearSoloBasico"
+            :disabled="!formularioPaso1Valido || guardando"
+            class="w-full px-4 py-2.5 text-gray-600 hover:text-gray-800 hover:bg-gray-100 font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <span v-if="guardando" class="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+            {{ guardando ? 'Creando...' : 'Crear paciente sin configurar' }}
+          </button>
+          <button
+            type="button"
+            @click="intentarCerrar"
+            class="w-full px-4 py-2 text-gray-500 hover:text-gray-700 text-sm transition-colors"
+          >
+            Cancelar
+          </button>
         </div>
       </form>
+
+      <!-- PASO 2: Configurar Tratamiento -->
+      <form v-else @submit.prevent="guardarPaciente" class="p-6 space-y-5">
+
+        <!-- Primera Sesión -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-gray-700">Primera Sesión</h3>
+            <label class="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
+              <input
+                v-model="sinPrimeraSesion"
+                type="checkbox"
+                class="w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-500"
+              />
+              No agendar ahora
+            </label>
+          </div>
+
+          <div v-if="!sinPrimeraSesion" class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="fecha_sesion" class="block text-xs font-medium text-gray-600 mb-1">Fecha</label>
+              <input
+                id="fecha_sesion"
+                v-model="formulario.fecha_primera_sesion"
+                type="date"
+                :min="fechaMinima"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm"
+              />
+            </div>
+            <div>
+              <label for="hora_sesion" class="block text-xs font-medium text-gray-600 mb-1">Hora</label>
+              <select
+                id="hora_sesion"
+                v-model="formulario.hora_primera_sesion"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm"
+              >
+                <option value="">Seleccionar</option>
+                <option v-for="hora in horasDisponibles" :key="hora" :value="hora">{{ hora }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Atajos rápidos -->
+          <div v-if="!sinPrimeraSesion" class="flex gap-2 flex-wrap">
+            <button
+              v-for="atajo in atajosHorario"
+              :key="atajo.label"
+              type="button"
+              @click="aplicarAtajo(atajo)"
+              class="text-xs px-3 py-1.5 rounded-lg border transition-all"
+              :class="atajoSeleccionado === atajo.label
+                ? 'bg-violet-600 text-white border-violet-600'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-violet-300'"
+            >
+              {{ atajo.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Tipo de Bono -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-gray-700">Tipo de Bono</h3>
+            <span class="text-xs text-gray-400">Opcional</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              v-for="tipo in tiposBono"
+              :key="tipo.value"
+              type="button"
+              @click="formulario.tipo_bono = formulario.tipo_bono === tipo.value ? '' : tipo.value"
+              class="p-3 rounded-lg border text-left transition-all"
+              :class="formulario.tipo_bono === tipo.value
+                ? 'border-violet-500 bg-violet-50 ring-2 ring-violet-500/20'
+                : 'border-gray-200 hover:border-gray-300'"
+            >
+              <span class="text-sm font-medium" :class="formulario.tipo_bono === tipo.value ? 'text-violet-700' : 'text-gray-700'">
+                {{ tipo.label }}
+              </span>
+              <p class="text-xs mt-0.5" :class="formulario.tipo_bono === tipo.value ? 'text-violet-600' : 'text-gray-500'">
+                {{ tipo.desc }}
+              </p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Crear Bono Prepagado -->
+        <div v-if="formulario.tipo_bono && formulario.tipo_bono !== 'otro'" class="space-y-3">
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+            <input
+              v-model="formulario.crear_bono"
+              type="checkbox"
+              class="mt-0.5 w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-500"
+            />
+            <div>
+              <span class="text-sm font-medium text-gray-700">Crear bono prepagado</span>
+              <p class="text-xs text-gray-500 mt-0.5">
+                {{ sesionesSegunTipo }} sesiones por {{ precioSugeridoBono }}
+              </p>
+            </div>
+          </label>
+
+          <!-- Detalles del bono si está activado -->
+          <div v-if="formulario.crear_bono" class="bg-violet-50 rounded-lg p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-violet-700">Monto total</span>
+              <div class="flex items-center gap-1">
+                <span class="text-violet-400">€</span>
+                <input
+                  v-model.number="formulario.bono_monto"
+                  type="number"
+                  min="0"
+                  step="5"
+                  class="w-20 px-2 py-1 border border-violet-200 rounded text-right text-sm font-medium text-violet-700 focus:ring-2 focus:ring-violet-500"
+                />
+              </div>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-violet-600 cursor-pointer">
+              <input
+                v-model="formulario.bono_renovacion_automatica"
+                type="checkbox"
+                class="w-4 h-4 text-violet-600 border-violet-300 rounded focus:ring-violet-500"
+              />
+              Renovación automática
+            </label>
+          </div>
+        </div>
+
+        <!-- Notas -->
+        <div class="space-y-2">
+          <label for="notas" class="block text-sm font-medium text-gray-700">
+            Observaciones <span class="text-gray-400 font-normal">(opcional)</span>
+          </label>
+          <textarea
+            id="notas"
+            v-model="formulario.notas_iniciales"
+            rows="2"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm resize-none"
+            placeholder="Motivo de consulta, derivación, contexto inicial..."
+          ></textarea>
+          <p class="text-xs text-gray-400">Solo visible para ti, no se envía al paciente.</p>
+        </div>
+
+        <!-- Mensaje de Error -->
+        <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-3">
+          <p class="text-sm text-red-600">{{ error }}</p>
+        </div>
+
+        <!-- Botones Paso 2 -->
+        <div class="flex gap-3 pt-4 border-t border-gray-100">
+          <button
+            type="button"
+            @click="paso = 1"
+            class="px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+          >
+            Atrás
+          </button>
+          <button
+            type="submit"
+            :disabled="guardando"
+            class="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <span v-if="guardando" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            {{ guardando ? 'Creando...' : 'Crear Paciente' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal de confirmación de cierre -->
+    <div
+      v-if="mostrarConfirmacionCierre"
+      class="fixed inset-0 bg-black/30 flex items-center justify-center z-60"
+      @click.self="mostrarConfirmacionCierre = false"
+    >
+      <div class="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Tienes cambios sin guardar</h3>
+        <p class="text-sm text-gray-600 mb-4">Si cierras ahora, perderás los datos ingresados.</p>
+        <div class="flex gap-3">
+          <button
+            @click="mostrarConfirmacionCierre = false"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Continuar editando
+          </button>
+          <button
+            @click="cerrarDefinitivo"
+            class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+          >
+            Descartar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
   mostrar: {
@@ -435,466 +381,331 @@ const { crearBono } = useBonos()
 const { crearCita } = useCitas()
 const user = useSupabaseUser()
 
+// Estado del modal
+const paso = ref(1)
+const guardando = ref(false)
+const error = ref('')
+const erroresCampo = ref({})
+const mostrarConfirmacionCierre = ref(false)
+const sinPrimeraSesion = ref(false)
+const atajoSeleccionado = ref('')
+
+// Formulario simplificado
 const formulario = ref({
   nombre: '',
   apellido: '',
   email: '',
   telefono: '',
-  fecha_nacimiento: '',
+  fecha_primera_sesion: '',
+  hora_primera_sesion: '',
   tipo_bono: '',
-  primera_sesion: '',
-  activo: true,
-  notas_iniciales: '',
   crear_bono: false,
   bono_monto: 0,
-  bono_renovacion_automatica: false
+  bono_renovacion_automatica: false,
+  notas_iniciales: ''
 })
 
-const guardando = ref(false)
-const error = ref('')
-
-// ============================================================================
-// PRECIOS BASE POR TIPO DE BONO
-// ============================================================================
+// Precios base
 const PRECIOS_BASE = {
-  otro: 60,         // €60 por 1 sesión (A Demanda) - Sin compromiso
-  quincenal: 100,   // €100 por 2 sesiones (€50/sesión)
-  semanal: 160,     // €160 por 4 sesiones (€40/sesión)
-  mensual: 180      // €180 por 4 sesiones mensuales
+  otro: 60,
+  quincenal: 100,
+  semanal: 160,
+  mensual: 180
 }
 
-// ============================================================================
-// COMPUTED PROPERTIES
-// ============================================================================
+// Tipos de bono disponibles
+const tiposBono = [
+  { value: 'otro', label: 'A Demanda', desc: '1 sesión - 60€' },
+  { value: 'quincenal', label: 'Quincenal', desc: '2 sesiones - 100€' },
+  { value: 'semanal', label: 'Semanal', desc: '4 sesiones - 160€' },
+  { value: 'mensual', label: 'Mensual', desc: '4 sesiones - 180€' }
+]
 
-// Computed: Sesiones según tipo de bono seleccionado
+// Computed
+const formularioPaso1Valido = computed(() => {
+  return formulario.value.nombre.trim() &&
+         formulario.value.apellido.trim() &&
+         formulario.value.email.trim() &&
+         validarEmail(formulario.value.email)
+})
+
+const hayCambios = computed(() => {
+  return formulario.value.nombre ||
+         formulario.value.apellido ||
+         formulario.value.email ||
+         formulario.value.telefono
+})
+
 const sesionesSegunTipo = computed(() => {
-  const tipo = formulario.value.tipo_bono
-  if (!tipo) return 0
-  
-  const mapeo = {
-    otro: 1,        // A Demanda
-    quincenal: 2,
-    semanal: 4,
-    mensual: 4
-  }
-  
-  return mapeo[tipo] || 0
+  const mapeo = { otro: 1, quincenal: 2, semanal: 4, mensual: 4 }
+  return mapeo[formulario.value.tipo_bono] || 0
 })
 
-// Computed: Nombre del tipo de bono
-const nombreTipoBono = computed(() => {
-  const tipo = formulario.value.tipo_bono
-  const nombres = {
-    otro: 'A Demanda',
-    quincenal: 'Quincenal',
-    semanal: 'Semanal',
-    mensual: 'Mensual'
-  }
-  return nombres[tipo] || 'No seleccionado'
-})
-
-// Computed: Precio por sesión del bono
-const precioPorSesionBono = computed(() => {
-  const sesiones = sesionesSegunTipo.value
-  const monto = formulario.value.bono_monto
-  if (!sesiones || !monto || sesiones <= 0) return '0.00'
-  return (monto / sesiones).toFixed(2)
-})
-
-// Computed: Precio sugerido según tipo de bono
 const precioSugeridoBono = computed(() => {
-  const tipo = formulario.value.tipo_bono
-  if (!tipo) return 0
-  return PRECIOS_BASE[tipo] || 0
+  const precio = PRECIOS_BASE[formulario.value.tipo_bono] || 0
+  return `€${precio}`
 })
 
-// Computed: Verificar si es sesión "A Demanda" (sin compromiso, no permite bono)
-const esADemanda = computed(() => {
-  return formulario.value.tipo_bono === 'otro'
-})
-
-// Opciones rápidas de fecha/hora para primera sesión
-const opcionesHorarioRapido = computed(() => {
+const fechaMinima = computed(() => {
   const hoy = new Date()
-  const opciones = []
-  
-  const formatearDateTime = (fecha, hora) => {
-    const year = fecha.getFullYear()
-    const month = String(fecha.getMonth() + 1).padStart(2, '0')
-    const day = String(fecha.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}T${hora}`
+  return hoy.toISOString().split('T')[0]
+})
+
+const horasDisponibles = computed(() => {
+  const horas = []
+  for (let h = 8; h <= 20; h++) {
+    horas.push(`${String(h).padStart(2, '0')}:00`)
+    horas.push(`${String(h).padStart(2, '0')}:30`)
   }
-  
-  // Mañana a las 10:00
+  return horas
+})
+
+const atajosHorario = computed(() => {
+  const hoy = new Date()
+
+  // Mañana
   const manana = new Date(hoy)
   manana.setDate(manana.getDate() + 1)
-  opciones.push({
-    label: '🌅 Mañana 10:00',
-    datetime: formatearDateTime(manana, '10:00')
-  })
-  
-  // Próximo lunes a las 09:00
+
+  // Próximo lunes
   const proximoLunes = new Date(hoy)
-  const diasHastaLunes = (8 - proximoLunes.getDay()) % 7
-  proximoLunes.setDate(proximoLunes.getDate() + (diasHastaLunes || 7))
-  opciones.push({
-    label: '📅 Próximo Lun 09:00',
-    datetime: formatearDateTime(proximoLunes, '09:00')
-  })
-  
-  // En una semana a las 16:00
-  const unaSemana = new Date(hoy)
-  unaSemana.setDate(unaSemana.getDate() + 7)
-  opciones.push({
-    label: '🗓️ En 7 días 16:00',
-    datetime: formatearDateTime(unaSemana, '16:00')
-  })
-  
-  return opciones
+  const diasHastaLunes = (8 - proximoLunes.getDay()) % 7 || 7
+  proximoLunes.setDate(proximoLunes.getDate() + diasHastaLunes)
+
+  return [
+    {
+      label: 'Mañana 10:00',
+      fecha: manana.toISOString().split('T')[0],
+      hora: '10:00'
+    },
+    {
+      label: 'Próx. Lunes 09:00',
+      fecha: proximoLunes.toISOString().split('T')[0],
+      hora: '09:00'
+    }
+  ]
 })
 
-// Computed: Validación del formulario
-const formularioValido = computed(() => {
-  const base = formulario.value.nombre &&
-               formulario.value.apellido &&
-               formulario.value.email &&
-               formulario.value.tipo_bono &&
-               formulario.value.primera_sesion
-
-  // Si está creando bono, validar que tenga monto
-  if (formulario.value.crear_bono) {
-    return base && formulario.value.bono_monto > 0
-  }
-
-  return base
-})
-
-// ============================================================================
-// WATCHERS
-// ============================================================================
-
-// Auto-rellenar monto del bono cuando se selecciona el tipo
+// Watchers
 watch(() => formulario.value.tipo_bono, (nuevoTipo) => {
-  // Si se selecciona "A Demanda", desactivar la creación de bono
   if (nuevoTipo === 'otro') {
     formulario.value.crear_bono = false
     formulario.value.bono_monto = 0
-  } else if (formulario.value.crear_bono && formulario.value.bono_monto === 0) {
-    // Para otros tipos, auto-rellenar el precio
+  } else if (formulario.value.crear_bono) {
     formulario.value.bono_monto = PRECIOS_BASE[nuevoTipo] || 0
   }
 })
 
-// Auto-rellenar monto cuando se activa "crear bono"
 watch(() => formulario.value.crear_bono, (crear) => {
-  if (crear && formulario.value.tipo_bono && formulario.value.bono_monto === 0) {
+  if (crear && formulario.value.tipo_bono) {
     formulario.value.bono_monto = PRECIOS_BASE[formulario.value.tipo_bono] || 0
   }
 })
 
-// Resetear formulario cuando se abre el modal
 watch(() => props.mostrar, (nuevo) => {
   if (nuevo) {
     resetearFormulario()
   }
 })
 
-// ============================================================================
-// MÉTODOS
-// ============================================================================
+// Métodos
+const validarEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return re.test(email)
+}
 
-// Método para abrir selector de fecha/hora
-const abrirSelectorFecha = (event, fieldId) => {
-  if (event.target && event.target.showPicker) {
-    try {
-      event.target.showPicker()
-    } catch (error) {
-      // showPicker no disponible en algunos navegadores
-      console.log('showPicker no disponible')
-    }
-  } else if (fieldId) {
-    // Fallback: enfocar el input
-    const input = document.getElementById(fieldId)
-    if (input) {
-      input.focus()
-      input.click()
-    }
+const validarPaso1 = () => {
+  erroresCampo.value = {}
+
+  if (!formulario.value.nombre.trim()) {
+    erroresCampo.value.nombre = 'El nombre es obligatorio'
+  }
+  if (!formulario.value.apellido.trim()) {
+    erroresCampo.value.apellido = 'El apellido es obligatorio'
+  }
+  if (!formulario.value.email.trim()) {
+    erroresCampo.value.email = 'El email es obligatorio'
+  } else if (!validarEmail(formulario.value.email)) {
+    erroresCampo.value.email = 'Introduce un email válido'
+  }
+
+  return Object.keys(erroresCampo.value).length === 0
+}
+
+const siguientePaso = () => {
+  if (validarPaso1()) {
+    paso.value = 2
+    error.value = ''
   }
 }
 
+const aplicarAtajo = (atajo) => {
+  formulario.value.fecha_primera_sesion = atajo.fecha
+  formulario.value.hora_primera_sesion = atajo.hora
+  atajoSeleccionado.value = atajo.label
+}
+
+const intentarCerrar = () => {
+  if (hayCambios.value && !guardando.value) {
+    mostrarConfirmacionCierre.value = true
+  } else {
+    cerrarDefinitivo()
+  }
+}
+
+const cerrarDefinitivo = () => {
+  mostrarConfirmacionCierre.value = false
+  emit('cerrar')
+}
+
 const resetearFormulario = () => {
+  paso.value = 1
   formulario.value = {
     nombre: '',
     apellido: '',
     email: '',
     telefono: '',
-    fecha_nacimiento: '',
+    fecha_primera_sesion: '',
+    hora_primera_sesion: '',
     tipo_bono: '',
-    primera_sesion: '',
-    activo: true,
-    notas_iniciales: '',
     crear_bono: false,
     bono_monto: 0,
-    bono_renovacion_automatica: false
+    bono_renovacion_automatica: false,
+    notas_iniciales: ''
   }
   error.value = ''
+  erroresCampo.value = {}
+  sinPrimeraSesion.value = false
+  atajoSeleccionado.value = ''
 }
 
-const cerrarModal = () => {
-  if (!guardando.value) {
-    emit('cerrar')
-  }
+// Crear solo con datos básicos (sin paso 2)
+const crearSoloBasico = async () => {
+  if (!validarPaso1()) return
+
+  // Crear paciente sin tratamiento configurado
+  await crearPacienteEnBD(false)
 }
 
+// Crear paciente completo (con tratamiento)
 const guardarPaciente = async () => {
+  await crearPacienteEnBD(true)
+}
+
+// Función principal de creación
+const crearPacienteEnBD = async (conTratamiento) => {
   try {
     guardando.value = true
     error.value = ''
 
-    // Esperar a que el usuario esté disponible (fix para race condition)
     await waitForUser()
-
-    // Verificar que el usuario esté autenticado
     const userId = getUserId()
+
     if (!userId) {
       throw new Error('Usuario no autenticado. Por favor, vuelve a iniciar sesión.')
     }
 
-    console.log('🆕 Creando nuevo paciente...')
     const nombreCompleto = `${formulario.value.nombre.trim()} ${formulario.value.apellido.trim()}`
 
-    // 1. Crear paciente usando RPC function para sincronizar con profiles
-    console.log('📝 Llamando a crear_paciente_simple...')
+    // 1. Crear paciente
     const { data: rpcResult, error: rpcError } = await supabase.rpc('crear_paciente_simple', {
-      p_email: formulario.value.email,
+      p_email: formulario.value.email.trim().toLowerCase(),
       p_nombre_completo: nombreCompleto,
       p_telefono: formulario.value.telefono || null,
       p_area_acompanamiento: null,
-      p_tipo_bono: formulario.value.tipo_bono || null,
+      p_tipo_bono: conTratamiento ? (formulario.value.tipo_bono || null) : null,
       p_terapeuta_id: userId,
       p_metadata: {
-        nombre: formulario.value.nombre,
-        apellido: formulario.value.apellido,
-        fecha_nacimiento: formulario.value.fecha_nacimiento,
-        notas_iniciales: formulario.value.notas_iniciales,
+        nombre: formulario.value.nombre.trim(),
+        apellido: formulario.value.apellido.trim(),
+        notas_iniciales: conTratamiento ? formulario.value.notas_iniciales : null,
         fecha_registro: new Date().toISOString(),
-        primera_sesion: formulario.value.primera_sesion,
         estado_registro: 'activo'
       }
     })
 
     if (rpcError) {
-      console.error('❌ Error en RPC crear_paciente_simple:', rpcError)
       throw new Error(`Error al crear paciente: ${rpcError.message}`)
     }
 
     if (!rpcResult || !rpcResult.id) {
-      const errorMsg = 'Error desconocido al crear paciente'
-      console.error('❌ RPC devolvió resultado inválido:', rpcResult)
-      throw new Error(errorMsg)
+      throw new Error('Error desconocido al crear paciente')
     }
 
-    console.log('✅ Paciente creado exitosamente:', rpcResult)
     const pacienteId = rpcResult.id
-    const profileId = null // La RPC ya no crea profiles
 
-    // 2. Crear bono PRIMERO (si está marcado) para que el trigger pueda asignarlo
-    if (formulario.value.crear_bono && formulario.value.tipo_bono && formulario.value.bono_monto) {
+    // Si es creación básica, terminamos aquí
+    if (!conTratamiento) {
+      emit('paciente-creado', rpcResult)
+      emit('cerrar')
+      resetearFormulario()
+      return
+    }
+
+    // 2. Crear bono si está seleccionado
+    if (formulario.value.crear_bono && formulario.value.tipo_bono && formulario.value.tipo_bono !== 'otro') {
       try {
-        console.log('💳 Creando bono inicial ANTES de la cita...')
-        
         const fechaInicio = new Date().toISOString().split('T')[0]
-        let fechaFin = null
-        
-        // Calcular fecha de fin según el tipo de bono
-        const tipoBono = formulario.value.tipo_bono
-        if (tipoBono === 'otro') {
-          // A demanda: 1 mes de validez
-          const fecha = new Date()
-          fecha.setMonth(fecha.getMonth() + 1)
-          fechaFin = fecha.toISOString().split('T')[0]
-        } else if (tipoBono === 'quincenal') {
-          const fecha = new Date()
-          fecha.setDate(fecha.getDate() + 15)
-          fechaFin = fecha.toISOString().split('T')[0]
-        } else if (tipoBono === 'semanal') {
-          const fecha = new Date()
-          fecha.setMonth(fecha.getMonth() + 1)
-          fechaFin = fecha.toISOString().split('T')[0]
-        } else if (tipoBono === 'mensual') {
-          const fecha = new Date()
-          fecha.setMonth(fecha.getMonth() + 1)
-          fechaFin = fecha.toISOString().split('T')[0]
-        }
-
+        const fechaFin = calcularFechaFin(formulario.value.tipo_bono)
         const sesiones = sesionesSegunTipo.value
 
-        const bonoData = {
+        await crearBono({
           paciente_id: pacienteId,
           terapeuta_id: userId,
-          tipo: tipoBono,
+          tipo: formulario.value.tipo_bono,
           sesiones_totales: sesiones,
           sesiones_restantes: sesiones,
           fecha_inicio: fechaInicio,
           fecha_fin: fechaFin,
-          estado: 'pendiente', // Pendiente hasta que se confirme el pago
+          estado: 'pendiente',
           monto_total: formulario.value.bono_monto,
-          precio_por_sesion: (formulario.value.bono_monto / sesiones),
+          precio_por_sesion: formulario.value.bono_monto / sesiones,
           pagado: false,
           renovacion_automatica: formulario.value.bono_renovacion_automatica,
-          notas: `Bono creado al registrar paciente. ${nombreCompleto}`,
-          metadata: {
-            creado_con_paciente: true,
-            fecha_creacion: new Date().toISOString()
-          }
-        }
-
-        console.log('📦 Datos del bono a crear:', bonoData)
-
-        const bonoCreado = await crearBono(bonoData)
-        
-        if (bonoCreado) {
-          console.log('✅ Bono creado exitosamente:', bonoCreado)
-        }
-
+          notas: `Bono creado al registrar paciente: ${nombreCompleto}`
+        })
       } catch (bonoError) {
-        console.error('⚠️ Error al crear bono:', bonoError)
-        // Mostrar el error al usuario pero no fallar la creación del paciente
-        error.value = `Paciente creado, pero hubo un error al crear el bono: ${bonoError.message}`
+        console.error('Error al crear bono:', bonoError)
       }
     }
 
-    // 3. AHORA crear cita para la primera sesión (el trigger asignará el bono automáticamente)
-    if (formulario.value.primera_sesion) {
+    // 3. Crear cita si hay primera sesión
+    if (!sinPrimeraSesion.value && formulario.value.fecha_primera_sesion && formulario.value.hora_primera_sesion) {
       try {
-        console.log('📅 Creando cita para primera sesión...')
-        console.log('📋 Datos del paciente:', { pacienteId, nombreCompleto, userId })
-        console.log('📋 Primera sesión:', formulario.value.primera_sesion)
-        
-        // Parsear fecha y hora de datetime-local (formato: 2025-10-29T14:30)
-        const [fecha, hora] = formulario.value.primera_sesion.split('T')
-        console.log('📋 Fecha parseada:', fecha, 'Hora parseada:', hora)
-        
-        // Calcular hora de fin (asumiendo sesión de 1 hora)
-        const [horas, minutos] = hora.split(':').map(Number)
+        const [horas, minutos] = formulario.value.hora_primera_sesion.split(':').map(Number)
         const horaFin = `${String(horas + 1).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`
-        console.log('📋 Hora inicio:', hora, 'Hora fin:', horaFin)
-        
-        // Usar el composable declarado al inicio (no redeclarar)
-        const resultado = await crearCita({
+
+        await crearCita({
           paciente_id: pacienteId,
           paciente_nombre: nombreCompleto,
-          terapeuta_id: userId, // Pasar explícitamente
-          fecha: fecha,
-          hora_inicio: hora,
+          terapeuta_id: userId,
+          fecha: formulario.value.fecha_primera_sesion,
+          hora_inicio: formulario.value.hora_primera_sesion,
           hora_fin: horaFin,
-          modalidad: 'online', // Por defecto online, se puede cambiar después
+          modalidad: 'online',
           estado: 'pendiente',
-          notas: `Primera sesión programada al registrar paciente: ${nombreCompleto}`,
-          descontar_de_bono: false // La primera sesión no descuenta de bono
+          notas: `Primera sesión: ${nombreCompleto}`,
+          descontar_de_bono: false
         })
-        
-        console.log('📋 Resultado completo de crearCita:', resultado)
-        
-        if (resultado.success) {
-          console.log('✅ Cita de primera sesión creada exitosamente:', resultado.data)
-        } else {
-          console.error('❌ ERROR al crear la cita de primera sesión:', resultado.error)
-          error.value = `Paciente creado, pero hubo un error al crear la cita: ${resultado.error}`
-        }
-      } catch (errorCita) {
-        console.error('❌ EXCEPCIÓN al crear cita de primera sesión:', errorCita)
-        error.value = `Paciente creado, pero hubo un error al crear la cita: ${errorCita.message}`
+      } catch (citaError) {
+        console.error('Error al crear cita:', citaError)
       }
     }
 
-        // 4. Si hay notas iniciales, crear registro en notas_terapeuticas
+    // 4. Guardar notas si existen
     if (formulario.value.notas_iniciales) {
       await supabase
         .from('notas_terapeuticas')
         .insert({
           paciente_id: pacienteId,
-          terapeuta_id: user.value.id,
+          terapeuta_id: userId,
           contenido: formulario.value.notas_iniciales,
           tipo: 'evaluacion_inicial'
         })
     }
 
-    // 5. TODO: Enviar email de invitación al paciente para que cree su cuenta
-    if (formulario.value.crear_bono && formulario.value.tipo_bono && formulario.value.bono_monto) {
-      try {
-        console.log('💳 Creando bono inicial...')
-        
-        const fechaInicio = new Date().toISOString().split('T')[0]
-        let fechaFin = null
-        
-        // Calcular fecha de fin según el tipo de bono
-        const tipoBono = formulario.value.tipo_bono
-        if (tipoBono === 'otro') {
-          // A demanda: 1 mes de validez
-          const fecha = new Date()
-          fecha.setMonth(fecha.getMonth() + 1)
-          fechaFin = fecha.toISOString().split('T')[0]
-        } else if (tipoBono === 'quincenal') {
-          const fecha = new Date()
-          fecha.setDate(fecha.getDate() + 15)
-          fechaFin = fecha.toISOString().split('T')[0]
-        } else if (tipoBono === 'semanal') {
-          const fecha = new Date()
-          fecha.setMonth(fecha.getMonth() + 1)
-          fechaFin = fecha.toISOString().split('T')[0]
-        } else if (tipoBono === 'mensual') {
-          const fecha = new Date()
-          fecha.setMonth(fecha.getMonth() + 1)
-          fechaFin = fecha.toISOString().split('T')[0]
-        }
-
-        const sesiones = sesionesSegunTipo.value
-
-        const bonoData = {
-          paciente_id: pacienteId,
-          terapeuta_id: userId,
-          tipo: tipoBono,
-          sesiones_totales: sesiones,
-          sesiones_restantes: sesiones,
-          fecha_inicio: fechaInicio,
-          fecha_fin: fechaFin,
-          estado: 'pendiente', // Pendiente hasta que se confirme el pago
-          monto_total: formulario.value.bono_monto,
-          precio_por_sesion: (formulario.value.bono_monto / sesiones),
-          pagado: false,
-          renovacion_automatica: formulario.value.bono_renovacion_automatica,
-          notas: `Bono creado al registrar paciente. ${nombreCompleto}`,
-          metadata: {
-            creado_con_paciente: true,
-            fecha_creacion: new Date().toISOString()
-          }
-        }
-
-        console.log('📦 Datos del bono a crear:', bonoData)
-
-        const bonoCreado = await crearBono(bonoData)
-        
-        if (bonoCreado) {
-          console.log('✅ Bono creado exitosamente:', bonoCreado)
-        }
-
-      } catch (bonoError) {
-        console.error('⚠️ Error al crear bono:', bonoError)
-        // Mostrar el error al usuario pero no fallar la creación del paciente
-        error.value = `Paciente creado, pero hubo un error al crear el bono: ${bonoError.message}`
-      }
-    }
-
-    // 5. TODO: Enviar email de invitación al paciente para que cree su cuenta
-    // Esto se implementará más adelante con una función edge
-
-    // Emitir evento de éxito con los datos del paciente
     emit('paciente-creado', rpcResult)
     emit('cerrar')
-    
-    // Resetear formulario
     resetearFormulario()
 
   } catch (err) {
@@ -905,13 +716,17 @@ const guardarPaciente = async () => {
   }
 }
 
-const generateTemporaryPassword = () => {
-  // Ya no se usa, pero lo dejamos por si acaso
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
-  let password = ''
-  for (let i = 0; i < 16; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length))
+const calcularFechaFin = (tipo) => {
+  const fecha = new Date()
+  switch (tipo) {
+    case 'quincenal':
+      fecha.setDate(fecha.getDate() + 15)
+      break
+    case 'semanal':
+    case 'mensual':
+    default:
+      fecha.setMonth(fecha.getMonth() + 1)
   }
-  return password
+  return fecha.toISOString().split('T')[0]
 }
 </script>

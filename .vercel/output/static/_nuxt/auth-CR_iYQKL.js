@@ -1,0 +1,1 @@
+import{an as n,g as u,B as r,ao as i,y as c}from"#entry";const f=n(async(l,p)=>{let e,a;const s=u(),t=r(),{data:{session:o}}=([e,a]=i(()=>s.auth.getSession()),e=await e,a(),e);if(!t.value&&!o)return c("/login")});export{f as default};

@@ -3,60 +3,83 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
       <!-- ================================================================= -->
-      <!-- HEADER -->
+      <!-- HEADER - Resumen accionable del día -->
       <!-- ================================================================= -->
-      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-            Dashboard
-          </h1>
-          <p class="text-gray-500 mt-1">
-            Bienvenida de nuevo, <span class="font-medium text-gray-700">{{ terapeuta?.nombre || 'Karem' }}</span>
-          </p>
+      <header class="mb-8">
+        <!-- Fila superior: Título + Botones -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+              {{ resumenDiaTexto }}
+            </h1>
+            <p class="text-gray-500 mt-1 flex items-center gap-2 flex-wrap">
+              <span v-if="sesionesHoy > 0" class="inline-flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-violet-500"></span>
+                <span class="font-medium text-gray-700">{{ sesionesHoy }} {{ sesionesHoy === 1 ? 'sesión' : 'sesiones' }}</span>
+              </span>
+              <span v-if="sesionesHoy > 0 && cobrosPendientesHoy > 0" class="text-gray-300">•</span>
+              <span v-if="cobrosPendientesHoy > 0" class="inline-flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span class="font-medium text-amber-600">{{ cobrosPendientesHoy }} {{ cobrosPendientesHoy === 1 ? 'cobro pendiente' : 'cobros pendientes' }}</span>
+              </span>
+              <span v-if="sesionesHoy === 0 && cobrosPendientesHoy === 0" class="text-gray-500">
+                Sin tareas pendientes para hoy
+              </span>
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button
+              @click="navegarANuevaCita"
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 text-white rounded-lg font-semibold hover:bg-violet-700 shadow-sm hover:shadow transition-all"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Nueva cita
+            </button>
+            <button
+              @click="navegarANuevoPaciente"
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 rounded-lg font-medium border border-gray-200 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 transition-all"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+              Nuevo paciente
+            </button>
+          </div>
         </div>
 
-        <div class="flex items-center gap-3">
-          <button
-            @click="navegarANuevaCita"
-            class="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Nueva Cita
-          </button>
-          <button
-            @click="navegarANuevoPaciente"
-            class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-600 rounded-lg font-medium border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
-            Nuevo Paciente
-          </button>
-        </div>
+        <!-- Barra de búsqueda central -->
+        <DashboardSearchBar @abrir-cita="abrirDetalles" />
       </header>
 
       <!-- ================================================================= -->
-      <!-- GRID PRINCIPAL -->
+      <!-- SECCIÓN 1: ¿QUÉ TENGO QUE HACER HOY? -->
+      <!-- Próximas sesiones + Pendientes de cobro -->
       <!-- ================================================================= -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 
         <!-- =============================================================== -->
-        <!-- COLUMNA IZQUIERDA: Proximas Sesiones (2/3 del ancho) -->
+        <!-- PRÓXIMAS SESIONES DE HOY (2/3 del ancho) -->
         <!-- =============================================================== -->
         <section class="lg:col-span-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
           <!-- Header de seccion -->
           <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
               <div>
-                <h2 class="text-lg font-semibold text-gray-900">Proximas Sesiones</h2>
-                <p class="text-sm text-gray-500">{{ fechaHoy }}</p>
+                <h2 class="text-lg font-semibold text-gray-900">Sesiones de hoy</h2>
+                <p class="text-sm text-gray-500">
+                  {{ fechaHoyCompleta }} ·
+                  <span :class="sesionesHoy > 0 ? 'text-violet-600 font-medium' : 'text-gray-400'">
+                    {{ sesionesHoy }} {{ sesionesHoy === 1 ? 'sesión programada' : 'sesiones programadas' }}
+                  </span>
+                </p>
               </div>
             </div>
             <NuxtLink
@@ -74,31 +97,56 @@
           <div class="p-4">
             <!-- Loading -->
             <div v-if="cargandoSesiones" class="flex flex-col items-center justify-center py-12">
-              <div class="w-8 h-8 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mb-3"></div>
+              <div class="w-8 h-8 border-2 border-gray-200 border-t-violet-600 rounded-full animate-spin mb-3"></div>
               <p class="text-sm text-gray-500">Cargando sesiones...</p>
             </div>
 
-            <!-- Empty state -->
-            <div v-else-if="proximasSesiones.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
-              <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <!-- Empty state mejorado -->
+            <div v-else-if="sesionesHoy === 0" class="flex flex-col items-center justify-center py-10 text-center">
+              <div class="w-16 h-16 rounded-full bg-violet-50 flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 text-violet-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <p class="text-gray-600 font-medium">No hay sesiones programadas</p>
-              <p class="text-sm text-gray-400 mt-1">Las próximas citas aparecerán aquí</p>
-              <button
-                @click="navegarANuevaCita"
-                class="mt-4 px-4 py-2 text-sm font-medium text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors"
+              <p class="text-gray-700 font-medium mb-1">{{ esDiaLibre ? 'Día libre' : 'Hoy no tienes sesiones programadas' }}</p>
+              <p class="text-sm text-gray-400 mb-4">{{ esDiaLibre ? 'Disfruta de tu descanso' : 'Aprovecha para organizar tu agenda o añadir nuevas citas' }}</p>
+              <NuxtLink
+                v-if="!esDiaLibre"
+                to="/terapeuta/agenda"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors"
               >
-                + Agendar una cita
-              </button>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Programar cita
+              </NuxtLink>
+
+              <!-- Mostrar próximas sesiones si hay -->
+              <div v-if="proximasSesiones.length > 0" class="mt-6 pt-6 border-t border-gray-100 w-full">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Próximas sesiones</p>
+                <div class="space-y-2">
+                  <DashboardSessionCard
+                    v-for="(cita, index) in proximasSesiones.slice(0, 3)"
+                    :key="cita.id"
+                    :id="cita.id"
+                    :fecha="cita.fecha_cita"
+                    :hora="cita.hora_inicio"
+                    :paciente-nombre="cita.paciente_nombre"
+                    :modalidad="cita.modalidad"
+                    :estado="cita.estado"
+                    :is-next="index === 0"
+                    @click="abrirDetalles"
+                    @confirmar="confirmarCitaRapido"
+                    @registrar-pago="abrirDetalles"
+                  />
+                </div>
+              </div>
             </div>
 
-            <!-- Lista de citas -->
+            <!-- Lista de citas de hoy -->
             <div v-else class="space-y-3">
               <DashboardSessionCard
-                v-for="(cita, index) in sesionesVisibles"
+                v-for="(cita, index) in sesionesDeHoyVisibles"
                 :key="cita.id"
                 :id="cita.id"
                 :fecha="cita.fecha_cita"
@@ -109,15 +157,37 @@
                 :is-next="index === 0"
                 @click="abrirDetalles"
                 @confirmar="confirmarCitaRapido"
+                @registrar-pago="abrirDetalles"
               />
 
-              <!-- Botón ver más -->
+              <!-- Próximas sesiones (otros días) -->
+              <div v-if="sesionesFuturas.length > 0" class="mt-4 pt-4 border-t border-gray-100">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Próximos días</p>
+                <div class="space-y-2">
+                  <DashboardSessionCard
+                    v-for="(cita, index) in sesionesFuturasVisibles"
+                    :key="cita.id"
+                    :id="cita.id"
+                    :fecha="cita.fecha_cita"
+                    :hora="cita.hora_inicio"
+                    :paciente-nombre="cita.paciente_nombre"
+                    :modalidad="cita.modalidad"
+                    :estado="cita.estado"
+                    :is-next="false"
+                    @click="abrirDetalles"
+                    @confirmar="confirmarCitaRapido"
+                    @registrar-pago="abrirDetalles"
+                  />
+                </div>
+              </div>
+
+              <!-- Botón ver más sesiones futuras -->
               <button
-                v-if="proximasSesiones.length > 5 && !mostrarTodasSesiones"
+                v-if="sesionesFuturas.length > 3 && !mostrarTodasSesiones"
                 @click="mostrarTodasSesiones = true"
                 class="w-full py-3 text-sm font-medium text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <span>Ver {{ proximasSesiones.length - 5 }} sesiones más</span>
+                <span>Ver {{ sesionesFuturas.length - 3 }} sesiones más</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -125,7 +195,7 @@
 
               <!-- Botón mostrar menos -->
               <button
-                v-if="mostrarTodasSesiones && proximasSesiones.length > 5"
+                v-if="mostrarTodasSesiones && sesionesFuturas.length > 3"
                 @click="mostrarTodasSesiones = false"
                 class="w-full py-3 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
@@ -139,18 +209,37 @@
         </section>
 
         <!-- =============================================================== -->
-        <!-- COLUMNA DERECHA: Pacientes Activos (1/3 del ancho) -->
+        <!-- PENDIENTES DE COBRO (1/3 del ancho) -->
+        <!-- =============================================================== -->
+        <DashboardPaymentsTodayCard
+          ref="paymentsTodayCardRef"
+          @abrir-cita="abrirDetalles"
+          @cobrar="abrirDetalles"
+        />
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- SECCIÓN 2: SEGUIMIENTO DE PACIENTES -->
+      <!-- Últimos pacientes + Recordatorios de bonos -->
+      <!-- ================================================================= -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-8">
+
+        <!-- =============================================================== -->
+        <!-- ACTIVIDAD RECIENTE DE PACIENTES -->
         <!-- =============================================================== -->
         <section class="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <!-- Header de sección -->
           <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h2 class="text-lg font-semibold text-gray-900">Pacientes</h2>
+              <div>
+                <h2 class="text-lg font-semibold text-gray-900">Actividad reciente de pacientes</h2>
+                <p class="text-xs text-gray-500">Últimos {{ filtroDiasPacientes }} días</p>
+              </div>
             </div>
             <NuxtLink
               to="/terapeuta/pacientes"
@@ -163,22 +252,50 @@
             </NuxtLink>
           </div>
 
+          <!-- Filtro por días -->
+          <div class="px-4 py-2 border-b border-gray-100 bg-gray-50/50">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs text-gray-500 mr-1">Ver últimos:</span>
+              <button
+                v-for="dias in [5, 10, 30]"
+                :key="dias"
+                @click="cambiarFiltroPacientes(dias)"
+                :class="[
+                  'px-2.5 py-1 text-xs font-medium rounded-full transition-colors',
+                  filtroDiasPacientes === dias
+                    ? 'bg-violet-100 text-violet-700'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                ]"
+              >
+                {{ dias }} días
+              </button>
+            </div>
+          </div>
+
           <!-- Lista de pacientes -->
           <div class="p-4">
             <!-- Loading -->
             <div v-if="cargandoPacientes" class="flex flex-col items-center justify-center py-8">
-              <div class="w-8 h-8 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mb-2"></div>
+              <div class="w-8 h-8 border-2 border-gray-200 border-t-emerald-600 rounded-full animate-spin mb-2"></div>
               <p class="text-sm text-gray-500">Cargando...</p>
             </div>
 
             <!-- Empty state -->
             <div v-else-if="pacientesActivos.length === 0" class="flex flex-col items-center justify-center py-8 text-center">
-              <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-12 h-12 rounded-full bg-violet-50 flex items-center justify-center mb-3">
+                <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <p class="text-gray-500 text-sm">Sin pacientes activos</p>
+              <p class="text-gray-700 font-medium mb-1">Sin sesiones en este período</p>
+              <p class="text-sm text-gray-400 mb-3 max-w-[220px]">No hay pacientes con citas en los últimos {{ filtroDiasPacientes }} días. Prueba ampliando el filtro.</p>
+              <button
+                v-if="filtroDiasPacientes < 30"
+                @click="cambiarFiltroPacientes(30)"
+                class="text-sm font-medium text-violet-600 hover:text-violet-700 hover:underline"
+              >
+                Ver últimos 30 días
+              </button>
             </div>
 
             <!-- Lista -->
@@ -197,89 +314,81 @@
             </div>
           </div>
         </section>
-      </div>
-
-      <!-- ================================================================= -->
-      <!-- FILA INTERMEDIA: Pagos Hoy + Recordatorios -->
-      <!-- ================================================================= -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-8">
 
         <!-- =============================================================== -->
-        <!-- PAGOS HOY (1/2 del ancho) -->
-        <!-- =============================================================== -->
-        <DashboardPaymentsTodayCard
-          ref="paymentsTodayCardRef"
-          @abrir-cita="abrirDetalles"
-        />
-
-        <!-- =============================================================== -->
-        <!-- RECORDATORIOS (1/2 del ancho) -->
+        <!-- BONOS PRÓXIMOS A AGOTARSE -->
         <!-- =============================================================== -->
         <section class="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <!-- Header -->
           <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                 </svg>
               </div>
-              <h2 class="text-lg font-semibold text-gray-900">Recordatorios</h2>
+              <div>
+                <h2 class="text-lg font-semibold text-gray-900">
+                  Bonos por agotarse
+                  <span v-if="bonosPorAgotar.length > 0" class="text-amber-600">({{ bonosPorAgotar.length }})</span>
+                </h2>
+                <p class="text-xs text-gray-500">Bonos con 2 sesiones o menos</p>
+              </div>
             </div>
             <button
-              v-if="!cargandoRecordatorios"
-              @click="generarRecordatorios"
+              v-if="!cargandoBonos"
+              @click="cargarBonosPorAgotar"
               class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-              title="Actualizar recordatorios"
+              title="Actualizar bonos"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
             </button>
           </div>
 
-          <!-- Lista de recordatorios -->
+          <!-- Lista de bonos -->
           <div class="p-4">
             <!-- Loading -->
-            <div v-if="cargandoRecordatorios" class="flex flex-col items-center justify-center py-8">
-              <div class="w-8 h-8 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mb-2"></div>
-              <p class="text-sm text-gray-500">Cargando...</p>
+            <div v-if="cargandoBonos" class="flex flex-col items-center justify-center py-8">
+              <div class="w-8 h-8 border-2 border-gray-200 border-t-amber-600 rounded-full animate-spin mb-2"></div>
+              <p class="text-sm text-gray-500">Cargando bonos...</p>
             </div>
 
             <!-- Empty state -->
-            <div v-else-if="recordatoriosOrdenados.length === 0" class="flex flex-col items-center justify-center py-8 text-center">
-              <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-else-if="bonosPorAgotar.length === 0" class="flex flex-col items-center justify-center py-8 text-center">
+              <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center mb-3">
+                <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p class="text-gray-600 font-medium">Todo al día</p>
-              <p class="text-sm text-gray-400 mt-1">No hay recordatorios pendientes</p>
+              <p class="text-gray-700 font-medium">Todos los bonos bajo control</p>
+              <p class="text-sm text-gray-400 mt-1 max-w-[200px]">Ningún paciente necesita renovar su bono próximamente</p>
             </div>
 
-            <!-- Lista -->
+            <!-- Lista de bonos -->
             <div v-else class="space-y-2">
-              <DashboardReminderCard
-                v-for="(recordatorio, index) in recordatoriosVisibles"
-                :key="recordatorio.id || index"
-                :id="recordatorio.id"
-                :tipo="recordatorio.tipo"
-                :mensaje="recordatorio.mensaje"
-                :paciente="recordatorio.paciente"
-                :fecha="recordatorio.fecha"
-                :hora="recordatorio.hora"
-                :urgente="recordatorio.urgente"
-                :accion="recordatorio.accion"
-                @accion="handleRecordatorioAccion"
+              <DashboardBonoCard
+                v-for="bono in bonosVisibles"
+                :key="bono.id"
+                :id="bono.id"
+                :paciente-id="bono.paciente_id"
+                :paciente-nombre="bono.paciente_nombre"
+                :tipo-bono="bono.tipo_bono"
+                :sesiones-restantes="bono.sesiones_restantes"
+                :sesiones-totales="bono.sesiones_totales"
+                :ultima-sesion="bono.ultima_sesion"
+                @ver-bono="navegarABono"
+                @programar-cita="programarCitaPaciente"
               />
 
-              <!-- Ver más recordatorios -->
+              <!-- Ver más bonos -->
               <button
-                v-if="recordatoriosOrdenados.length > 4"
-                @click="mostrarTodosRecordatorios = !mostrarTodosRecordatorios"
-                class="w-full py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                v-if="bonosPorAgotar.length > 4 && !mostrarTodosBonos"
+                @click="mostrarTodosBonos = true"
+                class="w-full py-2 text-sm font-medium text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
               >
-                {{ mostrarTodosRecordatorios ? 'Mostrar menos' : `Ver ${recordatoriosOrdenados.length - 4} más` }}
+                Ver {{ bonosPorAgotar.length - 4 }} más
               </button>
             </div>
           </div>
@@ -291,42 +400,132 @@
       <!-- ================================================================= -->
       <div class="mt-8">
         <section class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <!-- Header -->
-          <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
-            <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+          <!-- Header con selector de período -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-lg font-semibold text-gray-900">Analítica del Profesional</h2>
+                <p class="text-xs text-gray-500">{{ periodoTexto }}</p>
+              </div>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900">Analítica del Profesional</h2>
+
+            <!-- Selector de período -->
+            <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+              <button
+                v-for="periodo in periodos"
+                :key="periodo.valor"
+                @click="cambiarPeriodoAnalitica(periodo.valor)"
+                :class="[
+                  'px-3 py-1.5 text-xs font-medium rounded-md transition-colors',
+                  periodoAnalitica === periodo.valor
+                    ? 'bg-white text-violet-700 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                ]"
+              >
+                {{ periodo.etiqueta }}
+              </button>
+            </div>
           </div>
 
-          <!-- Grid de métricas -->
+          <!-- Grid de métricas mejorado -->
           <div class="p-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <DashboardMetricCard
-                :value="totalPacientes"
-                label="Pacientes activos"
-                icon-type="users"
-              />
-              <DashboardMetricCard
-                :value="totalSesionesMes"
-                label="Sesiones este mes"
-                icon-type="calendar"
-              />
-              <DashboardMetricCard
-                :value="`${porcentajeAsistencia}%`"
-                label="Asistencia promedio"
-                icon-type="check"
-              />
-              <DashboardMetricCard
-                :value="`${formatearPrecio(totalConfirmado)}€`"
-                label="Ingresos este mes"
-                :sublabel="`${totalBonosPagados} ${totalBonosPagados === 1 ? 'pago' : 'pagos'}`"
-                icon-type="euro"
-                :highlight="true"
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+              <!-- Pacientes activos -->
+              <NuxtLink
+                to="/terapeuta/pacientes"
+                class="group p-4 bg-gray-50 hover:bg-violet-50 rounded-xl border border-gray-100 hover:border-violet-200 transition-all cursor-pointer"
+              >
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-gray-400 group-hover:text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span class="text-xs font-medium text-gray-500 group-hover:text-violet-600">Pacientes activos</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900 group-hover:text-violet-700">{{ totalPacientes }}</p>
+                <p class="text-xs text-gray-400 mt-1 group-hover:text-violet-500">Ver todos →</p>
+              </NuxtLink>
+
+              <!-- Sesiones del período -->
+              <NuxtLink
                 to="/terapeuta/sesiones"
-              />
+                class="group p-4 bg-gray-50 hover:bg-violet-50 rounded-xl border border-gray-100 hover:border-violet-200 transition-all cursor-pointer"
+              >
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-gray-400 group-hover:text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span class="text-xs font-medium text-gray-500 group-hover:text-violet-600">Sesiones</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900 group-hover:text-violet-700">{{ totalSesionesMes }}</p>
+                <p class="text-xs text-gray-400 mt-1 group-hover:text-violet-500">Ver sesiones →</p>
+              </NuxtLink>
+
+              <!-- Ocupación de agenda -->
+              <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  <span class="text-xs font-medium text-gray-500">Ocupación</span>
+                </div>
+                <p class="text-3xl font-bold" :class="porcentajeOcupacion >= 70 ? 'text-emerald-600' : porcentajeOcupacion >= 40 ? 'text-amber-600' : 'text-gray-900'">
+                  {{ porcentajeOcupacion }}%
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {{ detalleAgenda.horasOcupadas }}h de {{ detalleAgenda.horasDisponibles }}h disponibles
+                </p>
+              </div>
+
+              <!-- Tasa de cancelación -->
+              <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span class="text-xs font-medium text-gray-500">Cancelaciones</span>
+                </div>
+                <p class="text-3xl font-bold" :class="tasaCancelacion <= 10 ? 'text-emerald-600' : tasaCancelacion <= 20 ? 'text-amber-600' : 'text-red-600'">
+                  {{ tasaCancelacion }}%
+                </p>
+                <p v-if="detalleAgenda.cancelaciones > 0" class="text-xs text-gray-500 mt-1">
+                  {{ detalleAgenda.cancelaciones }} de {{ detalleAgenda.totalCitas }} citas
+                </p>
+                <p v-else class="text-xs text-gray-400 mt-1">Sin cancelaciones</p>
+              </div>
+
+              <!-- Ingresos con comparativa -->
+              <NuxtLink
+                to="/terapeuta/pagos"
+                class="group p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200 hover:border-emerald-300 transition-all cursor-pointer"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-xs font-medium text-emerald-600">Ingresos</span>
+                  </div>
+                  <!-- Badge comparativa -->
+                  <span
+                    v-if="comparativaMesAnterior !== 0"
+                    :class="[
+                      'px-1.5 py-0.5 text-[10px] font-semibold rounded',
+                      comparativaMesAnterior > 0 ? 'bg-emerald-200 text-emerald-700' : 'bg-red-100 text-red-600'
+                    ]"
+                  >
+                    {{ comparativaMesAnterior > 0 ? '↑' : '↓' }} {{ Math.abs(comparativaMesAnterior) }}%
+                  </span>
+                </div>
+                <p class="text-3xl font-bold text-emerald-700">{{ formatearPrecio(totalConfirmado) }}€</p>
+                <p class="text-xs text-emerald-500 mt-1">
+                  {{ totalBonosPagados }} {{ totalBonosPagados === 1 ? 'pago' : 'pagos' }} · Ver pagos →
+                </p>
+              </NuxtLink>
             </div>
           </div>
         </section>
@@ -368,11 +567,38 @@ const proximasSesiones = ref<any[]>([])
 const pacientesActivos = ref<any[]>([])
 const totalPacientes = ref(0)
 const totalSesionesMes = ref(0)
-const porcentajeAsistencia = ref(0)
+const porcentajeOcupacion = ref(0)
+const tasaCancelacion = ref(0)
 const modalDetallesAbierto = ref(false)
 const citaSeleccionada = ref<string | null>(null)
 const mostrarTodasSesiones = ref(false)
 const mostrarTodosRecordatorios = ref(false)
+const mostrarTodosBonos = ref(false)
+const filtroDiasPacientes = ref(5) // Días para filtrar actividad de pacientes
+
+// Estado de bonos por agotar
+const bonosPorAgotar = ref<any[]>([])
+const cargandoBonos = ref(true)
+
+// Estado de analítica
+const periodoAnalitica = ref<'mes' | '3meses' | 'anio'>('mes')
+const periodos = [
+  { valor: 'mes', etiqueta: 'Mes' },
+  { valor: '3meses', etiqueta: '3 meses' },
+  { valor: 'anio', etiqueta: 'Año' }
+] as const
+
+// Detalle de métricas de agenda
+const detalleAgenda = ref({
+  horasDisponibles: 0,
+  horasOcupadas: 0,
+  cancelaciones: 0,
+  totalCitas: 0
+})
+
+// Comparativa mes anterior
+const comparativaMesAnterior = ref(0)
+const ingresosMesAnterior = ref(0)
 
 // Referencia al componente de pagos del día
 const paymentsTodayCardRef = ref<{ refrescar: () => Promise<void> } | null>(null)
@@ -414,6 +640,69 @@ const sesionesVisibles = computed(() => {
   }
   return proximasSesiones.value.slice(0, 5)
 })
+
+// Resumen del día para el header
+const resumenDiaTexto = computed(() => {
+  const hoy = new Date()
+  const diaSemana = hoy.toLocaleDateString('es-ES', { weekday: 'long' })
+  const dia = hoy.getDate()
+  const mes = hoy.toLocaleDateString('es-ES', { month: 'long' })
+  // Capitalizar primera letra
+  const diaCapitalizado = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)
+  return `Hoy, ${diaCapitalizado.toLowerCase()} ${dia} de ${mes}`
+})
+
+// Sesiones de hoy
+const sesionesHoy = computed(() => {
+  const hoy = new Date().toISOString().split('T')[0]
+  return proximasSesiones.value.filter(s => s.fecha_cita === hoy).length
+})
+
+// Fecha de hoy completa para subtítulo
+const fechaHoyCompleta = computed(() => {
+  const hoy = new Date()
+  const diaSemana = hoy.toLocaleDateString('es-ES', { weekday: 'long' })
+  const dia = hoy.getDate()
+  const mes = hoy.toLocaleDateString('es-ES', { month: 'long' })
+  // Capitalizar primera letra del día
+  return `${diaSemana.charAt(0).toUpperCase()}${diaSemana.slice(1)}, ${dia} de ${mes}`
+})
+
+// Detectar si es fin de semana (día libre típico)
+const esDiaLibre = computed(() => {
+  const hoy = new Date()
+  const diaSemana = hoy.getDay()
+  // 0 = domingo, 6 = sábado
+  return diaSemana === 0 || diaSemana === 6
+})
+
+// Sesiones de hoy para mostrar
+const sesionesDeHoy = computed(() => {
+  const hoy = new Date().toISOString().split('T')[0]
+  return proximasSesiones.value.filter(s => s.fecha_cita === hoy)
+})
+
+// Sesiones de hoy visibles (con límite)
+const sesionesDeHoyVisibles = computed(() => {
+  return sesionesDeHoy.value
+})
+
+// Sesiones de días futuros
+const sesionesFuturas = computed(() => {
+  const hoy = new Date().toISOString().split('T')[0]
+  return proximasSesiones.value.filter(s => s.fecha_cita > hoy)
+})
+
+// Sesiones futuras visibles (limitadas a 3)
+const sesionesFuturasVisibles = computed(() => {
+  if (mostrarTodasSesiones.value) {
+    return sesionesFuturas.value
+  }
+  return sesionesFuturas.value.slice(0, 3)
+})
+
+// Cobros pendientes de hoy (estado pendiente_pago en citas de hoy)
+const cobrosPendientesHoy = ref(0)
 
 // ============================================================================
 // FUNCIONES HELPER PARA FECHAS RELATIVAS Y URGENCIA
@@ -558,20 +847,80 @@ const recordatoriosVisibles = computed(() => {
   return recordatoriosOrdenados.value.slice(0, 4)
 })
 
+// Bonos visibles (con límite)
+const bonosVisibles = computed(() => {
+  if (mostrarTodosBonos.value) {
+    return bonosPorAgotar.value
+  }
+  return bonosPorAgotar.value.slice(0, 4)
+})
+
+// Texto descriptivo del período seleccionado
+const periodoTexto = computed(() => {
+  const ahora = new Date()
+  const mesActual = ahora.toLocaleDateString('es-ES', { month: 'long' })
+  const anioActual = ahora.getFullYear()
+
+  if (periodoAnalitica.value === 'mes') {
+    return `Datos de ${mesActual} ${anioActual}`
+  }
+  if (periodoAnalitica.value === '3meses') {
+    const mesInicio = new Date(ahora)
+    mesInicio.setMonth(mesInicio.getMonth() - 2)
+    const mesInicioNombre = mesInicio.toLocaleDateString('es-ES', { month: 'short' })
+    const mesFinNombre = ahora.toLocaleDateString('es-ES', { month: 'short' })
+    return `Últimos 3 meses (${mesInicioNombre} - ${mesFinNombre} ${anioActual})`
+  }
+  return `Año ${anioActual}`
+})
+
 // ============================================================================
 // FUNCIONES DE NAVEGACIÓN
 // ============================================================================
 
 const navegarANuevaCita = () => {
-  router.push('/terapeuta/agenda')
+  navigateTo('/terapeuta/agenda')
 }
 
 const navegarANuevoPaciente = () => {
-  router.push('/terapeuta/pacientes')
+  navigateTo('/terapeuta/pacientes')
 }
 
 const navegarAPaciente = (id: string) => {
-  router.push(`/terapeuta/pacientes/${id}`)
+  if (!id) {
+    console.error('[Dashboard] ERROR: ID de paciente no válido')
+    return
+  }
+  console.log('[Dashboard] Navegando a ficha de paciente:', id)
+  navigateTo(`/terapeuta/pacientes/${id}`)
+}
+
+// Cambiar filtro de días de pacientes y recargar
+const cambiarFiltroPacientes = async (dias: number) => {
+  filtroDiasPacientes.value = dias
+  await cargarPacientes()
+}
+
+// Navegación a bono
+const navegarABono = (bonoId: string) => {
+  // Por ahora navegar al paciente del bono
+  const bono = bonosPorAgotar.value.find(b => b.id === bonoId)
+  if (bono && bono.paciente_id) {
+    console.log('[Dashboard] Navegando a ficha desde bono:', bono.paciente_id)
+    navigateTo(`/terapeuta/pacientes/${bono.paciente_id}`)
+  }
+}
+
+// Programar cita para un paciente
+const programarCitaPaciente = (pacienteId: string) => {
+  router.push(`/terapeuta/agenda?paciente=${pacienteId}`)
+}
+
+// Cambiar período de analítica y recargar métricas
+const cambiarPeriodoAnalitica = async (periodo: 'mes' | '3meses' | 'anio') => {
+  periodoAnalitica.value = periodo
+  await cargarMetricas()
+  await cargarPagosConfirmados()
 }
 
 // ============================================================================
@@ -697,19 +1046,77 @@ async function cargarSesiones() {
 async function cargarPacientes() {
   cargandoPacientes.value = true
   try {
-    // Primero obtener pacientes
-    const { data: pacientesData, error } = await supabase
+    // Primero obtener el ID del terapeuta actual
+    if (!user.value?.email) {
+      pacientesActivos.value = []
+      cargandoPacientes.value = false
+      return
+    }
+
+    const { data: terapeutaData } = await supabase
+      .from('terapeutas')
+      .select('id')
+      .eq('email', user.value.email)
+      .single()
+
+    if (!terapeutaData) {
+      pacientesActivos.value = []
+      cargandoPacientes.value = false
+      return
+    }
+
+    // Obtener los pacientes del terapeuta
+    const { data: pacientesDelTerapeuta } = await supabase
       .from('pacientes')
-      .select('id, nombre_completo, area_de_acompanamiento, updated_at, metadata')
+      .select('id')
+      .eq('terapeuta_id', terapeutaData.id)
       .eq('activo', true)
-      .order('updated_at', { ascending: false })
-      .limit(5)
 
-    if (error) throw error
+    if (!pacientesDelTerapeuta || pacientesDelTerapeuta.length === 0) {
+      pacientesActivos.value = []
+      cargandoPacientes.value = false
+      return
+    }
 
-    // Para cada paciente, intentar obtener información de su bono activo
+    const pacienteIds = pacientesDelTerapeuta.map((p: any) => p.id)
+
+    // Calcular fecha límite según el filtro
+    const fechaLimite = new Date()
+    fechaLimite.setDate(fechaLimite.getDate() - filtroDiasPacientes.value)
+    const fechaLimiteStr = fechaLimite.toISOString().split('T')[0]
+    const hoyStr = new Date().toISOString().split('T')[0]
+
+    // Obtener citas del período para identificar pacientes con actividad reciente
+    // Buscar tanto citas pasadas (realizadas) como próximas (confirmadas/pendientes)
+    const { data: citasRecientes, error: citasError } = await supabase
+      .from('citas')
+      .select('paciente_id, fecha_cita, estado, pacientes(id, nombre_completo)')
+      .in('paciente_id', pacienteIds)
+      .in('estado', ['realizada', 'completada', 'confirmada', 'pendiente'])
+      .gte('fecha_cita', fechaLimiteStr)
+      .lte('fecha_cita', hoyStr)
+      .order('fecha_cita', { ascending: false })
+
+    if (citasError) throw citasError
+
+    // Crear mapa de pacientes únicos con su última sesión
+    const pacientesMap = new Map<string, { id: string; nombre: string; ultimaSesion: string }>()
+    citasRecientes?.forEach((cita: any) => {
+      if (cita.paciente_id && cita.pacientes && !pacientesMap.has(cita.paciente_id)) {
+        pacientesMap.set(cita.paciente_id, {
+          id: cita.paciente_id,
+          nombre: cita.pacientes.nombre_completo || 'Sin nombre',
+          ultimaSesion: cita.fecha_cita
+        })
+      }
+    })
+
+    // Convertir a array y limitar
+    const pacientesUnicos = Array.from(pacientesMap.values()).slice(0, 5)
+
+    // Para cada paciente, obtener información de su bono activo
     const pacientesConBonos = await Promise.all(
-      (pacientesData || []).map(async (p: any) => {
+      pacientesUnicos.map(async (p) => {
         let sesionesUsadas = 0
         let sesionesTotales = 0
         let estadoBono: 'activo' | 'por_agotar' | 'sin_bono' | 'agotado' = 'sin_bono'
@@ -743,8 +1150,8 @@ async function cargarPacientes() {
 
         return {
           id: p.id,
-          nombre_completo: p.nombre_completo || 'Sin nombre',
-          ultima_sesion: p.updated_at,
+          nombre_completo: p.nombre,
+          ultima_sesion: p.ultimaSesion,
           sesiones_usadas: sesionesUsadas,
           sesiones_totales: sesionesTotales,
           estado_bono: estadoBono
@@ -761,6 +1168,85 @@ async function cargarPacientes() {
   }
 }
 
+async function cargarBonosPorAgotar() {
+  cargandoBonos.value = true
+  try {
+    // Obtener bonos activos con 2 sesiones o menos restantes
+    const { data: bonos, error } = await supabase
+      .from('bonos')
+      .select(`
+        id,
+        paciente_id,
+        tipo,
+        sesiones_totales,
+        sesiones_restantes,
+        estado,
+        pacientes (
+          id,
+          nombre_completo
+        )
+      `)
+      .eq('estado', 'activo')
+      .lte('sesiones_restantes', 2)
+      .gt('sesiones_restantes', 0)
+      .order('sesiones_restantes', { ascending: true })
+      .limit(10)
+
+    if (error) throw error
+
+    // Para cada bono, obtener la última sesión del paciente
+    const bonosConUltimaSesion = await Promise.all(
+      (bonos || []).map(async (bono: any) => {
+        let ultimaSesion = null
+
+        try {
+          const { data: ultimaCita } = await supabase
+            .from('citas')
+            .select('fecha_cita')
+            .eq('paciente_id', bono.paciente_id)
+            .in('estado', ['realizada', 'completada'])
+            .order('fecha_cita', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          if (ultimaCita) {
+            ultimaSesion = ultimaCita.fecha_cita
+          }
+        } catch (err) {
+          // Si no hay cita, mantener null
+        }
+
+        // Formatear tipo de bono
+        let tipoBono = bono.tipo || 'Bono'
+        if (tipoBono.toLowerCase().includes('semanal')) {
+          tipoBono = `Bono Semanal ${bono.sesiones_totales} sesiones`
+        } else if (tipoBono.toLowerCase().includes('mensual')) {
+          tipoBono = `Bono Mensual ${bono.sesiones_totales} sesiones`
+        } else {
+          tipoBono = `Bono ${bono.sesiones_totales} sesiones`
+        }
+
+        return {
+          id: bono.id,
+          paciente_id: bono.paciente_id,
+          paciente_nombre: bono.pacientes?.nombre_completo || 'Paciente',
+          tipo_bono: tipoBono,
+          sesiones_totales: bono.sesiones_totales || 0,
+          sesiones_restantes: bono.sesiones_restantes || 0,
+          ultima_sesion: ultimaSesion
+        }
+      })
+    )
+
+    bonosPorAgotar.value = bonosConUltimaSesion
+  } catch (error) {
+    console.error('Error al cargar bonos por agotar:', error)
+    bonosPorAgotar.value = []
+  } finally {
+    cargandoBonos.value = false
+  }
+}
+
 async function cargarMetricas() {
   try {
     // Total pacientes activos
@@ -771,33 +1257,117 @@ async function cargarMetricas() {
 
     totalPacientes.value = countPacientes || 0
 
-    // Sesiones del mes actual
-    const primerDiaMes = new Date()
-    primerDiaMes.setDate(1)
-    primerDiaMes.setHours(0, 0, 0, 0)
+    // Calcular fecha de inicio según período
+    const fechaInicio = new Date()
+    fechaInicio.setHours(0, 0, 0, 0)
 
+    if (periodoAnalitica.value === 'mes') {
+      fechaInicio.setDate(1)
+    } else if (periodoAnalitica.value === '3meses') {
+      fechaInicio.setMonth(fechaInicio.getMonth() - 2)
+      fechaInicio.setDate(1)
+    } else {
+      // Año
+      fechaInicio.setMonth(0)
+      fechaInicio.setDate(1)
+    }
+
+    const fechaInicioStr = fechaInicio.toISOString().split('T')[0]
+
+    // Sesiones del período
     const { count: countSesiones } = await supabase
       .from('citas')
       .select('*', { count: 'exact', head: true })
-      .gte('fecha_cita', primerDiaMes.toISOString().split('T')[0])
+      .gte('fecha_cita', fechaInicioStr)
+      .lte('fecha_cita', new Date().toISOString().split('T')[0])
 
     totalSesionesMes.value = countSesiones || 0
 
-    // Porcentaje de asistencia (calculado real)
-    const { data: citasRealizadas } = await supabase
-      .from('citas')
-      .select('estado')
-      .gte('fecha_cita', primerDiaMes.toISOString().split('T')[0])
-      .in('estado', ['realizada', 'completada', 'cancelada'])
+    // Calcular días laborables en el período (lunes a viernes)
+    const fechaFin = new Date()
+    let diasLaborables = 0
+    const tempFecha = new Date(fechaInicio)
+    while (tempFecha <= fechaFin) {
+      const diaSemana = tempFecha.getDay()
+      if (diaSemana !== 0 && diaSemana !== 6) {
+        diasLaborables++
+      }
+      tempFecha.setDate(tempFecha.getDate() + 1)
+    }
 
-    if (citasRealizadas && citasRealizadas.length > 0) {
-      const realizadas = citasRealizadas.filter(c => c.estado === 'realizada' || c.estado === 'completada').length
-      porcentajeAsistencia.value = Math.round((realizadas / citasRealizadas.length) * 100)
+    // Horas disponibles: 8 horas por día laborable
+    const horasDisponibles = diasLaborables * 8
+
+    // Obtener todas las citas del período para calcular ocupación y cancelaciones
+    const { data: citasPeriodo } = await supabase
+      .from('citas')
+      .select('estado, duracion_minutos')
+      .gte('fecha_cita', fechaInicioStr)
+      .lte('fecha_cita', new Date().toISOString().split('T')[0])
+
+    if (citasPeriodo && citasPeriodo.length > 0) {
+      // Calcular horas ocupadas (solo citas no canceladas)
+      const citasActivas = citasPeriodo.filter(c =>
+        c.estado !== 'cancelada' && c.estado !== 'no_show' && c.estado !== 'ausente'
+      )
+      const minutosOcupados = citasActivas.reduce((acc, c) => acc + (c.duracion_minutos || 60), 0)
+      const horasOcupadas = Math.round(minutosOcupados / 60)
+
+      // Calcular cancelaciones
+      const canceladas = citasPeriodo.filter(c => c.estado === 'cancelada').length
+      const totalCitas = citasPeriodo.length
+
+      detalleAgenda.value = {
+        horasDisponibles,
+        horasOcupadas,
+        cancelaciones: canceladas,
+        totalCitas
+      }
+
+      // Calcular porcentaje de ocupación
+      if (horasDisponibles > 0) {
+        porcentajeOcupacion.value = Math.min(100, Math.round((horasOcupadas / horasDisponibles) * 100))
+      } else {
+        porcentajeOcupacion.value = 0
+      }
+
+      // Calcular tasa de cancelación
+      if (totalCitas > 0) {
+        tasaCancelacion.value = Math.round((canceladas / totalCitas) * 100)
+      } else {
+        tasaCancelacion.value = 0
+      }
     } else {
-      porcentajeAsistencia.value = 0
+      detalleAgenda.value = {
+        horasDisponibles,
+        horasOcupadas: 0,
+        cancelaciones: 0,
+        totalCitas: 0
+      }
+      porcentajeOcupacion.value = 0
+      tasaCancelacion.value = 0
     }
   } catch (error) {
     console.error('Error al cargar métricas:', error)
+  }
+}
+
+async function cargarCobrosPendientesHoy() {
+  try {
+    const hoy = new Date().toISOString().split('T')[0]
+
+    // Buscar citas de hoy con estado_pago pendiente o sin pagar
+    const { count } = await supabase
+      .from('citas')
+      .select('*', { count: 'exact', head: true })
+      .eq('fecha_cita', hoy)
+      .in('estado', ['realizada', 'completada', 'confirmada', 'pendiente'])
+      .or('estado_pago.is.null,estado_pago.eq.pendiente')
+
+    cobrosPendientesHoy.value = count || 0
+  } catch (error) {
+    console.error('Error al cargar cobros pendientes:', error)
+    cobrosPendientesHoy.value = 0
   }
 }
 
@@ -936,15 +1506,11 @@ async function cargarPagosConfirmados() {
 
     const { data: terapeutaData } = await supabase
       .from('terapeutas')
-      .select('id, porcentaje_comision')
+      .select('id')
       .eq('email', user.value.email)
       .single()
 
     if (!terapeutaData) return
-
-    // Porcentaje que recibe el terapeuta (default 70% si comision es 30%)
-    const porcentajeComision = terapeutaData.porcentaje_comision || 30
-    const porcentajeTerapeuta = (100 - porcentajeComision) / 100
 
     const { data: pacientes } = await supabase
       .from('pacientes')
@@ -954,17 +1520,38 @@ async function cargarPagosConfirmados() {
     if (!pacientes || pacientes.length === 0) {
       totalConfirmado.value = 0
       totalBonosPagados.value = 0
+      comparativaMesAnterior.value = 0
       return
     }
 
     const pacienteIds = pacientes.map((p: any) => p.id)
 
-    // 1. Obtener pagos de bonos
+    // Calcular fecha de inicio según período
+    const fechaInicio = new Date()
+    fechaInicio.setHours(0, 0, 0, 0)
+
+    if (periodoAnalitica.value === 'mes') {
+      fechaInicio.setDate(1)
+    } else if (periodoAnalitica.value === '3meses') {
+      fechaInicio.setMonth(fechaInicio.getMonth() - 2)
+      fechaInicio.setDate(1)
+    } else {
+      // Año
+      fechaInicio.setMonth(0)
+      fechaInicio.setDate(1)
+    }
+
+    const fechaInicioStr = fechaInicio.toISOString().split('T')[0]
+    const fechaHoyStr = new Date().toISOString().split('T')[0]
+
+    // 1. Obtener pagos de bonos del período
     const { data: bonos } = await supabase
       .from('bonos')
-      .select('id, monto_total')
+      .select('id, monto_total, created_at')
       .eq('pagado', true)
       .in('paciente_id', pacienteIds)
+      .gte('created_at', fechaInicioStr)
+      .lte('created_at', fechaHoyStr)
 
     let montoBonos = 0
     let cantidadBonos = 0
@@ -973,17 +1560,14 @@ async function cargarPagosConfirmados() {
       montoBonos = bonos.reduce((sum: number, bono: any) => sum + (bono.monto_total || 0), 0)
     }
 
-    // 2. Obtener pagos de sesiones individuales (nuevo sistema)
-    const primerDiaMes = new Date()
-    primerDiaMes.setDate(1)
-    primerDiaMes.setHours(0, 0, 0, 0)
-
+    // 2. Obtener pagos de sesiones individuales del período
     const { data: sesionesPagadas } = await supabase
       .from('citas')
-      .select('id, precio_sesion')
+      .select('id, precio_sesion, fecha_pago')
       .eq('estado_pago', 'pagado')
       .in('paciente_id', pacienteIds)
-      .gte('fecha_pago', primerDiaMes.toISOString())
+      .gte('fecha_pago', fechaInicioStr)
+      .lte('fecha_pago', fechaHoyStr)
 
     let montoSesiones = 0
     let cantidadSesiones = 0
@@ -992,15 +1576,69 @@ async function cargarPagosConfirmados() {
       montoSesiones = sesionesPagadas.reduce((sum: number, cita: any) => sum + (cita.precio_sesion || 0), 0)
     }
 
-    // Calcular total (aplicando porcentaje del terapeuta)
+    // Calcular total (100% para el terapeuta, sin comisiones)
     const montoTotalBruto = montoBonos + montoSesiones
-    totalConfirmado.value = montoTotalBruto * porcentajeTerapeuta
-    totalBonosPagados.value = cantidadBonos + cantidadSesiones // Mostrar total de pagos
+    totalConfirmado.value = montoTotalBruto
+    totalBonosPagados.value = cantidadBonos + cantidadSesiones
+
+    // 3. Calcular comparativa con período anterior (solo para mes)
+    if (periodoAnalitica.value === 'mes') {
+      const fechaInicioAnterior = new Date(fechaInicio)
+      fechaInicioAnterior.setMonth(fechaInicioAnterior.getMonth() - 1)
+      const fechaFinAnterior = new Date(fechaInicio)
+      fechaFinAnterior.setDate(fechaFinAnterior.getDate() - 1)
+
+      const fechaInicioAnteriorStr = fechaInicioAnterior.toISOString().split('T')[0]
+      const fechaFinAnteriorStr = fechaFinAnterior.toISOString().split('T')[0]
+
+      // Bonos mes anterior
+      const { data: bonosAnterior } = await supabase
+        .from('bonos')
+        .select('monto_total')
+        .eq('pagado', true)
+        .in('paciente_id', pacienteIds)
+        .gte('created_at', fechaInicioAnteriorStr)
+        .lte('created_at', fechaFinAnteriorStr)
+
+      let montoBonosAnterior = 0
+      if (bonosAnterior && bonosAnterior.length > 0) {
+        montoBonosAnterior = bonosAnterior.reduce((sum: number, bono: any) => sum + (bono.monto_total || 0), 0)
+      }
+
+      // Sesiones mes anterior
+      const { data: sesionesAnterior } = await supabase
+        .from('citas')
+        .select('precio_sesion')
+        .eq('estado_pago', 'pagado')
+        .in('paciente_id', pacienteIds)
+        .gte('fecha_pago', fechaInicioAnteriorStr)
+        .lte('fecha_pago', fechaFinAnteriorStr)
+
+      let montoSesionesAnterior = 0
+      if (sesionesAnterior && sesionesAnterior.length > 0) {
+        montoSesionesAnterior = sesionesAnterior.reduce((sum: number, cita: any) => sum + (cita.precio_sesion || 0), 0)
+      }
+
+      const totalAnterior = montoBonosAnterior + montoSesionesAnterior
+      ingresosMesAnterior.value = totalAnterior
+
+      // Calcular porcentaje de cambio
+      if (totalAnterior > 0) {
+        comparativaMesAnterior.value = Math.round(((totalConfirmado.value - totalAnterior) / totalAnterior) * 100)
+      } else if (totalConfirmado.value > 0) {
+        comparativaMesAnterior.value = 100 // Si antes era 0 y ahora hay algo, es +100%
+      } else {
+        comparativaMesAnterior.value = 0
+      }
+    } else {
+      comparativaMesAnterior.value = 0
+    }
 
   } catch (error) {
     console.error('Error al cargar pagos confirmados:', error)
     totalConfirmado.value = 0
     totalBonosPagados.value = 0
+    comparativaMesAnterior.value = 0
   }
 }
 
@@ -1033,9 +1671,11 @@ const handleRecordatorioAccion = async (payload: { id?: string; tipo: string; ac
 onMounted(async () => {
   await cargarPerfilTerapeuta()
   await cargarSesiones()
+  await cargarCobrosPendientesHoy()
   await cargarPacientes()
   await cargarMetricas()
   await cargarPagosConfirmados()
+  await cargarBonosPorAgotar()
   await generarRecordatorios()
 
   // Escuchar eventos de actualización de citas

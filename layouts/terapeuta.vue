@@ -59,26 +59,6 @@
           </li>
           <li>
             <NuxtLink
-              to="/terapeuta/mensajes"
-              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-purple-600 text-white hover:bg-purple-600"
-            >
-              <EnvelopeIcon class="w-5 h-5" />
-              <span class="font-medium">Mensajería</span>
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink
-              to="/terapeuta/recursos"
-              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-purple-600 text-white hover:bg-purple-600"
-            >
-              <BookOpenIcon class="w-5 h-5" />
-              <span class="font-medium">Recursos</span>
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink
               to="/terapeuta/bonos"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-purple-600 text-white hover:bg-purple-600"
@@ -201,28 +181,6 @@
           </li>
           <li>
             <NuxtLink
-              to="/terapeuta/mensajes"
-              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-purple-600 text-white hover:bg-purple-600"
-              @click="mobileMenuOpen = false"
-            >
-              <EnvelopeIcon class="w-5 h-5" />
-              <span class="font-medium">Mensajería</span>
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink
-              to="/terapeuta/recursos"
-              class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
-              active-class="bg-purple-600 text-white hover:bg-purple-600"
-              @click="mobileMenuOpen = false"
-            >
-              <BookOpenIcon class="w-5 h-5" />
-              <span class="font-medium">Recursos</span>
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink
               to="/terapeuta/bonos"
               class="flex items-center gap-3 px-4 py-3 rounded-lg text-cafe hover:bg-rosa/30 transition-colors duration-200"
               active-class="bg-purple-600 text-white hover:bg-purple-600"
@@ -340,8 +298,6 @@ import {
   UserGroupIcon,
   CalendarIcon,
   ChatBubbleLeftRightIcon,
-  EnvelopeIcon,
-  BookOpenIcon,
   TicketIcon,
   BanknotesIcon,
   Cog6ToothIcon,

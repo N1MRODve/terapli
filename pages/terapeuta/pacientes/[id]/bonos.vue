@@ -394,8 +394,11 @@ const limpiarFiltros = () => {
 }
 
 const volverAFicha = () => {
-  if (router.value) {
-    router.value.push(`/terapeuta/pacientes/${pacienteId.value}`)
+  if (pacienteId.value) {
+    console.log('[Bonos/[id]] Navegando a ficha del paciente:', pacienteId.value)
+    navigateTo(`/terapeuta/pacientes/${pacienteId.value}`)
+  } else {
+    console.error('[Bonos/[id]] ERROR: No se encontró ID del paciente')
   }
 }
 

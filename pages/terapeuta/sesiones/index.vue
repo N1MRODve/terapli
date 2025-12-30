@@ -2069,9 +2069,10 @@ const irAlPerfilPaciente = (sesion: any, event?: Event) => {
   event?.preventDefault()
   const pacienteId = sesion.paciente?.id || sesion.paciente_id
   if (pacienteId) {
-    router.push(`/terapeuta/pacientes/${pacienteId}`)
+    console.log('[Sesiones] Navegando a ficha de paciente:', pacienteId)
+    navigateTo(`/terapeuta/pacientes/${pacienteId}`)
   } else {
-    console.warn('No se encontró ID del paciente', sesion)
+    console.warn('[Sesiones] No se encontró ID del paciente', sesion)
   }
 }
 
