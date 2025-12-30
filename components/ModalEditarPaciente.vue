@@ -6,23 +6,23 @@
   >
     <div class="bg-[#F2F2F2] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
       <!-- Header -->
-      <div class="sticky top-0 bg-[#F2F2F2] border-b border-[#5550F2]/30 px-6 py-4 flex justify-between items-center">
-        <h2 class="text-2xl font-serif text-[#2D3748] font-semibold">
+      <div class="sticky top-0 bg-[#F2F2F2] border-b border-[#5550F2]/30 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+        <h2 class="text-xl sm:text-2xl font-serif text-[#2D3748] font-semibold">
           Editar Paciente
         </h2>
         <button
           @click="cerrarModal"
-          class="text-[#2D3748] hover:text-[#5550F2] transition-colors"
+          class="text-[#2D3748] hover:text-[#5550F2] transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
           aria-label="Cerrar modal"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
       <!-- Formulario -->
-      <form @submit.prevent="actualizarPaciente" class="px-6 py-6 space-y-6">
+      <form @submit.prevent="actualizarPaciente" class="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         <!-- Información Personal -->
         <div class="space-y-4">
           <h3 class="text-lg font-serif text-[#2D3748] font-semibold">

@@ -209,7 +209,7 @@
       </Transition>
 
       <!-- Buscador y filtros -->
-      <div class="space-y-4">
+      <div class="space-y-3 sm:space-y-4">
         <!-- Buscador -->
         <div class="relative">
           <input
@@ -217,28 +217,28 @@
             @input="handleBusquedaInput"
             type="text"
             placeholder="Buscar por nombre, email o teléfono..."
-            class="w-full h-11 px-4 pl-10 bg-white border border-gray-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all text-sm placeholder-gray-400"
+            class="w-full min-h-[44px] h-11 px-4 pl-10 bg-white border border-gray-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all text-sm placeholder-gray-400"
             aria-label="Buscar pacientes"
           />
           <MagnifyingGlassIcon class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true" />
           <button
             v-if="busqueda"
             @click="busqueda = ''; busquedaDebounced = ''"
-            class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded"
+            class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 rounded min-h-[36px] min-w-[36px] flex items-center justify-center"
             aria-label="Limpiar búsqueda"
           >
             <XMarkIcon class="w-4 h-4" />
           </button>
         </div>
 
-        <!-- Tabs de estado con underline -->
-        <div class="flex items-center justify-between border-b border-gray-100">
-          <nav class="flex gap-1 -mb-px" role="tablist">
+        <!-- Tabs de estado con underline - scroll horizontal en móvil -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 border-b border-gray-100">
+          <nav class="flex gap-1 -mb-px overflow-x-auto scrollbar-hide pb-px" role="tablist">
             <button
               v-for="filtro in filtrosEstadoConContadores"
               :key="filtro.valor"
               @click="estadoSeleccionado = filtro.valor"
-              class="px-4 py-2.5 text-sm font-medium transition-colors relative"
+              class="min-h-[44px] px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors relative whitespace-nowrap flex-shrink-0"
               :class="estadoSeleccionado === filtro.valor
                 ? 'text-purple-600'
                 : 'text-gray-500 hover:text-gray-700'"
@@ -246,7 +246,7 @@
               role="tab"
             >
               <span>{{ filtro.label }}</span>
-              <span class="ml-1.5 text-xs" :class="estadoSeleccionado === filtro.valor ? 'text-purple-500' : 'text-gray-400'">
+              <span class="ml-1 sm:ml-1.5 text-xs" :class="estadoSeleccionado === filtro.valor ? 'text-purple-500' : 'text-gray-400'">
                 {{ filtro.count }}
               </span>
               <!-- Underline activo -->
@@ -260,13 +260,13 @@
           <!-- Botón de filtros avanzados -->
           <button
             @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
-            class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+            class="flex items-center justify-center sm:justify-start gap-1.5 min-h-[44px] px-3 py-2 text-sm font-medium rounded-lg transition-colors flex-shrink-0"
             :class="hayFiltrosActivos
               ? 'text-purple-600 bg-purple-50'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
           >
             <FunnelIcon class="w-4 h-4" />
-            <span class="hidden sm:inline">Filtros</span>
+            <span>Filtros</span>
             <span
               v-if="contadorFiltrosActivos > 0"
               class="w-5 h-5 flex items-center justify-center text-xs font-semibold bg-purple-600 text-white rounded-full"
@@ -289,12 +289,12 @@
           leave-from-class="opacity-100 translate-y-0"
           leave-to-class="opacity-0 -translate-y-2"
         >
-          <div v-if="mostrarFiltrosAvanzados" class="bg-gray-50 rounded-lg p-4">
-            <div class="flex flex-wrap items-center gap-3">
+          <div v-if="mostrarFiltrosAvanzados" class="bg-gray-50 rounded-lg p-3 sm:p-4">
+            <div class="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
               <!-- Filtro por área -->
               <select
                 v-model="areaSeleccionada"
-                class="h-9 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
+                class="min-h-[44px] h-9 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20 w-full sm:w-auto"
                 aria-label="Filtrar por área"
               >
                 <option value="">Todas las áreas</option>
@@ -303,81 +303,88 @@
                 </option>
               </select>
 
-              <!-- Chips de filtros -->
-              <button
-                @click="toggleFiltro('sinProximaCita')"
-                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
-                :class="filtrosActivos.sinProximaCita
-                  ? 'bg-orange-100 text-orange-700 border border-orange-200'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
-              >
-                <CalendarDaysIcon class="w-4 h-4" />
-                Sin próxima cita
+              <!-- Chips de filtros - scroll horizontal en móvil -->
+              <div class="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-1 px-1 sm:mx-0 sm:px-0">
+                <button
+                  @click="toggleFiltro('sinProximaCita')"
+                  class="min-h-[44px] h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                  :class="filtrosActivos.sinProximaCita
+                    ? 'bg-orange-100 text-orange-700 border border-orange-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+                >
+                  <CalendarDaysIcon class="w-4 h-4" />
+                  <span class="hidden xs:inline">Sin próxima cita</span>
+                  <span class="xs:hidden">Sin cita</span>
+                </button>
+
+                <button
+                  @click="toggleFiltro('sinSesionRegistrada')"
+                  class="min-h-[44px] h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                  :class="filtrosActivos.sinSesionRegistrada
+                    ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+                >
+                  <ClipboardDocumentListIcon class="w-4 h-4" />
+                  Sin sesión
+                </button>
+
+                <button
+                  @click="toggleFiltro('requiereAtencion')"
+                  class="min-h-[44px] h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                  :class="filtrosActivos.requiereAtencion
+                    ? 'bg-red-100 text-red-700 border border-red-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+                >
+                  <ExclamationTriangleIcon class="w-4 h-4" />
+                  <span class="hidden xs:inline">Requiere atención</span>
+                  <span class="xs:hidden">Atención</span>
+                </button>
+
+                <!-- Nuevos filtros -->
+                <button
+                  @click="toggleFiltro('citasEstaSemana')"
+                  class="min-h-[44px] h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                  :class="filtrosActivos.citasEstaSemana
+                    ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+                >
+                  <CalendarDaysIcon class="w-4 h-4" />
+                  <span class="hidden xs:inline">Citas esta semana</span>
+                  <span class="xs:hidden">Esta semana</span>
               </button>
 
-              <button
-                @click="toggleFiltro('sinSesionRegistrada')"
-                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
-                :class="filtrosActivos.sinSesionRegistrada
-                  ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
-              >
-                <ClipboardDocumentListIcon class="w-4 h-4" />
-                Sin sesión
-              </button>
+                <button
+                  @click="toggleFiltro('bonosPorVencer')"
+                  class="min-h-[44px] h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                  :class="filtrosActivos.bonosPorVencer
+                    ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+                >
+                  <TicketIcon class="w-4 h-4" />
+                  <span class="hidden xs:inline">Bonos por vencer</span>
+                  <span class="xs:hidden">Bonos</span>
+                </button>
 
-              <button
-                @click="toggleFiltro('requiereAtencion')"
-                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
-                :class="filtrosActivos.requiereAtencion
-                  ? 'bg-red-100 text-red-700 border border-red-200'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
-              >
-                <ExclamationTriangleIcon class="w-4 h-4" />
-                Requiere atención
-              </button>
-
-              <!-- Nuevos filtros -->
-              <button
-                @click="toggleFiltro('citasEstaSemana')"
-                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
-                :class="filtrosActivos.citasEstaSemana
-                  ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
-              >
-                <CalendarDaysIcon class="w-4 h-4" />
-                Citas esta semana
-              </button>
-
-              <button
-                @click="toggleFiltro('bonosPorVencer')"
-                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
-                :class="filtrosActivos.bonosPorVencer
-                  ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
-              >
-                <TicketIcon class="w-4 h-4" />
-                Bonos por vencer
-              </button>
-
-              <button
-                @click="toggleFiltro('pagoPendiente')"
-                class="h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
-                :class="filtrosActivos.pagoPendiente
-                  ? 'bg-green-100 text-green-700 border border-green-200'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
-              >
-                <CurrencyDollarIcon class="w-4 h-4" />
-                Pago pendiente
-              </button>
+                <button
+                  @click="toggleFiltro('pagoPendiente')"
+                  class="min-h-[44px] h-9 px-3 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                  :class="filtrosActivos.pagoPendiente
+                    ? 'bg-green-100 text-green-700 border border-green-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'"
+                >
+                  <CurrencyDollarIcon class="w-4 h-4" />
+                  <span class="hidden xs:inline">Pago pendiente</span>
+                  <span class="xs:hidden">Pago</span>
+                </button>
+              </div>
 
               <!-- Limpiar filtros -->
               <button
                 v-if="hayFiltrosActivos"
                 @click="limpiarFiltrosAvanzados"
-                class="h-9 px-3 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                class="min-h-[44px] h-9 px-3 text-sm text-gray-500 hover:text-gray-700 transition-colors w-full sm:w-auto text-center"
               >
-                Limpiar
+                Limpiar filtros
               </button>
             </div>
           </div>
@@ -386,20 +393,20 @@
     </header>
 
     <!-- Barra de vista y resultados -->
-    <div class="flex items-center justify-between mb-4">
-      <p class="text-sm text-gray-500">
+    <div class="flex items-center justify-between mb-4 gap-2">
+      <p class="text-xs sm:text-sm text-gray-500 min-w-0">
         <span v-if="totalFiltrados === totalPacientes">{{ totalPacientes }} pacientes</span>
-        <span v-else>{{ totalFiltrados }} de {{ totalPacientes }} pacientes</span>
-        <span v-if="totalPaginas > 1" class="ml-2 text-gray-400">
-          (página {{ paginaActual }} de {{ totalPaginas }})
+        <span v-else>{{ totalFiltrados }} de {{ totalPacientes }}</span>
+        <span v-if="totalPaginas > 1" class="ml-1 sm:ml-2 text-gray-400">
+          <span class="hidden xs:inline">(página </span>{{ paginaActual }}<span class="hidden xs:inline"> de {{ totalPaginas }})</span><span class="xs:hidden">/{{ totalPaginas }}</span>
         </span>
       </p>
 
-      <!-- Toggle vista -->
-      <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+      <!-- Toggle vista - ocultar en móvil muy pequeño, siempre mostrar cards -->
+      <div class="hidden sm:flex items-center gap-1 bg-gray-100 rounded-lg p-1">
         <button
           @click="vistaActual = 'cards'"
-          class="p-1.5 rounded transition-colors"
+          class="min-h-[36px] min-w-[36px] p-1.5 rounded transition-colors flex items-center justify-center"
           :class="vistaActual === 'cards' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500 hover:text-gray-700'"
           title="Vista de tarjetas"
         >
@@ -407,7 +414,7 @@
         </button>
         <button
           @click="vistaActual = 'tabla'"
-          class="p-1.5 rounded transition-colors"
+          class="min-h-[36px] min-w-[36px] p-1.5 rounded transition-colors flex items-center justify-center"
           :class="vistaActual === 'tabla' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500 hover:text-gray-700'"
           title="Vista de tabla"
         >

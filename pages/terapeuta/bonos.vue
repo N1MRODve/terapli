@@ -1,73 +1,75 @@
 <template>
   <div>
     <!-- Header minimalista con tabs integrados -->
-    <header class="mb-6">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-6">
-          <h1 class="text-2xl font-semibold text-gray-900">Bonos</h1>
-
-          <!-- Tabs integrados -->
-          <nav class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-            <button
-              @click="activeTab = 'pacientes'"
-              class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
-              :class="activeTab === 'pacientes'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'"
-            >
-              Por Paciente
-              <span class="ml-1 text-xs" :class="activeTab === 'pacientes' ? 'text-gray-500' : 'text-gray-400'">
-                {{ pacientesConBonos.length }}
-              </span>
-            </button>
-            <button
-              @click="activeTab = 'resumen'"
-              class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
-              :class="activeTab === 'resumen'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'"
-            >
-              Por Tipo
-              <span class="ml-1 text-xs" :class="activeTab === 'resumen' ? 'text-gray-500' : 'text-gray-400'">
-                {{ tiposBonos.length }}
-              </span>
-            </button>
-            <button
-              @click="activeTab = 'bonos'"
-              class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
-              :class="activeTab === 'bonos'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'"
-            >
-              Todos
-              <span class="ml-1 text-xs" :class="activeTab === 'bonos' ? 'text-gray-500' : 'text-gray-400'">
-                {{ todosBonos.length }}
-              </span>
-            </button>
-            <button
-              @click="activeTab = 'plantillas'"
-              class="px-3 py-1.5 text-sm font-medium rounded-md transition-all"
-              :class="activeTab === 'plantillas'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'"
-            >
-              Plantillas
-              <span class="ml-1 text-xs" :class="activeTab === 'plantillas' ? 'text-gray-500' : 'text-gray-400'">
-                {{ plantillas.length }}
-              </span>
-            </button>
-          </nav>
-        </div>
+    <header class="mb-4 sm:mb-6">
+      <!-- Título y botón en móvil -->
+      <div class="flex items-center justify-between mb-3 sm:mb-4">
+        <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">Bonos</h1>
 
         <button
           v-if="activeTab === 'plantillas'"
           @click="abrirModalNuevaPlantilla"
-          class="h-10 px-4 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 shadow-sm"
+          class="min-h-[44px] h-10 px-3 sm:px-4 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 shadow-sm"
         >
           <PlusIcon class="w-4 h-4" />
-          Nueva Plantilla
+          <span class="hidden sm:inline">Nueva Plantilla</span>
+          <span class="sm:hidden">Nueva</span>
         </button>
       </div>
+
+      <!-- Tabs responsive - scroll horizontal en móvil -->
+      <nav class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 overflow-x-auto scrollbar-hide -mx-1 px-1 sm:mx-0 sm:px-0">
+        <button
+          @click="activeTab = 'pacientes'"
+          class="min-h-[40px] px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex-shrink-0"
+          :class="activeTab === 'pacientes'
+            ? 'bg-white text-gray-900 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'"
+        >
+          <span class="hidden sm:inline">Por Paciente</span>
+          <span class="sm:hidden">Pacientes</span>
+          <span class="ml-1 text-xs" :class="activeTab === 'pacientes' ? 'text-gray-500' : 'text-gray-400'">
+            {{ pacientesConBonos.length }}
+          </span>
+        </button>
+        <button
+          @click="activeTab = 'resumen'"
+          class="min-h-[40px] px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex-shrink-0"
+          :class="activeTab === 'resumen'
+            ? 'bg-white text-gray-900 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'"
+        >
+          <span class="hidden sm:inline">Por Tipo</span>
+          <span class="sm:hidden">Tipo</span>
+          <span class="ml-1 text-xs" :class="activeTab === 'resumen' ? 'text-gray-500' : 'text-gray-400'">
+            {{ tiposBonos.length }}
+          </span>
+        </button>
+        <button
+          @click="activeTab = 'bonos'"
+          class="min-h-[40px] px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex-shrink-0"
+          :class="activeTab === 'bonos'
+            ? 'bg-white text-gray-900 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'"
+        >
+          Todos
+          <span class="ml-1 text-xs" :class="activeTab === 'bonos' ? 'text-gray-500' : 'text-gray-400'">
+            {{ todosBonos.length }}
+          </span>
+        </button>
+        <button
+          @click="activeTab = 'plantillas'"
+          class="min-h-[40px] px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex-shrink-0"
+          :class="activeTab === 'plantillas'
+            ? 'bg-white text-gray-900 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'"
+        >
+          Plantillas
+          <span class="ml-1 text-xs" :class="activeTab === 'plantillas' ? 'text-gray-500' : 'text-gray-400'">
+            {{ plantillas.length }}
+          </span>
+        </button>
+      </nav>
 
       <!-- Quick stats mejoradas con cards -->
       <div v-if="activeTab === 'bonos' || activeTab === 'resumen' || activeTab === 'pacientes'" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
@@ -195,45 +197,45 @@
           <!-- Header del paciente (clickeable) -->
           <div
             @click="togglePacienteExpandido(paciente.id)"
-            class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-50/50 transition-colors"
+            class="px-3 sm:px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer hover:bg-gray-50/50 transition-colors gap-2 sm:gap-0 min-h-[44px]"
           >
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-semibold">
+              <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-semibold flex-shrink-0">
                 {{ getIniciales(paciente.nombre) }}
               </div>
-              <div>
-                <p class="font-medium text-gray-900">{{ paciente.nombre }}</p>
-                <div class="flex items-center gap-2 text-xs text-gray-500">
+              <div class="min-w-0">
+                <p class="font-medium text-gray-900 truncate">{{ paciente.nombre }}</p>
+                <div class="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
                   <span>{{ paciente.bonos.length }} {{ paciente.bonos.length === 1 ? 'bono' : 'bonos' }}</span>
-                  <span class="text-gray-300">|</span>
-                  <span>{{ paciente.sesionesUsadas }}/{{ paciente.sesionesTotales }} sesiones</span>
+                  <span class="text-gray-300 hidden xs:inline">|</span>
+                  <span class="hidden xs:inline">{{ paciente.sesionesUsadas }}/{{ paciente.sesionesTotales }} sesiones</span>
                 </div>
               </div>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 sm:gap-4 ml-auto sm:ml-0">
               <!-- Badge prioridad (basado en pago y sesiones) -->
               <span
                 v-if="paciente.requiereAccion"
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-full text-xs font-medium"
                 :class="getPrioridadPacienteClase(paciente)"
               >
                 <ExclamationCircleIcon v-if="paciente.prioridad === 'urgente'" class="w-3.5 h-3.5" />
                 <ClockIcon v-else-if="paciente.prioridad === 'atencion'" class="w-3.5 h-3.5" />
-                {{ getPrioridadPacienteTexto(paciente) }}
+                <span class="hidden sm:inline">{{ getPrioridadPacienteTexto(paciente) }}</span>
               </span>
 
               <!-- Total pendiente -->
-              <div class="text-right min-w-[80px]">
+              <div class="text-right min-w-[70px] sm:min-w-[80px]">
                 <p class="text-sm font-semibold text-gray-900">{{ formatearPrecio(paciente.montoTotal) }}€</p>
                 <p class="text-xs" :class="paciente.montoPendiente > 0 ? 'text-amber-600' : 'text-green-600'">
-                  {{ paciente.montoPendiente > 0 ? `${formatearPrecio(paciente.montoPendiente)}€ pend.` : 'Todo pagado' }}
+                  {{ paciente.montoPendiente > 0 ? `${formatearPrecio(paciente.montoPendiente)}€ pend.` : 'Pagado' }}
                 </p>
               </div>
 
               <!-- Chevron -->
               <ChevronDownIcon
-                class="w-5 h-5 text-gray-400 transition-transform"
+                class="w-5 h-5 text-gray-400 transition-transform flex-shrink-0"
                 :class="{ 'rotate-180': pacientesExpandidos.includes(paciente.id) }"
               />
             </div>
@@ -253,19 +255,19 @@
                 <div
                   v-for="bono in paciente.bonos"
                   :key="bono.id"
-                  class="px-4 py-3 pl-16 hover:bg-gray-50/50 transition-colors group"
+                  class="px-3 sm:px-4 py-3 pl-4 sm:pl-16 hover:bg-gray-50/50 transition-colors group"
                 >
-                  <div class="flex items-center justify-between">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
                     <!-- Info del bono (clickeable para ir a detalle) -->
                     <div
                       @click.stop="irABonoPaciente(bono)"
-                      class="flex items-center gap-3 cursor-pointer flex-1"
+                      class="flex items-center gap-3 cursor-pointer flex-1 min-w-0"
                     >
-                      <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="getTipoBonoColor(bono.tipo)">
+                      <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" :class="getTipoBonoColor(bono.tipo)">
                         <TicketIcon class="w-4 h-4" />
                       </div>
-                      <div>
-                        <div class="flex items-center gap-2">
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
                           <span class="text-sm font-medium text-gray-900">{{ frecuenciaLabel(bono.tipo) }}</span>
                           <!-- Badge estado unificado con prioridad visual -->
                           <span
@@ -273,42 +275,43 @@
                             :class="getEstadoUnificadoClase(bono)"
                           >
                             <component :is="getEstadoUnificadoIcono(bono)" class="w-3 h-3" />
-                            {{ getEstadoUnificadoTexto(bono) }}
+                            <span class="hidden xs:inline">{{ getEstadoUnificadoTexto(bono) }}</span>
                           </span>
                         </div>
-                        <p class="text-xs text-gray-500">
+                        <p class="text-xs text-gray-500 truncate">
                           {{ bono.sesiones_totales - bono.sesiones_restantes }}/{{ bono.sesiones_totales }} sesiones
-                          <span v-if="bono.fecha_fin" class="ml-2">• Vence {{ formatearFechaCorta(bono.fecha_fin) }}</span>
+                          <span v-if="bono.fecha_fin" class="ml-2 hidden sm:inline">• Vence {{ formatearFechaCorta(bono.fecha_fin) }}</span>
                         </p>
                       </div>
                     </div>
 
                     <!-- Acciones y monto -->
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 sm:gap-3 ml-auto">
                       <!-- Acción rápida según estado -->
                       <button
                         v-if="!bono.pagado"
                         @click.stop="registrarPago(bono)"
-                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
+                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all min-h-[36px]"
                         :class="bono.sesiones_restantes === 0
                           ? 'bg-red-100 text-red-700 hover:bg-red-200'
                           : 'bg-amber-100 text-amber-700 hover:bg-amber-200'"
                       >
                         <CurrencyEuroIcon class="w-3.5 h-3.5" />
-                        {{ bono.sesiones_restantes === 0 ? 'Cobrar ahora' : 'Registrar pago' }}
+                        {{ bono.sesiones_restantes === 0 ? 'Cobrar' : 'Pago' }}
                       </button>
 
                       <button
                         v-else-if="bono.sesiones_restantes === 0"
                         @click.stop="crearNuevoBono(bono)"
-                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition-all"
+                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition-all min-h-[36px]"
                       >
                         <PlusIcon class="w-3.5 h-3.5" />
-                        Nuevo bono
+                        <span class="hidden lg:inline">Nuevo bono</span>
+                        <span class="lg:hidden">Nuevo</span>
                       </button>
 
                       <!-- Barra de progreso -->
-                      <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden hidden md:block">
+                      <div class="w-12 sm:w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden hidden sm:block">
                         <div
                           class="h-full rounded-full transition-all"
                           :class="getProgresoColorUnificado(bono)"
@@ -317,10 +320,10 @@
                       </div>
 
                       <!-- Monto -->
-                      <div class="text-right min-w-[60px]">
+                      <div class="text-right min-w-[55px] sm:min-w-[60px]">
                         <p class="text-sm font-medium text-gray-900">{{ bono.monto_total }}€</p>
                         <p class="text-xs" :class="bono.pagado ? 'text-green-600' : 'text-amber-600'">
-                          {{ bono.pagado ? 'Pagado' : 'Pendiente' }}
+                          {{ bono.pagado ? 'Pagado' : 'Pend.' }}
                         </p>
                       </div>
 
@@ -806,76 +809,80 @@
     </div>
 
     <!-- Tab: Bonos Activos -->
-    <div v-if="activeTab === 'bonos'" class="space-y-4">
-      <!-- Filtros -->
-      <div class="flex flex-wrap items-center gap-3">
-        <div class="relative flex-1 min-w-[200px] max-w-md">
+    <div v-if="activeTab === 'bonos'" class="space-y-3 sm:space-y-4">
+      <!-- Filtros responsive -->
+      <div class="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
+        <!-- Búsqueda - full width en móvil -->
+        <div class="relative w-full sm:flex-1 sm:min-w-[200px] sm:max-w-md">
           <input
             v-model="busquedaBono"
             type="text"
             placeholder="Buscar por paciente..."
-            class="w-full h-10 px-4 pl-9 bg-white border border-gray-200 rounded-lg text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+            class="w-full min-h-[44px] h-10 px-4 pl-9 bg-white border border-gray-200 rounded-lg text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
           />
           <MagnifyingGlassIcon class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         </div>
 
-        <select
-          v-model="filtroEstado"
-          class="h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
-        >
-          <option value="">Estado: Todos</option>
-          <option value="activo">Activos</option>
-          <option value="pendiente">Pendientes</option>
-          <option value="completado">Completados</option>
-          <option value="vencido">Vencidos</option>
-        </select>
+        <!-- Filtros en grid para móvil -->
+        <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
+          <select
+            v-model="filtroEstado"
+            class="min-h-[44px] h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
+          >
+            <option value="">Estado</option>
+            <option value="activo">Activos</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="completado">Completados</option>
+            <option value="vencido">Vencidos</option>
+          </select>
 
-        <select
-          v-model="filtroPago"
-          class="h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
-        >
-          <option value="">Pago: Todos</option>
-          <option value="pagado">Pagados</option>
-          <option value="pendiente">Pendientes cobro</option>
-        </select>
+          <select
+            v-model="filtroPago"
+            class="min-h-[44px] h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
+          >
+            <option value="">Pago</option>
+            <option value="pagado">Pagados</option>
+            <option value="pendiente">Pendiente cobro</option>
+          </select>
 
-        <select
-          v-model="ordenBonos"
-          class="h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
-        >
-          <option value="reciente">Más recientes</option>
-          <option value="antiguo">Más antiguos</option>
-          <option value="nombre">Nombre A-Z</option>
-          <option value="monto_desc">Mayor monto</option>
-          <option value="monto_asc">Menor monto</option>
-          <option value="progreso">Por progreso</option>
-        </select>
+          <select
+            v-model="ordenBonos"
+            class="min-h-[44px] h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20 col-span-2 sm:col-span-1"
+          >
+            <option value="reciente">Más recientes</option>
+            <option value="antiguo">Más antiguos</option>
+            <option value="nombre">Nombre A-Z</option>
+            <option value="monto_desc">Mayor monto</option>
+            <option value="monto_asc">Menor monto</option>
+            <option value="progreso">Por progreso</option>
+          </select>
+        </div>
 
         <!-- Indicador de filtro especial activo -->
         <div
           v-if="filtroEspecial"
-          class="flex items-center gap-2 h-10 px-3 rounded-lg text-sm font-medium"
+          class="flex items-center gap-2 min-h-[40px] h-10 px-3 rounded-lg text-sm font-medium w-full sm:w-auto justify-center sm:justify-start"
           :class="{
             'bg-amber-100 text-amber-700': filtroEspecial === 'pendientes_cobro',
             'bg-orange-100 text-orange-700': filtroEspecial === 'proximos_agotar',
             'bg-red-100 text-red-700': filtroEspecial === 'urgentes'
           }"
         >
-          <span>
-            {{ filtroEspecial === 'pendientes_cobro' ? 'Pendientes de cobro' :
-               filtroEspecial === 'proximos_agotar' ? 'Por agotar (≤2 sesiones)' :
-               'Urgentes (agotados sin pagar)' }}
+          <span class="truncate">
+            {{ filtroEspecial === 'pendientes_cobro' ? 'Pendientes cobro' :
+               filtroEspecial === 'proximos_agotar' ? 'Por agotar' :
+               'Urgentes' }}
           </span>
-          <span class="text-xs opacity-75">({{ bonosFiltrados.length }})</span>
+          <span class="text-xs opacity-75 flex-shrink-0">({{ bonosFiltrados.length }})</span>
         </div>
 
         <button
           v-if="busquedaBono || filtroEstado || filtroEspecial || filtroPago || ordenBonos !== 'reciente'"
           @click="limpiarFiltros"
-          class="h-10 px-3 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+          class="min-h-[44px] h-10 px-3 text-sm text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1 w-full sm:w-auto"
         >
           <XMarkIcon class="w-4 h-4" />
-          Limpiar
+          Limpiar filtros
         </button>
       </div>
 
@@ -897,80 +904,131 @@
           </p>
         </div>
 
-        <!-- Tabla -->
-        <table v-else class="w-full">
-          <thead>
-            <tr class="border-b border-gray-100 bg-gray-50/50">
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paciente</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Progreso</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
-              <th class="px-4 py-3 w-10"></th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-50">
-            <tr
+        <!-- Tabla desktop / Cards móvil -->
+        <div v-else>
+          <!-- Vista de tabla para desktop -->
+          <table class="w-full hidden sm:table">
+            <thead>
+              <tr class="border-b border-gray-100 bg-gray-50/50">
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paciente</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Tipo</th>
+                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Progreso</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Estado</th>
+                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                <th class="px-4 py-3 w-10"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr
+                v-for="bono in bonosFiltrados"
+                :key="bono.id"
+                class="hover:bg-gray-50/50 transition-colors cursor-pointer"
+                @click="irABonoPaciente(bono)"
+              >
+                <!-- Paciente -->
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                      {{ getIniciales(bono.paciente_nombre) }}
+                    </div>
+                    <span class="text-sm font-medium text-gray-900 truncate max-w-[150px]">{{ bono.paciente_nombre }}</span>
+                  </div>
+                </td>
+
+                <!-- Tipo -->
+                <td class="px-4 py-3 hidden md:table-cell">
+                  <span class="text-sm text-gray-600">{{ frecuenciaLabel(bono.tipo) }}</span>
+                </td>
+
+                <!-- Progreso -->
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2 justify-center">
+                    <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        class="h-full rounded-full transition-all"
+                        :class="getProgresoColor(bono)"
+                        :style="{ width: `${calcularPorcentajeUso(bono)}%` }"
+                      ></div>
+                    </div>
+                    <span class="text-xs text-gray-500">{{ bono.sesiones_totales - bono.sesiones_restantes }}/{{ bono.sesiones_totales }}</span>
+                  </div>
+                </td>
+
+                <!-- Estado -->
+                <td class="px-4 py-3 hidden lg:table-cell">
+                  <span
+                    class="inline-flex items-center gap-1.5 text-sm"
+                    :class="getEstadoColorTexto(bono.estado)"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full" :class="getEstadoColorPunto(bono.estado)"></span>
+                    {{ getEstadoTexto(bono.estado) }}
+                  </span>
+                </td>
+
+                <!-- Monto -->
+                <td class="px-4 py-3 text-right">
+                  <div class="text-sm font-medium text-gray-900">{{ bono.monto_total }}€</div>
+                  <div class="text-xs" :class="bono.pagado ? 'text-green-600' : 'text-amber-600'">
+                    {{ bono.pagado ? 'Pagado' : 'Pendiente' }}
+                  </div>
+                </td>
+
+                <!-- Acción -->
+                <td class="px-4 py-3 text-right">
+                  <ChevronRightIcon class="w-4 h-4 text-gray-400" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Vista de cards para móvil -->
+          <div class="sm:hidden divide-y divide-gray-100">
+            <div
               v-for="bono in bonosFiltrados"
               :key="bono.id"
-              class="hover:bg-gray-50/50 transition-colors cursor-pointer"
+              class="p-4 hover:bg-gray-50/50 transition-colors cursor-pointer active:bg-gray-100"
               @click="irABonoPaciente(bono)"
             >
-              <!-- Paciente -->
-              <td class="px-4 py-3">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                  <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-semibold flex-shrink-0">
                     {{ getIniciales(bono.paciente_nombre) }}
                   </div>
-                  <span class="text-sm font-medium text-gray-900 truncate">{{ bono.paciente_nombre }}</span>
-                </div>
-              </td>
-
-              <!-- Tipo -->
-              <td class="px-4 py-3">
-                <span class="text-sm text-gray-600">{{ frecuenciaLabel(bono.tipo) }}</span>
-              </td>
-
-              <!-- Progreso -->
-              <td class="px-4 py-3">
-                <div class="flex items-center gap-2 justify-center">
-                  <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      class="h-full rounded-full transition-all"
-                      :class="getProgresoColor(bono)"
-                      :style="{ width: `${calcularPorcentajeUso(bono)}%` }"
-                    ></div>
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ bono.paciente_nombre }}</p>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="text-xs text-gray-500">{{ frecuenciaLabel(bono.tipo) }}</span>
+                      <span
+                        class="inline-flex items-center gap-1 text-xs"
+                        :class="getEstadoColorTexto(bono.estado)"
+                      >
+                        <span class="w-1.5 h-1.5 rounded-full" :class="getEstadoColorPunto(bono.estado)"></span>
+                        {{ getEstadoTexto(bono.estado) }}
+                      </span>
+                    </div>
                   </div>
-                  <span class="text-xs text-gray-500">{{ bono.sesiones_totales - bono.sesiones_restantes }}/{{ bono.sesiones_totales }}</span>
                 </div>
-              </td>
-
-              <!-- Estado -->
-              <td class="px-4 py-3">
-                <span
-                  class="inline-flex items-center gap-1.5 text-sm"
-                  :class="getEstadoColorTexto(bono.estado)"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full" :class="getEstadoColorPunto(bono.estado)"></span>
-                  {{ getEstadoTexto(bono.estado) }}
-                </span>
-              </td>
-
-              <!-- Monto -->
-              <td class="px-4 py-3 text-right">
-                <div class="text-sm font-medium text-gray-900">{{ bono.monto_total }}€</div>
-                <div class="text-xs" :class="bono.pagado ? 'text-green-600' : 'text-amber-600'">
-                  {{ bono.pagado ? 'Pagado' : 'Pendiente' }}
+                <div class="text-right flex-shrink-0">
+                  <p class="text-sm font-semibold text-gray-900">{{ bono.monto_total }}€</p>
+                  <p class="text-xs" :class="bono.pagado ? 'text-green-600' : 'text-amber-600'">
+                    {{ bono.pagado ? 'Pagado' : 'Pendiente' }}
+                  </p>
                 </div>
-              </td>
-
-              <!-- Acción -->
-              <td class="px-4 py-3 text-right">
-                <ChevronRightIcon class="w-4 h-4 text-gray-400" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+              <!-- Barra de progreso móvil -->
+              <div class="flex items-center gap-2 mt-3">
+                <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    class="h-full rounded-full transition-all"
+                    :class="getProgresoColor(bono)"
+                    :style="{ width: `${calcularPorcentajeUso(bono)}%` }"
+                  ></div>
+                </div>
+                <span class="text-xs text-gray-500 flex-shrink-0">{{ bono.sesiones_totales - bono.sesiones_restantes }}/{{ bono.sesiones_totales }} sesiones</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

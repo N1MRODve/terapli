@@ -1695,6 +1695,57 @@ onMounted(async () => {
 
     <!-- Tabla de Pagos -->
     <div v-else-if="activeTab === 'pagos'" class="table-container" @click="cerrarMenus">
+      <!-- Vista de cards para móvil -->
+      <div v-if="pagos.length > 0" class="pagos-cards-mobile">
+        <div
+          v-for="pago in pagos"
+          :key="'card-' + pago.id"
+          class="pago-card"
+          :class="{ 'pago-card-problema': tieneProblema(pago) }"
+          @click="verDetallesPago(pago)"
+        >
+          <div class="pago-card-header">
+            <div class="pago-card-paciente">
+              <span class="pago-card-nombre">{{ getNombrePaciente(pago) }}</span>
+              <span v-if="tieneProblema(pago)" class="badge-problema-small">Revisar</span>
+            </div>
+            <span class="pago-card-monto">{{ formatearImporte(pago.monto) }}</span>
+          </div>
+          <div class="pago-card-body">
+            <div class="pago-card-info">
+              <span class="pago-card-fecha">{{ formatearFechaContextual(pago.fecha_pago).texto }}</span>
+              <span class="pago-card-metodo">
+                <span class="metodo-icon-small">{{ getMetodoIcon(pago.metodo_pago) }}</span>
+                {{ formatearMetodoPago(pago.metodo_pago) }}
+              </span>
+            </div>
+            <div v-if="parseConcepto(pago).tipo" class="pago-card-concepto">
+              <span :class="['concepto-badge-small', getConceptoBadgeClass(parseConcepto(pago).tipo)]">
+                {{ getConceptoLabel(parseConcepto(pago).tipo) }}
+              </span>
+              <span class="concepto-texto-small">{{ parseConcepto(pago).texto }}</span>
+            </div>
+          </div>
+          <div class="pago-card-actions" @click.stop>
+            <button
+              v-if="tieneProblema(pago)"
+              class="btn-card-action btn-asignar-small"
+              @click.stop="abrirModalAsignarPaciente(pago)"
+            >
+              Asignar paciente
+            </button>
+            <button
+              v-else
+              class="btn-card-action"
+              @click.stop="abrirModalGenerarFactura(pago)"
+            >
+              Generar factura
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla para desktop -->
       <table v-if="pagos.length > 0" class="data-table">
         <thead>
           <tr>
@@ -2776,17 +2827,101 @@ onMounted(async () => {
 /* Responsive */
 @media (max-width: 768px) {
   .pagos-page {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .header-content {
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: stretch;
   }
 
+  .header-content h1 {
+    font-size: 1.25rem;
+  }
+
+  .btn-primary {
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    min-height: 44px;
+  }
+
+  /* Tabs responsive */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 1rem;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 0.625rem 1rem;
+    min-height: 44px;
+  }
+
+  /* Métricas grid */
+  .metricas-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .metrica-card {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .metrica-icono {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .metrica-icono svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .metrica-valor {
+    font-size: 0.9375rem;
+  }
+
+  .metrica-label {
+    font-size: 0.6875rem;
+  }
+
+  /* Filtros rápidos */
+  .filtros-rapidos {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
+    margin: 0 -0.75rem 0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .filtros-rapidos::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip-filtro {
+    flex-shrink: 0;
+    padding: 0.5rem 0.875rem;
+    min-height: 36px;
+  }
+
+  /* Filtros avanzados */
   .filtros {
     flex-direction: column;
+    padding: 0.75rem;
+    gap: 0.75rem;
   }
 
   .filtro-grupo {
@@ -2796,19 +2931,108 @@ onMounted(async () => {
   .input-date,
   .input-select {
     width: 100%;
+    min-height: 44px;
+    font-size: 16px; /* Evita zoom en iOS */
+  }
+
+  .filtro-acciones {
+    flex-direction: row;
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .filtro-acciones .btn-secondary {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  .filtro-acciones .btn-text {
+    min-height: 44px;
+  }
+
+  /* Resumen período */
+  .resumen-periodo {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .periodo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  /* Tabla - Vista cards en móvil */
+  .table-container {
+    border: none;
+    border-radius: 0;
+    margin: 0 -0.75rem;
+    background: transparent;
   }
 
   .data-table {
-    font-size: 0.8125rem;
+    display: none;
   }
 
-  .data-table th,
-  .data-table td {
+  /* Paginación */
+  .paginacion {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .btn-pag {
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Alerta huérfanos */
+  .alerta-huerfanos {
+    padding: 0.75rem;
+    margin: 0 -0.75rem 0.75rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .alerta-descripcion {
+    font-size: 0.75rem;
+  }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .pagos-page {
     padding: 0.5rem;
   }
 
-  .concepto {
-    max-width: 120px;
+  .metricas-container {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .metrica-card {
+    padding: 0.625rem;
+  }
+
+  .metrica-valor {
+    font-size: 0.875rem;
+  }
+
+  .header-content h1 {
+    font-size: 1.125rem;
+  }
+
+  .filtros-rapidos {
+    margin: 0 -0.5rem 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .chip-filtro {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -3696,5 +3920,201 @@ onMounted(async () => {
 
 .text-red {
   color: #dc2626;
+}
+
+/* Vista de cards para móvil */
+.pagos-cards-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .pagos-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+  }
+
+  .pago-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .pago-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .pago-card:active {
+    background: #f9fafb;
+  }
+
+  .pago-card-problema {
+    background: #fef3c7;
+    border-color: #f59e0b;
+  }
+
+  .pago-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pago-card-paciente {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pago-card-nombre {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: #111827;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .badge-problema-small {
+    display: inline-block;
+    padding: 0.125rem 0.375rem;
+    background: #dc2626;
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+
+  .pago-card-monto {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #059669;
+    flex-shrink: 0;
+  }
+
+  .pago-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pago-card-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8125rem;
+    color: #6b7280;
+  }
+
+  .pago-card-fecha {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .pago-card-metodo {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    background: #f3f4f6;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  .metodo-icon-small {
+    font-size: 0.75rem;
+  }
+
+  .pago-card-concepto {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .concepto-badge-small {
+    display: inline-block;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+
+  .concepto-texto-small {
+    font-size: 0.75rem;
+    color: #6b7280;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .pago-card-actions {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-card-action {
+    padding: 0.5rem 0.875rem;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    min-height: 36px;
+    transition: all 0.15s;
+  }
+
+  .btn-card-action:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+  }
+
+  .btn-asignar-small {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: white;
+  }
+
+  .btn-asignar-small:hover {
+    background: #d97706;
+    border-color: #d97706;
+  }
+
+  /* Métricas facturas responsive */
+  .metricas-facturas {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .metrica-factura {
+    flex: 1 1 45%;
+    min-width: 0;
+  }
+
+  .metrica-factura-valor {
+    font-size: 1rem;
+  }
+
+  .metrica-factura-label {
+    font-size: 0.6875rem;
+  }
 }
 </style>

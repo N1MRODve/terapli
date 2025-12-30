@@ -1116,9 +1116,21 @@ const getEstadoBadgeClass = (estado: string) => {
     max-width: 100%;
   }
 
+  .search-input {
+    min-height: 44px;
+  }
+
   .urgency-filters {
     overflow-x: auto;
     padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-chip {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .bonos-list {
@@ -1141,14 +1153,102 @@ const getEstadoBadgeClass = (estado: string) => {
     padding-left: 4rem;
   }
 
+  .bono-info-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
   .bono-action {
     margin-top: 0.75rem;
-    padding-left: 4rem;
+    padding-left: 0;
   }
 
   .btn-confirmar {
     width: 100%;
     justify-content: center;
+    min-height: 48px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .module-header {
+    padding: 0.875rem;
+  }
+
+  .header-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .header-title {
+    font-size: 1rem;
+  }
+
+  .header-counter {
+    padding: 0.375rem 0.75rem;
+  }
+
+  .counter-value {
+    font-size: 1.5rem;
+  }
+
+  .metrics-grid {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .metric-card {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .metric-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .metric-value {
+    font-size: 1.125rem;
+  }
+
+  .bonos-list {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .bono-card {
+    padding: 0.875rem;
+  }
+
+  .bono-content {
+    padding-left: 3.5rem;
+  }
+
+  .avatar-initials {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+  }
+
+  .paciente-nombre {
+    font-size: 0.875rem;
+  }
+
+  .bono-info-grid {
+    gap: 0.5rem;
+  }
+
+  .info-label {
+    font-size: 0.5625rem;
+  }
+
+  .info-value {
+    font-size: 0.75rem;
+  }
+
+  .monto-value {
+    font-size: 1rem;
   }
 }
 </style>

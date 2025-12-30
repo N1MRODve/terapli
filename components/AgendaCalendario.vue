@@ -898,6 +898,25 @@ const getColorEstadoCitaMes = (estado: string): string => {
 }
 
 /**
+ * Colores para dots de citas en vista mensual móvil
+ */
+const getColorEstadoCitaMesDot = (estado: string): string => {
+  switch (estado) {
+    case 'pendiente':
+      return 'bg-amber-500'
+    case 'confirmada':
+      return 'bg-emerald-500'
+    case 'realizada':
+    case 'completada':
+      return 'bg-blue-500'
+    case 'cancelada':
+      return 'bg-red-400'
+    default:
+      return 'bg-gray-400'
+  }
+}
+
+/**
  * Seleccionar un día en la vista mensual - cambia a vista de día
  */
 const seleccionarDiaMes = (fechaStr: string) => {
@@ -1583,13 +1602,13 @@ watch([vistaActiva, fechaSeleccionada], async () => {
     <!-- ================================================================= -->
     <!-- HEADER COMPACTO: Todo en una sola barra -->
     <!-- ================================================================= -->
-    <div class="bg-white border-b border-gray-100 px-4 py-2">
-      <div class="flex items-center justify-between gap-3">
+    <div class="bg-white border-b border-gray-100 px-2 sm:px-4 py-2">
+      <div class="flex items-center justify-between gap-2 sm:gap-3">
         <!-- Navegación izquierda -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 sm:gap-2">
           <button
             @click="navegarFecha(-1)"
-            class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-all"
+            class="w-8 h-8 sm:w-8 sm:h-8 min-h-[36px] min-w-[36px] rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-all"
             aria-label="Semana anterior"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1599,7 +1618,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
 
           <button
             @click="irHoy"
-            class="px-3 py-1 rounded-full border border-violet-500 text-violet-600 font-medium text-sm hover:bg-violet-50 transition-all"
+            class="px-2 sm:px-3 py-1 min-h-[36px] rounded-full border border-violet-500 text-violet-600 font-medium text-xs sm:text-sm hover:bg-violet-50 transition-all"
           >
             Hoy
           </button>
@@ -1618,7 +1637,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
 
           <button
             @click="navegarFecha(1)"
-            class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-all"
+            class="w-8 h-8 min-h-[36px] min-w-[36px] rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-all"
             aria-label="Semana siguiente"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1627,19 +1646,19 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           </button>
 
           <!-- Título del periodo + Indicador de Hoy -->
-          <div class="flex items-center gap-3 ml-2">
-            <h1 class="text-base font-semibold text-gray-800">
+          <div class="flex items-center gap-2 sm:gap-3 ml-1 sm:ml-2">
+            <h1 class="text-sm sm:text-base font-semibold text-gray-800 truncate max-w-[100px] sm:max-w-none">
               {{ tituloPeriodo }}
             </h1>
-            <!-- Badge "Hoy" cuando el día actual está visible -->
-            <div v-if="diaActualVisible" class="flex items-center gap-2 px-2.5 py-1 bg-violet-50 border border-violet-200 rounded-full">
+            <!-- Badge "Hoy" cuando el día actual está visible - oculto en móvil pequeño -->
+            <div v-if="diaActualVisible" class="hidden sm:flex items-center gap-2 px-2.5 py-1 bg-violet-50 border border-violet-200 rounded-full">
               <div class="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
               <span class="text-xs font-medium text-violet-700">Hoy, {{ textoHoy }}</span>
             </div>
           </div>
 
-          <!-- Barra de progreso del día (solo si es hoy) -->
-          <div v-if="diaActualVisible" class="flex items-center gap-1.5 ml-2">
+          <!-- Barra de progreso del día (solo si es hoy) - oculta en móvil -->
+          <div v-if="diaActualVisible" class="hidden md:flex items-center gap-1.5 ml-2">
             <div class="w-20 h-1 bg-gray-200 rounded-full overflow-hidden">
               <div
                 class="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full transition-all duration-1000"
@@ -1650,9 +1669,9 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           </div>
         </div>
 
-        <!-- Centro: Buscador compacto -->
-        <div class="flex-1 max-w-md mx-4">
-          <div class="relative">
+        <!-- Centro: Buscador compacto - oculto en móvil muy pequeño -->
+        <div class="hidden sm:flex flex-1 max-w-xs md:max-w-md mx-2 md:mx-4">
+          <div class="relative w-full">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1662,13 +1681,13 @@ watch([vistaActiva, fechaSeleccionada], async () => {
               v-model="busqueda"
               type="text"
               placeholder="Buscar paciente..."
-              class="w-full pl-9 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500/30 focus:border-violet-400 transition-all"
+              class="w-full min-h-[40px] pl-9 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500/30 focus:border-violet-400 transition-all"
             />
           </div>
         </div>
 
         <!-- Derecha: Vista + Filtros + Nueva Cita -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 sm:gap-2">
           <!-- Selector de vista compacto -->
           <div class="flex items-center bg-gray-100 rounded-lg p-0.5">
             <button
@@ -1680,7 +1699,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
               ]"
               :key="vista.key"
               @click="vistaActiva = vista.key as any"
-              class="px-2.5 py-1 rounded-md text-xs font-medium transition-all"
+              class="px-2 sm:px-2.5 py-1 min-h-[32px] rounded-md text-xs font-medium transition-all"
               :class="vistaActiva === vista.key
                 ? 'bg-violet-500 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'"
@@ -1690,11 +1709,11 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             </button>
           </div>
 
-          <!-- Toggle Zoom Horario (solo visible en vistas no mensuales) -->
+          <!-- Toggle Zoom Horario (solo visible en vistas no mensuales) - oculto en móvil pequeño -->
           <button
             v-if="vistaActiva !== 'mes'"
             @click="ciclarModoHorario"
-            class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-xs font-medium transition-all"
+            class="hidden xs:flex items-center gap-1.5 px-2 py-1.5 min-h-[36px] rounded-lg border text-xs font-medium transition-all"
             :class="{
               'bg-violet-50 border-violet-300 text-violet-700': modoHorario === 'activo',
               'bg-amber-50 border-amber-300 text-amber-700': modoHorario === 'auto',
@@ -1711,7 +1730,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           <!-- Filtros toggle -->
           <button
             @click="mostrarFiltros = !mostrarFiltros"
-            class="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all"
+            class="p-1.5 min-h-[36px] min-w-[36px] rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all flex items-center justify-center"
             :class="{ 'bg-violet-50 border-violet-300 text-violet-600': mostrarFiltros }"
             title="Filtros"
           >
@@ -1723,7 +1742,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           <!-- Botón Nueva Cita - Más descriptivo -->
           <button
             @click="mostrarModalNuevaCita = true"
-            class="flex items-center gap-1.5 px-3 py-1.5 bg-violet-500 text-white font-medium text-sm rounded-lg hover:bg-violet-600 shadow-sm transition-all"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 min-h-[36px] bg-violet-500 text-white font-medium text-sm rounded-lg hover:bg-violet-600 shadow-sm transition-all"
             title="Agendar nueva cita (doble clic en hora vacía para crear rápido)"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1739,54 +1758,54 @@ watch([vistaActiva, fechaSeleccionada], async () => {
     <!-- ================================================================= -->
     <!-- PANEL DE MÉTRICAS: Simplificado - Solo lo accionable -->
     <!-- ================================================================= -->
-    <div class="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 px-4 py-2.5">
-      <div class="flex items-center justify-between">
+    <div class="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 px-3 sm:px-4 py-2 sm:py-2.5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
 
         <!-- ============ MÉTRICAS PRINCIPALES (Izquierda) ============ -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide -mx-1 px-1 sm:mx-0 sm:px-0 pb-1 sm:pb-0">
           <!-- Pendientes - Accionable -->
           <button
             @click="toggleEstado('pendiente')"
-            class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all"
+            class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg border transition-all min-h-[40px] flex-shrink-0"
             :class="estadosFiltro.includes('pendiente')
               ? 'bg-amber-50 border-amber-200'
               : 'bg-white border-gray-200 opacity-60 hover:opacity-100'"
           >
-            <div class="w-6 h-6 rounded-md bg-amber-100 flex items-center justify-center">
-              <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-5 sm:w-6 h-5 sm:h-6 rounded-md bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div class="text-left">
-              <p class="text-base font-bold text-amber-700 leading-none">{{ contadores.pendiente }}</p>
-              <p class="text-[9px] text-amber-600/70 font-medium">Pendientes</p>
+              <p class="text-sm sm:text-base font-bold text-amber-700 leading-none">{{ contadores.pendiente }}</p>
+              <p class="text-[8px] sm:text-[9px] text-amber-600/70 font-medium hidden xs:block">Pendientes</p>
             </div>
           </button>
 
           <!-- Confirmadas - Accionable -->
           <button
             @click="toggleEstado('confirmada')"
-            class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all"
+            class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg border transition-all min-h-[40px] flex-shrink-0"
             :class="estadosFiltro.includes('confirmada')
               ? 'bg-emerald-50 border-emerald-200'
               : 'bg-white border-gray-200 opacity-60 hover:opacity-100'"
           >
-            <div class="w-6 h-6 rounded-md bg-emerald-100 flex items-center justify-center">
-              <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+            <div class="w-5 sm:w-6 h-5 sm:h-6 rounded-md bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="text-left">
-              <p class="text-base font-bold text-emerald-700 leading-none">{{ contadores.confirmada }}</p>
-              <p class="text-[9px] text-emerald-600/70 font-medium">Confirmadas</p>
+              <p class="text-sm sm:text-base font-bold text-emerald-700 leading-none">{{ contadores.confirmada }}</p>
+              <p class="text-[8px] sm:text-[9px] text-emerald-600/70 font-medium hidden xs:block">Confirmadas</p>
             </div>
           </button>
 
-          <!-- Separador sutil -->
-          <div class="w-px h-8 bg-gray-200"></div>
+          <!-- Separador sutil - ocultar en móvil -->
+          <div class="w-px h-8 bg-gray-200 hidden sm:block"></div>
 
-          <!-- NUEVO: Ocupación con contexto -->
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-50 border border-violet-200">
+          <!-- Ocupación con contexto - simplificado en móvil -->
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-50 border border-violet-200 flex-shrink-0">
             <div class="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
               <span class="text-xs font-bold text-violet-700">{{ metricasContextuales.ocupacion }}%</span>
             </div>
@@ -1816,9 +1835,14 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             </div>
           </div>
 
-          <!-- NUEVO: Tasa de confirmación -->
+          <!-- Ocupación compacta para móvil -->
+          <div class="flex sm:hidden items-center gap-1.5 px-2 py-1.5 rounded-lg bg-violet-50 border border-violet-200 flex-shrink-0 min-h-[40px]">
+            <span class="text-xs font-bold text-violet-700">{{ metricasContextuales.ocupacion }}%</span>
+          </div>
+
+          <!-- Tasa de confirmación - ocultar en móvil -->
           <div
-            class="flex items-center gap-2 px-3 py-1.5 rounded-lg border"
+            class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border flex-shrink-0"
             :class="metricasContextuales.tasaConfirmacion >= 80
               ? 'bg-emerald-50 border-emerald-200'
               : 'bg-amber-50 border-amber-200'"
@@ -2074,20 +2098,22 @@ watch([vistaActiva, fechaSeleccionada], async () => {
       </div>
 
       <!-- Vista Mensual - Grid de calendario -->
-      <div v-else-if="vistaActiva === 'mes'" class="p-4">
+      <div v-else-if="vistaActiva === 'mes'" class="p-2 sm:p-4">
         <!-- Cabecera días de la semana -->
-        <div class="grid grid-cols-7 gap-1 mb-2">
+        <div class="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2">
           <div
-            v-for="diaSemana in ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']"
+            v-for="(diaSemana, idx) in ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']"
             :key="diaSemana"
-            class="text-center text-xs font-medium text-gray-500 uppercase py-2"
+            class="text-center text-[10px] sm:text-xs font-medium text-gray-500 uppercase py-1 sm:py-2"
           >
-            {{ diaSemana }}
+            <!-- Versión corta en móvil -->
+            <span class="sm:hidden">{{ ['L', 'M', 'X', 'J', 'V', 'S', 'D'][idx] }}</span>
+            <span class="hidden sm:inline">{{ diaSemana }}</span>
           </div>
         </div>
 
         <!-- Grid de días del mes -->
-        <div class="grid grid-cols-7 gap-1">
+        <div class="grid grid-cols-7 gap-0.5 sm:gap-1">
           <!-- Espacios vacíos para alinear el primer día -->
           <div
             v-for="n in primerDiaSemanaDelMes"
@@ -2099,7 +2125,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           <div
             v-for="dia in diasVisibles"
             :key="dia.fecha"
-            class="min-h-[80px] border rounded-lg p-1.5 cursor-pointer transition-all hover:border-violet-300 hover:shadow-sm relative"
+            class="min-h-[50px] sm:min-h-[80px] border rounded sm:rounded-lg p-1 sm:p-1.5 cursor-pointer transition-all hover:border-violet-300 hover:shadow-sm relative"
             :class="{
               'bg-violet-50 border-violet-300': dia.esHoy && !estaBloqueda(dia.fecha),
               'bg-amber-50 border-amber-300': estaBloqueda(dia.fecha),
@@ -2108,9 +2134,9 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             @click="seleccionarDiaMes(dia.fecha)"
           >
             <!-- Número del día -->
-            <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center justify-between mb-0.5 sm:mb-1">
               <span
-                class="text-sm font-medium"
+                class="text-xs sm:text-sm font-medium"
                 :class="[
                   dia.esHoy && !estaBloqueda(dia.fecha) ? 'text-violet-600' : '',
                   estaBloqueda(dia.fecha) ? 'text-amber-600' : '',
@@ -2121,7 +2147,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
               </span>
               <span
                 v-if="getCitasDelDia(dia.fecha).length > 0 && !estaBloqueda(dia.fecha)"
-                class="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
+                class="text-[8px] sm:text-[10px] font-medium px-1 sm:px-1.5 py-0.5 rounded-full"
                 :class="dia.esHoy ? 'bg-violet-200 text-violet-700' : 'bg-gray-100 text-gray-600'"
               >
                 {{ getCitasDelDia(dia.fecha).length }}
@@ -2129,7 +2155,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
               <!-- Badge de vacaciones en vista mes -->
               <span
                 v-if="estaBloqueda(dia.fecha)"
-                class="text-[10px]"
+                class="text-[8px] sm:text-[10px]"
                 :title="estaBloqueda(dia.fecha)?.descripcion || estaBloqueda(dia.fecha)?.tipo"
               >
                 🏖️
@@ -2137,28 +2163,41 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             </div>
 
             <!-- Indicador de bloqueo para vista mensual -->
-            <div v-if="estaBloqueda(dia.fecha)" class="text-center py-2">
-              <span class="text-[10px] text-amber-600 font-medium">
+            <div v-if="estaBloqueda(dia.fecha)" class="text-center py-1 sm:py-2">
+              <span class="text-[8px] sm:text-[10px] text-amber-600 font-medium hidden sm:block">
                 {{ estaBloqueda(dia.fecha)?.tipo === 'vacaciones' ? 'Vacaciones' : estaBloqueda(dia.fecha)?.tipo }}
               </span>
             </div>
 
-            <!-- Mini lista de citas (máximo 3) - solo si no está bloqueado -->
+            <!-- Mini lista de citas (máximo 3 en desktop, 2 en móvil) - solo si no está bloqueado -->
             <div v-else class="space-y-0.5 overflow-hidden">
-              <div
-                v-for="cita in getCitasDelDia(dia.fecha).slice(0, 3)"
-                :key="cita.id"
-                class="text-[9px] px-1 py-0.5 rounded truncate"
-                :class="getColorEstadoCitaMes(cita.estado)"
-                :title="cita.paciente?.nombre_completo || 'Paciente'"
-              >
-                {{ cita.hora_inicio?.substring(0, 5) }} {{ cita.paciente?.nombre_completo?.split(' ')[0] || '' }}
+              <!-- En móvil solo mostramos dots, en desktop la info completa -->
+              <div class="sm:hidden flex flex-wrap gap-0.5">
+                <div
+                  v-for="cita in getCitasDelDia(dia.fecha).slice(0, 4)"
+                  :key="cita.id"
+                  class="w-1.5 h-1.5 rounded-full"
+                  :class="getColorEstadoCitaMesDot(cita.estado)"
+                ></div>
+                <span v-if="getCitasDelDia(dia.fecha).length > 4" class="text-[8px] text-gray-400">+</span>
               </div>
-              <div
-                v-if="getCitasDelDia(dia.fecha).length > 3"
-                class="text-[9px] text-gray-400 text-center"
-              >
-                +{{ getCitasDelDia(dia.fecha).length - 3 }} más
+              <!-- Desktop: lista de citas -->
+              <div class="hidden sm:block space-y-0.5">
+                <div
+                  v-for="cita in getCitasDelDia(dia.fecha).slice(0, 3)"
+                  :key="cita.id"
+                  class="text-[9px] px-1 py-0.5 rounded truncate"
+                  :class="getColorEstadoCitaMes(cita.estado)"
+                  :title="cita.paciente?.nombre_completo || 'Paciente'"
+                >
+                  {{ cita.hora_inicio?.substring(0, 5) }} {{ cita.paciente?.nombre_completo?.split(' ')[0] || '' }}
+                </div>
+                <div
+                  v-if="getCitasDelDia(dia.fecha).length > 3"
+                  class="text-[9px] text-gray-400 text-center"
+                >
+                  +{{ getCitasDelDia(dia.fecha).length - 3 }} más
+                </div>
               </div>
             </div>
           </div>
@@ -2168,7 +2207,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
       <!-- Grid horario (día, 5 días, semana) -->
       <div v-else class="min-w-max">
         <!-- Cabecera de días -->
-        <div class="sticky top-0 z-20 bg-white border-b border-gray-200 grid" :style="{ gridTemplateColumns: `70px repeat(${diasVisibles.length}, 1fr)` }">
+        <div class="sticky top-0 z-20 bg-white border-b border-gray-200 grid" :style="{ gridTemplateColumns: `50px repeat(${diasVisibles.length}, minmax(80px, 1fr))` }">
           <!-- Esquina vacía -->
           <div class="border-r border-gray-100"></div>
 
@@ -2176,15 +2215,19 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           <div
             v-for="dia in diasVisibles"
             :key="dia.fecha"
-            class="px-4 py-3 text-center border-r border-gray-100 last:border-r-0 relative"
+            class="px-1 sm:px-4 py-2 sm:py-3 text-center border-r border-gray-100 last:border-r-0 relative min-w-[80px]"
             :class="[
               dia.esHoy ? 'bg-violet-50/50' : '',
               estaBloqueda(dia.fecha) ? 'bg-amber-50/70' : ''
             ]"
           >
-            <p class="text-xs font-medium uppercase tracking-wider" :class="estaBloqueda(dia.fecha) ? 'text-amber-600' : 'text-gray-400'">{{ dia.diaSemana }}</p>
+            <!-- Día de la semana - versión corta en móvil -->
+            <p class="text-[10px] sm:text-xs font-medium uppercase tracking-wider" :class="estaBloqueda(dia.fecha) ? 'text-amber-600' : 'text-gray-400'">
+              <span class="sm:hidden">{{ dia.diaSemana.substring(0, 3) }}</span>
+              <span class="hidden sm:inline">{{ dia.diaSemana }}</span>
+            </p>
             <p
-              class="text-2xl font-bold mt-1"
+              class="text-lg sm:text-2xl font-bold mt-0.5 sm:mt-1"
               :class="[
                 dia.esHoy ? 'text-violet-600' : '',
                 estaBloqueda(dia.fecha) ? 'text-amber-600' : '',
@@ -2193,12 +2236,12 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             >
               {{ dia.numeroDia }}
             </p>
-            <div v-if="dia.esHoy && !estaBloqueda(dia.fecha)" class="w-6 h-0.5 bg-violet-500 mx-auto mt-1 rounded-full"></div>
-            <!-- Badge de vacaciones/bloqueo -->
-            <div v-if="estaBloqueda(dia.fecha)" class="mt-1">
-              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded-full">
+            <div v-if="dia.esHoy && !estaBloqueda(dia.fecha)" class="w-4 sm:w-6 h-0.5 bg-violet-500 mx-auto mt-0.5 sm:mt-1 rounded-full"></div>
+            <!-- Badge de vacaciones/bloqueo - oculto en móvil muy pequeño -->
+            <div v-if="estaBloqueda(dia.fecha)" class="mt-0.5 sm:mt-1 hidden xs:block">
+              <span class="inline-flex items-center gap-0.5 sm:gap-1 px-1 sm:px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[8px] sm:text-[10px] font-medium rounded-full">
                 <span>🏖️</span>
-                <span class="truncate max-w-[60px]">{{ estaBloqueda(dia.fecha)?.tipo === 'vacaciones' ? 'Vacaciones' : estaBloqueda(dia.fecha)?.tipo }}</span>
+                <span class="truncate max-w-[40px] sm:max-w-[60px] hidden sm:inline">{{ estaBloqueda(dia.fecha)?.tipo === 'vacaciones' ? 'Vacaciones' : estaBloqueda(dia.fecha)?.tipo }}</span>
               </span>
             </div>
           </div>
@@ -2215,16 +2258,16 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             class="absolute z-30 flex items-center pointer-events-none"
             :style="{
               top: `${posicionHoraActual}px`,
-              left: '70px',
+              left: '50px',
               right: '0'
             }"
           >
             <!-- Círculo indicador al inicio -->
-            <div class="absolute -left-1.5 w-3 h-3 bg-red-500 rounded-full shadow-sm ring-2 ring-red-200"></div>
+            <div class="absolute -left-1.5 w-2 sm:w-3 h-2 sm:h-3 bg-red-500 rounded-full shadow-sm ring-1 sm:ring-2 ring-red-200"></div>
 
-            <!-- Chip con hora actual -->
-            <div class="absolute -left-16 -top-2.5 flex items-center">
-              <span class="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-md shadow-sm whitespace-nowrap">
+            <!-- Chip con hora actual - oculto en móvil muy pequeño -->
+            <div class="absolute -left-12 sm:-left-14 -top-2 sm:-top-2.5 flex items-center">
+              <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-red-500 text-white text-[10px] sm:text-xs font-bold rounded-md shadow-sm whitespace-nowrap">
                 {{ horaActualFormateada }}
               </span>
             </div>
@@ -2238,11 +2281,11 @@ watch([vistaActiva, fechaSeleccionada], async () => {
             v-for="(hora, horaIndex) in horasDelDia"
             :key="hora"
             class="grid border-b border-gray-100"
-            :style="{ gridTemplateColumns: `70px repeat(${diasVisibles.length}, 1fr)` }"
+            :style="{ gridTemplateColumns: `50px repeat(${diasVisibles.length}, minmax(80px, 1fr))` }"
           >
             <!-- Columna hora -->
             <div
-              class="px-3 py-2 text-xs font-medium text-right border-r border-gray-100 flex items-start justify-end"
+              class="px-1 sm:px-3 py-2 text-[10px] sm:text-xs font-medium text-right border-r border-gray-100 flex items-start justify-end"
               :class="[
                 esSlotActual(hora, diasVisibles.find(d => d.esHoy)?.fecha || '')
                   ? 'text-red-500 font-semibold'
@@ -2276,11 +2319,11 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 style="background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(156, 163, 175, 0.15) 4px, rgba(156, 163, 175, 0.15) 8px)"
                 @click.stop="toggleBloqueSlot(dia.fecha, hora, $event)"
               >
-                <div class="flex items-center gap-1.5 px-2 py-1 bg-gray-200/90 rounded-lg border border-gray-300/50">
-                  <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 bg-gray-200/90 rounded-lg border border-gray-300/50">
+                  <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                   </svg>
-                  <span class="text-xs font-medium text-gray-500">No disponible</span>
+                  <span class="text-[10px] sm:text-xs font-medium text-gray-500 hidden sm:inline">No disponible</span>
                 </div>
               </div>
 
@@ -2306,7 +2349,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 role="button"
                 tabindex="0"
                 :aria-label="`Cita ${getEstiloCompletoCita(cita).label} de ${cita.paciente?.nombre_completo || 'paciente'}, ${formatearHora(cita.hora_inicio)} a ${formatearHora(cita.hora_fin)}`"
-                class="absolute inset-x-0.5 p-2 rounded-lg border-l-4 cursor-pointer hover:shadow-lg hover:z-30 transition-all z-10 group/card overflow-hidden"
+                class="absolute inset-x-0.5 p-1 sm:p-2 rounded sm:rounded-lg border-l-2 sm:border-l-4 cursor-pointer hover:shadow-lg hover:z-30 transition-all z-10 group/card overflow-hidden"
                 :class="[
                   getEstiloCompletoCita(cita).bg,
                   getEstiloCompletoCita(cita).border,
@@ -2324,7 +2367,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 <button
                   v-if="cita.estado === 'pendiente'"
                   @click.stop="handleConfirmarCita(cita.id, $event)"
-                  class="absolute top-1 right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold border transition-all cursor-pointer hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-700 active:scale-95 group/badge"
+                  class="absolute top-0.5 sm:top-1 right-0.5 sm:right-1 flex items-center gap-0.5 px-1 sm:px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold border transition-all cursor-pointer hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-700 active:scale-95 group/badge"
                   :class="[
                     citaConfirmandoId === cita.id
                       ? 'bg-emerald-100 border-emerald-300 text-emerald-700 animate-pulse'
@@ -2335,16 +2378,16 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                   type="button"
                 >
                   <!-- Spinner cuando está confirmando -->
-                  <svg v-if="citaConfirmandoId === cita.id" class="w-2.5 h-2.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <svg v-if="citaConfirmandoId === cita.id" class="w-2 sm:w-2.5 h-2 sm:h-2.5 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                   </svg>
                   <!-- Icono normal o check en hover -->
                   <template v-else>
-                    <svg class="w-2.5 h-2.5 group-hover/badge:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-2 sm:w-2.5 h-2 sm:h-2.5 group-hover/badge:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <svg class="w-2.5 h-2.5 hidden group-hover/badge:block" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-2 sm:w-2.5 h-2 sm:h-2.5 hidden group-hover/badge:block" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                   </template>
@@ -2354,38 +2397,38 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 <!-- Para otros estados: badge no clickeable -->
                 <div
                   v-else
-                  class="absolute top-1 right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold border transition-all"
+                  class="absolute top-0.5 sm:top-1 right-0.5 sm:right-1 flex items-center gap-0.5 px-1 sm:px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold border transition-all"
                   :class="getEstiloCompletoCita(cita).badge"
                 >
                   <!-- Check: Confirmada -->
-                  <svg v-if="getEstiloCompletoCita(cita).icon === 'check'" class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg v-if="getEstiloCompletoCita(cita).icon === 'check'" class="w-2 sm:w-2.5 h-2 sm:h-2.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                   </svg>
                   <!-- Flecha: Próxima -->
-                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'arrow-right'" class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'arrow-right'" class="w-2 sm:w-2.5 h-2 sm:h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                   <!-- Rayo: Inminente -->
-                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'bolt'" class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'bolt'" class="w-2 sm:w-2.5 h-2 sm:h-2.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
                   </svg>
                   <!-- Check-circle: Realizada -->
-                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'check-circle'" class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'check-circle'" class="w-2 sm:w-2.5 h-2 sm:h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <!-- X-circle: Cancelada -->
-                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'x-circle'" class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'x-circle'" class="w-2 sm:w-2.5 h-2 sm:h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <!-- Exclamación: Requiere confirmación (urgente pero no pendiente) -->
-                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'exclamation'" class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg v-else-if="getEstiloCompletoCita(cita).icon === 'exclamation'" class="w-2 sm:w-2.5 h-2 sm:h-2.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
                   <span class="hidden sm:inline">{{ getEstiloCompletoCita(cita).label }}</span>
                 </div>
 
-                <!-- Barra de acciones rápidas (aparece en hover) - acciones comunes -->
-                <div class="absolute -bottom-1 right-0 flex items-center gap-1 opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity z-40">
+                <!-- Barra de acciones rápidas (aparece en hover) - oculta en móvil -->
+                <div class="absolute -bottom-1 right-0 hidden sm:flex items-center gap-1 opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity z-40">
                   <!-- Grupo acciones comunes (fondo blanco) -->
                   <div class="flex items-center gap-0.5 bg-white/95 backdrop-blur-sm rounded-full px-1 py-0.5 shadow-lg border border-gray-200">
                     <!-- Botón reprogramar -->
@@ -2454,13 +2497,13 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 </div>
 
                 <!-- Contenido de la tarjeta - NOMBRE PROMINENTE -->
-                <div class="flex flex-col h-full min-h-[34px] pr-14">
+                <div class="flex flex-col h-full min-h-[28px] sm:min-h-[34px] pr-8 sm:pr-14">
                   <!-- Fila superior: Nombre + Indicador modalidad -->
-                  <div class="flex items-start gap-1">
-                    <!-- Indicador modalidad (esquina izquierda) -->
+                  <div class="flex items-start gap-0.5 sm:gap-1">
+                    <!-- Indicador modalidad (esquina izquierda) - oculto en móvil muy pequeño -->
                     <span
                       v-if="cita.modalidad"
-                      class="flex-shrink-0 w-4 h-4 rounded flex items-center justify-center"
+                      class="hidden sm:flex flex-shrink-0 w-4 h-4 rounded items-center justify-center"
                       :class="cita.modalidad === 'online' ? 'bg-teal-100 text-teal-600' : 'bg-blue-100 text-blue-600'"
                       :title="cita.modalidad === 'online' ? 'Sesión Online' : 'Sesión Presencial'"
                     >
@@ -2475,10 +2518,10 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                     </span>
                     <!-- Nombre del paciente - GRANDE Y VISIBLE -->
                     <p
-                      class="text-sm font-bold leading-tight flex-1"
+                      class="text-[10px] sm:text-sm font-bold leading-tight flex-1"
                       :class="[
                         getEstiloCompletoCita(cita).text,
-                        { 'line-clamp-2': vistaActiva === 'semana', 'line-clamp-1': vistaActiva === '5dias' }
+                        { 'line-clamp-2': vistaActiva === 'semana', 'line-clamp-1': vistaActiva === '5dias' || vistaActiva === 'dia' }
                       ]"
                       :title="cita.paciente?.nombre_completo || 'Sin paciente'"
                     >
@@ -2486,7 +2529,7 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                     </p>
                   </div>
                   <!-- Hora en formato compacto + indicadores adicionales -->
-                  <p class="text-[10px] text-gray-500 font-medium mt-auto flex items-center gap-1">
+                  <p class="text-[8px] sm:text-[10px] text-gray-500 font-medium mt-auto flex items-center gap-0.5 sm:gap-1">
                     <span>{{ formatearHora(cita.hora_inicio) }}–{{ formatearHora(cita.hora_fin) }}</span>
                     <!-- Indicador de pago pendiente en bono (si aplica) -->
                     <span
@@ -2494,15 +2537,15 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                       class="text-orange-500"
                       title="Bono pendiente de pago"
                     >
-                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <svg class="w-2.5 sm:w-3 h-2.5 sm:h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                       </svg>
                     </span>
                   </p>
                 </div>
 
-                <!-- Tooltip expandido con información completa -->
-                <div class="absolute left-full ml-2 top-0 hidden group-hover/card:block z-50 pointer-events-none">
+                <!-- Tooltip expandido con información completa - oculto en móvil/tablet -->
+                <div class="absolute left-full ml-2 top-0 hidden md:group-hover/card:block z-50 pointer-events-none">
                   <div class="bg-gray-900 text-white text-xs rounded-lg py-3 px-4 shadow-xl max-w-sm min-w-[220px]">
                     <!-- Cabecera: Nombre + Estado -->
                     <div class="flex items-start justify-between gap-2 mb-2">

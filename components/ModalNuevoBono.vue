@@ -12,37 +12,37 @@
       <!-- Contenido con scroll -->
       <div class="relative max-h-[90vh] overflow-y-auto">
         <!-- Header -->
-        <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-200/50 px-8 py-6 flex justify-between items-center z-10">
-          <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-200/50 px-4 sm:px-8 py-4 sm:py-6 flex justify-between items-start sm:items-center z-10">
+          <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+            <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
               </svg>
             </div>
-            <div>
-              <h2 class="text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
+            <div class="min-w-0">
+              <h2 class="text-xl sm:text-3xl font-['Elms_Sans'] font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent truncate">
                 {{ modoEdicion ? 'Editar Bono' : 'Nuevo Bono' }}
               </h2>
-              <p class="text-sm font-sans text-gray-600 mt-1">
+              <p class="text-xs sm:text-sm font-sans text-gray-600 mt-0.5 sm:mt-1 truncate">
                 {{ modoEdicion ? 'Modifica los datos del bono de' : 'Crea un nuevo bono para' }} {{ pacienteNombre }}
               </p>
             </div>
           </div>
           <button
             @click="cerrar"
-            class="p-3 text-gray-500 hover:text-[#5550F2] hover:bg-gradient-to-br from-[#5550F2]/10 to-[#027368]/10 rounded-2xl transition-all duration-300 backdrop-blur-sm border border-white/50 hover:shadow-lg"
+            class="p-2 sm:p-3 text-gray-500 hover:text-[#5550F2] hover:bg-gradient-to-br from-[#5550F2]/10 to-[#027368]/10 rounded-xl sm:rounded-2xl transition-all duration-300 backdrop-blur-sm border border-white/50 hover:shadow-lg flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="Cerrar modal"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
       </div>
 
         <!-- Formulario -->
-        <form @submit.prevent="guardarBono" class="px-8 py-8 space-y-8">
+        <form @submit.prevent="guardarBono" class="px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
           <!-- Tipo y Frecuencia -->
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label class="block text-sm font-sans font-semibold text-gray-700 mb-3">
                 Tipo de Bono <span class="text-[#F2B33D]">*</span>
@@ -77,7 +77,7 @@
         </div>
 
         <!-- Sesiones: Totales y Ya Usadas -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Sesiones Totales <span class="text-red-500">*</span>
@@ -146,7 +146,7 @@
         </div>
 
         <!-- Fechas -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-[#2D3748] mb-2">
               Fecha de Inicio
@@ -154,7 +154,7 @@
             <input
               v-model="formData.fecha_inicio"
               type="date"
-              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2] min-h-[44px]"
             />
           </div>
 
@@ -166,7 +166,7 @@
               v-model="formData.fecha_fin"
               type="date"
               :min="formData.fecha_inicio"
-              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2]"
+              class="w-full px-4 py-2 border border-[#5550F2]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5550F2] min-h-[44px]"
             />
           </div>
         </div>

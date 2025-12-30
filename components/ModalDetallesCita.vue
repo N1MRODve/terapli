@@ -884,15 +884,15 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
             @click.stop
           >
             <!-- HEADER -->
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
-              <div class="flex items-center gap-3">
+            <div class="px-3 sm:px-5 py-3 sm:py-4 border-b border-gray-100 flex items-center justify-between bg-white gap-2">
+              <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                 <div
-                  class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-semibold text-gray-600"
+                  class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center text-xs sm:text-sm font-semibold text-gray-600 flex-shrink-0"
                 >
                   {{ inicialesPaciente }}
                 </div>
-                <div>
-                  <h2 id="modal-title" class="text-base font-semibold text-gray-900">
+                <div class="min-w-0">
+                  <h2 id="modal-title" class="text-sm sm:text-base font-semibold text-gray-900 truncate">
                     Sesión - {{ paciente?.nombre_completo || 'Cargando...' }}
                   </h2>
                   <span :class="['text-xs font-medium px-2 py-0.5 rounded-full', claseEstadoBadge]">
@@ -902,7 +902,7 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
               </div>
               <button
                 @click="cerrar"
-                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
                 aria-label="Cerrar modal"
               >
                 <XMarkIcon class="w-5 h-5" />
@@ -921,7 +921,7 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
               <template v-if="!modoEdicion">
 
                 <!-- Acciones rápidas -->
-                <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2 flex-wrap">
+                <div class="px-3 sm:px-5 py-2 sm:py-3 border-b border-gray-100 flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   <button
                     v-if="puedeMarcarRealizada"
                     @click="marcarComoRealizada"

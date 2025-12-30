@@ -1,136 +1,239 @@
 <template>
-  <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Paciente
-          </th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Estado
-          </th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Próxima cita
-          </th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Última sesión
-          </th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Bono
-          </th>
-          <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Acciones
-          </th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-100">
-        <tr
-          v-for="paciente in pacientes"
-          :key="paciente.id"
-          class="hover:bg-gray-50 cursor-pointer transition-colors"
-          @click="$emit('ver-ficha', paciente)"
-        >
-          <!-- Paciente -->
-          <td class="px-4 py-3 whitespace-nowrap">
-            <div class="flex items-center gap-3">
-              <div
-                class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                :style="{ backgroundColor: getAvatarColor(paciente) }"
-              >
-                {{ getIniciales(paciente.nombre) }}
+  <div>
+    <!-- Vista de tabla para desktop -->
+    <div class="hidden md:block overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Paciente
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Estado
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+              Próxima cita
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+              Última sesión
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Bono
+            </th>
+            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-100">
+          <tr
+            v-for="paciente in pacientes"
+            :key="paciente.id"
+            class="hover:bg-gray-50 cursor-pointer transition-colors"
+            @click="$emit('ver-ficha', paciente)"
+          >
+            <!-- Paciente -->
+            <td class="px-4 py-3 whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                  :style="{ backgroundColor: getAvatarColor(paciente) }"
+                >
+                  {{ getIniciales(paciente.nombre) }}
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate max-w-[200px]">
+                    {{ paciente.nombre || 'Sin nombre' }}
+                  </p>
+                  <p v-if="paciente.area_de_acompanamiento" class="text-xs text-gray-500 truncate max-w-[200px]">
+                    {{ paciente.area_de_acompanamiento }}
+                  </p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <p class="text-sm font-medium text-gray-900 truncate max-w-[200px]">
-                  {{ paciente.nombre || 'Sin nombre' }}
-                </p>
-                <p v-if="paciente.area_de_acompanamiento" class="text-xs text-gray-500 truncate max-w-[200px]">
+            </td>
+
+            <!-- Estado -->
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span
+                class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full"
+                :class="getEstadoClasses(paciente)"
+              >
+                {{ getEstadoTexto(paciente) }}
+              </span>
+            </td>
+
+            <!-- Próxima cita -->
+            <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
+              <div v-if="paciente.proxima_sesion" class="flex items-center gap-1.5">
+                <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+                <span class="text-sm text-gray-900">{{ formatProximaCita(paciente.proxima_sesion) }}</span>
+              </div>
+              <span v-else class="text-sm text-amber-600 font-medium">Sin cita</span>
+            </td>
+
+            <!-- Última sesión -->
+            <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
+              <div class="flex items-center gap-1.5">
+                <div
+                  class="w-2 h-2 rounded-full"
+                  :class="getUltimaSesionIndicador(paciente)"
+                ></div>
+                <span class="text-sm" :class="getUltimaSesionTextClass(paciente)">
+                  {{ formatUltimaSesion(paciente.ultima_sesion) }}
+                </span>
+              </div>
+            </td>
+
+            <!-- Bono -->
+            <td class="px-4 py-3 whitespace-nowrap">
+              <template v-if="paciente.bono_activo">
+                <div class="flex items-center gap-2">
+                  <!-- Mini barra de progreso -->
+                  <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full"
+                      :class="getBonoBarClass(paciente.bono_activo)"
+                      :style="{ width: getBonoPercent(paciente.bono_activo) + '%' }"
+                    ></div>
+                  </div>
+                  <span class="text-xs font-medium" :class="getBonoTextClass(paciente.bono_activo)">
+                    {{ paciente.bono_activo.sesiones_restantes }}/{{ paciente.bono_activo.sesiones_totales }}
+                  </span>
+                </div>
+              </template>
+              <span v-else class="text-xs text-gray-400">—</span>
+            </td>
+
+            <!-- Acciones -->
+            <td class="px-4 py-3 whitespace-nowrap text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button
+                  @click.stop="$emit('editar', paciente)"
+                  class="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors"
+                  title="Editar"
+                >
+                  <PencilIcon class="w-4 h-4" />
+                </button>
+                <button
+                  @click.stop="$emit('gestionar-bonos', paciente)"
+                  class="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors"
+                  title="Bonos"
+                >
+                  <TicketIcon class="w-4 h-4" />
+                </button>
+                <button
+                  @click.stop="$emit('ver-preview', paciente)"
+                  class="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors"
+                  title="Vista rápida"
+                >
+                  <EyeIcon class="w-4 h-4" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Vista de cards para móvil y tablet -->
+    <div class="md:hidden divide-y divide-gray-100">
+      <div
+        v-for="paciente in pacientes"
+        :key="paciente.id"
+        class="p-4 hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors"
+        @click="$emit('ver-ficha', paciente)"
+      >
+        <!-- Header del card -->
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <div
+              class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+              :style="{ backgroundColor: getAvatarColor(paciente) }"
+            >
+              {{ getIniciales(paciente.nombre) }}
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-gray-900 truncate">
+                {{ paciente.nombre || 'Sin nombre' }}
+              </p>
+              <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full"
+                  :class="getEstadoClasses(paciente)"
+                >
+                  {{ getEstadoTexto(paciente) }}
+                </span>
+                <span v-if="paciente.area_de_acompanamiento" class="text-xs text-gray-500 truncate max-w-[120px]">
                   {{ paciente.area_de_acompanamiento }}
-                </p>
+                </span>
               </div>
             </div>
-          </td>
+          </div>
 
-          <!-- Estado -->
-          <td class="px-4 py-3 whitespace-nowrap">
-            <span
-              class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full"
-              :class="getEstadoClasses(paciente)"
+          <!-- Acciones móvil -->
+          <div class="flex items-center gap-1 flex-shrink-0">
+            <button
+              @click.stop="$emit('editar', paciente)"
+              class="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              title="Editar"
             >
-              {{ getEstadoTexto(paciente) }}
-            </span>
-          </td>
+              <PencilIcon class="w-5 h-5" />
+            </button>
+            <button
+              @click.stop="$emit('gestionar-bonos', paciente)"
+              class="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              title="Bonos"
+            >
+              <TicketIcon class="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
+        <!-- Info secundaria en móvil -->
+        <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
           <!-- Próxima cita -->
-          <td class="px-4 py-3 whitespace-nowrap">
+          <div>
+            <p class="text-xs text-gray-500 mb-0.5">Próxima cita</p>
             <div v-if="paciente.proxima_sesion" class="flex items-center gap-1.5">
               <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-              <span class="text-sm text-gray-900">{{ formatProximaCita(paciente.proxima_sesion) }}</span>
+              <span class="text-gray-900 text-xs">{{ formatProximaCita(paciente.proxima_sesion) }}</span>
             </div>
-            <span v-else class="text-sm text-amber-600 font-medium">Sin cita</span>
-          </td>
+            <span v-else class="text-xs text-amber-600 font-medium">Sin cita</span>
+          </div>
 
           <!-- Última sesión -->
-          <td class="px-4 py-3 whitespace-nowrap">
+          <div>
+            <p class="text-xs text-gray-500 mb-0.5">Última sesión</p>
             <div class="flex items-center gap-1.5">
               <div
                 class="w-2 h-2 rounded-full"
                 :class="getUltimaSesionIndicador(paciente)"
               ></div>
-              <span class="text-sm" :class="getUltimaSesionTextClass(paciente)">
+              <span class="text-xs" :class="getUltimaSesionTextClass(paciente)">
                 {{ formatUltimaSesion(paciente.ultima_sesion) }}
               </span>
             </div>
-          </td>
+          </div>
+        </div>
 
-          <!-- Bono -->
-          <td class="px-4 py-3 whitespace-nowrap">
-            <template v-if="paciente.bono_activo">
-              <div class="flex items-center gap-2">
-                <!-- Mini barra de progreso -->
-                <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    class="h-full rounded-full"
-                    :class="getBonoBarClass(paciente.bono_activo)"
-                    :style="{ width: getBonoPercent(paciente.bono_activo) + '%' }"
-                  ></div>
-                </div>
-                <span class="text-xs font-medium" :class="getBonoTextClass(paciente.bono_activo)">
-                  {{ paciente.bono_activo.sesiones_restantes }}/{{ paciente.bono_activo.sesiones_totales }}
-                </span>
-              </div>
-            </template>
-            <span v-else class="text-xs text-gray-400">—</span>
-          </td>
-
-          <!-- Acciones -->
-          <td class="px-4 py-3 whitespace-nowrap text-right">
-            <div class="flex items-center justify-end gap-1">
-              <button
-                @click.stop="$emit('editar', paciente)"
-                class="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors"
-                title="Editar"
-              >
-                <PencilIcon class="w-4 h-4" />
-              </button>
-              <button
-                @click.stop="$emit('gestionar-bonos', paciente)"
-                class="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors"
-                title="Bonos"
-              >
-                <TicketIcon class="w-4 h-4" />
-              </button>
-              <button
-                @click.stop="$emit('ver-preview', paciente)"
-                class="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors"
-                title="Vista rápida"
-              >
-                <EyeIcon class="w-4 h-4" />
-              </button>
+        <!-- Bono -->
+        <div v-if="paciente.bono_activo" class="mt-3">
+          <p class="text-xs text-gray-500 mb-1">Bono activo</p>
+          <div class="flex items-center gap-2">
+            <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                class="h-full rounded-full transition-all"
+                :class="getBonoBarClass(paciente.bono_activo)"
+                :style="{ width: getBonoPercent(paciente.bono_activo) + '%' }"
+              ></div>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <span class="text-xs font-medium flex-shrink-0" :class="getBonoTextClass(paciente.bono_activo)">
+              {{ paciente.bono_activo.sesiones_restantes }}/{{ paciente.bono_activo.sesiones_totales }} sesiones
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Estado vacío -->
     <div v-if="pacientes.length === 0" class="py-12 text-center">
