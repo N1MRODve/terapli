@@ -23,7 +23,7 @@
     "@heroicons/vue": "^2.2.0",
     "@nuxtjs/supabase": "^2.0.1",
     "@supabase/ssr": "^0.7.0",
-    "@supabase/supabase-js": "^2.75.1",
+    "@supabase/supabase-js": "^2.89.0",
     "@types/pdfmake": "^0.2.12",
     "@vercel/analytics": "^1.5.0",
     "@vite-pwa/nuxt": "^1.0.7",

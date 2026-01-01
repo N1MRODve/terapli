@@ -359,7 +359,8 @@ export default defineNuxtConfig({
     experimental: {
       wasm: true
     },
-    // Bundlear todas las dependencias para serverless (incluyendo @supabase)
+    // CRÍTICO: Bundlear Supabase y dependencias directamente en el código
+    // Esto evita que se listen como dependencias externas
     externals: {
       inline: [
         // Vue y relacionados
@@ -374,7 +375,7 @@ export default defineNuxtConfig({
         '@vue/compiler-dom',
         '@vue/compiler-sfc',
         '@vue/compiler-ssr',
-        // Supabase y todas sus dependencias
+        // Supabase - TODOS los paquetes deben estar inline
         '@supabase/supabase-js',
         '@supabase/ssr',
         '@supabase/auth-js',
@@ -383,6 +384,7 @@ export default defineNuxtConfig({
         '@supabase/realtime-js',
         '@supabase/postgrest-js',
         '@supabase/node-fetch',
+        '@nuxtjs/supabase',
         // Otras dependencias
         'entities',
         'estree-walker',
@@ -403,7 +405,16 @@ export default defineNuxtConfig({
         'cookie',
         'cross-fetch',
         'node-fetch'
-      ]
+      ],
+      // Forzar que NADA de Supabase sea externo
+      external: []
+    },
+    // Rollup config para asegurar que Supabase se bundlee
+    rollupConfig: {
+      output: {
+        // Mantener todo en el bundle
+        manualChunks: undefined
+      }
     },
     // Optimizar para serverless
     minify: true
