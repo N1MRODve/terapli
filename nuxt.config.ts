@@ -359,20 +359,31 @@ export default defineNuxtConfig({
     experimental: {
       wasm: true
     },
-    // NO bundlear vue-bundle-renderer, dejarlo como externa
+    // Bundlear todas las dependencias para serverless (incluyendo @supabase)
     externals: {
       inline: [
+        // Vue y relacionados
         'vue-bundle-renderer',
         '@vue/server-renderer',
         'vue',
         '@vue/shared',
-        '@vue/reactivity', 
+        '@vue/reactivity',
         '@vue/runtime-core',
         '@vue/runtime-dom',
         '@vue/compiler-core',
         '@vue/compiler-dom',
         '@vue/compiler-sfc',
         '@vue/compiler-ssr',
+        // Supabase y todas sus dependencias
+        '@supabase/supabase-js',
+        '@supabase/ssr',
+        '@supabase/auth-js',
+        '@supabase/functions-js',
+        '@supabase/storage-js',
+        '@supabase/realtime-js',
+        '@supabase/postgrest-js',
+        '@supabase/node-fetch',
+        // Otras dependencias
         'entities',
         'estree-walker',
         'magic-string',
@@ -389,8 +400,9 @@ export default defineNuxtConfig({
         'scule',
         'pathe',
         'ohash',
-        '@supabase/ssr',
-        'cookie'
+        'cookie',
+        'cross-fetch',
+        'node-fetch'
       ]
     },
     // Optimizar para serverless
@@ -420,7 +432,8 @@ export default defineNuxtConfig({
       'scule',
       'pathe',
       'ohash',
-      '@supabase/ssr'
+      '@supabase/ssr',
+      '@supabase/supabase-js'
     ]
   },
 
