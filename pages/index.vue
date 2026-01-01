@@ -15,7 +15,8 @@ useSeoMeta({
 })
 
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  ssr: true // Permitir SSR pero manejar cliente correctamente
 })
 
 // Estado del formulario waitlist
@@ -24,11 +25,18 @@ const enviando = ref(false)
 const enviado = ref(false)
 const error = ref('')
 
-const supabase = useSupabaseClient()
+// Solo inicializar supabase en el cliente
+const supabase = import.meta.client ? useSupabaseClient() : null
 
 const unirseWaitlist = async () => {
   if (!email.value || !email.value.includes('@')) {
     error.value = 'Por favor, introduce un email válido'
+    return
+  }
+
+  // Verificar que estamos en cliente y supabase está disponible
+  if (!import.meta.client || !supabase) {
+    error.value = 'Error de conexión. Recarga la página.'
     return
   }
 
