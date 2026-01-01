@@ -404,7 +404,9 @@ export default defineNuxtConfig({
         'ohash',
         'cookie',
         'cross-fetch',
-        'node-fetch'
+        'node-fetch',
+        // tslib es requerido por @supabase/realtime-js
+        'tslib'
       ],
       // Forzar que NADA de Supabase sea externo
       external: []
