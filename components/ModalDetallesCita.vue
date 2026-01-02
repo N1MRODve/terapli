@@ -499,10 +499,6 @@ const marcarComoRealizada = async () => {
       updated_at: new Date().toISOString()
     }
 
-    if (!cita.value?.estado_pago || cita.value.estado_pago === 'pendiente') {
-      updateData.estado_pago = 'pendiente'
-    }
-
     const { error } = await supabase
       .from('citas')
       .update(updateData)
@@ -512,9 +508,6 @@ const marcarComoRealizada = async () => {
 
     if (cita.value) {
       cita.value.estado = 'realizada'
-      if (updateData.estado_pago) {
-        cita.value.estado_pago = updateData.estado_pago
-      }
     }
 
     toastSuccess('Sesión marcada como realizada')
