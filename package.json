@@ -24,7 +24,10 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
+    "@nuxt/content": "^3.7.1",
+    "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/supabase": "^2.0.1",
+    "@nuxtjs/tailwindcss": "^6.14.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.89.0",
     "@types/pdfmake": "^0.2.12",
@@ -67,9 +70,6 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@nuxt/content": "^3.7.1",
-    "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/tailwindcss": "^6.14.0",
     "@types/papaparse": "^5.5.2",
     "autoprefixer": "^10.4.21",
     "better-sqlite3": "^12.4.1",
