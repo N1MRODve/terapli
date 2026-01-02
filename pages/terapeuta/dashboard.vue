@@ -542,6 +542,15 @@
       @cita-actualizada="cargarSesiones"
       @actualizado="cargarSesiones"
     />
+
+    <!-- ================================================================= -->
+    <!-- MODAL DE NUEVA CITA -->
+    <!-- ================================================================= -->
+    <ModalNuevaCita
+      v-model="modalNuevaCitaAbierto"
+      @close="modalNuevaCitaAbierto = false"
+      @cita-creada="handleCitaCreada"
+    />
   </div>
 </template>
 
@@ -570,6 +579,7 @@ const totalSesionesMes = ref(0)
 const porcentajeOcupacion = ref(0)
 const tasaCancelacion = ref(0)
 const modalDetallesAbierto = ref(false)
+const modalNuevaCitaAbierto = ref(false)
 const citaSeleccionada = ref<string | null>(null)
 const mostrarTodasSesiones = ref(false)
 const mostrarTodosRecordatorios = ref(false)
@@ -879,7 +889,12 @@ const periodoTexto = computed(() => {
 // ============================================================================
 
 const navegarANuevaCita = () => {
-  navigateTo('/terapeuta/agenda')
+  modalNuevaCitaAbierto.value = true
+}
+
+const handleCitaCreada = () => {
+  modalNuevaCitaAbierto.value = false
+  cargarSesiones()
 }
 
 const navegarANuevoPaciente = () => {
