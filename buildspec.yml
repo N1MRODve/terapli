@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo Installing dependencies...
+      - npm install
+  
+  build:
+    commands:
+      - echo Build started on `date`
+      - npm run build
+  
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.vercel/output'
+  name: terapli-build-$(date +%Y%m%d-%H%M%S)
+
+cache:
+  paths:
+    - 'node_modules/**/*'
