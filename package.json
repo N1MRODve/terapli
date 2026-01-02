@@ -2,6 +2,9 @@
   "name": "project",
   "type": "module",
   "private": true,
+  "overrides": {
+    "esbuild": "0.23.1"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "DISABLE_CONTENT=true DISABLE_PWA=true nuxt dev",
@@ -71,6 +74,7 @@
     "autoprefixer": "^10.4.21",
     "better-sqlite3": "^12.4.1",
     "dotenv": "^17.2.3",
+    "esbuild": "0.23.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18",
     "vercel": "^50.1.3"
