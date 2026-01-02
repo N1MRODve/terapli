@@ -668,6 +668,7 @@ const actualizarPaciente = async () => {
     }
 
     // Actualizar registro en pacientes
+    // NOTA: en_pausa se guarda SOLO en metadata, no como columna directa
     const { data: pacienteData, error: pacienteError } = await supabase
       .from('pacientes')
       .update({
@@ -677,7 +678,6 @@ const actualizarPaciente = async () => {
         tipo_bono: formulario.value.tipo_bono,
         precio_sesion: formulario.value.precio_sesion,
         activo: formulario.value.activo,
-        en_pausa: formulario.value.en_pausa,
         metadata: {
           ...metadataExistente,
           nombre: formulario.value.nombre,
