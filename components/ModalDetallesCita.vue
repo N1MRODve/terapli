@@ -968,8 +968,8 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
                   </div>
                 </div>
 
-                <!-- SECCIÓN DE PAGO -->
-                <div class="mx-5 my-4">
+                <!-- SECCIÓN DE PAGO - Solo mostrar si NO tiene bono asignado -->
+                <div v-if="!bono" class="mx-5 my-4">
                   <PaymentStatusBadge
                     :estado-pago="estadoPago"
                     :metodo-pago="cita.metodo_pago"
@@ -1100,6 +1100,7 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
                           <div>
                             <p class="text-xs text-gray-500">Precio por sesión</p>
                             <p class="text-sm font-semibold text-gray-900">{{ infoBono.precioPorSesion?.toFixed(2) || '0.00' }}€</p>
+                            <p class="text-[10px] text-purple-500 mt-0.5">Editar desde el bono ↓</p>
                           </div>
                         </div>
 
