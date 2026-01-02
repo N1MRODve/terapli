@@ -97,13 +97,13 @@ WHERE
 UPDATE public.bonos
 SET
     estado = CASE
-        WHEN pagado = true THEN 'completado'
-        ELSE 'agotado'
+        WHEN pagado = true THEN 'completado'::estado_bono
+        ELSE 'agotado'::estado_bono
     END,
     updated_at = NOW()
 WHERE
     sesiones_restantes <= 0
-    AND estado IN ('activo', 'pendiente');
+    AND estado::text IN ('activo', 'pendiente');
 
 -- PASO 7: Recrear el trigger de validación (ahora permite bonos completados para actualizaciones)
 CREATE OR REPLACE FUNCTION public.validar_bono_cita()
