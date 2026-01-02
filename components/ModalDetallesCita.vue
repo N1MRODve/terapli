@@ -290,8 +290,11 @@ const estadoPago = computed(() => cita.value?.estado_pago || 'pendiente')
 const puedeConfirmar = computed(() => cita.value?.estado === 'pendiente')
 
 // Computed: Puede registrar pago
+// NO mostrar opción de pago si el paciente tiene un bono activo asignado a la cita
 const puedeRegistrarPago = computed(() => {
   if (!cita.value) return false
+  // Si tiene bono asignado, no mostrar opción de pago individual
+  if (bono.value) return false
   const estadoCitaVal = cita.value.estado
   const estadoPagoVal = cita.value.estado_pago
   return (estadoCitaVal === 'confirmada' || estadoCitaVal === 'realizada') &&
