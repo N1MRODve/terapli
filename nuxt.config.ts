@@ -346,15 +346,9 @@ export default defineNuxtConfig({
     }
   },
 
-  // Configuración para deployment en Vercel
+  // Configuración para deployment en AWS Amplify
   nitro: {
-    preset: 'vercel',
-    vercel: {
-      functions: {
-        maxDuration: 30,
-        memory: 1024
-      }
-    },
+    preset: 'aws-amplify',
     // Configuración para vue-bundle-renderer
     experimental: {
       wasm: true
