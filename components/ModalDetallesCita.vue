@@ -376,22 +376,24 @@ const tipoBonoFormateado = computed(() => {
 
 // Computed: Precio de la sesion (usa precio del bono si existe)
 const precioSesion = computed(() => {
-  // PRIORIDAD 1: Si la cita tiene precio_sesion asignado, usar ese
+  // PRIORIDAD 1: Si tiene bono (asignado o activo), SIEMPRE usar precio del bono
+  if (bonoMostrar.value) {
+    // Primero intentar precio_por_sesion explícito del bono
+    if (bonoMostrar.value.precio_por_sesion) {
+      return bonoMostrar.value.precio_por_sesion
+    }
+    // Si no, calcular desde monto_total / sesiones_totales
+    if (bonoMostrar.value.monto_total && bonoMostrar.value.sesiones_totales) {
+      return Math.round((bonoMostrar.value.monto_total / bonoMostrar.value.sesiones_totales) * 100) / 100
+    }
+  }
+
+  // PRIORIDAD 2: Si la cita tiene precio_sesion asignado (solo para citas sin bono)
   if (cita.value?.precio_sesion) {
     return cita.value.precio_sesion
   }
 
-  // PRIORIDAD 2: Si tiene bono con precio_por_sesion, usar ese
-  if (bonoMostrar.value?.precio_por_sesion) {
-    return bonoMostrar.value.precio_por_sesion
-  }
-
-  // PRIORIDAD 3: Si tiene bono, calcular precio por sesión del bono
-  if (bonoMostrar.value && bonoMostrar.value.monto_total && bonoMostrar.value.sesiones_totales) {
-    return Math.round((bonoMostrar.value.monto_total / bonoMostrar.value.sesiones_totales) * 100) / 100
-  }
-
-  // PRIORIDAD 4: Precio por defecto
+  // PRIORIDAD 3: Precio por defecto
   return 50
 })
 
