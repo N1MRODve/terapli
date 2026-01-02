@@ -968,8 +968,8 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
                   </div>
                 </div>
 
-                <!-- SECCIÓN DE PAGO - Solo mostrar si NO tiene bono asignado -->
-                <div v-if="!bono" class="mx-5 my-4">
+                <!-- SECCIÓN DE PAGO - Solo mostrar si NO tiene bono asignado NI bono activo disponible -->
+                <div v-if="!bono && !bonoActivoPaciente" class="mx-5 my-4">
                   <PaymentStatusBadge
                     :estado-pago="estadoPago"
                     :metodo-pago="cita.metodo_pago"
