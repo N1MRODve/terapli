@@ -98,8 +98,10 @@ const recargarPagina = () => {
       @cerrar="mostrarDebug = false" 
     /> -->
     
-    <!-- Analytics de Vercel -->
-    <Analytics />
+    <!-- Analytics de Vercel (solo cliente) -->
+    <ClientOnly>
+      <Analytics />
+    </ClientOnly>
   </div>
 </template>
 

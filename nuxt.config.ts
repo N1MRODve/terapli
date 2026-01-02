@@ -406,12 +406,7 @@ export default defineNuxtConfig({
         'cross-fetch',
         'node-fetch',
         // tslib es requerido por @supabase/realtime-js
-        'tslib',
-        // Vercel analytics (incluir todos los subpaths)
-        '@vercel/analytics',
-        '@vercel/analytics/nuxt',
-        '@vercel/analytics/vue',
-        '@vercel/analytics/react'
+        'tslib'
       ],
       // Forzar que NADA de Supabase sea externo
       external: []
