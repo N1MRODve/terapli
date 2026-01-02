@@ -8,8 +8,10 @@
 -- 3. Inconsistencia entre 'pagado' (boolean) y 'estado_pago' (string) en bonos
 -- ============================================================================
 
--- PASO 1: Deshabilitar temporalmente el trigger que bloquea las actualizaciones
+-- PASO 1: Deshabilitar temporalmente TODOS los triggers que bloquean las actualizaciones
 DROP TRIGGER IF EXISTS validar_bono_cita_trigger ON public.citas;
+DROP TRIGGER IF EXISTS trigger_validar_saldo_bono ON public.citas;
+DROP TRIGGER IF EXISTS trg_actualizar_bono_por_cita ON public.citas;
 
 -- PASO 2: Corregir estado_pago de citas que tienen bono asignado
 -- Las citas con bono deben tener estado_pago='bonificado' y metodo_pago='bono'
@@ -154,7 +156,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Recrear el trigger
+-- Recrear el trigger validar_bono_cita
 DROP TRIGGER IF EXISTS validar_bono_cita_trigger ON public.citas;
 CREATE TRIGGER validar_bono_cita_trigger
     BEFORE INSERT OR UPDATE OF bono_id
@@ -162,7 +164,70 @@ CREATE TRIGGER validar_bono_cita_trigger
     FOR EACH ROW
     EXECUTE FUNCTION public.validar_bono_cita();
 
--- PASO 8: Resumen final
+-- PASO 8: Recrear validar_saldo_bono con lógica mejorada
+-- (Permitir pendiente, y no bloquear actualizaciones de estado_pago)
+CREATE OR REPLACE FUNCTION public.validar_saldo_bono()
+RETURNS TRIGGER AS $$
+DECLARE
+    bono_record record;
+BEGIN
+    -- Solo validar si se debe descontar de bono Y es un INSERT o cambio de bono_id
+    IF NOT NEW.descontar_de_bono OR NEW.bono_id IS NULL THEN
+        RETURN NEW;
+    END IF;
+
+    -- No validar si solo estamos actualizando estado_pago o metodo_pago (corrección de datos)
+    IF TG_OP = 'UPDATE' AND OLD.bono_id = NEW.bono_id THEN
+        -- Solo revalidar si cambia descontar_de_bono de false a true
+        IF OLD.descontar_de_bono = NEW.descontar_de_bono THEN
+            RETURN NEW;
+        END IF;
+    END IF;
+
+    -- Obtener información del bono
+    SELECT * INTO bono_record
+    FROM public.bonos
+    WHERE id = NEW.bono_id;
+
+    -- Validar que el bono exista
+    IF bono_record IS NULL THEN
+        RAISE EXCEPTION 'El bono especificado no existe'
+            USING ERRCODE = 'foreign_key_violation';
+    END IF;
+
+    -- Validar que el bono esté activo o pendiente (permitir ambos)
+    IF bono_record.estado NOT IN ('activo', 'pendiente') THEN
+        RAISE EXCEPTION 'El bono no está disponible. Estado actual: %', bono_record.estado
+            USING ERRCODE = 'check_violation',
+                  HINT = 'Solo se pueden usar bonos en estado activo o pendiente.';
+    END IF;
+
+    -- Validar que tenga sesiones disponibles
+    IF bono_record.sesiones_restantes <= 0 THEN
+        RAISE EXCEPTION 'El bono no tiene sesiones disponibles (% sesiones restantes)',
+                       bono_record.sesiones_restantes
+            USING ERRCODE = 'check_violation',
+                  HINT = 'El paciente debe renovar o comprar un nuevo bono.';
+    END IF;
+
+    -- Validar que el bono pertenezca al paciente de la cita
+    IF bono_record.paciente_id != NEW.paciente_id THEN
+        RAISE EXCEPTION 'El bono no pertenece al paciente de la cita'
+            USING ERRCODE = 'foreign_key_violation';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Recrear el trigger validar_saldo_bono
+DROP TRIGGER IF EXISTS trigger_validar_saldo_bono ON public.citas;
+CREATE TRIGGER trigger_validar_saldo_bono
+    BEFORE INSERT OR UPDATE ON public.citas
+    FOR EACH ROW
+    EXECUTE FUNCTION public.validar_saldo_bono();
+
+-- PASO 9: Resumen final
 DO $$
 DECLARE
     v_citas_bonificadas INTEGER;
