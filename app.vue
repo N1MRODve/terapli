@@ -1,16 +1,5 @@
 <script setup>
-import { ref, onMounted, onErrorCaptured, shallowRef } from 'vue'
-
-// Analytics component - solo se carga en cliente
-const AnalyticsComponent = shallowRef(null)
-
-// Cargar Analytics solo en cliente después del mount
-onMounted(async () => {
-  if (import.meta.client) {
-    const { Analytics } = await import('@vercel/analytics/nuxt')
-    AnalyticsComponent.value = Analytics
-  }
-})
+import { ref, onMounted, onErrorCaptured } from 'vue'
 
 // Mostrar panel de debug (solo en desarrollo)
 const mostrarDebug = ref(process.env.NODE_ENV === 'development')
@@ -108,8 +97,7 @@ const recargarPagina = () => {
       @cerrar="mostrarDebug = false" 
     /> -->
     
-    <!-- Analytics de Vercel (solo cliente, cargado dinámicamente) -->
-    <component :is="AnalyticsComponent" v-if="AnalyticsComponent" />
+    <!-- Analytics de Vercel se inyecta automáticamente via módulo en nuxt.config.ts -->
   </div>
 </template>
 

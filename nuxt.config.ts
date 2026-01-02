@@ -3,11 +3,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    '@nuxtjs/supabase', 
-    '@nuxtjs/tailwindcss', 
+    '@nuxtjs/supabase',
+    '@nuxtjs/tailwindcss',
     // Solo incluir @nuxt/content si no está deshabilitado
     ...(process.env.DISABLE_CONTENT !== 'true' && process.env.NODE_ENV === 'development' ? ['@nuxt/content'] : []),
-    '@nuxtjs/google-fonts', 
+    '@nuxtjs/google-fonts',
     // Solo incluir PWA si no está deshabilitado
     ...(process.env.DISABLE_PWA !== 'true' ? ['@vite-pwa/nuxt'] : [])
   ],
