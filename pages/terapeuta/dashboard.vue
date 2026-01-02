@@ -1092,7 +1092,7 @@ async function cargarPacientes() {
       .from('citas')
       .select('paciente_id, fecha_cita, estado, pacientes(id, nombre_completo)')
       .in('paciente_id', pacienteIds)
-      .in('estado', ['realizada', 'completada', 'confirmada', 'pendiente'])
+      .in('estado', ['realizada', 'confirmada', 'pendiente'])
       .gte('fecha_cita', fechaLimiteStr)
       .lte('fecha_cita', hoyStr)
       .order('fecha_cita', { ascending: false })
@@ -1204,7 +1204,7 @@ async function cargarBonosPorAgotar() {
             .from('citas')
             .select('fecha_cita')
             .eq('paciente_id', bono.paciente_id)
-            .in('estado', ['realizada', 'completada'])
+            .eq('estado', 'realizada')
             .order('fecha_cita', { ascending: false })
             .limit(1)
             .maybeSingle()
@@ -1356,13 +1356,12 @@ async function cargarCobrosPendientesHoy() {
   try {
     const hoy = new Date().toISOString().split('T')[0]
 
-    // Buscar citas de hoy con estado_pago pendiente o sin pagar
+    // Buscar citas de hoy realizadas o confirmadas (potencialmente por cobrar)
     const { count } = await supabase
       .from('citas')
       .select('*', { count: 'exact', head: true })
       .eq('fecha_cita', hoy)
-      .in('estado', ['realizada', 'completada', 'confirmada', 'pendiente'])
-      .or('estado_pago.is.null,estado_pago.eq.pendiente')
+      .in('estado', ['realizada', 'confirmada'])
 
     cobrosPendientesHoy.value = count || 0
   } catch (error) {
@@ -1429,7 +1428,7 @@ async function generarRecordatorios() {
       })
     })
 
-    // 2. Citas pasadas no completadas
+    // 2. Citas pasadas no completadas (pendientes o confirmadas que ya pasaron)
     const { data: citasAtrasadas } = await supabase
       .from('citas')
       .select(`
@@ -1441,9 +1440,7 @@ async function generarRecordatorios() {
         )
       `)
       .lt('fecha_cita', fechaHoyStr)
-      .neq('estado', 'completada')
-      .neq('estado', 'cancelada')
-      .neq('estado', 'realizada')
+      .in('estado', ['pendiente', 'confirmada'])
       .order('fecha_cita', { ascending: false })
       .limit(3)
 

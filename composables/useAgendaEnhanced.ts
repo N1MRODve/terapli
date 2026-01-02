@@ -352,10 +352,11 @@ export function useAgendaEnhanced() {
   /**
    * Mapea los datos de la vista a la interfaz Cita
    * La vista usa nombres como cita_id, paciente_id, etc.
+   * Nota: Algunas vistas retornan 'id' directamente, otras 'cita_id'
    */
   function mapViewDataToCita(row: any): Cita {
     return {
-      id: row.cita_id,
+      id: row.cita_id || row.id,
       fecha_cita: row.fecha_cita,
       hora_inicio: row.hora_inicio,
       hora_fin: row.hora_fin,
