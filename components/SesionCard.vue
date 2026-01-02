@@ -1,9 +1,10 @@
 <template>
-  <div 
+  <div
     :class="[
-      'bg-white rounded-xl p-5 border transition-all duration-200',
+      'bg-white rounded-xl p-5 border transition-all duration-200 cursor-pointer',
       pasada ? 'border-[#E2E8F0]/50 opacity-90' : 'border-[#E2E8F0] hover:border-[#5550F2]/50 hover:shadow-md'
     ]"
+    @click="$emit('verDetalles', sesion.id)"
   >
     <div class="space-y-4">
       <!-- Fecha y estado -->
@@ -24,15 +25,28 @@
           </div>
         </div>
 
-        <span
-          :class="[
-            'inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap',
-            'font-[\'Lato\']',
-            estadoClassExtendido(sesion.estado)
-          ]"
-        >
-          {{ estadoTextoExtendido(sesion.estado) }}
-        </span>
+        <div class="flex items-center gap-2">
+          <span
+            :class="[
+              'inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap',
+              'font-[\'Lato\']',
+              estadoClassExtendido(sesion.estado)
+            ]"
+          >
+            {{ estadoTextoExtendido(sesion.estado) }}
+          </span>
+          <!-- Icono de ver detalles -->
+          <button
+            @click.stop="$emit('verDetalles', sesion.id)"
+            class="p-1.5 text-gray-400 hover:text-[#5550F2] hover:bg-[#5550F2]/10 rounded-lg transition-colors"
+            title="Ver detalles"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- Modalidad -->
@@ -75,7 +89,7 @@
       <div>
         <button
           v-if="sesion.ubicacion && sesion.modalidad === 'online' && ['pendiente', 'confirmada'].includes(sesion.estado)"
-          @click="$emit('abrir', sesion.ubicacion)"
+          @click.stop="$emit('abrir', sesion.ubicacion)"
           class="w-full inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-[#5550F2] text-white rounded-lg hover:bg-[#c99d8d] transition-all duration-200 font-sans font-medium text-sm"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,6 +117,7 @@ const props = defineProps<{
 
 defineEmits<{
   abrir: [url: string]
+  verDetalles: [id: string]
 }>()
 
 const notaExpandida = ref(false)

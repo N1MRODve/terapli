@@ -116,6 +116,7 @@
             :key="sesion.id"
             :sesion="sesion"
             @abrir="abrirSesion"
+            @ver-detalles="abrirDetalles"
           />
         </div>
       </div>
@@ -136,6 +137,7 @@
             :sesion="sesion"
             :pasada="true"
             @abrir="abrirSesion"
+            @ver-detalles="abrirDetalles"
           />
         </div>
       </div>
@@ -153,6 +155,12 @@
         </template>
       </EmptyState>
     </div>
+
+    <!-- Modal de detalles de cita -->
+    <ModalDetallesCitaPaciente
+      :cita-id="citaSeleccionadaId"
+      @close="citaSeleccionadaId = null"
+    />
   </div>
 </template>
 
@@ -162,12 +170,13 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const { getSesiones } = usePacientes()
+const supabase = useSupabaseClient()
 
 // Estados
 const loading = ref(true)
 const todasLasSesiones = ref<any[]>([])
 const filtroActivo = ref('todas')
+const citaSeleccionadaId = ref<string | null>(null)
 
 const filtros = [
   { value: 'todas', label: 'Todas' },
@@ -286,16 +295,74 @@ const abrirSesion = (url: string) => {
   window.open(url, '_blank')
 }
 
-// Cargar sesiones
+// Abrir detalles de la cita
+const abrirDetalles = (id: string) => {
+  citaSeleccionadaId.value = id
+}
+
+// Cargar sesiones del paciente
 const cargarSesiones = async () => {
   loading.value = true
 
   try {
-    const { data, error } = await getSesiones()
-    
-    if (!error && data) {
-      todasLasSesiones.value = data
+    // Obtener el usuario actual
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      console.error('No hay usuario autenticado')
+      return
     }
+
+    // Obtener el paciente_id del usuario
+    const { data: pacienteData, error: pacienteError } = await supabase
+      .from('pacientes')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (pacienteError || !pacienteData) {
+      console.error('Error obteniendo paciente:', pacienteError)
+      return
+    }
+
+    // Obtener las citas del paciente
+    const { data: citasData, error: citasError } = await supabase
+      .from('citas')
+      .select(`
+        id,
+        fecha_cita,
+        hora_inicio,
+        hora_fin,
+        duracion_min,
+        modalidad,
+        estado,
+        ubicacion,
+        observaciones,
+        nota_terapeuta,
+        terapeuta:terapeutas(
+          id,
+          nombre_completo
+        )
+      `)
+      .eq('paciente_id', pacienteData.id)
+      .order('fecha_cita', { ascending: false })
+
+    if (citasError) {
+      console.error('Error cargando citas:', citasError)
+      return
+    }
+
+    // Transformar datos para el formato esperado por el componente
+    todasLasSesiones.value = (citasData || []).map((cita: any) => ({
+      id: cita.id,
+      fecha: `${cita.fecha_cita}T${cita.hora_inicio}`,
+      duracion_min: cita.duracion_min,
+      modalidad: cita.modalidad,
+      estado: cita.estado,
+      ubicacion: cita.ubicacion,
+      observaciones: cita.observaciones,
+      nota_terapeuta: cita.nota_terapeuta,
+      terapeuta: cita.terapeuta
+    }))
   } catch (error) {
     console.error('Error cargando sesiones:', error)
   } finally {
