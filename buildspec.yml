@@ -17,7 +17,6 @@ artifacts:
   files:
     - '**/*'
   base-directory: '.output'  
-    name: terapli-build-$(date +%Y%m%d-%H%M%S)
 cache:
   paths:
     - 'node_modules/**/*'
