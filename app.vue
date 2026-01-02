@@ -1,6 +1,10 @@
 <script setup>
-import { ref, onMounted, onErrorCaptured } from 'vue'
-import { Analytics } from '@vercel/analytics/nuxt'
+import { ref, onMounted, onErrorCaptured, defineAsyncComponent } from 'vue'
+
+// Lazy load Analytics solo en cliente para evitar SSR errors
+const Analytics = defineAsyncComponent(() =>
+  import('@vercel/analytics/nuxt').then(m => m.Analytics)
+)
 
 // Mostrar panel de debug (solo en desarrollo)
 const mostrarDebug = ref(process.env.NODE_ENV === 'development')
