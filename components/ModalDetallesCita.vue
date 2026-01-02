@@ -402,14 +402,27 @@ const infoBono = computed(() => {
   if (!bonoMostrar.value) return null
 
   const sesionesUsadasCalc = bonoMostrar.value.sesiones_totales - bonoMostrar.value.sesiones_restantes
-  const numeroSesionActual = sesionesUsadasCalc + 1 // La siguiente sesión
+  const bonoAgotado = bonoMostrar.value.sesiones_restantes <= 0
+
+  // Calcular número de sesión actual de forma correcta
+  let numeroSesionActual: number
+  if (cita.value?.sesion_descontada) {
+    // Si ya se descontó, mostrar qué sesión fue
+    numeroSesionActual = sesionesUsadasCalc
+  } else if (bonoAgotado) {
+    // Si el bono está agotado, no hay "siguiente sesión"
+    numeroSesionActual = sesionesUsadasCalc // Mostrar la última usada
+  } else {
+    // Siguiente sesión disponible
+    numeroSesionActual = sesionesUsadasCalc + 1
+  }
 
   return {
     tipo: bonoMostrar.value.tipo || 'Bono',
     sesionesRestantes: bonoMostrar.value.sesiones_restantes,
     sesionesTotales: bonoMostrar.value.sesiones_totales,
     sesionesUsadas: sesionesUsadasCalc,
-    numeroSesionActual: cita.value?.sesion_descontada ? sesionesUsadasCalc : numeroSesionActual,
+    numeroSesionActual,
     montoTotal: bonoMostrar.value.monto_total,
     precioPorSesion: bonoMostrar.value.precio_por_sesion || (bonoMostrar.value.monto_total / bonoMostrar.value.sesiones_totales),
     pagado: bonoMostrar.value.pagado,
@@ -417,7 +430,8 @@ const infoBono = computed(() => {
     fechaInicio: bonoMostrar.value.fecha_inicio,
     fechaFin: bonoMostrar.value.fecha_fin,
     esAsignado: !!bono.value, // true si el bono está asignado a esta cita
-    sesionDescontada: cita.value?.sesion_descontada
+    sesionDescontada: cita.value?.sesion_descontada,
+    agotado: bonoAgotado
   }
 })
 
@@ -1130,28 +1144,42 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
                         </div>
 
                         <!-- Mensaje informativo sobre esta sesión -->
-                        <div v-if="infoBono.esAsignado" class="p-2.5 rounded-lg" :class="cita.sesion_descontada ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'">
+                        <div v-if="infoBono.esAsignado" class="p-2.5 rounded-lg" :class="[
+                          cita.sesion_descontada ? 'bg-green-50 border border-green-200' :
+                          infoBono.agotado ? 'bg-red-50 border border-red-200' :
+                          'bg-amber-50 border border-amber-200'
+                        ]">
                           <div class="flex items-start gap-2">
                             <CheckCircleIcon v-if="cita.sesion_descontada" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                            <ExclamationTriangleIcon v-else class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <ExclamationTriangleIcon v-else class="w-4 h-4 flex-shrink-0 mt-0.5" :class="infoBono.agotado ? 'text-red-600' : 'text-amber-600'" />
                             <div>
-                              <p class="text-xs font-medium" :class="cita.sesion_descontada ? 'text-green-800' : 'text-amber-800'">
+                              <p class="text-xs font-medium" :class="[
+                                cita.sesion_descontada ? 'text-green-800' :
+                                infoBono.agotado ? 'text-red-800' :
+                                'text-amber-800'
+                              ]">
                                 <template v-if="cita.sesion_descontada">
                                   Sesión {{ infoBono.sesionesUsadas }}/{{ infoBono.sesionesTotales }} del bono (ya descontada)
+                                </template>
+                                <template v-else-if="infoBono.agotado">
+                                  Bono agotado - todas las sesiones ya fueron usadas
                                 </template>
                                 <template v-else>
                                   Esta será la sesión {{ infoBono.numeroSesionActual }}/{{ infoBono.sesionesTotales }} del bono
                                 </template>
                               </p>
-                              <p v-if="!cita.sesion_descontada" class="text-xs text-amber-700 mt-0.5">
+                              <p v-if="!cita.sesion_descontada && !infoBono.agotado" class="text-xs text-amber-700 mt-0.5">
                                 Se descontará cuando confirmes o marques como realizada
+                              </p>
+                              <p v-if="infoBono.agotado && !cita.sesion_descontada" class="text-xs text-red-700 mt-0.5">
+                                Crea un nuevo bono o registra el pago de forma individual
                               </p>
                             </div>
                           </div>
                         </div>
 
                         <!-- Alertas importantes -->
-                        <div v-if="bonoMostrar.sesiones_restantes === 1 && !cita.sesion_descontada" class="flex items-center gap-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
+                        <div v-if="bonoMostrar.sesiones_restantes === 1 && !cita.sesion_descontada && !infoBono.agotado" class="flex items-center gap-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
                           <ExclamationTriangleIcon class="w-4 h-4 text-orange-500 flex-shrink-0" />
                           <span class="text-xs text-orange-700 font-medium">¡Última sesión disponible del bono!</span>
                         </div>
