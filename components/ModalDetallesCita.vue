@@ -39,6 +39,9 @@ const mostrarConfirmacionDeshacer = ref(false)
 const deshaciendoPago = ref(false)
 const consumiendoSesion = ref(false)
 const asignandoBono = ref(false)
+const editandoPrecio = ref(false)
+const precioEditado = ref<number>(0)
+const guardandoPrecio = ref(false)
 
 // Datos
 const cita = ref<any>(null)
@@ -863,6 +866,50 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
     formEdicion.value.hora_fin = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`
   }
 })
+
+// Funciones para editar precio de sesión
+const iniciarEdicionPrecio = () => {
+  precioEditado.value = precioSesion.value
+  editandoPrecio.value = true
+}
+
+const cancelarEdicionPrecio = () => {
+  editandoPrecio.value = false
+  precioEditado.value = 0
+}
+
+const guardarPrecioSesion = async () => {
+  if (!props.citaId || precioEditado.value < 0) return
+
+  try {
+    guardandoPrecio.value = true
+
+    const { error } = await supabase
+      .from('citas')
+      .update({
+        precio_sesion: precioEditado.value,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', props.citaId)
+
+    if (error) throw error
+
+    // Actualizar el valor local
+    if (cita.value) {
+      cita.value.precio_sesion = precioEditado.value
+    }
+
+    editandoPrecio.value = false
+    toastSuccess('Precio actualizado')
+    emit('cita-actualizada')
+    emit('actualizado')
+  } catch (error: any) {
+    console.error('Error al actualizar precio:', error)
+    toastError(`Error al actualizar precio: ${error.message}`)
+  } finally {
+    guardandoPrecio.value = false
+  }
+}
 </script>
 
 <template>
@@ -986,6 +1033,61 @@ watch(() => formEdicion.value.hora_inicio, (newHora) => {
 
                 <!-- SECCIÓN DE PAGO - Solo mostrar si NO tiene bono asignado NI bono activo disponible -->
                 <div v-if="!bono && !bonoActivoPaciente" class="mx-5 my-4">
+                  <!-- Precio de la sesión editable -->
+                  <div class="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm text-gray-600">Precio de la sesión</span>
+                      <div class="flex items-center gap-2">
+                        <template v-if="!editandoPrecio">
+                          <span class="text-lg font-semibold text-gray-900">{{ precioSesion.toFixed(2) }}€</span>
+                          <button
+                            type="button"
+                            class="p-1 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded transition-colors"
+                            title="Editar precio"
+                            @click="iniciarEdicionPrecio"
+                          >
+                            <PencilIcon class="w-4 h-4" />
+                          </button>
+                        </template>
+                        <template v-else>
+                          <div class="flex items-center gap-2">
+                            <div class="relative">
+                              <input
+                                v-model.number="precioEditado"
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                class="w-24 px-2 py-1 pr-6 text-right text-lg font-semibold border border-teal-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                                :disabled="guardandoPrecio"
+                                @keyup.enter="guardarPrecioSesion"
+                                @keyup.escape="cancelarEdicionPrecio"
+                              />
+                              <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">€</span>
+                            </div>
+                            <button
+                              type="button"
+                              class="p-1.5 text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors disabled:opacity-50"
+                              title="Guardar"
+                              :disabled="guardandoPrecio"
+                              @click="guardarPrecioSesion"
+                            >
+                              <CheckCircleIcon class="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              class="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                              title="Cancelar"
+                              :disabled="guardandoPrecio"
+                              @click="cancelarEdicionPrecio"
+                            >
+                              <XMarkIcon class="w-4 h-4" />
+                            </button>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+
                   <PaymentStatusBadge
                     :estado-pago="estadoPago"
                     :metodo-pago="cita.metodo_pago"
