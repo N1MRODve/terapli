@@ -338,35 +338,156 @@
           </div>
         </div>
 
-        <!-- Deuda -->
+        <!-- Balance Financiero -->
         <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
           <div class="flex items-center justify-between mb-4">
             <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2">
-              <span class="text-2xl">💳</span>
-              Deuda
+              <span class="text-2xl">💰</span>
+              Balance Financiero
             </h2>
-            <select
-              v-model="anioSeleccionadoDeuda"
-              class="px-3 py-1.5 text-sm border border-purple-200 rounded-lg bg-white text-cafe focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            <button
+              @click="mostrarModalDeudaHistorica = true"
+              class="text-xs px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
             >
-              <option v-for="anio in aniosDisponibles" :key="anio" :value="anio">
-                {{ anio }}
-              </option>
-            </select>
+              + Registrar deuda
+            </button>
           </div>
 
-          <div class="p-6 rounded-xl text-center" :class="deudaPorAnio.haDeuda ? 'bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200'">
-            <div v-if="deudaPorAnio.haDeuda">
-              <div class="text-4xl font-bold text-red-600 mb-2">{{ formatearPrecio(deudaPorAnio.totalPendiente) }}</div>
-              <div class="text-sm text-red-700">Pendiente de cobro</div>
-              <div class="text-xs text-red-500 mt-1">{{ deudaPorAnio.cantidadPendientes }} sesión(es) sin cobrar</div>
+          <!-- Total pendiente -->
+          <div class="p-4 rounded-xl text-center mb-4" :class="balanceFinanciero.totalPendiente > 0 ? 'bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200'">
+            <div v-if="balanceFinanciero.totalPendiente > 0">
+              <div class="text-3xl font-bold text-red-600 mb-1">{{ formatearPrecio(balanceFinanciero.totalPendiente) }}</div>
+              <div class="text-sm text-red-700">Total pendiente de cobro</div>
             </div>
             <div v-else>
-              <div class="text-4xl mb-2">✅</div>
-              <div class="text-lg font-semibold text-green-700">Sin deuda</div>
-              <div class="text-sm text-green-600">Todos los pagos al día</div>
+              <div class="text-3xl mb-1">✅</div>
+              <div class="text-base font-semibold text-green-700">Al día</div>
             </div>
           </div>
+
+          <!-- Desglose -->
+          <div class="space-y-2 text-sm">
+            <div v-if="balanceFinanciero.bonosPendientes > 0" class="flex items-center justify-between p-2 bg-amber-50 rounded-lg">
+              <span class="text-amber-800">Bonos sin pagar</span>
+              <span class="font-semibold text-amber-700">{{ balanceFinanciero.bonosPendientes }} ({{ formatearPrecio(balanceFinanciero.montoBonosPendientes) }})</span>
+            </div>
+            <div v-if="balanceFinanciero.sesionesSinCobrar > 0" class="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+              <span class="text-orange-800">Sesiones sin cobrar</span>
+              <span class="font-semibold text-orange-700">{{ balanceFinanciero.sesionesSinCobrar }} ({{ formatearPrecio(balanceFinanciero.montoSesionesPendientes) }})</span>
+            </div>
+            <div v-if="balanceFinanciero.deudaHistorica > 0" class="flex items-center justify-between p-2 bg-red-50 rounded-lg">
+              <div class="flex items-center gap-2">
+                <span class="text-red-800">Deuda histórica</span>
+                <button
+                  @click="mostrarModalDeudaHistorica = true"
+                  class="text-red-600 hover:text-red-800"
+                  title="Editar deuda histórica"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              </div>
+              <span class="font-semibold text-red-700">{{ formatearPrecio(balanceFinanciero.deudaHistorica) }}</span>
+            </div>
+            <div v-if="balanceFinanciero.totalPendiente === 0" class="text-center text-green-600 py-2">
+              Sin deudas pendientes
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historial de Bonos -->
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-serif text-xl font-semibold text-cafe flex items-center gap-2">
+            <span class="text-2xl">🎫</span>
+            Historial de Bonos
+          </h2>
+          <button
+            @click="irABonos"
+            class="text-sm text-purple-600 hover:text-purple-800 transition-colors"
+          >
+            Gestionar bonos →
+          </button>
+        </div>
+
+        <div v-if="todosLosBonos.length > 0" class="space-y-3">
+          <div
+            v-for="bono in todosLosBonos"
+            :key="bono.id"
+            class="p-4 rounded-lg border transition-all"
+            :class="{
+              'bg-green-50 border-green-200': bono.pagado && bono.estado !== 'agotado',
+              'bg-amber-50 border-amber-200': !bono.pagado && bono.sesiones_restantes > 0,
+              'bg-gray-50 border-gray-200': bono.estado === 'agotado' || bono.estado === 'completado',
+              'bg-red-50 border-red-200': !bono.pagado && bono.sesiones_restantes <= 0
+            }"
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="font-semibold text-cafe">{{ formatearTipoBono(bono.tipo) }}</span>
+                  <span
+                    class="px-2 py-0.5 text-xs rounded-full capitalize"
+                    :class="{
+                      'bg-green-100 text-green-700': bono.estado === 'activo',
+                      'bg-yellow-100 text-yellow-700': bono.estado === 'pendiente',
+                      'bg-gray-100 text-gray-600': bono.estado === 'agotado' || bono.estado === 'completado',
+                      'bg-red-100 text-red-700': bono.estado === 'cancelado'
+                    }"
+                  >
+                    {{ bono.estado }}
+                  </span>
+                  <span
+                    v-if="!bono.pagado"
+                    class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700"
+                  >
+                    💳 Sin pagar
+                  </span>
+                  <span
+                    v-else
+                    class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700"
+                  >
+                    ✓ Pagado
+                  </span>
+                </div>
+                <div class="flex flex-wrap items-center gap-4 text-sm text-cafe/70">
+                  <span>{{ bono.sesiones_totales - bono.sesiones_restantes }}/{{ bono.sesiones_totales }} sesiones usadas</span>
+                  <span>{{ formatearPrecio(bono.monto_total) }}</span>
+                  <span v-if="bono.created_at">Creado: {{ formatearFecha(bono.created_at.split('T')[0]) }}</span>
+                </div>
+                <!-- Barra de progreso -->
+                <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    class="h-2 rounded-full transition-all"
+                    :class="bono.sesiones_restantes > 0 ? 'bg-purple-500' : 'bg-gray-400'"
+                    :style="{ width: `${((bono.sesiones_totales - bono.sesiones_restantes) / bono.sesiones_totales) * 100}%` }"
+                  ></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button
+                  v-if="!bono.pagado"
+                  @click="marcarBonoPagado(bono)"
+                  class="px-3 py-1.5 text-xs bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  Marcar pagado
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="text-center py-8">
+          <span class="text-4xl mb-2 block opacity-40">🎫</span>
+          <p class="text-cafe/60 text-sm">No hay bonos registrados</p>
+          <button
+            @click="irABonos"
+            class="mt-3 px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Crear primer bono
+          </button>
         </div>
       </div>
 
@@ -771,6 +892,91 @@
       :cita-id="citaSeleccionada"
       @close="cerrarModalDetalles"
     />
+
+    <!-- Modal de Deuda Histórica -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        enter-from-class="opacity-0"
+        leave-active-class="transition-opacity duration-200"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="mostrarModalDeudaHistorica"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          @click.self="mostrarModalDeudaHistorica = false"
+        >
+          <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-cafe">Registrar Deuda Histórica</h3>
+              <button
+                @click="mostrarModalDeudaHistorica = false"
+                class="text-gray-400 hover:text-gray-600"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <p class="text-sm text-cafe/70 mb-4">
+              Registra deudas pendientes de períodos anteriores (bonos no pagados, sesiones antiguas, etc.)
+            </p>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-cafe mb-1">Cantidad de bonos adeudados</label>
+                <input
+                  v-model.number="formDeudaHistorica.cantidadBonos"
+                  type="number"
+                  min="0"
+                  class="w-full px-3 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="0"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-cafe mb-1">Monto total adeudado (€)</label>
+                <input
+                  v-model.number="formDeudaHistorica.montoTotal"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="w-full px-3 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-cafe mb-1">Notas (opcional)</label>
+                <textarea
+                  v-model="formDeudaHistorica.notas"
+                  rows="2"
+                  class="w-full px-3 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Ej: Bonos de 2024 pendientes de pago"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+              <button
+                @click="mostrarModalDeudaHistorica = false"
+                class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                @click="guardarDeudaHistorica"
+                :disabled="guardandoDeuda"
+                class="flex-1 px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+              >
+                {{ guardandoDeuda ? 'Guardando...' : 'Guardar' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -831,6 +1037,18 @@ const tabActiva = ref('proximas')
 const modalCitaAbierto = ref(false)
 const pacienteParaCita = ref<any>(null)
 const modalDetallesAbierto = ref(false)
+const mostrarModalDeudaHistorica = ref(false)
+const guardandoDeuda = ref(false)
+
+// Todos los bonos del paciente
+const todosLosBonos = ref<any[]>([])
+
+// Formulario de deuda histórica
+const formDeudaHistorica = ref({
+  cantidadBonos: 0,
+  montoTotal: 0,
+  notas: ''
+})
 const citaSeleccionada = ref<string | null>(null)
 
 // Tabs
@@ -897,11 +1115,17 @@ const cargarDatosPaciente = async () => {
     // Cargar bono activo
     await cargarBonoActivo()
 
+    // Cargar todos los bonos
+    await cargarTodosLosBonos()
+
     // Cargar pagos
     await cargarPagos()
 
     // Cargar notas
     await cargarNotas()
+
+    // Cargar deuda histórica
+    await cargarDeudaHistorica()
 
   } catch (err: any) {
     console.error('Error al cargar paciente:', err)
@@ -972,6 +1196,150 @@ const cargarPagos = async () => {
   } catch (err) {
     console.warn('[Pagos] Error inesperado:', err)
   }
+}
+
+// Cargar todos los bonos del paciente
+const cargarTodosLosBonos = async () => {
+  try {
+    const { data, error: bonosError } = await supabase
+      .from('bonos')
+      .select('*')
+      .eq('paciente_id', pacienteId.value)
+      .order('created_at', { ascending: false })
+
+    if (bonosError) {
+      console.warn('[Bonos] Error al cargar todos:', bonosError.message)
+      return
+    }
+
+    todosLosBonos.value = data || []
+    console.info(`[Bonos] Cargados ${todosLosBonos.value.length} bonos para el paciente`)
+  } catch (err) {
+    console.warn('[Bonos] Error inesperado:', err)
+  }
+}
+
+// Cargar deuda histórica del paciente
+const cargarDeudaHistorica = async () => {
+  try {
+    // La deuda histórica se guarda en metadata del paciente
+    if (pacienteData.value?.metadata?.deuda_historica) {
+      const deuda = pacienteData.value.metadata.deuda_historica
+      formDeudaHistorica.value = {
+        cantidadBonos: deuda.cantidad_bonos || 0,
+        montoTotal: deuda.monto_total || 0,
+        notas: deuda.notas || ''
+      }
+    }
+  } catch (err) {
+    console.warn('[Deuda] Error al cargar:', err)
+  }
+}
+
+// Guardar deuda histórica
+const guardarDeudaHistorica = async () => {
+  try {
+    guardandoDeuda.value = true
+
+    // Actualizar metadata del paciente con la deuda histórica
+    const metadataActual = pacienteData.value?.metadata || {}
+    const nuevaMetadata = {
+      ...metadataActual,
+      deuda_historica: {
+        cantidad_bonos: formDeudaHistorica.value.cantidadBonos,
+        monto_total: formDeudaHistorica.value.montoTotal,
+        notas: formDeudaHistorica.value.notas,
+        fecha_registro: new Date().toISOString()
+      }
+    }
+
+    const { error } = await supabase
+      .from('pacientes')
+      .update({ metadata: nuevaMetadata })
+      .eq('id', pacienteId.value)
+
+    if (error) throw error
+
+    // Actualizar datos locales
+    pacienteData.value.metadata = nuevaMetadata
+    mostrarModalDeudaHistorica.value = false
+
+    alert('Deuda histórica registrada correctamente')
+  } catch (err: any) {
+    console.error('[Deuda] Error al guardar:', err)
+    alert('Error al guardar: ' + err.message)
+  } finally {
+    guardandoDeuda.value = false
+  }
+}
+
+// Marcar bono como pagado
+const marcarBonoPagado = async (bono: any) => {
+  if (!confirm(`¿Marcar el bono de ${formatearPrecio(bono.monto_total)} como pagado?`)) return
+
+  try {
+    const { error } = await supabase
+      .from('bonos')
+      .update({
+        pagado: true,
+        estado_pago: 'pagado',
+        fecha_pago: new Date().toISOString().split('T')[0],
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', bono.id)
+
+    if (error) throw error
+
+    // Recargar bonos
+    await cargarTodosLosBonos()
+    await cargarBonoActivo()
+    alert('Bono marcado como pagado')
+  } catch (err: any) {
+    console.error('[Bono] Error al marcar pagado:', err)
+    alert('Error: ' + err.message)
+  }
+}
+
+// Computed: Balance financiero completo
+const balanceFinanciero = computed(() => {
+  // Bonos sin pagar
+  const bonosSinPagar = todosLosBonos.value.filter(b => !b.pagado)
+  const montoBonosPendientes = bonosSinPagar.reduce((acc, b) => acc + (b.monto_total || 0), 0)
+
+  // Sesiones sin cobrar (realizadas pero no pagadas, sin bono)
+  const sesionesSinCobrar = todasLasCitas.value.filter(c =>
+    c.estado === 'realizada' &&
+    !c.pagado &&
+    c.estado_pago !== 'bonificado' &&
+    !c.bono_id
+  )
+  const montoSesionesPendientes = sesionesSinCobrar.reduce((acc, c) => acc + (c.precio_sesion || 0), 0)
+
+  // Deuda histórica
+  const deudaHistorica = pacienteData.value?.metadata?.deuda_historica?.monto_total || 0
+
+  return {
+    bonosPendientes: bonosSinPagar.length,
+    montoBonosPendientes,
+    sesionesSinCobrar: sesionesSinCobrar.length,
+    montoSesionesPendientes,
+    deudaHistorica,
+    totalPendiente: montoBonosPendientes + montoSesionesPendientes + deudaHistorica
+  }
+})
+
+// Formatear tipo de bono
+const formatearTipoBono = (tipo: string) => {
+  const tipos: Record<string, string> = {
+    'a_demanda': 'A Demanda',
+    'quincenal': 'Quincenal',
+    'semanal': 'Semanal',
+    'mensual': 'Mensual',
+    'bono_4': 'Bono 4 sesiones',
+    'bono_8': 'Bono 8 sesiones',
+    'bono_10': 'Bono 10 sesiones'
+  }
+  return tipos[tipo] || tipo || 'Bono'
 }
 
 // Cargar notas
