@@ -1805,13 +1805,13 @@ watch([vistaActiva, fechaSeleccionada], async () => {
           <div class="w-px h-8 bg-gray-200 hidden sm:block"></div>
 
           <!-- Ocupación con contexto - simplificado en móvil -->
-          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-50 border border-violet-200 flex-shrink-0">
-            <div class="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
-              <span class="text-xs font-bold text-violet-700">{{ metricasContextuales.ocupacion }}%</span>
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-50 border border-purple-200 flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+              <span class="text-xs font-bold text-purple-700">{{ metricasContextuales.ocupacion }}%</span>
             </div>
             <div class="text-left">
-              <p class="text-xs font-medium text-violet-700">Ocupación</p>
-              <p class="text-[10px] text-violet-500">
+              <p class="text-xs font-medium text-purple-700">Ocupación</p>
+              <p class="text-[10px] text-purple-500">
                 {{ metricasContextuales.citasAdicionales > 0
                   ? `Puedes agendar ${metricasContextuales.citasAdicionales} más`
                   : 'Agenda completa' }}
@@ -1825,19 +1825,14 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                 ? 'bg-emerald-100 text-emerald-700'
                 : 'bg-red-100 text-red-700'"
             >
-              <svg v-if="metricasContextuales.tendencia === 'up'" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-              </svg>
-              <svg v-else class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-              {{ Math.abs(metricasContextuales.diferenciaSemanaAnterior) }}%
+              <span>{{ metricasContextuales.tendencia === 'up' ? '↑' : '↓' }}</span>
+              <span>{{ Math.abs(metricasContextuales.diferenciaSemanaAnterior) }}%</span>
             </div>
           </div>
 
           <!-- Ocupación compacta para móvil -->
-          <div class="flex sm:hidden items-center gap-1.5 px-2 py-1.5 rounded-lg bg-violet-50 border border-violet-200 flex-shrink-0 min-h-[40px]">
-            <span class="text-xs font-bold text-violet-700">{{ metricasContextuales.ocupacion }}%</span>
+          <div class="flex sm:hidden items-center gap-1.5 px-2 py-1.5 rounded-lg bg-purple-50 border border-purple-200 flex-shrink-0 min-h-[40px]">
+            <span class="text-xs font-bold text-purple-700">{{ metricasContextuales.ocupacion }}%</span>
           </div>
 
           <!-- Tasa de confirmación - ocultar en móvil -->
