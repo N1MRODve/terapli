@@ -1,11 +1,8 @@
 <template>
   <article
-    class="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-lg hover:border-purple-200 transition-all duration-200 group relative cursor-pointer focus-within:ring-2 focus-within:ring-purple-500 focus-within:ring-offset-2"
+    class="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-lg hover:border-purple-200 transition-all duration-200 group relative focus-within:ring-2 focus-within:ring-purple-500 focus-within:ring-offset-2"
     role="article"
     :aria-label="`Ficha de ${nombreMostrar}`"
-    tabindex="0"
-    @click="$emit('ver-ficha', paciente)"
-    @keydown.enter="$emit('ver-ficha', paciente)"
   >
     <!-- Botones de acción flotantes (hover) -->
     <div
@@ -72,10 +69,14 @@
 
     <!-- SECCIÓN PRINCIPAL: Avatar + Nombre + Estado -->
     <div class="flex items-start gap-3 mb-3">
-      <!-- Avatar con borde de estado -->
-      <div class="relative flex-shrink-0">
+      <!-- Avatar con borde de estado - CLIC ABRE MODAL DE ACCIONES RÁPIDAS -->
+      <button
+        @click.stop="$emit('ver-preview', paciente)"
+        class="relative flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-full"
+        :title="`Ver acciones rápidas de ${nombreMostrar}`"
+      >
         <div
-          class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ring-2 ring-offset-1"
+          class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ring-2 ring-offset-1 hover:ring-purple-400 transition-all cursor-pointer"
           :class="avatarRingClass"
           :style="{ backgroundColor: avatarColor }"
         >
@@ -86,13 +87,17 @@
           class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white"
           :class="estadoIndicadorClass"
         ></span>
-      </div>
+      </button>
 
-      <!-- Nombre y badge de estado -->
+      <!-- Nombre y badge de estado - CLIC VA AL PERFIL COMPLETO -->
       <div class="flex-1 min-w-0 pt-0.5">
-        <h3 class="font-semibold text-gray-900 text-base leading-tight truncate pr-16">
+        <button
+          @click.stop="$emit('ver-ficha', paciente)"
+          class="font-semibold text-gray-900 text-base leading-tight truncate pr-16 text-left hover:text-purple-600 transition-colors focus:outline-none focus:text-purple-600 w-full block"
+          :title="`Ver perfil completo de ${nombreMostrar}`"
+        >
           {{ nombreMostrar }}
-        </h3>
+        </button>
         <div class="flex items-center gap-2 mt-1">
           <span
             class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full"
@@ -228,7 +233,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['editar', 'eliminar', 'ver-citas', 'gestionar-bonos', 'editar-cita', 'ver-ficha'])
+const emit = defineEmits(['editar', 'eliminar', 'ver-citas', 'gestionar-bonos', 'editar-cita', 'ver-ficha', 'ver-preview'])
 
 // Estado para confirmación de eliminación
 const mostrarConfirmarEliminar = ref(false)

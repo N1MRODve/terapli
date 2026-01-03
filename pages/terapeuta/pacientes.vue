@@ -482,6 +482,7 @@
             <PacienteCard
               :paciente="paciente"
               @ver-ficha="irAFichaPaciente"
+              @ver-preview="abrirPreview"
               @editar="abrirModalEditar"
               @eliminar="abrirModalEliminar"
               @ver-citas="verCitasPaciente"
