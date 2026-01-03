@@ -206,7 +206,106 @@
               </div>
             </div>
 
-            <div class="flex justify-end pt-4 border-t border-gray-100">
+            <!-- Horarios diferentes por día -->
+            <div v-if="tieneHorariosDiferentes || mostrarConfigHorariosPorDia" class="mt-6 pt-6 border-t border-gray-100">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-medium text-gray-700">Horarios especificos por dia</h3>
+                <button
+                  v-if="!mostrarConfigHorariosPorDia"
+                  @click="mostrarConfigHorariosPorDia = true"
+                  class="text-xs text-violet-600 hover:text-violet-700 font-medium"
+                >
+                  + Editar horarios por dia
+                </button>
+              </div>
+
+              <p class="text-xs text-gray-500 mb-4">
+                Define horarios diferentes para dias especificos (ej: sabados solo por la manana)
+              </p>
+
+              <div class="space-y-3">
+                <div
+                  v-for="dia in diasSemana.filter(d => agenda.dias_laborables.includes(d.value))"
+                  :key="dia.value"
+                  class="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="font-medium text-gray-900">{{ dia.labelLargo }}</span>
+                    <label class="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        :checked="tieneHorarioEspecifico(dia.value)"
+                        @change="toggleHorarioDia(dia.value)"
+                        class="w-4 h-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+                      />
+                      <span class="text-gray-600">Horario diferente</span>
+                    </label>
+                  </div>
+
+                  <!-- Horario especifico del dia -->
+                  <div v-if="tieneHorarioEspecifico(dia.value)" class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Inicio manana</label>
+                      <select
+                        :value="getHorarioDia(dia.value, 'inicio_manana')"
+                        @change="setHorarioDia(dia.value, 'inicio_manana', ($event.target as HTMLSelectElement).value)"
+                        class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500"
+                      >
+                        <option value="">Cerrado</option>
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Fin manana</label>
+                      <select
+                        :value="getHorarioDia(dia.value, 'fin_manana')"
+                        @change="setHorarioDia(dia.value, 'fin_manana', ($event.target as HTMLSelectElement).value)"
+                        class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500"
+                      >
+                        <option value="">Cerrado</option>
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Inicio tarde</label>
+                      <select
+                        :value="getHorarioDia(dia.value, 'inicio_tarde')"
+                        @change="setHorarioDia(dia.value, 'inicio_tarde', ($event.target as HTMLSelectElement).value)"
+                        class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500"
+                      >
+                        <option value="">Cerrado</option>
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Fin tarde</label>
+                      <select
+                        :value="getHorarioDia(dia.value, 'fin_tarde')"
+                        @change="setHorarioDia(dia.value, 'fin_tarde', ($event.target as HTMLSelectElement).value)"
+                        class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500"
+                      >
+                        <option value="">Cerrado</option>
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <p v-else class="text-xs text-gray-400 italic">Usa el horario base</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Boton para mostrar config de horarios por dia -->
+            <div v-if="!tieneHorariosDiferentes && !mostrarConfigHorariosPorDia" class="mt-4 p-3 bg-violet-50 rounded-lg border border-violet-100">
+              <button
+                @click="mostrarConfigHorariosPorDia = true"
+                class="w-full text-sm text-violet-700 hover:text-violet-900 font-medium flex items-center justify-center gap-2"
+              >
+                <AdjustmentsHorizontalIcon class="w-4 h-4" />
+                Configurar horarios diferentes por dia de la semana
+              </button>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-gray-100 mt-6">
               <button
                 @click="guardarSeccion('horario')"
                 :disabled="guardandoSeccion === 'horario' || hayErroresHorario"
@@ -706,6 +805,14 @@ const config = ref({
   duracion_sesion_minutos: 60
 })
 
+// Tipo para horario por día de la semana
+interface HorarioDia {
+  inicio_manana: string
+  fin_manana: string
+  inicio_tarde: string
+  fin_tarde: string
+}
+
 // Datos de agenda
 const agenda = ref({
   buffer_minutos: 10,
@@ -715,6 +822,9 @@ const agenda = ref({
     inicio_tarde: '16:00',
     fin_tarde: '20:00'
   },
+  // Horarios específicos por día de la semana (ej: sábados solo mañana)
+  // Las claves son el número del día (0=dom, 1=lun, ..., 6=sab)
+  horarios_por_dia: {} as Record<number, HorarioDia>,
   dias_laborables: [1, 2, 3, 4, 5],
   limite_cancelacion_horas: 24,
   penalizacion_cancelacion: 'ninguna',
@@ -744,15 +854,18 @@ const nuevoHorarioPersonalizado = ref({
 // Error de solapamiento de bloqueos
 const errorBloqueoSolapado = ref<string | null>(null)
 
+// Mostrar config de horarios por día
+const mostrarConfigHorariosPorDia = ref(false)
+
 // Constantes
 const diasSemana = [
-  { value: 1, label: 'Lun' },
-  { value: 2, label: 'Mar' },
-  { value: 3, label: 'Mie' },
-  { value: 4, label: 'Jue' },
-  { value: 5, label: 'Vie' },
-  { value: 6, label: 'Sab' },
-  { value: 0, label: 'Dom' }
+  { value: 1, label: 'Lun', labelLargo: 'Lunes' },
+  { value: 2, label: 'Mar', labelLargo: 'Martes' },
+  { value: 3, label: 'Mie', labelLargo: 'Miercoles' },
+  { value: 4, label: 'Jue', labelLargo: 'Jueves' },
+  { value: 5, label: 'Vie', labelLargo: 'Viernes' },
+  { value: 6, label: 'Sab', labelLargo: 'Sabado' },
+  { value: 0, label: 'Dom', labelLargo: 'Domingo' }
 ]
 
 const horasDisponibles = computed(() => {
@@ -789,6 +902,58 @@ const errorHorarioTarde = computed(() => {
 const hayErroresHorario = computed(() => {
   return !!errorHorarioManana.value || !!errorHorarioTarde.value
 })
+
+// ============================================
+// HORARIOS POR DIA DE LA SEMANA
+// ============================================
+
+// Verifica si hay algún día con horario diferente al base
+const tieneHorariosDiferentes = computed(() => {
+  return Object.keys(agenda.value.horarios_por_dia).length > 0
+})
+
+// Verifica si un día tiene horario específico
+const tieneHorarioEspecifico = (diaSemana: number): boolean => {
+  return diaSemana in agenda.value.horarios_por_dia
+}
+
+// Obtiene el valor de un campo de horario para un día
+const getHorarioDia = (diaSemana: number, campo: keyof HorarioDia): string => {
+  if (agenda.value.horarios_por_dia[diaSemana]) {
+    return agenda.value.horarios_por_dia[diaSemana][campo] || ''
+  }
+  return agenda.value.horario[campo]
+}
+
+// Establece el valor de un campo de horario para un día
+const setHorarioDia = (diaSemana: number, campo: keyof HorarioDia, valor: string) => {
+  if (!agenda.value.horarios_por_dia[diaSemana]) {
+    // Inicializar con valores del horario base
+    agenda.value.horarios_por_dia[diaSemana] = {
+      inicio_manana: agenda.value.horario.inicio_manana,
+      fin_manana: agenda.value.horario.fin_manana,
+      inicio_tarde: agenda.value.horario.inicio_tarde,
+      fin_tarde: agenda.value.horario.fin_tarde
+    }
+  }
+  agenda.value.horarios_por_dia[diaSemana][campo] = valor
+}
+
+// Activa/desactiva horario específico para un día
+const toggleHorarioDia = (diaSemana: number) => {
+  if (tieneHorarioEspecifico(diaSemana)) {
+    // Eliminar horario específico
+    delete agenda.value.horarios_por_dia[diaSemana]
+  } else {
+    // Crear horario específico con valores del horario base
+    agenda.value.horarios_por_dia[diaSemana] = {
+      inicio_manana: agenda.value.horario.inicio_manana,
+      fin_manana: agenda.value.horario.fin_manana,
+      inicio_tarde: agenda.value.horario.inicio_tarde,
+      fin_tarde: agenda.value.horario.fin_tarde
+    }
+  }
+}
 
 // ============================================
 // HORARIOS PERSONALIZADOS ORDENADOS
@@ -1050,7 +1215,12 @@ async function cargarConfiguracion() {
           ...agenda.value,
           ...agendaData,
           bloqueos: agendaData.bloqueos || [],
-          horarios_personalizados: agendaData.horarios_personalizados || []
+          horarios_personalizados: agendaData.horarios_personalizados || [],
+          horarios_por_dia: agendaData.horarios_por_dia || {}
+        }
+        // Mostrar config si ya hay horarios por día configurados
+        if (Object.keys(agenda.value.horarios_por_dia).length > 0) {
+          mostrarConfigHorariosPorDia.value = true
         }
       }
 

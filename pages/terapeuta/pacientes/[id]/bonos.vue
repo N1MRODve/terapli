@@ -312,6 +312,13 @@
                 >
                   <PencilIcon class="w-5 h-5" />
                 </button>
+                <button
+                  @click="confirmarEliminarBono(bono)"
+                  class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  title="Eliminar bono"
+                >
+                  <TrashIcon class="w-5 h-5" />
+                </button>
               </div>
             </div>
           </div>
@@ -431,6 +438,88 @@
       @close="cerrarModalRenovacion"
       @renovated="onBonoRenovado"
     />
+
+    <!-- Modal de confirmación para eliminar bono -->
+    <Teleport to="body">
+      <div
+        v-if="modalConfirmarEliminar"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+      >
+        <!-- Overlay -->
+        <div
+          class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          @click="cancelarEliminar"
+        ></div>
+
+        <!-- Modal -->
+        <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
+          <div class="text-center">
+            <!-- Icono de advertencia -->
+            <div class="mx-auto w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
+              <TrashIcon class="w-7 h-7 text-red-600" />
+            </div>
+
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+              Eliminar bono
+            </h3>
+
+            <p class="text-sm text-gray-500 mb-2">
+              Estas a punto de eliminar el bono <strong>{{ getTipoTexto(bonoAEliminar?.tipo) }}</strong>.
+            </p>
+
+            <div v-if="bonoAEliminar" class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-left">
+              <p class="text-sm text-amber-800">
+                <strong>Atencion:</strong> Las citas asociadas a este bono seran desvinculadas
+                y quedaran con estado de pago "pendiente". Esta accion no se puede deshacer.
+              </p>
+            </div>
+
+            <!-- Info del bono -->
+            <div v-if="bonoAEliminar" class="bg-gray-50 rounded-lg p-3 mb-6 text-left">
+              <div class="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span class="text-gray-500">Sesiones:</span>
+                  <span class="font-medium ml-1">{{ bonoAEliminar.sesiones_restantes }}/{{ bonoAEliminar.sesiones_totales }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Estado:</span>
+                  <span class="font-medium ml-1">{{ getEstadoTexto(bonoAEliminar.estado) }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Monto:</span>
+                  <span class="font-medium ml-1">{{ bonoAEliminar.monto_total || 0 }} EUR</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Pago:</span>
+                  <span class="font-medium ml-1" :class="bonoAEliminar.pagado ? 'text-green-600' : 'text-amber-600'">
+                    {{ bonoAEliminar.pagado ? 'Pagado' : 'Pendiente' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex gap-3">
+              <button
+                @click="cancelarEliminar"
+                :disabled="eliminandoBono"
+                class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                @click="eliminarBono"
+                :disabled="eliminandoBono"
+                class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <ArrowPathIcon v-if="eliminandoBono" class="w-4 h-4 animate-spin" />
+                {{ eliminandoBono ? 'Eliminando...' : 'Eliminar' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -446,7 +535,8 @@ import {
   ExclamationTriangleIcon,
   InformationCircleIcon,
   ArrowPathIcon,
-  PencilIcon
+  PencilIcon,
+  TrashIcon
 } from '@heroicons/vue/24/outline'
 
 definePageMeta({
@@ -493,6 +583,12 @@ const modalPagosAbierto = ref(false)
 const modalRenovacionAbierto = ref(false)
 const bonoSeleccionado = ref<any>(null)
 const bonoParaEditar = ref<any>(null)
+
+// Modal de confirmación para eliminar
+const modalConfirmarEliminar = ref(false)
+const bonoAEliminar = ref<any>(null)
+const eliminandoBono = ref(false)
+const toast = useToast()
 
 // Computed
 const bonosFiltrados = computed(() => {
@@ -716,6 +812,68 @@ const onBonoRenovado = async () => {
 const editarBono = (bono: any) => {
   bonoParaEditar.value = bono
   modalNuevoBonoAbierto.value = true
+}
+
+// ============================================
+// ELIMINAR BONO
+// ============================================
+
+const confirmarEliminarBono = (bono: any) => {
+  bonoAEliminar.value = bono
+  modalConfirmarEliminar.value = true
+}
+
+const cancelarEliminar = () => {
+  modalConfirmarEliminar.value = false
+  bonoAEliminar.value = null
+}
+
+const eliminarBono = async () => {
+  if (!bonoAEliminar.value) return
+
+  try {
+    eliminandoBono.value = true
+    const bonoId = bonoAEliminar.value.id
+
+    // Paso 1: Desvincular citas que usan este bono (no las elimina, solo quita la referencia)
+    const { error: errorCitas } = await supabase
+      .from('citas')
+      .update({
+        bono_id: null,
+        sesion_descontada: false,
+        descontar_de_bono: false,
+        estado_pago: 'pendiente',
+        metodo_pago: null
+      })
+      .eq('bono_id', bonoId)
+
+    if (errorCitas) {
+      console.error('Error al desvincular citas:', errorCitas)
+      // Continuar con la eliminación aunque falle esto
+    }
+
+    // Paso 2: Eliminar el bono
+    const { error: errorBono } = await supabase
+      .from('bonos')
+      .delete()
+      .eq('id', bonoId)
+
+    if (errorBono) {
+      throw errorBono
+    }
+
+    // Paso 3: Recargar bonos
+    await cargarBonos()
+
+    toast.success('Bono eliminado correctamente')
+    modalConfirmarEliminar.value = false
+    bonoAEliminar.value = null
+  } catch (error: any) {
+    console.error('Error al eliminar bono:', error)
+    toast.error(`Error al eliminar: ${error.message}`)
+  } finally {
+    eliminandoBono.value = false
+  }
 }
 
 // Lifecycle
