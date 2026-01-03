@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <!-- Header -->
-      <header class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Configuracion</h1>
+      <header class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Configuracion de Agenda</h1>
         <p class="text-gray-500 text-sm mt-1">
-          Personaliza Terapli segun tu forma de trabajar
+          Define como funciona tu disponibilidad y las reglas de tu agenda
         </p>
       </header>
 
@@ -15,1038 +15,655 @@
         <p class="text-gray-500">Cargando configuracion...</p>
       </div>
 
-      <!-- Contenido con navegacion lateral -->
-      <div v-else class="flex gap-6">
-        <!-- Navegacion lateral -->
-        <nav class="hidden lg:block w-56 flex-shrink-0">
-          <div class="sticky top-24 space-y-1">
-            <button
-              v-for="seccion in secciones"
-              :key="seccion.id"
-              @click="seccionActiva = seccion.id"
-              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all"
-              :class="seccionActiva === seccion.id
-                ? 'bg-violet-100 text-violet-700 font-medium'
-                : 'text-gray-600 hover:bg-gray-100'"
-            >
-              <span class="text-lg">{{ seccion.icon }}</span>
-              <span class="text-sm">{{ seccion.label }}</span>
-            </button>
-
-            <!-- Ultima actualizacion -->
-            <div v-if="ultimaActualizacion" class="pt-4 mt-4 border-t border-gray-200">
-              <p class="text-xs text-gray-400 px-3">
-                Actualizado: {{ ultimaActualizacion }}
-              </p>
+      <!-- Contenido principal -->
+      <div v-else class="space-y-8">
+        <!-- ============================================ -->
+        <!-- SECCION 1: PREFERENCIAS DE SESION -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+                <ClockIcon class="w-5 h-5 text-violet-600" />
+              </div>
+              <div>
+                <h2 class="font-semibold text-gray-900">Preferencias de sesion</h2>
+                <p class="text-sm text-gray-500">Define la duracion base de tus sesiones y los tiempos de descanso</p>
+              </div>
             </div>
           </div>
-        </nav>
 
-        <!-- Selector movil -->
-        <div class="lg:hidden mb-4 w-full">
-          <select
-            v-model="seccionActiva"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-          >
-            <option v-for="seccion in secciones" :key="seccion.id" :value="seccion.id">
-              {{ seccion.icon }} {{ seccion.label }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Contenido principal -->
-        <main class="flex-1 min-w-0">
-          <!-- SECCION: Perfil y Marca -->
-          <section v-show="seccionActiva === 'perfil'" class="space-y-6">
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-900">Perfil y Marca</h2>
-                <p class="text-sm text-gray-500">Como te identificas en la plataforma</p>
-              </div>
-
-              <div class="p-6 space-y-6">
-                <!-- Nombre para mostrar -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre para mostrar
-                  </label>
-                  <input
-                    v-model="perfil.nombre_mostrar"
-                    type="text"
-                    placeholder="Ej: Dra. Maria, Karem, Dr. Lopez..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                  />
-                  <p class="mt-1.5 text-xs text-gray-500">Aparecera en facturas, emails y recordatorios</p>
-                </div>
-
-                <!-- Especialidad -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Especialidad
-                  </label>
-                  <input
-                    v-model="perfil.especialidad"
-                    type="text"
-                    placeholder="Ej: Psicologia Clinica, Terapia de Pareja..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                  />
-                </div>
-
-                <!-- Mensaje de bienvenida -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Mensaje de bienvenida
-                    <span class="text-gray-400 font-normal">(opcional)</span>
-                  </label>
-                  <textarea
-                    v-model="perfil.mensaje_bienvenida"
-                    rows="3"
-                    placeholder="Mensaje que recibiran los nuevos pacientes en su primer email..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none"
-                  ></textarea>
-                </div>
-
-                <!-- Preferencias de formato -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Idioma</label>
-                    <select
-                      v-model="perfil.idioma"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    >
-                      <option value="es">Espanol</option>
-                      <option value="ca">Catalan</option>
-                      <option value="en">English</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Formato de fecha</label>
-                    <select
-                      v-model="perfil.formato_fecha"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    >
-                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-gray-100">
-                  <button
-                    @click="guardarSeccion('perfil')"
-                    :disabled="guardandoSeccion === 'perfil'"
-                    class="px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-                  >
-                    <svg v-if="guardandoSeccion === 'perfil'" class="w-4 h-4 animate-spin" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    {{ guardandoSeccion === 'perfil' ? 'Guardando...' : 'Guardar perfil' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- SECCION: Agenda y Sesiones -->
-          <section v-show="seccionActiva === 'agenda'" class="space-y-6">
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-900">Agenda y Sesiones</h2>
-                <p class="text-sm text-gray-500">Configura como funcionan tus sesiones</p>
-              </div>
-
-              <div class="p-6 space-y-6">
-                <!-- Duracion y buffer -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                      Duracion estandar de sesion
-                    </label>
-                    <select
-                      v-model.number="config.duracion_sesion_minutos"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    >
-                      <option :value="30">30 minutos</option>
-                      <option :value="45">45 minutos</option>
-                      <option :value="60">60 minutos (recomendado)</option>
-                      <option :value="90">90 minutos</option>
-                      <option :value="120">2 horas</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                      Tiempo entre sesiones
-                    </label>
-                    <select
-                      v-model.number="agenda.buffer_minutos"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    >
-                      <option :value="0">Sin pausa</option>
-                      <option :value="5">5 minutos</option>
-                      <option :value="10">10 minutos</option>
-                      <option :value="15">15 minutos</option>
-                      <option :value="30">30 minutos</option>
-                    </select>
-                    <p class="mt-1 text-xs text-gray-500">Tiempo de descanso entre citas</p>
-                  </div>
-                </div>
-
-                <!-- Horario de trabajo -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-3">
-                    Horario de trabajo habitual
-                  </label>
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div>
-                      <label class="text-xs text-gray-500 mb-1 block">Inicio manana</label>
-                      <select v-model="agenda.horario.inicio_manana" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="text-xs text-gray-500 mb-1 block">Fin manana</label>
-                      <select v-model="agenda.horario.fin_manana" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="text-xs text-gray-500 mb-1 block">Inicio tarde</label>
-                      <select v-model="agenda.horario.inicio_tarde" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="text-xs text-gray-500 mb-1 block">Fin tarde</label>
-                      <select v-model="agenda.horario.fin_tarde" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Dias laborables -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-3">
-                    Dias laborables
-                  </label>
-                  <div class="flex flex-wrap gap-2">
-                    <label
-                      v-for="dia in diasSemana"
-                      :key="dia.value"
-                      class="flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer transition-all"
-                      :class="agenda.dias_laborables.includes(dia.value)
-                        ? 'border-violet-500 bg-violet-50 text-violet-700'
-                        : 'border-gray-200 hover:border-gray-300'"
-                    >
-                      <input
-                        type="checkbox"
-                        :value="dia.value"
-                        v-model="agenda.dias_laborables"
-                        class="sr-only"
-                      />
-                      <span class="text-sm font-medium">{{ dia.label }}</span>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Politica de cancelacion -->
-                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                  <h4 class="font-medium text-amber-900 mb-3 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Politica de cancelacion
-                  </h4>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label class="text-xs text-amber-700 mb-1 block">Limite de cancelacion gratuita</label>
-                      <select
-                        v-model.number="agenda.limite_cancelacion_horas"
-                        class="w-full px-3 py-2 border border-amber-300 rounded-lg text-sm bg-white"
-                      >
-                        <option :value="12">12 horas antes</option>
-                        <option :value="24">24 horas antes</option>
-                        <option :value="48">48 horas antes</option>
-                        <option :value="72">72 horas antes</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="text-xs text-amber-700 mb-1 block">Penalizacion por cancelacion tardia</label>
-                      <select
-                        v-model="agenda.penalizacion_cancelacion"
-                        class="w-full px-3 py-2 border border-amber-300 rounded-lg text-sm bg-white"
-                      >
-                        <option value="ninguna">Sin penalizacion</option>
-                        <option value="50%">50% del valor de la sesion</option>
-                        <option value="100%">100% del valor de la sesion</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Vacaciones y Bloqueos de Horario -->
-                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 class="font-medium text-blue-900 mb-3 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Vacaciones y bloqueos de horario
-                  </h4>
-                  <p class="text-sm text-blue-700 mb-4">Bloquea periodos donde no atenderas pacientes</p>
-
-                  <!-- Lista de bloqueos existentes -->
-                  <div v-if="agenda.bloqueos && agenda.bloqueos.length > 0" class="space-y-2 mb-4">
-                    <div
-                      v-for="bloqueo in agenda.bloqueos"
-                      :key="bloqueo.id"
-                      class="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-100"
-                    >
-                      <div class="flex items-center gap-3">
-                        <span class="text-lg">
-                          {{ bloqueo.tipo === 'vacaciones' ? '🏖️' : bloqueo.tipo === 'festivo' ? '🎉' : '🚫' }}
-                        </span>
-                        <div>
-                          <p class="font-medium text-gray-900">
-                            {{ formatearFechaBloqueo(bloqueo.fecha_inicio) }} - {{ formatearFechaBloqueo(bloqueo.fecha_fin) }}
-                          </p>
-                          <p class="text-sm text-gray-500">{{ bloqueo.descripcion || tipoBloqueoLabel(bloqueo.tipo) }}</p>
-                        </div>
-                      </div>
-                      <button
-                        @click="eliminarBloqueo(bloqueo.id)"
-                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Eliminar bloqueo"
-                      >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  <p v-else class="text-sm text-blue-600 mb-4 italic">No hay bloqueos configurados</p>
-
-                  <!-- Formulario para nuevo bloqueo -->
-                  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 bg-white rounded-lg border border-blue-100">
-                    <div>
-                      <label class="text-xs text-blue-700 mb-1 block">Fecha inicio</label>
-                      <input
-                        v-model="nuevoBloqueo.fecha_inicio"
-                        type="date"
-                        class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label class="text-xs text-blue-700 mb-1 block">Fecha fin</label>
-                      <input
-                        v-model="nuevoBloqueo.fecha_fin"
-                        type="date"
-                        class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label class="text-xs text-blue-700 mb-1 block">Tipo</label>
-                      <select
-                        v-model="nuevoBloqueo.tipo"
-                        class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
-                      >
-                        <option value="vacaciones">Vacaciones</option>
-                        <option value="festivo">Festivo</option>
-                        <option value="personal">Personal</option>
-                        <option value="otro">Otro</option>
-                      </select>
-                    </div>
-                    <div class="flex items-end">
-                      <button
-                        @click="agregarBloqueo"
-                        :disabled="!nuevoBloqueo.fecha_inicio || !nuevoBloqueo.fecha_fin"
-                        class="w-full px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Anadir bloqueo
-                      </button>
-                    </div>
-                  </div>
-                  <div class="mt-2">
-                    <input
-                      v-model="nuevoBloqueo.descripcion"
-                      type="text"
-                      placeholder="Descripcion opcional (ej: Vacaciones de Navidad)"
-                      class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm"
-                    />
-                  </div>
-                </div>
-
-                <!-- Horarios Personalizados por Dia -->
-                <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                  <h4 class="font-medium text-purple-900 mb-3 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Horarios personalizados
-                  </h4>
-                  <p class="text-sm text-purple-700 mb-4">Define horarios especiales para dias concretos (ej: solo manana un viernes)</p>
-
-                  <!-- Lista de horarios personalizados -->
-                  <div v-if="agenda.horarios_personalizados && agenda.horarios_personalizados.length > 0" class="space-y-2 mb-4">
-                    <div
-                      v-for="hp in agenda.horarios_personalizados"
-                      :key="hp.fecha"
-                      class="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-100"
-                    >
-                      <div>
-                        <p class="font-medium text-gray-900">{{ formatearFechaBloqueo(hp.fecha) }}</p>
-                        <p v-if="hp.cerrado" class="text-sm text-red-500">Cerrado</p>
-                        <p v-else class="text-sm text-gray-500">
-                          {{ hp.inicio_manana || agenda.horario.inicio_manana }} - {{ hp.fin_manana || agenda.horario.fin_manana }}
-                          /
-                          {{ hp.inicio_tarde || agenda.horario.inicio_tarde }} - {{ hp.fin_tarde || agenda.horario.fin_tarde }}
-                        </p>
-                        <p v-if="hp.notas" class="text-xs text-purple-600">{{ hp.notas }}</p>
-                      </div>
-                      <button
-                        @click="eliminarHorarioPersonalizado(hp.fecha)"
-                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  <p v-else class="text-sm text-purple-600 mb-4 italic">No hay horarios personalizados</p>
-
-                  <!-- Formulario para nuevo horario personalizado -->
-                  <div class="p-3 bg-white rounded-lg border border-purple-100 space-y-3">
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      <div>
-                        <label class="text-xs text-purple-700 mb-1 block">Fecha</label>
-                        <input
-                          v-model="nuevoHorarioPersonalizado.fecha"
-                          type="date"
-                          class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm"
-                        />
-                      </div>
-                      <div class="flex items-end">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                          <input
-                            v-model="nuevoHorarioPersonalizado.cerrado"
-                            type="checkbox"
-                            class="w-4 h-4 text-purple-600 rounded"
-                          />
-                          <span class="text-sm text-purple-700">Dia cerrado</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div v-if="!nuevoHorarioPersonalizado.cerrado" class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div>
-                        <label class="text-xs text-purple-700 mb-1 block">Inicio manana</label>
-                        <select v-model="nuevoHorarioPersonalizado.inicio_manana" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
-                          <option value="">Por defecto</option>
-                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label class="text-xs text-purple-700 mb-1 block">Fin manana</label>
-                        <select v-model="nuevoHorarioPersonalizado.fin_manana" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
-                          <option value="">Por defecto</option>
-                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label class="text-xs text-purple-700 mb-1 block">Inicio tarde</label>
-                        <select v-model="nuevoHorarioPersonalizado.inicio_tarde" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
-                          <option value="">Por defecto</option>
-                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label class="text-xs text-purple-700 mb-1 block">Fin tarde</label>
-                        <select v-model="nuevoHorarioPersonalizado.fin_tarde" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm">
-                          <option value="">Por defecto</option>
-                          <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="flex gap-3">
-                      <input
-                        v-model="nuevoHorarioPersonalizado.notas"
-                        type="text"
-                        placeholder="Notas opcionales"
-                        class="flex-1 px-3 py-2 border border-purple-200 rounded-lg text-sm"
-                      />
-                      <button
-                        @click="agregarHorarioPersonalizado"
-                        :disabled="!nuevoHorarioPersonalizado.fecha"
-                        class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Anadir
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-gray-100">
-                  <button
-                    @click="guardarSeccion('agenda')"
-                    :disabled="guardandoSeccion === 'agenda'"
-                    class="px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-                  >
-                    <svg v-if="guardandoSeccion === 'agenda'" class="w-4 h-4 animate-spin" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    {{ guardandoSeccion === 'agenda' ? 'Guardando...' : 'Guardar agenda' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- SECCION: Tarifas y Bonos -->
-          <section v-show="seccionActiva === 'tarifas'" class="space-y-6">
-            <!-- Modelo de tarifas -->
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-900">Modelo de Tarifas</h2>
-                <p class="text-sm text-gray-500">Define el precio por sesion segun la frecuencia</p>
-              </div>
-
-              <div class="p-6">
-                <!-- Tabla de tarifas -->
-                <div class="overflow-x-auto">
-                  <table class="w-full">
-                    <thead>
-                      <tr class="text-left text-xs text-gray-500 uppercase tracking-wider">
-                        <th class="pb-3">Tipo</th>
-                        <th class="pb-3 text-center">Precio/Sesion</th>
-                        <th class="pb-3 text-center">Ingreso mensual estimado</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                      <tr>
-                        <td class="py-3">
-                          <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                            <span class="font-medium text-gray-900">Semanal</span>
-                          </div>
-                          <p class="text-xs text-gray-500 mt-0.5">4 sesiones/mes</p>
-                        </td>
-                        <td class="py-3 text-center">
-                          <div class="inline-flex items-center">
-                            <input
-                              v-model.number="config.precios_frecuencia.semanal"
-                              type="number"
-                              min="0"
-                              step="1"
-                              class="w-20 px-2 py-1.5 border border-gray-300 rounded text-center text-sm font-bold focus:ring-2 focus:ring-violet-500"
-                            />
-                            <span class="ml-1 text-gray-500 text-sm">EUR</span>
-                          </div>
-                        </td>
-                        <td class="py-3 text-center">
-                          <span class="font-bold text-emerald-600">{{ formatearPrecio(config.precios_frecuencia.semanal * 4) }} EUR</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="py-3">
-                          <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                            <span class="font-medium text-gray-900">Quincenal</span>
-                          </div>
-                          <p class="text-xs text-gray-500 mt-0.5">2 sesiones/mes</p>
-                        </td>
-                        <td class="py-3 text-center">
-                          <div class="inline-flex items-center">
-                            <input
-                              v-model.number="config.precios_frecuencia.quincenal"
-                              type="number"
-                              min="0"
-                              step="1"
-                              class="w-20 px-2 py-1.5 border border-gray-300 rounded text-center text-sm font-bold focus:ring-2 focus:ring-violet-500"
-                            />
-                            <span class="ml-1 text-gray-500 text-sm">EUR</span>
-                          </div>
-                        </td>
-                        <td class="py-3 text-center">
-                          <span class="font-bold text-emerald-600">{{ formatearPrecio(config.precios_frecuencia.quincenal * 2) }} EUR</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="py-3">
-                          <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-purple-500"></span>
-                            <span class="font-medium text-gray-900">Sesion unica</span>
-                          </div>
-                          <p class="text-xs text-gray-500 mt-0.5">Sin compromiso</p>
-                        </td>
-                        <td class="py-3 text-center">
-                          <div class="inline-flex items-center">
-                            <input
-                              v-model.number="config.precios_frecuencia.unica"
-                              type="number"
-                              min="0"
-                              step="1"
-                              class="w-20 px-2 py-1.5 border border-gray-300 rounded text-center text-sm font-bold focus:ring-2 focus:ring-violet-500"
-                            />
-                            <span class="ml-1 text-gray-500 text-sm">EUR</span>
-                          </div>
-                        </td>
-                        <td class="py-3 text-center">
-                          <span class="font-bold text-emerald-600">{{ formatearPrecio(config.precios_frecuencia.unica) }} EUR</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!-- Info sin comision -->
-                <div class="mt-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                  <div class="flex items-center gap-2">
-                    <span class="text-emerald-600 text-lg">&#10003;</span>
-                    <p class="text-sm text-emerald-700 font-medium">Sin comisiones - Recibes el 100% de tus sesiones</p>
-                  </div>
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-gray-100 mt-6">
-                  <button
-                    @click="guardarSeccion('tarifas')"
-                    :disabled="guardandoSeccion === 'tarifas'"
-                    class="px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {{ guardandoSeccion === 'tarifas' ? 'Guardando...' : 'Guardar tarifas' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Plantillas de Bonos -->
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-                <div>
-                  <h2 class="font-semibold text-gray-900">Plantillas de Bonos</h2>
-                  <p class="text-sm text-gray-500">Bonos prepagados que puedes ofrecer</p>
-                </div>
-                <button
-                  @click="agregarPlantillaBono"
-                  class="px-3 py-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium hover:bg-amber-200 transition-colors flex items-center gap-1"
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Duracion de sesion -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Duracion estandar de sesion
+                </label>
+                <select
+                  v-model.number="config.duracion_sesion_minutos"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Nueva
-                </button>
+                  <option :value="30">30 minutos</option>
+                  <option :value="45">45 minutos</option>
+                  <option :value="60">60 minutos</option>
+                  <option :value="90">90 minutos</option>
+                  <option :value="120">120 minutos</option>
+                </select>
               </div>
 
-              <div class="p-6 space-y-4">
-                <!-- Lista de plantillas -->
-                <div
-                  v-for="(plantilla, index) in config.plantillas_bonos"
-                  :key="index"
-                  class="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+              <!-- Pausa entre sesiones -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Pausa entre sesiones
+                </label>
+                <select
+                  v-model.number="agenda.buffer_minutos"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white"
                 >
-                  <div class="flex items-start justify-between gap-4">
-                    <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Nombre</label>
-                        <input
-                          v-model="plantilla.nombre"
-                          type="text"
-                          placeholder="Ej: Bono 4 sesiones"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Sesiones</label>
-                        <input
-                          v-model.number="plantilla.sesiones"
-                          type="number"
-                          min="1"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Precio total</label>
-                        <input
-                          v-model.number="plantilla.precio"
-                          type="number"
-                          min="0"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Frecuencia</label>
-                        <select
-                          v-model="plantilla.frecuencia"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        >
-                          <option value="semanal">Semanal</option>
-                          <option value="quincenal">Quincenal</option>
-                          <option value="mensual">Mensual</option>
-                          <option value="cualquiera">Flexible</option>
-                        </select>
-                      </div>
-                    </div>
-                    <button
-                      @click="eliminarPlantillaBono(index)"
-                      class="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
-                    <span class="text-gray-500">
-                      Precio por sesion: <strong class="text-gray-700">{{ formatearPrecio(plantilla.precio / plantilla.sesiones) }} EUR</strong>
-                    </span>
-                    <span class="text-emerald-600">
-                      Tu ingreso: <strong>{{ formatearPrecio(calcularIngresoNeto(plantilla.precio)) }} EUR</strong>
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Sin plantillas -->
-                <div v-if="config.plantillas_bonos.length === 0" class="text-center py-8 text-gray-500">
-                  <p>No tienes plantillas de bonos</p>
-                  <p class="text-sm">Crea una para ofrecer paquetes a tus pacientes</p>
-                </div>
-
-                <!-- Sugerencias rapidas -->
-                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                  <p class="text-sm font-medium text-amber-800 mb-2">Plantillas sugeridas:</p>
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      @click="agregarPlantillaPredefinida('4 sesiones semanales', 4, 160, 'semanal')"
-                      class="px-3 py-1.5 bg-white border border-amber-300 text-amber-700 rounded-lg text-xs font-medium hover:bg-amber-100"
-                    >
-                      + 4 sesiones (160 EUR)
-                    </button>
-                    <button
-                      @click="agregarPlantillaPredefinida('8 sesiones flex', 8, 380, 'cualquiera')"
-                      class="px-3 py-1.5 bg-white border border-amber-300 text-amber-700 rounded-lg text-xs font-medium hover:bg-amber-100"
-                    >
-                      + 8 sesiones (380 EUR)
-                    </button>
-                    <button
-                      @click="agregarPlantillaPredefinida('10 sesiones', 10, 500, 'cualquiera')"
-                      class="px-3 py-1.5 bg-white border border-amber-300 text-amber-700 rounded-lg text-xs font-medium hover:bg-amber-100"
-                    >
-                      + 10 sesiones (500 EUR)
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- SECCION: Pagos y Facturacion -->
-          <section v-show="seccionActiva === 'pagos'" class="space-y-6">
-            <!-- Metodos de pago -->
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-900">Metodos de Pago</h2>
-                <p class="text-sm text-gray-500">Metodos que aceptas de tus pacientes</p>
-              </div>
-
-              <div class="p-6">
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <label
-                    v-for="metodo in metodosDisponibles"
-                    :key="metodo.value"
-                    class="relative flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-all"
-                    :class="config.metodos_pago_aceptados.includes(metodo.value)
-                      ? 'border-violet-500 bg-violet-50'
-                      : 'border-gray-200 hover:border-gray-300'"
-                  >
-                    <input
-                      type="checkbox"
-                      :value="metodo.value"
-                      v-model="config.metodos_pago_aceptados"
-                      class="sr-only"
-                    />
-                    <span class="text-2xl">{{ metodo.icon }}</span>
-                    <span class="text-sm font-medium" :class="config.metodos_pago_aceptados.includes(metodo.value) ? 'text-violet-900' : 'text-gray-700'">
-                      {{ metodo.label }}
-                    </span>
-                    <svg
-                      v-if="config.metodos_pago_aceptados.includes(metodo.value)"
-                      class="w-5 h-5 text-violet-600 absolute top-2 right-2"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                  </label>
-                </div>
-
-                <p class="mt-4 text-xs text-gray-500">
-                  Estos metodos apareceran en recordatorios de pago y facturas.
-                </p>
-
-                <div class="flex justify-end pt-4 border-t border-gray-100 mt-6">
-                  <button
-                    @click="guardarSeccion('metodos_pago')"
-                    :disabled="guardandoSeccion === 'metodos_pago'"
-                    class="px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50"
-                  >
-                    {{ guardandoSeccion === 'metodos_pago' ? 'Guardando...' : 'Guardar metodos' }}
-                  </button>
-                </div>
+                  <option :value="0">Sin pausa</option>
+                  <option :value="5">5 minutos</option>
+                  <option :value="10">10 minutos</option>
+                  <option :value="15">15 minutos</option>
+                  <option :value="30">30 minutos</option>
+                </select>
               </div>
             </div>
 
-            <!-- Datos Fiscales -->
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-900">Datos Fiscales</h2>
-                <p class="text-sm text-gray-500">Informacion para emitir facturas</p>
+            <p class="mt-4 text-sm text-gray-500 bg-gray-50 rounded-lg p-3">
+              <InformationCircleIcon class="w-4 h-4 inline mr-1 text-gray-400" />
+              Estas opciones se usaran para calcular los huecos disponibles en tu agenda.
+            </p>
+
+            <div class="flex justify-end pt-4 mt-4 border-t border-gray-100">
+              <button
+                @click="guardarSeccion('preferencias')"
+                :disabled="guardandoSeccion === 'preferencias'"
+                class="px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <ArrowPathIcon v-if="guardandoSeccion === 'preferencias'" class="w-4 h-4 animate-spin" />
+                {{ guardandoSeccion === 'preferencias' ? 'Guardando...' : 'Guardar preferencias' }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECCION 2: HORARIO HABITUAL -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <CalendarDaysIcon class="w-5 h-5 text-emerald-600" />
               </div>
+              <div>
+                <h2 class="font-semibold text-gray-900">Horario habitual</h2>
+                <p class="text-sm text-gray-500">Tu disponibilidad semanal base. Las vacaciones y horarios especiales pueden modificarlo.</p>
+              </div>
+            </div>
+          </div>
 
-              <div class="p-6 space-y-6">
-                <!-- NIF y Razon Social -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                      NIF / DNI <span class="text-red-500">*</span>
-                    </label>
-                    <input
-                      v-model="datosFiscales.nif"
-                      type="text"
-                      placeholder="12345678A"
-                      class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-violet-500 uppercase"
-                      :class="nifError ? 'border-red-300 bg-red-50' : 'border-gray-300'"
-                      @blur="validarNIF"
-                    />
-                    <p v-if="nifError" class="mt-1 text-xs text-red-600">{{ nifError }}</p>
+          <div class="p-6 space-y-6">
+            <!-- Franjas horarias -->
+            <div>
+              <h3 class="text-sm font-medium text-gray-700 mb-4">Franjas horarias</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Franja manana -->
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-100">
+                  <div class="flex items-center gap-2 mb-3">
+                    <SunIcon class="w-5 h-5 text-amber-500" />
+                    <span class="font-medium text-amber-900">Manana</span>
                   </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                      Nombre o Razon Social <span class="text-red-500">*</span>
-                    </label>
-                    <input
-                      v-model="datosFiscales.razon_social"
-                      type="text"
-                      placeholder="Tu nombre completo"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    />
-                  </div>
-                </div>
-
-                <!-- Direccion -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Direccion fiscal</label>
-                  <input
-                    v-model="datosFiscales.direccion"
-                    type="text"
-                    placeholder="Calle, numero, piso..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                  />
-                </div>
-
-                <!-- CP, Ciudad, Provincia -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Codigo Postal</label>
-                    <input
-                      v-model="datosFiscales.codigo_postal"
-                      type="text"
-                      placeholder="28001"
-                      maxlength="5"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
-                    <input
-                      v-model="datosFiscales.ciudad"
-                      type="text"
-                      placeholder="Madrid"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Provincia</label>
-                    <input
-                      v-model="datosFiscales.provincia"
-                      type="text"
-                      placeholder="Madrid"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    />
-                  </div>
-                </div>
-
-                <!-- Numero colegiado y Regimen IVA -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                      Numero de Colegiado <span class="text-gray-400 font-normal">(opcional)</span>
-                    </label>
-                    <input
-                      v-model="datosFiscales.numero_colegiado"
-                      type="text"
-                      placeholder="Ej: M-12345"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Regimen de IVA</label>
-                    <div class="space-y-2">
-                      <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all"
-                        :class="datosFiscales.regimen_iva === 'exento' ? 'border-violet-500 bg-violet-50' : 'border-gray-200'">
-                        <input type="radio" v-model="datosFiscales.regimen_iva" value="exento" class="w-4 h-4 text-violet-600" />
-                        <div>
-                          <span class="text-sm font-medium">Exento de IVA</span>
-                          <p class="text-xs text-gray-500">Servicios sanitarios</p>
-                        </div>
-                      </label>
-                      <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all"
-                        :class="datosFiscales.regimen_iva === 'general' ? 'border-violet-500 bg-violet-50' : 'border-gray-200'">
-                        <input type="radio" v-model="datosFiscales.regimen_iva" value="general" class="w-4 h-4 text-violet-600" />
-                        <div>
-                          <span class="text-sm font-medium">Regimen General (21%)</span>
-                          <p class="text-xs text-gray-500">Otros servicios</p>
-                        </div>
-                      </label>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Inicio</label>
+                      <select
+                        v-model="agenda.horario.inicio_manana"
+                        class="w-full px-3 py-2.5 border border-amber-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                      >
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Fin</label>
+                      <select
+                        v-model="agenda.horario.fin_manana"
+                        class="w-full px-3 py-2.5 border border-amber-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                      >
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
                     </div>
                   </div>
-                </div>
-
-                <!-- Info facturacion -->
-                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                  <p class="text-sm text-indigo-800">
-                    <strong>Sobre facturacion:</strong> Particulares: {{ datosFiscales.regimen_iva === 'exento' ? 'IVA exento' : 'IVA 21%' }} |
-                    Empresas: IVA 21% + Retencion 15%
+                  <!-- Validacion horario manana -->
+                  <p v-if="errorHorarioManana" class="mt-2 text-xs text-red-600 flex items-center gap-1">
+                    <ExclamationTriangleIcon class="w-3.5 h-3.5" />
+                    {{ errorHorarioManana }}
                   </p>
                 </div>
 
-                <div class="flex justify-end pt-4 border-t border-gray-100">
-                  <button
-                    @click="guardarDatosFiscales"
-                    :disabled="guardandoFiscales"
-                    class="px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-                  >
-                    <svg v-if="guardandoFiscales" class="w-4 h-4 animate-spin" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    {{ guardandoFiscales ? 'Guardando...' : 'Guardar datos fiscales' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- SECCION: Comunicacion -->
-          <section v-show="seccionActiva === 'comunicacion'" class="space-y-6">
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-900">Comunicacion con Pacientes</h2>
-                <p class="text-sm text-gray-500">Configura recordatorios y notificaciones</p>
-              </div>
-
-              <div class="p-6 space-y-6">
-                <!-- Recordatorios -->
-                <div>
-                  <h4 class="font-medium text-gray-700 mb-3">Recordatorios de cita</h4>
-                  <div class="space-y-3">
-                    <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                      <div>
-                        <span class="font-medium text-gray-900">24 horas antes</span>
-                        <p class="text-xs text-gray-500">Enviar recordatorio un dia antes</p>
-                      </div>
-                      <input
-                        v-model="comunicacion.recordatorio_24h"
-                        type="checkbox"
-                        class="w-5 h-5 text-violet-600 rounded"
-                      />
-                    </label>
-                    <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                      <div>
-                        <span class="font-medium text-gray-900">1 hora antes</span>
-                        <p class="text-xs text-gray-500">Recordatorio de ultima hora</p>
-                      </div>
-                      <input
-                        v-model="comunicacion.recordatorio_1h"
-                        type="checkbox"
-                        class="w-5 h-5 text-violet-600 rounded"
-                      />
-                    </label>
+                <!-- Franja tarde -->
+                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                  <div class="flex items-center gap-2 mb-3">
+                    <MoonIcon class="w-5 h-5 text-indigo-500" />
+                    <span class="font-medium text-indigo-900">Tarde</span>
                   </div>
-                </div>
-
-                <!-- Canal preferido -->
-                <div>
-                  <h4 class="font-medium text-gray-700 mb-3">Canal preferido</h4>
                   <div class="grid grid-cols-2 gap-3">
-                    <label class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer"
-                      :class="comunicacion.canal_preferido === 'email' ? 'border-violet-500 bg-violet-50' : 'border-gray-200'">
-                      <input type="radio" v-model="comunicacion.canal_preferido" value="email" class="w-4 h-4 text-violet-600" />
-                      <span>Email</span>
-                    </label>
-                    <label class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer"
-                      :class="comunicacion.canal_preferido === 'whatsapp' ? 'border-violet-500 bg-violet-50' : 'border-gray-200'">
-                      <input type="radio" v-model="comunicacion.canal_preferido" value="whatsapp" class="w-4 h-4 text-violet-600" />
-                      <span>WhatsApp</span>
-                    </label>
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Inicio</label>
+                      <select
+                        v-model="agenda.horario.inicio_tarde"
+                        class="w-full px-3 py-2.5 border border-indigo-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      >
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-600 mb-1 block">Fin</label>
+                      <select
+                        v-model="agenda.horario.fin_tarde"
+                        class="w-full px-3 py-2.5 border border-indigo-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      >
+                        <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-gray-100">
-                  <button
-                    @click="guardarSeccion('comunicacion')"
-                    :disabled="guardandoSeccion === 'comunicacion'"
-                    class="px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50"
-                  >
-                    {{ guardandoSeccion === 'comunicacion' ? 'Guardando...' : 'Guardar preferencias' }}
-                  </button>
+                  <!-- Validacion horario tarde -->
+                  <p v-if="errorHorarioTarde" class="mt-2 text-xs text-red-600 flex items-center gap-1">
+                    <ExclamationTriangleIcon class="w-3.5 h-3.5" />
+                    {{ errorHorarioTarde }}
+                  </p>
                 </div>
               </div>
             </div>
-          </section>
 
-          <!-- SECCION: Privacidad -->
-          <section v-show="seccionActiva === 'privacidad'" class="space-y-6">
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-900">Privacidad y Datos</h2>
-                <p class="text-sm text-gray-500">Control sobre tus datos y privacidad</p>
-              </div>
-
-              <div class="p-6 space-y-6">
-                <div class="p-4 bg-gray-50 rounded-lg">
-                  <h4 class="font-medium text-gray-700 mb-2">Exportar configuracion</h4>
-                  <p class="text-sm text-gray-500 mb-3">Descarga una copia de tu configuracion en formato JSON.</p>
-                  <button
-                    @click="exportarConfiguracion"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
-                  >
-                    Exportar configuracion
-                  </button>
-                </div>
-
-                <div class="p-4 bg-red-50 rounded-lg border border-red-200">
-                  <h4 class="font-medium text-red-700 mb-2">Zona de peligro</h4>
-                  <p class="text-sm text-red-600 mb-3">Estas acciones son irreversibles.</p>
-                  <button
-                    class="px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
-                    disabled
-                  >
-                    Eliminar cuenta (contactar soporte)
-                  </button>
-                </div>
+            <!-- Dias laborables -->
+            <div>
+              <h3 class="text-sm font-medium text-gray-700 mb-4">Dias laborables</h3>
+              <div class="flex flex-wrap gap-2">
+                <label
+                  v-for="dia in diasSemana"
+                  :key="dia.value"
+                  class="relative flex items-center justify-center w-14 h-14 border-2 rounded-xl cursor-pointer transition-all"
+                  :class="agenda.dias_laborables.includes(dia.value)
+                    ? 'border-violet-500 bg-violet-50 text-violet-700'
+                    : 'border-gray-200 hover:border-gray-300 text-gray-500'"
+                >
+                  <input
+                    type="checkbox"
+                    :value="dia.value"
+                    v-model="agenda.dias_laborables"
+                    class="sr-only"
+                  />
+                  <div class="text-center">
+                    <span class="text-sm font-semibold">{{ dia.label }}</span>
+                  </div>
+                  <CheckCircleIcon
+                    v-if="agenda.dias_laborables.includes(dia.value)"
+                    class="absolute -top-1 -right-1 w-5 h-5 text-violet-600 bg-white rounded-full"
+                  />
+                </label>
               </div>
             </div>
-          </section>
-        </main>
+
+            <div class="flex justify-end pt-4 border-t border-gray-100">
+              <button
+                @click="guardarSeccion('horario')"
+                :disabled="guardandoSeccion === 'horario' || hayErroresHorario"
+                class="px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <ArrowPathIcon v-if="guardandoSeccion === 'horario'" class="w-4 h-4 animate-spin" />
+                {{ guardandoSeccion === 'horario' ? 'Guardando...' : 'Guardar horario' }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECCION 3: POLITICA DE CANCELACION -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                <ExclamationTriangleIcon class="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <h2 class="font-semibold text-gray-900">Politica de cancelacion</h2>
+                <p class="text-sm text-gray-500">Reglas claras para cuando un paciente cancela su cita</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Limite cancelacion -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Limite de cancelacion gratuita
+                </label>
+                <select
+                  v-model.number="agenda.limite_cancelacion_horas"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white"
+                >
+                  <option :value="12">12 horas antes</option>
+                  <option :value="24">24 horas antes</option>
+                  <option :value="48">48 horas antes</option>
+                  <option :value="72">72 horas antes</option>
+                </select>
+                <p class="mt-1.5 text-xs text-gray-500">Tiempo minimo de antelacion para cancelar sin coste</p>
+              </div>
+
+              <!-- Penalizacion -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Penalizacion por cancelacion tardia
+                </label>
+                <select
+                  v-model="agenda.penalizacion_cancelacion"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white"
+                >
+                  <option value="ninguna">Sin penalizacion</option>
+                  <option value="50%">50% del valor de la sesion</option>
+                  <option value="100%">100% del valor de la sesion</option>
+                </select>
+                <p class="mt-1.5 text-xs text-gray-500">Importe a cobrar si cancela fuera de plazo</p>
+              </div>
+            </div>
+
+            <p class="mt-4 text-sm text-gray-500 bg-gray-50 rounded-lg p-3">
+              <InformationCircleIcon class="w-4 h-4 inline mr-1 text-gray-400" />
+              Estas reglas se aplicaran cuando un paciente cancele tarde. Se utilizaran tambien en los textos de recordatorios y comunicaciones.
+            </p>
+
+            <div class="flex justify-end pt-4 mt-4 border-t border-gray-100">
+              <button
+                @click="guardarSeccion('cancelacion')"
+                :disabled="guardandoSeccion === 'cancelacion'"
+                class="px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <ArrowPathIcon v-if="guardandoSeccion === 'cancelacion'" class="w-4 h-4 animate-spin" />
+                {{ guardandoSeccion === 'cancelacion' ? 'Guardando...' : 'Guardar politica' }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECCION 4: VACACIONES Y BLOQUEOS -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <CalendarIcon class="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 class="font-semibold text-gray-900">Vacaciones y bloqueos</h2>
+                <p class="text-sm text-gray-500">Periodos donde no estaras disponible para nuevas citas</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 space-y-6">
+            <!-- Lista de bloqueos existentes -->
+            <div>
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Bloqueos configurados</h3>
+
+              <div v-if="agenda.bloqueos && agenda.bloqueos.length > 0" class="space-y-2">
+                <div
+                  v-for="bloqueo in agenda.bloqueos"
+                  :key="bloqueo.id"
+                  class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100 group hover:border-gray-200 transition-colors"
+                >
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" :class="tipoBloqueoStyle(bloqueo.tipo).bg">
+                      <span class="text-lg">{{ tipoBloqueoStyle(bloqueo.tipo).icon }}</span>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <p class="font-medium text-gray-900">
+                          {{ formatearFechaBloqueo(bloqueo.fecha_inicio) }}
+                          <span class="text-gray-400 mx-1">→</span>
+                          {{ formatearFechaBloqueo(bloqueo.fecha_fin) }}
+                        </p>
+                        <span class="px-2 py-0.5 text-xs font-medium rounded-full" :class="tipoBloqueoStyle(bloqueo.tipo).badge">
+                          {{ tipoBloqueoLabel(bloqueo.tipo) }}
+                        </span>
+                      </div>
+                      <p v-if="bloqueo.descripcion" class="text-sm text-gray-500 mt-0.5">{{ bloqueo.descripcion }}</p>
+                    </div>
+                  </div>
+                  <button
+                    @click="eliminarBloqueo(bloqueo.id)"
+                    class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                    title="Eliminar bloqueo"
+                  >
+                    <TrashIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                <CalendarIcon class="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                <p class="text-sm text-gray-500">No tienes bloqueos configurados</p>
+                <p class="text-xs text-gray-400 mt-1">Anade vacaciones o dias libres aqui</p>
+              </div>
+            </div>
+
+            <!-- Formulario nuevo bloqueo -->
+            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+              <h4 class="font-medium text-blue-900 mb-4 flex items-center gap-2">
+                <PlusCircleIcon class="w-5 h-5" />
+                Anadir nuevo bloqueo
+              </h4>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Fecha inicio -->
+                <div>
+                  <label class="text-xs font-medium text-blue-700 mb-1.5 block">Fecha inicio</label>
+                  <input
+                    v-model="nuevoBloqueo.fecha_inicio"
+                    type="date"
+                    :min="hoy"
+                    class="w-full px-3 py-2.5 border border-blue-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <!-- Fecha fin -->
+                <div>
+                  <label class="text-xs font-medium text-blue-700 mb-1.5 block">Fecha fin</label>
+                  <input
+                    v-model="nuevoBloqueo.fecha_fin"
+                    type="date"
+                    :min="nuevoBloqueo.fecha_inicio || hoy"
+                    class="w-full px-3 py-2.5 border border-blue-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <!-- Tipo -->
+                <div>
+                  <label class="text-xs font-medium text-blue-700 mb-1.5 block">Tipo</label>
+                  <select
+                    v-model="nuevoBloqueo.tipo"
+                    class="w-full px-3 py-2.5 border border-blue-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="vacaciones">Vacaciones</option>
+                    <option value="festivo">Festivo</option>
+                    <option value="personal">Personal</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+
+                <!-- Boton anadir -->
+                <div class="flex items-end">
+                  <button
+                    @click="agregarBloqueo"
+                    :disabled="!nuevoBloqueo.fecha_inicio || !nuevoBloqueo.fecha_fin"
+                    class="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <PlusIcon class="w-4 h-4" />
+                    Anadir
+                  </button>
+                </div>
+              </div>
+
+              <!-- Descripcion -->
+              <div class="mt-3">
+                <input
+                  v-model="nuevoBloqueo.descripcion"
+                  type="text"
+                  placeholder="Descripcion opcional (ej: Vacaciones de Navidad)"
+                  class="w-full px-3 py-2.5 border border-blue-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <!-- Error de solapamiento -->
+              <p v-if="errorBloqueoSolapado" class="mt-3 text-sm text-red-600 flex items-center gap-1">
+                <ExclamationTriangleIcon class="w-4 h-4" />
+                {{ errorBloqueoSolapado }}
+              </p>
+            </div>
+
+            <p class="text-sm text-gray-500 bg-gray-50 rounded-lg p-3">
+              <InformationCircleIcon class="w-4 h-4 inline mr-1 text-gray-400" />
+              Los dias bloqueados no estaran disponibles para nuevas sesiones. Revisa las sesiones ya agendadas en esos dias para reprogramarlas si es necesario.
+            </p>
+
+            <div class="flex justify-end pt-4 border-t border-gray-100">
+              <button
+                @click="guardarSeccion('bloqueos')"
+                :disabled="guardandoSeccion === 'bloqueos'"
+                class="px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <ArrowPathIcon v-if="guardandoSeccion === 'bloqueos'" class="w-4 h-4 animate-spin" />
+                {{ guardandoSeccion === 'bloqueos' ? 'Guardando...' : 'Guardar bloqueos' }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECCION 5: HORARIOS PERSONALIZADOS POR DIA -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                <AdjustmentsHorizontalIcon class="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <h2 class="font-semibold text-gray-900">Horarios personalizados por dia</h2>
+                <p class="text-sm text-gray-500">Excepciones al horario habitual para dias concretos (ej: solo manana un viernes)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 space-y-6">
+            <!-- Lista de horarios personalizados -->
+            <div>
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Horarios especiales configurados</h3>
+
+              <div v-if="agenda.horarios_personalizados && agenda.horarios_personalizados.length > 0" class="space-y-2">
+                <div
+                  v-for="hp in horariosPersonalizadosOrdenados"
+                  :key="hp.fecha"
+                  class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100 group hover:border-gray-200 transition-colors"
+                >
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" :class="hp.cerrado ? 'bg-red-100' : 'bg-purple-100'">
+                      <XMarkIcon v-if="hp.cerrado" class="w-5 h-5 text-red-600" />
+                      <ClockIcon v-else class="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <p class="font-medium text-gray-900">{{ formatearFechaBloqueo(hp.fecha) }}</p>
+                        <span
+                          class="px-2 py-0.5 text-xs font-medium rounded-full"
+                          :class="hp.cerrado ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700'"
+                        >
+                          {{ hp.cerrado ? 'Cerrado' : 'Horario especial' }}
+                        </span>
+                      </div>
+                      <p v-if="!hp.cerrado" class="text-sm text-gray-500 mt-0.5">
+                        {{ hp.inicio_manana || agenda.horario.inicio_manana }} - {{ hp.fin_manana || agenda.horario.fin_manana }}
+                        <span class="mx-1 text-gray-300">|</span>
+                        {{ hp.inicio_tarde || agenda.horario.inicio_tarde }} - {{ hp.fin_tarde || agenda.horario.fin_tarde }}
+                      </p>
+                      <p v-if="hp.notas" class="text-xs text-purple-600 mt-0.5">{{ hp.notas }}</p>
+                    </div>
+                  </div>
+                  <button
+                    @click="eliminarHorarioPersonalizado(hp.fecha)"
+                    class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                    title="Eliminar horario personalizado"
+                  >
+                    <TrashIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                <AdjustmentsHorizontalIcon class="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                <p class="text-sm text-gray-500">No tienes horarios especiales configurados</p>
+                <p class="text-xs text-gray-400 mt-1">Usa esto para dias con horario diferente al habitual</p>
+              </div>
+            </div>
+
+            <!-- Formulario nuevo horario personalizado -->
+            <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
+              <h4 class="font-medium text-purple-900 mb-4 flex items-center gap-2">
+                <PlusCircleIcon class="w-5 h-5" />
+                Anadir horario especial
+              </h4>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <!-- Fecha -->
+                <div>
+                  <label class="text-xs font-medium text-purple-700 mb-1.5 block">Fecha</label>
+                  <input
+                    v-model="nuevoHorarioPersonalizado.fecha"
+                    type="date"
+                    :min="hoy"
+                    class="w-full px-3 py-2.5 border border-purple-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+
+                <!-- Dia cerrado -->
+                <div class="flex items-end pb-1">
+                  <label class="flex items-center gap-3 cursor-pointer p-2.5 bg-white rounded-lg border border-purple-200 w-full">
+                    <input
+                      v-model="nuevoHorarioPersonalizado.cerrado"
+                      type="checkbox"
+                      class="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+                    />
+                    <span class="text-sm font-medium text-purple-700">Dia cerrado</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Horarios si no esta cerrado -->
+              <div v-if="!nuevoHorarioPersonalizado.cerrado" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                  <label class="text-xs font-medium text-purple-700 mb-1.5 block">
+                    Inicio manana
+                    <span class="text-purple-400 font-normal">(opcional)</span>
+                  </label>
+                  <select
+                    v-model="nuevoHorarioPersonalizado.inicio_manana"
+                    class="w-full px-3 py-2.5 border border-purple-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Por defecto</option>
+                    <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-xs font-medium text-purple-700 mb-1.5 block">
+                    Fin manana
+                    <span class="text-purple-400 font-normal">(opcional)</span>
+                  </label>
+                  <select
+                    v-model="nuevoHorarioPersonalizado.fin_manana"
+                    class="w-full px-3 py-2.5 border border-purple-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Por defecto</option>
+                    <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-xs font-medium text-purple-700 mb-1.5 block">
+                    Inicio tarde
+                    <span class="text-purple-400 font-normal">(opcional)</span>
+                  </label>
+                  <select
+                    v-model="nuevoHorarioPersonalizado.inicio_tarde"
+                    class="w-full px-3 py-2.5 border border-purple-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Por defecto</option>
+                    <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-xs font-medium text-purple-700 mb-1.5 block">
+                    Fin tarde
+                    <span class="text-purple-400 font-normal">(opcional)</span>
+                  </label>
+                  <select
+                    v-model="nuevoHorarioPersonalizado.fin_tarde"
+                    class="w-full px-3 py-2.5 border border-purple-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Por defecto</option>
+                    <option v-for="h in horasDisponibles" :key="h" :value="h">{{ h }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Notas y boton -->
+              <div class="flex gap-3">
+                <input
+                  v-model="nuevoHorarioPersonalizado.notas"
+                  type="text"
+                  placeholder="Notas opcionales (ej: Reunion profesional)"
+                  class="flex-1 px-3 py-2.5 border border-purple-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-purple-500"
+                />
+                <button
+                  @click="agregarHorarioPersonalizado"
+                  :disabled="!nuevoHorarioPersonalizado.fecha"
+                  class="px-5 py-2.5 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  <PlusIcon class="w-4 h-4" />
+                  Anadir
+                </button>
+              </div>
+            </div>
+
+            <div class="p-3 bg-amber-50 rounded-lg border border-amber-100">
+              <p class="text-sm text-amber-800">
+                <strong>Prioridad de reglas:</strong> Los bloqueos (vacaciones) tienen prioridad sobre los horarios personalizados.
+                Los horarios personalizados sobrescriben el horario habitual para ese dia concreto.
+              </p>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-gray-100">
+              <button
+                @click="guardarSeccion('horarios_personalizados')"
+                :disabled="guardandoSeccion === 'horarios_personalizados'"
+                class="px-5 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <ArrowPathIcon v-if="guardandoSeccion === 'horarios_personalizados'" class="w-4 h-4 animate-spin" />
+                {{ guardandoSeccion === 'horarios_personalizados' ? 'Guardando...' : 'Guardar horarios' }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ultima actualizacion -->
+        <div v-if="ultimaActualizacion" class="text-center py-4">
+          <p class="text-xs text-gray-400">
+            Ultima actualizacion: {{ ultimaActualizacion }}
+          </p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import {
+  ClockIcon,
+  CalendarDaysIcon,
+  CalendarIcon,
+  SunIcon,
+  MoonIcon,
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+  CheckCircleIcon,
+  TrashIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  XMarkIcon,
+  AdjustmentsHorizontalIcon,
+  ArrowPathIcon
+} from '@heroicons/vue/24/outline'
+
 definePageMeta({
   layout: 'terapeuta',
   middleware: ['auth-terapeuta']
@@ -1056,46 +673,16 @@ const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const toast = useToast()
 
-// Tipos
-interface PlantillaBono {
-  nombre: string
-  sesiones: number
-  precio: number
-  frecuencia: 'semanal' | 'quincenal' | 'mensual' | 'cualquiera'
-}
-
-// Secciones de navegacion
-const secciones = [
-  { id: 'perfil', label: 'Perfil y Marca', icon: '👤' },
-  { id: 'agenda', label: 'Agenda y Sesiones', icon: '📅' },
-  { id: 'tarifas', label: 'Tarifas y Bonos', icon: '💰' },
-  { id: 'pagos', label: 'Pagos y Facturacion', icon: '💳' },
-  { id: 'comunicacion', label: 'Comunicacion', icon: '💬' },
-  { id: 'privacidad', label: 'Privacidad', icon: '🔒' }
-]
-
-const seccionActiva = ref('perfil')
-
 // Estado general
 const cargando = ref(true)
 const guardandoSeccion = ref<string | null>(null)
 const ultimaActualizacion = ref<string | null>(null)
 const terapeutaId = ref<string | null>(null)
 
-// Estado datos fiscales
-const guardandoFiscales = ref(false)
-const nifError = ref<string | null>(null)
+// Fecha de hoy para validaciones
+const hoy = computed(() => new Date().toISOString().split('T')[0])
 
-// Datos de perfil
-const perfil = ref({
-  nombre_mostrar: '',
-  especialidad: '',
-  mensaje_bienvenida: '',
-  idioma: 'es',
-  formato_fecha: 'DD/MM/YYYY'
-})
-
-// Tipos para bloqueos y horarios personalizados
+// Tipos
 interface Bloqueo {
   id: string
   fecha_inicio: string
@@ -1113,6 +700,11 @@ interface HorarioPersonalizado {
   fin_tarde?: string
   notas?: string
 }
+
+// Configuracion principal
+const config = ref({
+  duracion_sesion_minutos: 60
+})
 
 // Datos de agenda
 const agenda = ref({
@@ -1149,54 +741,10 @@ const nuevoHorarioPersonalizado = ref({
   notas: ''
 })
 
-// Datos de comunicacion
-const comunicacion = ref({
-  recordatorio_24h: true,
-  recordatorio_1h: false,
-  canal_preferido: 'email'
-})
-
-// Configuracion principal
-const config = ref({
-  precio_sesion_base: 50.00,
-  duracion_sesion_minutos: 60,
-  metodos_pago_aceptados: ['efectivo', 'transferencia', 'bizum'] as string[],
-  precios_frecuencia: {
-    semanal: 40.00,
-    quincenal: 50.00,
-    unica: 60.00
-  },
-  plantillas_bonos: [] as PlantillaBono[],
-  configuracion_bonos: {
-    semanal: { sesiones: 4, precio: 160, descuento_porcentaje: 0 },
-    quincenal: { sesiones: 4, precio: 200, descuento_porcentaje: 0 },
-    mensual: { sesiones: 4, precio: 240, descuento_porcentaje: 0 }
-  }
-})
-
-// Datos fiscales
-const datosFiscales = ref({
-  nif: '',
-  razon_social: '',
-  direccion: '',
-  codigo_postal: '',
-  ciudad: '',
-  provincia: '',
-  regimen_iva: 'exento' as 'exento' | 'general',
-  numero_colegiado: ''
-})
-
+// Error de solapamiento de bloqueos
+const errorBloqueoSolapado = ref<string | null>(null)
 
 // Constantes
-const metodosDisponibles = [
-  { value: 'efectivo', label: 'Efectivo', icon: '💵' },
-  { value: 'transferencia', label: 'Transferencia', icon: '🏦' },
-  { value: 'bizum', label: 'Bizum', icon: '📱' },
-  { value: 'tarjeta', label: 'Tarjeta', icon: '💳' },
-  { value: 'paypal', label: 'PayPal', icon: '🅿️' },
-  { value: 'otro', label: 'Otro', icon: '📋' }
-]
-
 const diasSemana = [
   { value: 1, label: 'Lun' },
   { value: 2, label: 'Mar' },
@@ -1211,52 +759,119 @@ const horasDisponibles = computed(() => {
   const horas = []
   for (let h = 7; h <= 22; h++) {
     horas.push(`${String(h).padStart(2, '0')}:00`)
+    horas.push(`${String(h).padStart(2, '0')}:15`)
     horas.push(`${String(h).padStart(2, '0')}:30`)
+    horas.push(`${String(h).padStart(2, '0')}:45`)
   }
   return horas
 })
 
-// Funciones de utilidad
-const formatearPrecio = (precio: number) => {
-  if (!precio || isNaN(precio)) return '0.00'
-  return precio.toFixed(2)
-}
+// ============================================
+// VALIDACIONES DE HORARIOS
+// ============================================
 
+const errorHorarioManana = computed(() => {
+  if (!agenda.value.horario.inicio_manana || !agenda.value.horario.fin_manana) return null
+  if (agenda.value.horario.fin_manana <= agenda.value.horario.inicio_manana) {
+    return 'La hora de fin debe ser posterior a la de inicio'
+  }
+  return null
+})
 
-// Plantillas de bonos
-const agregarPlantillaBono = () => {
-  config.value.plantillas_bonos.push({
-    nombre: '',
-    sesiones: 4,
-    precio: 160,
-    frecuencia: 'semanal'
+const errorHorarioTarde = computed(() => {
+  if (!agenda.value.horario.inicio_tarde || !agenda.value.horario.fin_tarde) return null
+  if (agenda.value.horario.fin_tarde <= agenda.value.horario.inicio_tarde) {
+    return 'La hora de fin debe ser posterior a la de inicio'
+  }
+  return null
+})
+
+const hayErroresHorario = computed(() => {
+  return !!errorHorarioManana.value || !!errorHorarioTarde.value
+})
+
+// ============================================
+// HORARIOS PERSONALIZADOS ORDENADOS
+// ============================================
+
+const horariosPersonalizadosOrdenados = computed(() => {
+  return [...agenda.value.horarios_personalizados].sort((a, b) =>
+    new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
+  )
+})
+
+// ============================================
+// FUNCIONES DE UTILIDAD
+// ============================================
+
+const formatearFechaBloqueo = (fecha: string) => {
+  return new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
   })
 }
 
-const eliminarPlantillaBono = (index: number) => {
-  config.value.plantillas_bonos.splice(index, 1)
-}
-
-const agregarPlantillaPredefinida = (nombre: string, sesiones: number, precio: number, frecuencia: 'semanal' | 'quincenal' | 'mensual' | 'cualquiera') => {
-  const existe = config.value.plantillas_bonos.some(p => p.nombre === nombre)
-  if (!existe) {
-    config.value.plantillas_bonos.push({ nombre, sesiones, precio, frecuencia })
+const tipoBloqueoLabel = (tipo: string) => {
+  const labels: Record<string, string> = {
+    vacaciones: 'Vacaciones',
+    festivo: 'Festivo',
+    personal: 'Personal',
+    otro: 'Otro'
   }
+  return labels[tipo] || tipo
 }
 
-// ==========================================
-// Funciones para Bloqueos (Vacaciones, etc.)
-// ==========================================
+const tipoBloqueoStyle = (tipo: string) => {
+  const styles: Record<string, { bg: string; badge: string; icon: string }> = {
+    vacaciones: { bg: 'bg-emerald-100', badge: 'bg-emerald-100 text-emerald-700', icon: '🏖️' },
+    festivo: { bg: 'bg-amber-100', badge: 'bg-amber-100 text-amber-700', icon: '🎉' },
+    personal: { bg: 'bg-blue-100', badge: 'bg-blue-100 text-blue-700', icon: '👤' },
+    otro: { bg: 'bg-gray-100', badge: 'bg-gray-100 text-gray-700', icon: '🚫' }
+  }
+  return styles[tipo] || styles.otro
+}
+
+// ============================================
+// FUNCIONES PARA BLOQUEOS
+// ============================================
+
+const verificarSolapamientoBloqueo = (inicio: string, fin: string): boolean => {
+  for (const bloqueo of agenda.value.bloqueos) {
+    // Comprobar si hay solapamiento
+    const existeInicio = new Date(bloqueo.fecha_inicio)
+    const existeFin = new Date(bloqueo.fecha_fin)
+    const nuevoInicio = new Date(inicio)
+    const nuevoFin = new Date(fin)
+
+    if (
+      (nuevoInicio >= existeInicio && nuevoInicio <= existeFin) ||
+      (nuevoFin >= existeInicio && nuevoFin <= existeFin) ||
+      (nuevoInicio <= existeInicio && nuevoFin >= existeFin)
+    ) {
+      return true
+    }
+  }
+  return false
+}
 
 const agregarBloqueo = () => {
+  errorBloqueoSolapado.value = null
+
   if (!nuevoBloqueo.value.fecha_inicio || !nuevoBloqueo.value.fecha_fin) {
     toast.error('Debes seleccionar fecha de inicio y fin')
     return
   }
 
-  // Validar que fecha fin >= fecha inicio
   if (nuevoBloqueo.value.fecha_fin < nuevoBloqueo.value.fecha_inicio) {
-    toast.error('La fecha de fin debe ser posterior a la de inicio')
+    toast.error('La fecha de fin debe ser igual o posterior a la de inicio')
+    return
+  }
+
+  // Verificar solapamiento
+  if (verificarSolapamientoBloqueo(nuevoBloqueo.value.fecha_inicio, nuevoBloqueo.value.fecha_fin)) {
+    errorBloqueoSolapado.value = 'Este periodo se solapa con un bloqueo existente. Modifica las fechas o elimina el bloqueo anterior.'
     return
   }
 
@@ -1278,7 +893,7 @@ const agregarBloqueo = () => {
     descripcion: ''
   }
 
-  toast.success('Bloqueo agregado. Recuerda guardar los cambios.')
+  toast.success('Bloqueo anadido. Recuerda guardar los cambios.')
 }
 
 const eliminarBloqueo = (bloqueoId: string) => {
@@ -1286,27 +901,9 @@ const eliminarBloqueo = (bloqueoId: string) => {
   toast.success('Bloqueo eliminado. Recuerda guardar los cambios.')
 }
 
-const formatearFechaBloqueo = (fecha: string) => {
-  return new Date(fecha).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  })
-}
-
-const tipoBloqueoLabel = (tipo: string) => {
-  const labels: Record<string, string> = {
-    vacaciones: 'Vacaciones',
-    festivo: 'Festivo',
-    personal: 'Personal',
-    otro: 'Otro'
-  }
-  return labels[tipo] || tipo
-}
-
-// ==========================================
-// Funciones para Horarios Personalizados
-// ==========================================
+// ============================================
+// FUNCIONES PARA HORARIOS PERSONALIZADOS
+// ============================================
 
 const agregarHorarioPersonalizado = () => {
   if (!nuevoHorarioPersonalizado.value.fecha) {
@@ -1330,13 +927,11 @@ const agregarHorarioPersonalizado = () => {
   }
 
   if (existeIdx >= 0) {
-    // Actualizar existente
     agenda.value.horarios_personalizados[existeIdx] = horario
     toast.success('Horario actualizado. Recuerda guardar los cambios.')
   } else {
-    // Agregar nuevo
     agenda.value.horarios_personalizados.push(horario)
-    toast.success('Horario personalizado agregado. Recuerda guardar los cambios.')
+    toast.success('Horario personalizado anadido. Recuerda guardar los cambios.')
   }
 
   // Limpiar formulario
@@ -1358,49 +953,10 @@ const eliminarHorarioPersonalizado = (fecha: string) => {
   toast.success('Horario personalizado eliminado. Recuerda guardar los cambios.')
 }
 
-// Calculo de ingreso neto (sin comisiones)
-const calcularIngresoNeto = (precio: number) => {
-  return precio // 100% para el terapeuta, sin comisiones
-}
+// ============================================
+// GUARDAR SECCIONES
+// ============================================
 
-// Validar NIF
-const validarNIF = () => {
-  const nif = datosFiscales.value.nif.toUpperCase().replace(/[^A-Z0-9]/g, '')
-  if (!nif) {
-    nifError.value = null
-    return true
-  }
-  if (nif.length !== 9) {
-    nifError.value = 'El NIF debe tener 9 caracteres'
-    return false
-  }
-  const dniRegex = /^[0-9]{8}[A-Z]$/
-  if (dniRegex.test(nif)) {
-    const letras = 'TRWAGMYFPDXBNJZSQVHLCKE'
-    const numero = parseInt(nif.substring(0, 8))
-    const letraCalculada = letras[numero % 23]
-    if (nif[8] !== letraCalculada) {
-      nifError.value = 'La letra del DNI no es correcta'
-      return false
-    }
-    nifError.value = null
-    return true
-  }
-  const nieRegex = /^[XYZ][0-9]{7}[A-Z]$/
-  if (nieRegex.test(nif)) {
-    nifError.value = null
-    return true
-  }
-  const cifRegex = /^[ABCDEFGHJKLMNPQRSUVW][0-9]{7}[A-J0-9]$/
-  if (cifRegex.test(nif)) {
-    nifError.value = null
-    return true
-  }
-  nifError.value = 'Formato de NIF/DNI/NIE no valido'
-  return false
-}
-
-// Guardar seccion
 async function guardarSeccion(seccion: string) {
   if (!terapeutaId.value) return
 
@@ -1410,22 +966,24 @@ async function guardarSeccion(seccion: string) {
     let updateData: any = { updated_at: new Date().toISOString() }
 
     switch (seccion) {
-      case 'perfil':
-        updateData.perfil = perfil.value
-        break
-      case 'agenda':
-        updateData.configuracion_agenda = agenda.value
+      case 'preferencias':
         updateData.duracion_sesion_minutos = config.value.duracion_sesion_minutos
+        updateData.configuracion_agenda = {
+          ...agenda.value,
+          buffer_minutos: agenda.value.buffer_minutos
+        }
         break
-      case 'tarifas':
-        updateData.precios_frecuencia = config.value.precios_frecuencia
-        updateData.plantillas_bonos = config.value.plantillas_bonos
+      case 'horario':
+        updateData.configuracion_agenda = agenda.value
         break
-      case 'metodos_pago':
-        updateData.metodos_pago_aceptados = config.value.metodos_pago_aceptados
+      case 'cancelacion':
+        updateData.configuracion_agenda = agenda.value
         break
-      case 'comunicacion':
-        updateData.configuracion_comunicacion = comunicacion.value
+      case 'bloqueos':
+        updateData.configuracion_agenda = agenda.value
+        break
+      case 'horarios_personalizados':
+        updateData.configuracion_agenda = agenda.value
         break
     }
 
@@ -1440,15 +998,14 @@ async function guardarSeccion(seccion: string) {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     })
 
-    // Mostrar mensaje de confirmación según la sección
     const mensajes: Record<string, string> = {
-      perfil: 'Perfil actualizado correctamente',
-      agenda: 'Configuración de agenda guardada',
-      tarifas: 'Tarifas y bonos actualizados',
-      metodos_pago: 'Métodos de pago guardados',
-      comunicacion: 'Preferencias de comunicación guardadas'
+      preferencias: 'Preferencias de sesion guardadas',
+      horario: 'Horario habitual guardado',
+      cancelacion: 'Politica de cancelacion guardada',
+      bloqueos: 'Bloqueos guardados correctamente',
+      horarios_personalizados: 'Horarios personalizados guardados'
     }
-    toast.success(mensajes[seccion] || 'Configuración guardada')
+    toast.success(mensajes[seccion] || 'Configuracion guardada')
   } catch (error: any) {
     console.error('Error al guardar:', error)
     toast.error(`Error al guardar: ${error.message}`)
@@ -1457,62 +1014,10 @@ async function guardarSeccion(seccion: string) {
   }
 }
 
-// Guardar datos fiscales
-async function guardarDatosFiscales() {
-  if (!terapeutaId.value) return
-  if (datosFiscales.value.nif && !validarNIF()) return
+// ============================================
+// CARGAR CONFIGURACION
+// ============================================
 
-  try {
-    guardandoFiscales.value = true
-
-    const { error } = await supabase
-      .from('terapeutas')
-      .update({
-        datos_fiscales: {
-          ...datosFiscales.value,
-          nif: datosFiscales.value.nif.toUpperCase().replace(/[^A-Z0-9]/g, '')
-        },
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', terapeutaId.value)
-
-    if (error) throw error
-
-    ultimaActualizacion.value = new Date().toLocaleString('es-ES', {
-      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-    })
-    toast.success('Datos fiscales guardados correctamente')
-  } catch (error: any) {
-    console.error('Error al guardar datos fiscales:', error)
-    toast.error(`Error al guardar: ${error.message}`)
-  } finally {
-    guardandoFiscales.value = false
-  }
-}
-
-// Exportar configuracion
-const exportarConfiguracion = () => {
-  const exportData = {
-    perfil: perfil.value,
-    agenda: agenda.value,
-    tarifas: config.value.precios_frecuencia,
-    plantillas_bonos: config.value.plantillas_bonos,
-    metodos_pago: config.value.metodos_pago_aceptados,
-    comunicacion: comunicacion.value,
-    datos_fiscales: datosFiscales.value,
-    exportado_en: new Date().toISOString()
-  }
-
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `terapli-config-${new Date().toISOString().split('T')[0]}.json`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-// Cargar configuracion
 async function cargarConfiguracion() {
   try {
     cargando.value = true
@@ -1533,19 +1038,10 @@ async function cargarConfiguracion() {
     if (terapeutaData) {
       terapeutaId.value = terapeutaData.id
 
-      // Cargar configuracion principal
-      if (terapeutaData.precio_sesion_base !== null) config.value.precio_sesion_base = terapeutaData.precio_sesion_base
-      if (terapeutaData.duracion_sesion_minutos !== null) config.value.duracion_sesion_minutos = terapeutaData.duracion_sesion_minutos
-      if (terapeutaData.metodos_pago_aceptados) config.value.metodos_pago_aceptados = terapeutaData.metodos_pago_aceptados
-      if (terapeutaData.precios_frecuencia) config.value.precios_frecuencia = { ...config.value.precios_frecuencia, ...terapeutaData.precios_frecuencia }
-      if (terapeutaData.plantillas_bonos) config.value.plantillas_bonos = terapeutaData.plantillas_bonos
-      if (terapeutaData.configuracion_bonos) config.value.configuracion_bonos = { ...config.value.configuracion_bonos, ...terapeutaData.configuracion_bonos }
-
-      // Cargar perfil
-      if (terapeutaData.perfil) {
-        perfil.value = { ...perfil.value, ...terapeutaData.perfil }
+      // Cargar duracion de sesion
+      if (terapeutaData.duracion_sesion_minutos !== null) {
+        config.value.duracion_sesion_minutos = terapeutaData.duracion_sesion_minutos
       }
-      if (terapeutaData.nombre) perfil.value.nombre_mostrar = terapeutaData.nombre
 
       // Cargar agenda
       if (terapeutaData.configuracion_agenda) {
@@ -1553,29 +1049,8 @@ async function cargarConfiguracion() {
         agenda.value = {
           ...agenda.value,
           ...agendaData,
-          // Asegurar que los arrays existan
           bloqueos: agendaData.bloqueos || [],
           horarios_personalizados: agendaData.horarios_personalizados || []
-        }
-      }
-
-      // Cargar comunicacion
-      if (terapeutaData.configuracion_comunicacion) {
-        comunicacion.value = { ...comunicacion.value, ...terapeutaData.configuracion_comunicacion }
-      }
-
-      // Cargar datos fiscales
-      if (terapeutaData.datos_fiscales) {
-        const df = terapeutaData.datos_fiscales as any
-        datosFiscales.value = {
-          nif: df.nif || '',
-          razon_social: df.razon_social || '',
-          direccion: df.direccion || '',
-          codigo_postal: df.codigo_postal || '',
-          ciudad: df.ciudad || '',
-          provincia: df.provincia || '',
-          regimen_iva: df.regimen_iva || 'exento',
-          numero_colegiado: df.numero_colegiado || ''
         }
       }
 
