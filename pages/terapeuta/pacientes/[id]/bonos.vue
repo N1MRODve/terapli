@@ -263,6 +263,12 @@
                   <div class="flex items-center gap-2">
                     <h3 class="font-semibold text-gray-900">{{ getTipoTexto(bono.tipo) }}</h3>
                     <span
+                      v-if="(bono.numero_renovacion || 1) > 1"
+                      class="px-2 py-0.5 text-xs font-medium rounded-full bg-violet-100 text-violet-700 border border-violet-200"
+                    >
+                      {{ bono.numero_renovacion }}ª renovación
+                    </span>
+                    <span
                       class="px-2 py-0.5 text-xs font-medium rounded-full"
                       :class="getEstadoClasses(bono.estado)"
                     >

@@ -13,9 +13,17 @@
           <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5550F2] to-[#027368] shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
             <span class="text-xl">🎫</span>
           </div>
-          <h3 class="font-['Elms_Sans'] text-xl font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
-            Bono {{ tipoTexto }}
-          </h3>
+          <div>
+            <h3 class="font-['Elms_Sans'] text-xl font-bold bg-gradient-to-r from-[#5550F2] to-[#027368] bg-clip-text text-transparent">
+              Bono {{ tipoTexto }}
+            </h3>
+            <span
+              v-if="numeroRenovacion > 1"
+              class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-violet-100 text-violet-700 border border-violet-200"
+            >
+              {{ numeroRenovacion }}ª renovación
+            </span>
+          </div>
         </div>
         
         <!-- Estado del bono -->
@@ -248,6 +256,7 @@ const borderColor = computed(() => {
 const sesionesRestantes = computed(() => props.bono.sesiones_restantes ?? 0)
 const sesionesUsadas = computed(() => (props.bono.sesiones_totales || 0) - sesionesRestantes.value)
 const porcentajeUsado = computed(() => calcularPorcentajeUso(props.bono))
+const numeroRenovacion = computed(() => props.bono.numero_renovacion ?? 1)
 
 const barraProgresoColor = computed(() => {
   const porcentaje = porcentajeUsado.value
