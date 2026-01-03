@@ -834,6 +834,7 @@ const eliminarBono = async () => {
   try {
     eliminandoBono.value = true
     const bonoId = bonoAEliminar.value.id
+    const pacienteIdBono = bonoAEliminar.value.paciente_id
 
     // Paso 1: Desvincular citas que usan este bono (no las elimina, solo quita la referencia)
     const { error: errorCitas } = await supabase
@@ -862,17 +863,59 @@ const eliminarBono = async () => {
       throw errorBono
     }
 
-    // Paso 3: Recargar bonos
+    // Paso 3: Recalcular números de renovación para los bonos restantes del paciente
+    await recalcularNumerosRenovacion(pacienteIdBono)
+
+    // Paso 4: Cerrar modal inmediatamente para dar feedback visual
+    modalConfirmarEliminar.value = false
+    bonoAEliminar.value = null
+
+    // Paso 5: Recargar bonos
     await cargarBonos()
 
     toast.success('Bono eliminado correctamente')
-    modalConfirmarEliminar.value = false
-    bonoAEliminar.value = null
   } catch (error: any) {
     console.error('Error al eliminar bono:', error)
     toast.error(`Error al eliminar: ${error.message}`)
   } finally {
     eliminandoBono.value = false
+  }
+}
+
+/**
+ * Recalcula los números de renovación de todos los bonos de un paciente
+ * basándose en el orden de creación
+ */
+const recalcularNumerosRenovacion = async (pacienteIdParam: string) => {
+  try {
+    // Obtener todos los bonos del paciente ordenados por fecha de creación
+    const { data: bonosPaciente, error: errorBonos } = await supabase
+      .from('bonos')
+      .select('id, created_at')
+      .eq('paciente_id', pacienteIdParam)
+      .order('created_at', { ascending: true })
+
+    if (errorBonos) {
+      console.error('Error al obtener bonos para recalcular:', errorBonos)
+      return
+    }
+
+    if (!bonosPaciente || bonosPaciente.length === 0) return
+
+    // Actualizar cada bono con su nuevo número de renovación
+    for (let i = 0; i < bonosPaciente.length; i++) {
+      const nuevoNumero = i + 1
+      const { error: errorUpdate } = await supabase
+        .from('bonos')
+        .update({ numero_renovacion: nuevoNumero })
+        .eq('id', bonosPaciente[i].id)
+
+      if (errorUpdate) {
+        console.error(`Error al actualizar renovación del bono ${bonosPaciente[i].id}:`, errorUpdate)
+      }
+    }
+  } catch (err) {
+    console.error('Error al recalcular números de renovación:', err)
   }
 }
 
