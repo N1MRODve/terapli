@@ -47,6 +47,9 @@ const {
 
 const supabase = useSupabaseClient()
 
+// Composable de ficha de paciente (modal global)
+const { abrirFichaPaciente } = useFichaPaciente()
+
 // Configuración de agenda del terapeuta
 const {
   configuracion: configAgenda,
@@ -2512,15 +2515,27 @@ watch([vistaActiva, fechaSeleccionada], async () => {
                       </svg>
                     </span>
                     <!-- Nombre del paciente - GRANDE Y VISIBLE -->
+                    <button
+                      v-if="cita.paciente?.id"
+                      @click.stop="abrirFichaPaciente(cita.paciente.id)"
+                      class="text-[10px] sm:text-sm font-bold leading-tight flex-1 text-left hover:underline"
+                      :class="[
+                        getEstiloCompletoCita(cita).text,
+                        { 'line-clamp-2': vistaActiva === 'semana', 'line-clamp-1': vistaActiva === '5dias' || vistaActiva === 'dia' }
+                      ]"
+                      :title="`Ver ficha de ${cita.paciente?.nombre_completo || 'paciente'}`"
+                    >
+                      {{ cita.paciente?.nombre_completo || 'Sin paciente' }}
+                    </button>
                     <p
+                      v-else
                       class="text-[10px] sm:text-sm font-bold leading-tight flex-1"
                       :class="[
                         getEstiloCompletoCita(cita).text,
                         { 'line-clamp-2': vistaActiva === 'semana', 'line-clamp-1': vistaActiva === '5dias' || vistaActiva === 'dia' }
                       ]"
-                      :title="cita.paciente?.nombre_completo || 'Sin paciente'"
                     >
-                      {{ cita.paciente?.nombre_completo || 'Sin paciente' }}
+                      Sin paciente
                     </p>
                   </div>
                   <!-- Hora en formato compacto + indicadores adicionales -->

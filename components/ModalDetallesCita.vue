@@ -52,6 +52,9 @@ const bonoActivoPaciente = ref<any>(null) // Bono activo del paciente (si no tie
 // Router para navegación
 const router = useRouter()
 
+// Composable de ficha de paciente
+const { abrirFichaPaciente } = useFichaPaciente()
+
 // Composable de pagos
 const { undoPayment } = usePayments()
 const { success: toastSuccess, error: toastError } = useToast()
@@ -952,7 +955,15 @@ const guardarPrecioSesion = async () => {
                 </div>
                 <div class="min-w-0">
                   <h2 id="modal-title" class="text-sm sm:text-base font-semibold text-gray-900 truncate">
-                    Sesión - {{ paciente?.nombre_completo || 'Cargando...' }}
+                    Sesión -
+                    <button
+                      v-if="paciente?.id"
+                      @click="abrirFichaPaciente(paciente.id)"
+                      class="text-purple-600 hover:text-purple-800 hover:underline transition-colors"
+                    >
+                      {{ paciente?.nombre_completo || 'Cargando...' }}
+                    </button>
+                    <span v-else>{{ paciente?.nombre_completo || 'Cargando...' }}</span>
                   </h2>
                   <span :class="['text-xs font-medium px-2 py-0.5 rounded-full', claseEstadoBadge]">
                     {{ estadoLabel }}

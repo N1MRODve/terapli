@@ -292,6 +292,17 @@
 
     <!-- Toast Container -->
     <ToastContainer />
+
+    <!-- Modal Global de Ficha de Paciente -->
+    <ModalFichaPaciente
+      :is-open="modalFichaPacienteAbierto"
+      :paciente-id="pacienteIdFicha"
+      @close="cerrarFichaPaciente"
+      @ver-ficha="navegarAFicha"
+      @editar="editarPaciente"
+      @gestionar-bonos="gestionarBonos"
+      @nueva-cita="nuevaCita"
+    />
   </div>
 </template>
 
@@ -311,6 +322,27 @@ import {
 
 const mobileMenuOpen = ref(false)
 const { signOut, userProfile } = useSupabase()
+const router = useRouter()
+
+// Modal global de ficha de paciente
+const { modalAbierto: modalFichaPacienteAbierto, pacienteIdActual: pacienteIdFicha, cerrarFichaPaciente } = useFichaPaciente()
+
+// Acciones del modal de ficha
+const navegarAFicha = (pacienteId) => {
+  router.push(`/terapeuta/pacientes/${pacienteId}`)
+}
+
+const editarPaciente = (pacienteId) => {
+  router.push(`/terapeuta/pacientes/${pacienteId}?editar=true`)
+}
+
+const gestionarBonos = (pacienteId) => {
+  router.push(`/terapeuta/bonos?paciente=${pacienteId}`)
+}
+
+const nuevaCita = (pacienteId) => {
+  router.push(`/terapeuta/agenda?nuevaCita=${pacienteId}`)
+}
 
 // Nombre del terapeuta (dinámico según usuario logueado)
 const nombreTerapeuta = computed(() => {
