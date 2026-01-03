@@ -749,8 +749,9 @@
                 </span>
               </div>
 
-              <!-- Bono (compacto) - oculto en vista compacta -->
-              <div v-if="vistaActual !== 'compacta'" class="w-20 flex-shrink-0 text-center">
+              <!-- Bono / Estado de pago - oculto en vista compacta -->
+              <div v-if="vistaActual !== 'compacta'" class="w-24 flex-shrink-0 text-center">
+                <!-- Si tiene bono -->
                 <div v-if="sesion.bono" class="text-xs">
                   <div class="flex items-center justify-center gap-1">
                     <span class="font-medium text-gray-700">{{ sesion.bono.sesiones_restantes }}/{{ sesion.bono.sesiones_totales }}</span>
@@ -766,15 +767,38 @@
                     <span
                       v-else
                       class="w-4 h-4 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center"
-                      title="Pago pendiente"
+                      title="Bono pendiente de pago"
                     >
                       <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
                       </svg>
                     </span>
                   </div>
+                  <span class="text-[10px] text-gray-400">Bono</span>
                 </div>
-                <span v-else class="text-xs text-gray-300">—</span>
+                <!-- Si no tiene bono, mostrar estado de cobro -->
+                <div v-else class="text-xs">
+                  <span
+                    v-if="sesion.esta_pagado"
+                    class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-green-50 text-green-700"
+                    title="Sesion pagada"
+                  >
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Cobrado
+                  </span>
+                  <span
+                    v-else
+                    class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700"
+                    title="Por cobrar"
+                  >
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Cobrar
+                  </span>
+                </div>
               </div>
 
               <!-- Monto (solo precio principal, sin "tu parte") -->
@@ -1888,30 +1912,51 @@ const cargarSesiones = async () => {
 
     if (errorSesiones) throw errorSesiones
 
-    sesiones.value = (data || []).map(sesion => ({
-      id: sesion.cita_id,
-      fecha_cita: sesion.fecha_cita,
-      hora_inicio: sesion.hora_inicio,
-      hora_fin: sesion.hora_fin,
-      duracion_minutos: sesion.duracion_minutos,
-      modalidad: sesion.modalidad,
-      estado: sesion.estado,
-      observaciones: sesion.observaciones,
-      notas_terapeuta: sesion.notas_terapeuta,
-      precio_estimado: sesion.cita_metadata?.precio_sesion || PRECIO_SESION_DEFAULT,
-      esta_pagado: sesion.cita_metadata?.metodo_pago === 'bono' || sesion.bono_estado === 'activo',
-      paciente: {
-        id: sesion.paciente_id,
-        nombre_completo: sesion.paciente_nombre,
-        email: sesion.paciente_email
-      },
-      bono: sesion.bono_id ? {
-        id: sesion.bono_id,
-        sesiones_totales: sesion.bono_sesiones_totales,
-        sesiones_restantes: sesion.bono_sesiones_restantes,
-        pagado: sesion.bono_estado === 'activo' || sesion.bono_estado === 'pagado'
-      } : null
-    }))
+    sesiones.value = (data || []).map(sesion => {
+      // Calcular el precio de la sesión:
+      // - Si tiene bono, el precio es el monto del bono dividido por sesiones totales
+      // - Si no, usar el precio configurado o el default
+      const precioPorSesion = sesion.bono_id && sesion.bono_monto_total && sesion.bono_sesiones_totales
+        ? sesion.bono_monto_total / sesion.bono_sesiones_totales
+        : (sesion.cita_metadata?.precio_sesion || PRECIO_SESION_DEFAULT)
+
+      // Determinar si está pagado:
+      // 1. Si tiene bono -> verificar si el BONO está pagado (campo bono_pagado)
+      // 2. Si no tiene bono -> verificar estado_pago de la cita o cita_estado_pago
+      const estaPagado = sesion.bono_id
+        ? sesion.bono_pagado === true
+        : (sesion.cita_estado_pago === 'pagado' || sesion.estado_financiero === 'cobrado')
+
+      return {
+        id: sesion.cita_id,
+        fecha_cita: sesion.fecha_cita,
+        hora_inicio: sesion.hora_inicio,
+        hora_fin: sesion.hora_fin,
+        duracion_minutos: sesion.duracion_minutos,
+        modalidad: sesion.modalidad,
+        estado: sesion.estado,
+        observaciones: sesion.observaciones,
+        notas_terapeuta: sesion.notas_terapeuta,
+        precio_estimado: precioPorSesion,
+        esta_pagado: estaPagado,
+        estado_financiero: sesion.estado_financiero || (estaPagado ? 'cobrado' : 'por_cobrar_suelta'),
+        paciente: {
+          id: sesion.paciente_id,
+          nombre_completo: sesion.paciente_nombre,
+          email: sesion.paciente_email
+        },
+        bono: sesion.bono_id ? {
+          id: sesion.bono_id,
+          tipo: sesion.bono_tipo,
+          sesiones_totales: sesion.bono_sesiones_totales,
+          sesiones_restantes: sesion.bono_sesiones_restantes,
+          monto_total: sesion.bono_monto_total,
+          pagado: sesion.bono_pagado === true,
+          estado: sesion.bono_estado,
+          numero_renovacion: sesion.bono_numero_renovacion
+        } : null
+      }
+    })
 
   } catch (err: any) {
     error.value = err.message || 'Error desconocido'
