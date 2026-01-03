@@ -467,11 +467,23 @@
 
               <!-- Ocupación de agenda -->
               <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                <div class="flex items-center gap-2 mb-2">
-                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  <span class="text-xs font-medium text-gray-500">Ocupación</span>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span class="text-xs font-medium text-gray-500">Ocupación</span>
+                  </div>
+                  <!-- Badge comparativa vs período anterior -->
+                  <span
+                    v-if="variacionOcupacion !== 0"
+                    :class="[
+                      'px-1.5 py-0.5 text-[10px] font-semibold rounded',
+                      variacionOcupacion > 0 ? 'bg-emerald-200 text-emerald-700' : 'bg-red-100 text-red-600'
+                    ]"
+                  >
+                    {{ variacionOcupacion > 0 ? '↑' : '↓' }} {{ Math.abs(variacionOcupacion) }}%
+                  </span>
                 </div>
                 <p class="text-3xl font-bold" :class="porcentajeOcupacion >= 70 ? 'text-emerald-600' : porcentajeOcupacion >= 40 ? 'text-amber-600' : 'text-gray-900'">
                   {{ porcentajeOcupacion }}%
@@ -606,9 +618,18 @@ const detalleAgenda = ref({
   totalCitas: 0
 })
 
-// Comparativa mes anterior
+// Comparativa período anterior
 const comparativaMesAnterior = ref(0)
 const ingresosMesAnterior = ref(0)
+const ocupacionPeriodoAnterior = ref(0)
+const variacionOcupacion = ref(0) // Porcentaje de cambio vs período anterior
+
+// Configuración de agenda del terapeuta
+const configuracionAgenda = ref<{
+  horario: { inicio_manana: string; fin_manana: string; inicio_tarde: string; fin_tarde: string }
+  dias_laborables: number[]
+  buffer_minutos: number
+} | null>(null)
 
 // Referencia al componente de pagos del día
 const paymentsTodayCardRef = ref<{ refrescar: () => Promise<void> } | null>(null)
@@ -1002,10 +1023,36 @@ async function cargarPerfilTerapeuta() {
         nombre: profile?.metadata?.nombre || 'Karem',
         email: data.user.email
       }
+
+      // Cargar configuración de agenda del terapeuta
+      const { data: terapeutaData } = await supabase
+        .from('terapeutas')
+        .select('id, configuracion_agenda, duracion_sesion_minutos')
+        .eq('email', data.user.email)
+        .single()
+
+      if (terapeutaData?.configuracion_agenda) {
+        configuracionAgenda.value = terapeutaData.configuracion_agenda
+        terapeuta.value.id = terapeutaData.id
+        terapeuta.value.duracion_sesion_minutos = terapeutaData.duracion_sesion_minutos || 60
+      } else {
+        // Valores por defecto si no hay configuración
+        configuracionAgenda.value = {
+          horario: { inicio_manana: '09:00', fin_manana: '14:00', inicio_tarde: '16:00', fin_tarde: '20:00' },
+          dias_laborables: [1, 2, 3, 4, 5],
+          buffer_minutos: 10
+        }
+      }
     }
   } catch (error) {
     console.error('Error al cargar perfil:', error)
     terapeuta.value = { nombre: 'Karem' }
+    // Valores por defecto
+    configuracionAgenda.value = {
+      horario: { inicio_manana: '09:00', fin_manana: '14:00', inicio_tarde: '16:00', fin_tarde: '20:00' },
+      dias_laborables: [1, 2, 3, 4, 5],
+      buffer_minutos: 10
+    }
   }
 }
 
@@ -1276,91 +1323,159 @@ async function cargarMetricas() {
     const fechaInicio = new Date()
     fechaInicio.setHours(0, 0, 0, 0)
 
+    // Calcular duración del período para la comparativa
+    let diasPeriodo = 0
     if (periodoAnalitica.value === 'mes') {
       fechaInicio.setDate(1)
+      diasPeriodo = 30
     } else if (periodoAnalitica.value === '3meses') {
       fechaInicio.setMonth(fechaInicio.getMonth() - 2)
       fechaInicio.setDate(1)
+      diasPeriodo = 90
     } else {
       // Año
       fechaInicio.setMonth(0)
       fechaInicio.setDate(1)
+      diasPeriodo = 365
     }
 
     const fechaInicioStr = fechaInicio.toISOString().split('T')[0]
+    const fechaFinStr = new Date().toISOString().split('T')[0]
+
+    // Calcular fechas del período anterior para comparativa
+    const fechaInicioPeriodoAnterior = new Date(fechaInicio)
+    fechaInicioPeriodoAnterior.setDate(fechaInicioPeriodoAnterior.getDate() - diasPeriodo)
+    const fechaFinPeriodoAnterior = new Date(fechaInicio)
+    fechaFinPeriodoAnterior.setDate(fechaFinPeriodoAnterior.getDate() - 1)
+    const fechaInicioPeriodoAnteriorStr = fechaInicioPeriodoAnterior.toISOString().split('T')[0]
+    const fechaFinPeriodoAnteriorStr = fechaFinPeriodoAnterior.toISOString().split('T')[0]
 
     // Sesiones del período
     const { count: countSesiones } = await supabase
       .from('citas')
       .select('*', { count: 'exact', head: true })
       .gte('fecha_cita', fechaInicioStr)
-      .lte('fecha_cita', new Date().toISOString().split('T')[0])
+      .lte('fecha_cita', fechaFinStr)
 
     totalSesionesMes.value = countSesiones || 0
 
-    // Calcular días laborables en el período (lunes a viernes)
-    const fechaFin = new Date()
-    let diasLaborables = 0
-    const tempFecha = new Date(fechaInicio)
-    while (tempFecha <= fechaFin) {
-      const diaSemana = tempFecha.getDay()
-      if (diaSemana !== 0 && diaSemana !== 6) {
-        diasLaborables++
+    // Función auxiliar: calcular horas diarias según configuración del terapeuta
+    const calcularHorasDiarias = (): number => {
+      if (!configuracionAgenda.value?.horario) return 8 // Default 8 horas
+
+      const { inicio_manana, fin_manana, inicio_tarde, fin_tarde } = configuracionAgenda.value.horario
+
+      const parseHora = (hora: string): number => {
+        const partes = hora.split(':').map(Number)
+        const h = partes[0] || 0
+        const m = partes[1] || 0
+        return h + m / 60
       }
-      tempFecha.setDate(tempFecha.getDate() + 1)
+
+      const horasManana = parseHora(fin_manana) - parseHora(inicio_manana)
+      const horasTarde = parseHora(fin_tarde) - parseHora(inicio_tarde)
+
+      return Math.max(0, horasManana) + Math.max(0, horasTarde)
     }
 
-    // Horas disponibles: 8 horas por día laborable
-    const horasDisponibles = diasLaborables * 8
+    // Función auxiliar: calcular días laborables usando configuración del terapeuta
+    const calcularDiasLaborables = (inicio: Date, fin: Date): number => {
+      const diasConfig = configuracionAgenda.value?.dias_laborables || [1, 2, 3, 4, 5]
+      let dias = 0
+      const temp = new Date(inicio)
+      while (temp <= fin) {
+        if (diasConfig.includes(temp.getDay())) {
+          dias++
+        }
+        temp.setDate(temp.getDate() + 1)
+      }
+      return dias
+    }
 
-    // Obtener todas las citas del período para calcular ocupación y cancelaciones
+    // Calcular días laborables en el período actual
+    const fechaFin = new Date()
+    const diasLaborables = calcularDiasLaborables(fechaInicio, fechaFin)
+
+    // Calcular horas disponibles según horario real del terapeuta
+    const horasPorDia = calcularHorasDiarias()
+    const horasDisponibles = diasLaborables * horasPorDia
+
+    // Obtener todas las citas del período actual
     const { data: citasPeriodo } = await supabase
       .from('citas')
       .select('estado, duracion_minutos')
       .gte('fecha_cita', fechaInicioStr)
-      .lte('fecha_cita', new Date().toISOString().split('T')[0])
+      .lte('fecha_cita', fechaFinStr)
 
-    if (citasPeriodo && citasPeriodo.length > 0) {
-      // Calcular horas ocupadas (solo citas no canceladas)
-      const citasActivas = citasPeriodo.filter(c =>
+    // Función auxiliar: calcular ocupación de un conjunto de citas
+    const calcularOcupacion = (citas: any[], horasDisp: number): { ocupacion: number; horasOcupadas: number; canceladas: number } => {
+      if (!citas || citas.length === 0 || horasDisp <= 0) {
+        return { ocupacion: 0, horasOcupadas: 0, canceladas: 0 }
+      }
+
+      const citasActivas = citas.filter(c =>
         c.estado !== 'cancelada' && c.estado !== 'no_show' && c.estado !== 'ausente'
       )
-      const minutosOcupados = citasActivas.reduce((acc, c) => acc + (c.duracion_minutos || 60), 0)
-      const horasOcupadas = Math.round(minutosOcupados / 60)
+      const duracionDefault = terapeuta.value?.duracion_sesion_minutos || 60
+      const minutosOcupados = citasActivas.reduce((acc, c) => acc + (c.duracion_minutos || duracionDefault), 0)
+      const horasOcupadas = minutosOcupados / 60
+      const canceladas = citas.filter(c => c.estado === 'cancelada').length
 
-      // Calcular cancelaciones
-      const canceladas = citasPeriodo.filter(c => c.estado === 'cancelada').length
-      const totalCitas = citasPeriodo.length
+      return {
+        ocupacion: Math.min(100, Math.round((horasOcupadas / horasDisp) * 100)),
+        horasOcupadas: Math.round(horasOcupadas * 10) / 10,
+        canceladas
+      }
+    }
+
+    if (citasPeriodo && citasPeriodo.length > 0) {
+      const resultado = calcularOcupacion(citasPeriodo, horasDisponibles)
 
       detalleAgenda.value = {
-        horasDisponibles,
-        horasOcupadas,
-        cancelaciones: canceladas,
-        totalCitas
+        horasDisponibles: Math.round(horasDisponibles * 10) / 10,
+        horasOcupadas: resultado.horasOcupadas,
+        cancelaciones: resultado.canceladas,
+        totalCitas: citasPeriodo.length
       }
 
-      // Calcular porcentaje de ocupación
-      if (horasDisponibles > 0) {
-        porcentajeOcupacion.value = Math.min(100, Math.round((horasOcupadas / horasDisponibles) * 100))
-      } else {
-        porcentajeOcupacion.value = 0
-      }
+      porcentajeOcupacion.value = resultado.ocupacion
 
       // Calcular tasa de cancelación
-      if (totalCitas > 0) {
-        tasaCancelacion.value = Math.round((canceladas / totalCitas) * 100)
-      } else {
-        tasaCancelacion.value = 0
-      }
+      tasaCancelacion.value = Math.round((resultado.canceladas / citasPeriodo.length) * 100)
     } else {
       detalleAgenda.value = {
-        horasDisponibles,
+        horasDisponibles: Math.round(horasDisponibles * 10) / 10,
         horasOcupadas: 0,
         cancelaciones: 0,
         totalCitas: 0
       }
       porcentajeOcupacion.value = 0
       tasaCancelacion.value = 0
+    }
+
+    // Calcular ocupación del período anterior para comparativa
+    const diasLaborablesAnterior = calcularDiasLaborables(fechaInicioPeriodoAnterior, fechaFinPeriodoAnterior)
+    const horasDisponiblesAnterior = diasLaborablesAnterior * horasPorDia
+
+    const { data: citasPeriodoAnterior } = await supabase
+      .from('citas')
+      .select('estado, duracion_minutos')
+      .gte('fecha_cita', fechaInicioPeriodoAnteriorStr)
+      .lte('fecha_cita', fechaFinPeriodoAnteriorStr)
+
+    if (citasPeriodoAnterior && horasDisponiblesAnterior > 0) {
+      const resultadoAnterior = calcularOcupacion(citasPeriodoAnterior, horasDisponiblesAnterior)
+      ocupacionPeriodoAnterior.value = resultadoAnterior.ocupacion
+
+      // Calcular variación porcentual
+      if (resultadoAnterior.ocupacion > 0) {
+        variacionOcupacion.value = porcentajeOcupacion.value - resultadoAnterior.ocupacion
+      } else {
+        variacionOcupacion.value = porcentajeOcupacion.value > 0 ? 100 : 0
+      }
+    } else {
+      ocupacionPeriodoAnterior.value = 0
+      variacionOcupacion.value = porcentajeOcupacion.value > 0 ? 100 : 0
     }
   } catch (error) {
     console.error('Error al cargar métricas:', error)
