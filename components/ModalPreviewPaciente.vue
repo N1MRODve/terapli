@@ -31,35 +31,40 @@
               class="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
               @click.stop
             >
-              <!-- Header con avatar -->
-              <div class="relative px-6 pt-6 pb-4 bg-gradient-to-br from-purple-500 to-purple-600">
+              <!-- Header con título de acciones rápidas -->
+              <div class="relative px-6 pt-4 pb-3 bg-gradient-to-br from-purple-500 to-purple-600">
                 <button
                   @click="$emit('cerrar')"
-                  class="absolute top-4 right-4 p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                  class="absolute top-3 right-3 p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                 >
                   <XMarkIcon class="w-5 h-5" />
                 </button>
 
+                <!-- Título del modal -->
+                <p class="text-xs font-semibold text-white/70 uppercase tracking-wider mb-3">
+                  Acciones rápidas
+                </p>
+
                 <div class="flex items-center gap-4">
                   <div
-                    class="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold ring-4 ring-white/20"
+                    class="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg font-bold ring-4 ring-white/20"
                     :style="{ backgroundColor: avatarColor }"
                   >
                     {{ iniciales }}
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h2 class="text-xl font-semibold text-white truncate">
+                    <h2 class="text-lg font-semibold text-white truncate">
                       {{ paciente.nombre || 'Sin nombre' }}
                     </h2>
-                    <div class="flex items-center gap-2 mt-1">
+                    <div class="flex items-center gap-2 mt-1 flex-wrap">
                       <span
                         class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full"
                         :class="estadoBadgeClasses"
                       >
                         {{ estadoTexto }}
                       </span>
-                      <span v-if="paciente.area_de_acompanamiento" class="text-sm text-white/70">
-                        {{ paciente.area_de_acompanamiento }}
+                      <span v-if="paciente.precio_sesion" class="text-xs text-white/80 font-medium">
+                        €{{ paciente.precio_sesion }}/sesión
                       </span>
                     </div>
                   </div>
@@ -140,25 +145,40 @@
               </div>
 
               <!-- Footer con acciones -->
-              <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center gap-2">
+              <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 space-y-3">
+                <!-- Botón principal: Ver perfil completo -->
                 <button
                   @click="$emit('ver-ficha', paciente)"
-                  class="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                  class="w-full px-4 py-3 bg-purple-600 text-white text-sm font-semibold rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 group"
                 >
-                  Ver ficha completa
+                  <span>Ver perfil completo</span>
+                  <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <button
-                  @click="$emit('editar', paciente)"
-                  class="px-4 py-2 text-gray-600 text-sm font-medium hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  Editar
-                </button>
-                <button
-                  @click="$emit('gestionar-bonos', paciente)"
-                  class="px-4 py-2 text-gray-600 text-sm font-medium hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  Bonos
-                </button>
+
+                <!-- Acciones secundarias -->
+                <div class="flex items-center gap-2">
+                  <button
+                    @click="$emit('nueva-cita', paciente)"
+                    class="flex-1 px-3 py-2 bg-emerald-50 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-100 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <CalendarDaysIcon class="w-4 h-4" />
+                    <span>Nueva cita</span>
+                  </button>
+                  <button
+                    @click="$emit('editar', paciente)"
+                    class="flex-1 px-3 py-2 text-gray-600 text-sm font-medium hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <PencilIcon class="w-4 h-4" />
+                    <span>Editar</span>
+                  </button>
+                  <button
+                    @click="$emit('gestionar-bonos', paciente)"
+                    class="flex-1 px-3 py-2 text-gray-600 text-sm font-medium hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <TicketIcon class="w-4 h-4" />
+                    <span>Bonos</span>
+                  </button>
+                </div>
               </div>
             </div>
           </Transition>
@@ -174,7 +194,9 @@ import {
   CalendarDaysIcon,
   TicketIcon,
   EnvelopeIcon,
-  PhoneIcon
+  PhoneIcon,
+  ArrowRightIcon,
+  PencilIcon
 } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
@@ -188,7 +210,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['cerrar', 'ver-ficha', 'editar', 'gestionar-bonos'])
+defineEmits(['cerrar', 'ver-ficha', 'editar', 'gestionar-bonos', 'nueva-cita'])
 
 // Computed properties
 const iniciales = computed(() => {

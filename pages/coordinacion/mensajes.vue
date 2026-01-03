@@ -21,7 +21,7 @@
         >
           <option value="">-- Selecciona un paciente --</option>
           <option v-for="paciente in pacientes" :key="paciente.id" :value="paciente">
-            {{ paciente.nombre }}
+            {{ paciente.nombre_completo }}
           </option>
         </select>
       </div>
@@ -31,11 +31,11 @@
         <div class="mb-4 flex items-center space-x-3">
           <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#D8AFA0] to-[#C49484] flex items-center justify-center">
             <span class="text-white font-semibold">
-              {{ obtenerIniciales(pacienteSeleccionado.nombre) }}
+              {{ obtenerIniciales(pacienteSeleccionado.nombre_completo) }}
             </span>
           </div>
           <div>
-            <p class="font-semibold text-[#5D4A44]">{{ pacienteSeleccionado.nombre }}</p>
+            <p class="font-semibold text-[#5D4A44]">{{ pacienteSeleccionado.nombre_completo }}</p>
             <p class="text-sm text-[#8B7470]">{{ pacienteSeleccionado.telefono }}</p>
           </div>
         </div>
@@ -131,8 +131,8 @@ const cargarPacientes = async () => {
   try {
     const { data, error } = await supabase
       .from('pacientes' as any)
-      .select('id, nombre, telefono, email')
-      .order('nombre')
+      .select('id, nombre_completo, telefono, email')
+      .order('nombre_completo')
 
     if (error) throw error
     if (data) pacientes.value = data

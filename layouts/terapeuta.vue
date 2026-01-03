@@ -337,7 +337,7 @@ const editarPaciente = (pacienteId) => {
 }
 
 const gestionarBonos = (pacienteId) => {
-  router.push(`/terapeuta/bonos?paciente=${pacienteId}`)
+  router.push(`/terapeuta/pacientes/${pacienteId}/bonos`)
 }
 
 const nuevaCita = (pacienteId) => {

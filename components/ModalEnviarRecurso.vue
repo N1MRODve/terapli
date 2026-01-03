@@ -98,7 +98,7 @@
                   />
                   <div class="flex-1 min-w-0">
                     <div class="font-medium text-gray-900">
-                      {{ paciente.nombre }}
+                      {{ paciente.nombre_completo }}
                     </div>
                     <div v-if="paciente.email" class="text-sm text-gray-500">
                       {{ paciente.email }}
@@ -205,8 +205,8 @@ const pacientesFiltrados = computed(() => {
   if (!busqueda.value) return pacientes.value
   
   const termino = busqueda.value.toLowerCase()
-  return pacientes.value.filter((p: any) => 
-    p.nombre?.toLowerCase().includes(termino) ||
+  return pacientes.value.filter((p: any) =>
+    p.nombre_completo?.toLowerCase().includes(termino) ||
     p.email?.toLowerCase().includes(termino)
   )
 })
@@ -278,9 +278,9 @@ const cargarPacientes = async () => {
     
     const { data, error } = await supabase
       .from('pacientes')
-      .select('id, nombre, email')
+      .select('id, nombre_completo, email')
       .eq('terapeuta_id', user.value.id)
-      .order('nombre', { ascending: true })
+      .order('nombre_completo', { ascending: true })
 
     if (error) throw error
 

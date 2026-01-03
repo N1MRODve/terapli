@@ -45,6 +45,10 @@
                   <CalendarIcon class="w-4 h-4 text-emerald-600" />
                   <span class="text-emerald-700">Frecuencia: <strong class="capitalize">{{ pacienteSeleccionado.frecuencia }}</strong></span>
                 </div>
+                <div v-if="pacienteSeleccionado.precio_sesion" class="mt-1 flex items-center gap-2 text-xs">
+                  <BanknotesIcon class="w-4 h-4 text-emerald-600" />
+                  <span class="text-emerald-700">Precio: <strong>€{{ pacienteSeleccionado.precio_sesion }}</strong></span>
+                </div>
               </div>
             </div>
             <div class="text-right">
@@ -191,6 +195,14 @@
                         <span class="font-medium text-emerald-800">Frecuencia:</span>
                         <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-lg font-medium capitalize">
                           {{ pacienteSeleccionado.frecuencia }}
+                        </span>
+                      </div>
+                      <!-- Precio por sesión del paciente -->
+                      <div v-if="pacienteSeleccionado.precio_sesion" class="mt-2 flex items-center gap-2 text-sm">
+                        <BanknotesIcon class="w-4 h-4 text-emerald-600" />
+                        <span class="font-medium text-emerald-800">Precio sesión:</span>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-lg font-bold">
+                          €{{ pacienteSeleccionado.precio_sesion }}
                         </span>
                       </div>
                     </div>
@@ -864,11 +876,11 @@
 import { type PropType, nextTick } from 'vue'
 import { useCitas } from '~/composables/useCitas'
 import { 
-  UserIcon, 
-  CalendarIcon, 
-  ClockIcon, 
-  ComputerDesktopIcon, 
-  PhoneIcon, 
+  UserIcon,
+  CalendarIcon,
+  ClockIcon,
+  ComputerDesktopIcon,
+  PhoneIcon,
   BuildingOfficeIcon,
   CheckCircleIcon,
   XCircleIcon,
@@ -880,7 +892,8 @@ import {
   InformationCircleIcon,
   CheckBadgeIcon,
   TicketIcon,
-  CreditCardIcon
+  CreditCardIcon,
+  BanknotesIcon
 } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
@@ -913,6 +926,7 @@ const props = defineProps({
       email: string
       frecuencia?: string
       area_acompanamiento?: string
+      precio_sesion?: number | null
     }>,
     default: null
   },
@@ -1164,7 +1178,9 @@ async function cargarPacientes() {
         id,
         nombre_completo,
         email,
-        metadata
+        metadata,
+        precio_sesion,
+        tipo_bono
       `)
       .eq('activo', true)
       .order('created_at', { ascending: false })
@@ -1190,8 +1206,9 @@ async function cargarPacientes() {
       id: p.id,
       nombre: p.nombre_completo || 'Sin nombre',
       email: p.email || '',
-      frecuencia: p.metadata?.frecuencia || 'No definida',
-      area_acompanamiento: p.metadata?.area_de_acompanamiento || ''
+      frecuencia: p.metadata?.frecuencia || p.tipo_bono || 'No definida',
+      area_acompanamiento: p.metadata?.area_de_acompanamiento || '',
+      precio_sesion: p.precio_sesion || null
     }))
     
     console.log(`✅ ${pacientesReales.value.length} pacientes cargados (rol: ${userProfile.value?.rol || 'desconocido'})`)
@@ -1899,7 +1916,8 @@ const inicializarModal = () => {
         nombre: props.pacientePreseleccionado.nombre,
         email: props.pacientePreseleccionado.email,
         frecuencia: props.pacientePreseleccionado.frecuencia || 'No definida',
-        area_acompanamiento: props.pacientePreseleccionado.area_acompanamiento || ''
+        area_acompanamiento: props.pacientePreseleccionado.area_acompanamiento || '',
+        precio_sesion: props.pacientePreseleccionado.precio_sesion || null
       })
     })
   }

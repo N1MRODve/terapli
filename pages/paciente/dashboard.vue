@@ -74,12 +74,12 @@ const fetchPatientData = async () => {
     if (user) {
       const { data: profile } = await supabase
         .from('pacientes')
-        .select('nombre')
+        .select('nombre_completo')
         .eq('user_id', user.id)
         .single()
-      
-      if (profile?.nombre) {
-        nombrePaciente.value = profile.nombre.split(' ')[0]
+
+      if (profile?.nombre_completo) {
+        nombrePaciente.value = profile.nombre_completo.split(' ')[0]
       }
       
       emotionTrend.value = 'stable'

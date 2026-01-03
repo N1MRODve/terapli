@@ -192,39 +192,116 @@
           </label>
         </div>
 
-        <!-- Estado Inicial -->
-        <div>
-          <label class="block text-sm font-medium text-[#2D3748] mb-2">
-            Estado Inicial
+        <!-- Tipo de registro: Nuevo o Histórico -->
+        <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+          <div class="flex items-start gap-3">
+            <input
+              v-model="formData.es_historico"
+              type="checkbox"
+              id="es-historico"
+              class="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label for="es-historico" class="flex-1 cursor-pointer">
+              <div class="text-sm font-medium text-blue-900 flex items-center gap-1.5">
+                <span>📜</span>
+                Registrar como Bono Histórico
+              </div>
+              <div class="text-xs text-blue-700 mt-1">
+                Marca esta opción para registrar bonos de meses anteriores que no están en el sistema
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Estado y Pago -->
+        <div class="space-y-4">
+          <label class="block text-sm font-medium text-[#2D3748]">
+            Estado del Bono
           </label>
-          <div class="grid grid-cols-2 gap-3">
+
+          <!-- Opciones de estado -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <label class="flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all"
-              :class="formData.estado === 'pendiente' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300 hover:border-yellow-300'"
+              :class="formData.estado === 'pendiente' && !formData.pagado ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 hover:border-yellow-300'"
             >
               <input
                 v-model="formData.estado"
                 type="radio"
                 value="pendiente"
+                @change="formData.pagado = false"
                 class="w-4 h-4 text-yellow-600"
               />
               <div>
                 <div class="text-sm font-medium text-[#2D3748]">⏳ Pendiente</div>
-                <div class="text-xs text-[#2D3748]/60">Requiere pago</div>
+                <div class="text-xs text-[#2D3748]/60">Sin pagar</div>
               </div>
             </label>
 
             <label class="flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all"
-              :class="formData.estado === 'activo' ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-green-300'"
+              :class="formData.estado === 'activo' ? 'border-green-400 bg-green-50' : 'border-gray-200 hover:border-green-300'"
             >
               <input
                 v-model="formData.estado"
                 type="radio"
                 value="activo"
+                @change="formData.pagado = true"
                 class="w-4 h-4 text-green-600"
               />
               <div>
                 <div class="text-sm font-medium text-[#2D3748]">✅ Activo</div>
-                <div class="text-xs text-[#2D3748]/60">Ya pagado</div>
+                <div class="text-xs text-[#2D3748]/60">Pagado y en uso</div>
+              </div>
+            </label>
+
+            <label v-if="formData.es_historico || formData.sesiones_usadas >= formData.sesiones_totales"
+              class="flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all"
+              :class="formData.estado === 'completado' ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-blue-300'"
+            >
+              <input
+                v-model="formData.estado"
+                type="radio"
+                value="completado"
+                class="w-4 h-4 text-blue-600"
+              />
+              <div>
+                <div class="text-sm font-medium text-[#2D3748]">🏁 Completado</div>
+                <div class="text-xs text-[#2D3748]/60">Pagado y usado</div>
+              </div>
+            </label>
+
+            <label v-if="formData.es_historico"
+              class="flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all"
+              :class="formData.estado === 'agotado' ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-red-300'"
+            >
+              <input
+                v-model="formData.estado"
+                type="radio"
+                value="agotado"
+                class="w-4 h-4 text-red-600"
+              />
+              <div>
+                <div class="text-sm font-medium text-[#2D3748]">❌ Agotado</div>
+                <div class="text-xs text-[#2D3748]/60">Sin pagar</div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Checkbox de pagado (visible si es histórico o si estado es completado/agotado) -->
+          <div v-if="formData.es_historico || ['completado', 'agotado'].includes(formData.estado)"
+            class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <input
+              v-model="formData.pagado"
+              type="checkbox"
+              id="bono-pagado"
+              class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+            <label for="bono-pagado" class="flex-1 cursor-pointer">
+              <div class="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                <span>💰</span>
+                Este bono ya fue pagado
+              </div>
+              <div v-if="!formData.pagado" class="text-xs text-red-600 mt-0.5">
+                Se registrará como deuda del paciente (€{{ formData.monto || 0 }})
               </div>
             </label>
           </div>
@@ -347,7 +424,9 @@ const formData = ref({
   fecha_fin: '',
   estado: 'pendiente',
   renovacion_automatica: false,
-  notas: ''
+  notas: '',
+  es_historico: false,
+  pagado: false
 })
 
 // Cargar datos del bono existente cuando cambia
@@ -363,7 +442,9 @@ watch(() => props.bonoExistente, (bono) => {
       fecha_fin: bono.fecha_fin || '',
       estado: bono.estado || 'pendiente',
       renovacion_automatica: bono.renovacion_automatica || false,
-      notas: bono.notas || ''
+      notas: bono.notas || '',
+      es_historico: false,
+      pagado: bono.pagado || false
     }
   }
 }, { immediate: true })
@@ -417,6 +498,16 @@ const guardarBono = async () => {
     const sesionesUsadas = formData.value.sesiones_usadas || 0
     const sesionesRestantes = formData.value.sesiones_totales - sesionesUsadas
 
+    // Determinar estado final
+    let estadoFinal = formData.value.estado
+    if (sesionesRestantes <= 0 && !['completado', 'agotado'].includes(formData.value.estado)) {
+      // Si no quedan sesiones y no es un estado final, marcar como agotado o completado
+      estadoFinal = formData.value.pagado ? 'completado' : 'agotado'
+    }
+
+    // Determinar si está pagado
+    const estaPagado = formData.value.pagado || formData.value.estado === 'activo' || formData.value.estado === 'completado'
+
     const bonoData = {
       tipo: formData.value.tipo,
       frecuencia: formData.value.frecuencia,
@@ -425,11 +516,13 @@ const guardarBono = async () => {
       sesiones_restantes: sesionesRestantes,
       fecha_inicio: formData.value.fecha_inicio || null,
       fecha_fin: formData.value.fecha_fin || null,
-      estado: sesionesRestantes <= 0 ? 'agotado' : formData.value.estado,
-      monto_total: formData.value.monto, // Campo correcto en la BD
-      pagado: formData.value.estado === 'activo', // Si es activo, ya está pagado
+      estado: estadoFinal,
+      monto_total: formData.value.monto,
+      pagado: estaPagado,
+      estado_pago: estaPagado ? 'pagado' : 'pendiente',
       renovacion_automatica: formData.value.renovacion_automatica,
-      notas: formData.value.notas || null
+      notas: formData.value.notas || null,
+      metadata: formData.value.es_historico ? { es_historico: true, registrado_manualmente: true } : null
     }
 
     if (modoEdicion.value && props.bonoExistente?.id) {
@@ -461,7 +554,9 @@ const guardarBono = async () => {
         fecha_fin: '',
         estado: 'pendiente',
         renovacion_automatica: false,
-        notas: ''
+        notas: '',
+        es_historico: false,
+        pagado: false
       }
     }
   } catch (err: any) {

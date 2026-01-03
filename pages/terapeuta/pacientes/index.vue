@@ -639,6 +639,7 @@
       @ver-ficha="(p) => { cerrarPreview(); irAFichaPaciente(p) }"
       @editar="(p) => { cerrarPreview(); abrirModalEditar(p) }"
       @gestionar-bonos="(p) => { cerrarPreview(); gestionarBonosPaciente(p) }"
+      @nueva-cita="(p) => { cerrarPreview(); abrirModalAsignarCita(p) }"
     />
   </div>
 </template>
@@ -888,16 +889,24 @@ const cargarPacientes = async () => {
           .limit(1)
           .maybeSingle()
 
-        const { data: proximaCita } = await supabase
+        const hoy = new Date().toISOString().split('T')[0]
+        const { data: proximaCita, error: errorProxima } = await supabase
           .from('citas')
-          .select('id, fecha_cita, hora_inicio')
+          .select('id, fecha_cita, hora_inicio, estado')
           .eq('paciente_id', paciente.id)
           .in('estado', ['pendiente', 'confirmada'])
-          .gte('fecha_cita', new Date().toISOString().split('T')[0])
+          .gte('fecha_cita', hoy)
           .order('fecha_cita', { ascending: true })
           .order('hora_inicio', { ascending: true })
           .limit(1)
           .maybeSingle()
+
+        // Debug: Log para ver próximas citas
+        if (proximaCita) {
+          console.log(`[Pacientes] ${paciente.nombre_completo}: Próxima cita ${proximaCita.fecha_cita} (${proximaCita.estado})`)
+        } else if (errorProxima) {
+          console.warn(`[Pacientes] Error buscando próxima cita para ${paciente.nombre_completo}:`, errorProxima)
+        }
 
         const { count: totalSesiones } = await supabase
           .from('citas')
@@ -930,25 +939,33 @@ const cargarPacientes = async () => {
         const hace7Dias = new Date()
         hace7Dias.setDate(hace7Dias.getDate() - 7)
 
-        const { data: emocionesRecientes } = await supabase
-          .from('metricas_bienestar')
-          .select('estado_animo, nivel_energia, nivel_estres')
-          .eq('paciente_id', paciente.id)
-          .gte('fecha', hace7Dias.toISOString())
-
+        // Variables de estado emocional con valores por defecto
         let estadoEmocionalPromedio = 3
         let requiereAtencion = false
         let evolucionPorcentaje = 50
 
-        if (emocionesRecientes && emocionesRecientes.length > 0) {
-          const promedioAnimo = emocionesRecientes.reduce((sum, e) => sum + e.estado_animo, 0) / emocionesRecientes.length
-          estadoEmocionalPromedio = promedioAnimo
-          evolucionPorcentaje = Math.round((promedioAnimo / 10) * 100)
+        // Intentar cargar métricas de bienestar (tabla opcional, puede no existir)
+        try {
+          const { data: emocionesRecientes, error: metricasError } = await supabase
+            .from('metricas_bienestar')
+            .select('estado_animo, nivel_energia, nivel_estres')
+            .eq('paciente_id', paciente.id)
+            .gte('fecha', hace7Dias.toISOString())
 
-          const ultimosTres = emocionesRecientes.slice(-3)
-          if (ultimosTres.length >= 3) {
-            requiereAtencion = ultimosTres.every(e => e.estado_animo <= 4)
+          if (!metricasError && emocionesRecientes && emocionesRecientes.length > 0) {
+            const promedioAnimo = emocionesRecientes.reduce((sum, e) => sum + e.estado_animo, 0) / emocionesRecientes.length
+            estadoEmocionalPromedio = promedioAnimo
+            evolucionPorcentaje = Math.round((promedioAnimo / 10) * 100)
+
+            const ultimosTres = emocionesRecientes.slice(-3)
+            if (ultimosTres.length >= 3) {
+              requiereAtencion = ultimosTres.every(e => e.estado_animo <= 4)
+            }
           }
+        } catch (metricasErr) {
+          // La tabla metricas_bienestar puede no existir o no tener datos
+          // No bloquear la carga de pacientes por esto
+          console.debug('[Pacientes] metricas_bienestar no disponible:', metricasErr?.message)
         }
 
         const nombreCompleto = paciente.nombre_completo ||
@@ -1124,10 +1141,18 @@ const paginasVisibles = computed(() => {
   return paginas
 })
 
-// Navegación
+// Navegación - con protección contra múltiples clics
+let navegandoAPaciente = false
+
 const irAFichaPaciente = (pacienteOrId) => {
+  // Prevenir múltiples navegaciones simultáneas
+  if (navegandoAPaciente) {
+    console.debug('[Pacientes] Navegación ya en curso, ignorando clic duplicado')
+    return
+  }
+
   // Puede recibir el objeto paciente o directamente el ID
-  const id = typeof pacienteOrId === 'object' ? pacienteOrId.id : pacienteOrId
+  const id = typeof pacienteOrId === 'object' ? pacienteOrId?.id : pacienteOrId
   console.log('[Pacientes] Navegando a ficha de paciente:', id)
 
   if (!id) {
@@ -1135,8 +1160,16 @@ const irAFichaPaciente = (pacienteOrId) => {
     return
   }
 
+  // Marcar como navegando para evitar clics múltiples
+  navegandoAPaciente = true
+
   // Usar navigateTo para mejor compatibilidad con Nuxt 3
-  navigateTo(`/terapeuta/pacientes/${id}`)
+  navigateTo(`/terapeuta/pacientes/${id}`).finally(() => {
+    // Liberar el bloqueo después de un breve delay
+    setTimeout(() => {
+      navegandoAPaciente = false
+    }, 500)
+  })
 }
 
 // Gestión de modales

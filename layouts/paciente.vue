@@ -183,12 +183,12 @@ const loadPacienteData = async () => {
     // Intentar obtener el perfil del paciente desde la tabla pacientes
     const { data, error } = await supabase
       .from('pacientes')
-      .select('nombre')
+      .select('nombre_completo')
       .eq('id', user.value.id)
       .single()
-    
-    if (!error && data?.nombre) {
-      nombrePaciente.value = data.nombre
+
+    if (!error && data?.nombre_completo) {
+      nombrePaciente.value = data.nombre_completo
     } else {
       // Si no hay nombre en la base de datos, usar el email o metadata
       nombrePaciente.value = user.value.user_metadata?.nombre || 
