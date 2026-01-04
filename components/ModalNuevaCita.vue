@@ -713,6 +713,49 @@
           </div>
         </div>
 
+        <!-- Aviso de horario excepcional -->
+        <div v-if="esFueraDeHorario && !conflictoHorario" class="p-4 bg-purple-50 border-l-4 border-purple-500 rounded-lg shadow-sm">
+          <div class="flex items-start gap-3">
+            <ClockIcon class="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
+            <div class="flex-1">
+              <div class="font-semibold text-purple-900 mb-1 flex items-center gap-2">
+                <span>Horario Excepcional</span>
+                <span class="px-2 py-0.5 text-xs font-medium bg-purple-200 text-purple-800 rounded-full">Fuera de horario</span>
+              </div>
+              <div class="text-sm text-purple-800 mb-3">
+                Esta cita esta programada fuera de tu horario habitual de trabajo.
+                No contara para el calculo de tu tasa de ocupacion.
+              </div>
+
+              <!-- Checkbox para confirmar -->
+              <label class="flex items-start gap-3 p-3 bg-white/60 rounded-lg border border-purple-200 cursor-pointer hover:bg-white/80 transition-colors">
+                <input
+                  type="checkbox"
+                  v-model="formulario.es_horario_excepcional"
+                  class="mt-0.5 w-5 h-5 rounded border-purple-300 text-purple-600 focus:ring-purple-500"
+                />
+                <div>
+                  <div class="font-medium text-purple-900">Confirmo que es una cita excepcional</div>
+                  <div class="text-xs text-purple-700 mt-0.5">Se marcara como "Horario excepcional" en la agenda</div>
+                </div>
+              </label>
+
+              <!-- Campo opcional para motivo -->
+              <div v-if="formulario.es_horario_excepcional" class="mt-3">
+                <label class="block text-sm font-medium text-purple-800 mb-1">
+                  Motivo (opcional)
+                </label>
+                <input
+                  v-model="formulario.motivo_excepcional"
+                  type="text"
+                  placeholder="Ej: Paciente no disponible en horario regular"
+                  class="w-full px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white/80"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Mensajes de validación de campos requeridos -->
         <div v-if="camposInvalidos.length > 0 && !formularioValido" class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
           <div class="flex items-start gap-3">
@@ -1000,8 +1043,14 @@ const formulario = ref({
   estado: 'pendiente',
   notas: '',
   descontar_de_bono: false,
-  bono_id: undefined as string | undefined
+  bono_id: undefined as string | undefined,
+  // Horario excepcional
+  es_horario_excepcional: false,
+  motivo_excepcional: ''
 })
+
+// Estado para detectar si la cita está fuera del horario
+const esFueraDeHorario = ref(false)
 
 // Nueva: fecha sugerida
 const fechaSugerida = ref<string | null>(null)
@@ -1320,16 +1369,111 @@ function calcularHoraFin() {
   const horas = partes[0] || 0
   const minutos = partes[1] || 0
   const duracionMinutos = parseInt(formulario.value.duracion)
-  
+
   const fechaInicio = new Date()
   fechaInicio.setHours(horas, minutos, 0, 0)
-  
+
   const fechaFin = new Date(fechaInicio.getTime() + duracionMinutos * 60000)
-  
+
   const horaFin = String(fechaFin.getHours()).padStart(2, '0')
   const minutosFin = String(fechaFin.getMinutes()).padStart(2, '0')
-  
+
   formulario.value.hora_fin = `${horaFin}:${minutosFin}`
+
+  // Verificar si está fuera del horario después de calcular hora fin
+  verificarHorarioExcepcional()
+}
+
+// Configuración del horario del terapeuta (se carga dinámicamente)
+const configuracionAgenda = ref<any>(null)
+
+/**
+ * Carga la configuración de agenda del terapeuta
+ */
+async function cargarConfiguracionAgenda() {
+  try {
+    const { userProfile } = useSupabase()
+    if (!userProfile.value?.id) return
+
+    const { data } = await supabase
+      .from('terapeutas')
+      .select('configuracion_agenda')
+      .eq('id', userProfile.value.id)
+      .single()
+
+    if (data?.configuracion_agenda) {
+      configuracionAgenda.value = data.configuracion_agenda
+    }
+  } catch (err) {
+    console.warn('No se pudo cargar configuración de agenda:', err)
+  }
+}
+
+/**
+ * Verifica si la hora seleccionada está fuera del horario habitual del terapeuta
+ */
+function verificarHorarioExcepcional() {
+  if (!formulario.value.fecha || !formulario.value.hora_inicio) {
+    esFueraDeHorario.value = false
+    return
+  }
+
+  const config = configuracionAgenda.value
+  if (!config) {
+    // Si no hay configuración, no podemos verificar
+    esFueraDeHorario.value = false
+    return
+  }
+
+  const fecha = new Date(formulario.value.fecha + 'T00:00:00')
+  const diaSemana = fecha.getDay() // 0=domingo, 1=lunes, etc.
+
+  // Verificar si es día laborable
+  const diasLaborables = config.dias_laborables || [1, 2, 3, 4, 5]
+  if (!diasLaborables.includes(diaSemana)) {
+    esFueraDeHorario.value = true
+    return
+  }
+
+  // Obtener horario del día (puede ser específico o base)
+  const horariosPorDia = config.horarios_por_dia || {}
+  const horarioBase = config.horario || {
+    inicio_manana: '09:00',
+    fin_manana: '14:00',
+    inicio_tarde: '16:00',
+    fin_tarde: '20:00'
+  }
+
+  const horarioDia = horariosPorDia[diaSemana] || horarioBase
+
+  const horaInicio = formulario.value.hora_inicio
+  const horaFin = formulario.value.hora_fin || horaInicio
+
+  // Convertir a minutos para comparar
+  const horaInicioMin = horaAMinutos(horaInicio)
+  const horaFinMin = horaAMinutos(horaFin)
+
+  // Horario de mañana
+  const inicioMananaMin = horaAMinutos(horarioDia.inicio_manana || '')
+  const finMananaMin = horaAMinutos(horarioDia.fin_manana || '')
+
+  // Horario de tarde
+  const inicioTardeMin = horaAMinutos(horarioDia.inicio_tarde || '')
+  const finTardeMin = horaAMinutos(horarioDia.fin_tarde || '')
+
+  // Verificar si está dentro de alguna franja
+  const dentroDeManana = inicioMananaMin && finMananaMin &&
+    horaInicioMin >= inicioMananaMin && horaFinMin <= finMananaMin
+
+  const dentroDeTarde = inicioTardeMin && finTardeMin &&
+    horaInicioMin >= inicioTardeMin && horaFinMin <= finTardeMin
+
+  esFueraDeHorario.value = !dentroDeManana && !dentroDeTarde
+
+  // Si está fuera de horario y el usuario no ha confirmado, marcar como excepcional
+  if (esFueraDeHorario.value && !formulario.value.es_horario_excepcional) {
+    // El usuario debe confirmar manualmente
+  }
 }
 
 async function verificarConflicto() {
@@ -1450,7 +1594,10 @@ async function guardarCita() {
       modalidad: formulario.value.tipo as 'presencial' | 'online' | 'telefonica',
       estado: (formulario.value.estado === 'completada' ? 'realizada' : formulario.value.estado) as 'confirmada' | 'pendiente' | 'cancelada' | 'realizada',
       observaciones: formulario.value.notas,
-      bono_id: formulario.value.bono_id
+      bono_id: formulario.value.bono_id,
+      // Horario excepcional
+      es_horario_excepcional: formulario.value.es_horario_excepcional,
+      motivo_excepcional: formulario.value.es_horario_excepcional ? formulario.value.motivo_excepcional : null
     }
     
     // Si es coordinadora, agregar terapeuta_id explícitamente
@@ -1509,7 +1656,10 @@ async function guardarCita() {
         estado: (formulario.value.estado === 'completada' ? 'realizada' : formulario.value.estado) as 'confirmada' | 'pendiente' | 'cancelada' | 'realizada',
         notas: formulario.value.notas,
         descontar_de_bono: formulario.value.descontar_de_bono,
-        bono_id: formulario.value.bono_id
+        bono_id: formulario.value.bono_id,
+        // Horario excepcional
+        es_horario_excepcional: formulario.value.es_horario_excepcional,
+        motivo_excepcional: formulario.value.es_horario_excepcional ? formulario.value.motivo_excepcional : null
       }
       
       // Si es coordinadora, agregar terapeuta_id
@@ -1815,6 +1965,8 @@ watch([() => formulario.value.fecha, () => formulario.value.hora_inicio, () => f
   if (formulario.value.fecha && formulario.value.hora_inicio && formulario.value.hora_fin) {
     verificarConflicto()
   }
+  // Verificar si está fuera del horario habitual
+  verificarHorarioExcepcional()
 })
 
 watch(() => props.fechaPreseleccionada, (nueva) => {
@@ -1835,14 +1987,20 @@ onMounted(async () => {
   await verificarRolUsuario()
   cargarPacientes()
   cargarDatosTemporales()
-  
+
+  // Cargar configuración de agenda para detectar horario excepcional
+  await cargarConfiguracionAgenda()
+
   if (props.horaPreseleccionada) {
     calcularHoraFin()
   }
-  
+
+  // Verificar si la cita preseleccionada está fuera del horario
+  verificarHorarioExcepcional()
+
   // Cerrar lista de pacientes al hacer clic fuera
   document.addEventListener('click', cerrarListaPacientes)
-  
+
   // Atajos de teclado
   document.addEventListener('keydown', manejarAtajosTeclado)
 })

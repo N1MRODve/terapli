@@ -747,6 +747,14 @@
                   </svg>
                   {{ obtenerTextoEstado(sesion.estado) }}
                 </span>
+                <!-- Badge de horario excepcional -->
+                <span
+                  v-if="sesion.es_horario_excepcional"
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-100 text-purple-700 border border-purple-200"
+                  :title="sesion.motivo_excepcional || 'Cita fuera del horario habitual'"
+                >
+                  H.E.
+                </span>
               </div>
 
               <!-- Bono / Estado de pago - oculto en vista compacta -->
@@ -1940,6 +1948,9 @@ const cargarSesiones = async () => {
         precio_estimado: precioPorSesion,
         esta_pagado: estaPagado,
         estado_financiero: sesion.estado_financiero || (estaPagado ? 'cobrado' : 'por_cobrar_suelta'),
+        // Horario excepcional
+        es_horario_excepcional: sesion.es_horario_excepcional === true,
+        motivo_excepcional: sesion.motivo_excepcional,
         paciente: {
           id: sesion.paciente_id,
           nombre_completo: sesion.paciente_nombre,

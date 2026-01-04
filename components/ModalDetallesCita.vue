@@ -968,6 +968,14 @@ const guardarPrecioSesion = async () => {
                   <span :class="['text-xs font-medium px-2 py-0.5 rounded-full', claseEstadoBadge]">
                     {{ estadoLabel }}
                   </span>
+                  <!-- Badge de horario excepcional -->
+                  <span
+                    v-if="cita?.es_horario_excepcional"
+                    class="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-100 text-purple-700"
+                    :title="cita?.motivo_excepcional || 'Cita fuera del horario habitual'"
+                  >
+                    Horario excepcional
+                  </span>
                 </div>
               </div>
               <button

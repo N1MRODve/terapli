@@ -12,6 +12,8 @@ interface Cita {
   estado: 'pendiente' | 'confirmada' | 'completada' | 'cancelada' | 'realizada'
   modalidad: string
   observaciones?: string
+  es_horario_excepcional?: boolean
+  motivo_excepcional?: string
   paciente?: {
     nombre_completo: string
     telefono?: string
@@ -131,6 +133,14 @@ const puedeCompletar = computed(() => {
             ]"
           >
             {{ cita.estado.toUpperCase() }}
+          </span>
+          <!-- Badge de horario excepcional -->
+          <span
+            v-if="cita.es_horario_excepcional"
+            class="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700 border border-purple-300"
+            :title="cita.motivo_excepcional || 'Cita fuera del horario habitual'"
+          >
+            Horario excepcional
           </span>
         </div>
 

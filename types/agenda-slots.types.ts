@@ -250,6 +250,7 @@ export interface ExistingAppointment {
   pacienteNombre: string
   modalidad: 'presencial' | 'online' | 'telefonica'
   estado: 'pendiente' | 'confirmada' | 'realizada' | 'cancelada'
+  esHorarioExcepcional?: boolean  // No cuenta para ocupación si es true
 }
 
 /**
@@ -262,8 +263,9 @@ export interface CalculateOccupancyParams {
   settings: TherapistAgendaSettings
   appointments: ExistingAppointment[]
   // Opciones avanzadas
-  includeExtended?: boolean    // Incluir desglose por modalidad/estado
-  excludeCancelled?: boolean   // No contar citas canceladas como "booked"
+  includeExtended?: boolean        // Incluir desglose por modalidad/estado
+  excludeCancelled?: boolean       // No contar citas canceladas como "booked"
+  excludeExceptional?: boolean     // No contar citas en horario excepcional (default: true)
 }
 
 // =============================================================================

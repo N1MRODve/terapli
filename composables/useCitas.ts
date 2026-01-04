@@ -23,6 +23,9 @@ interface Cita {
   metadata?: any
   created_at?: string
   updated_at?: string
+  // Horario excepcional
+  es_horario_excepcional?: boolean
+  motivo_excepcional?: string | null
 }
 
 interface CrearCitaParams {
@@ -39,6 +42,9 @@ interface CrearCitaParams {
   bono_id?: string
   ubicacion?: string
   enlace_videollamada?: string
+  // Horario excepcional
+  es_horario_excepcional?: boolean
+  motivo_excepcional?: string | null
 }
 
 interface Terapeuta {
@@ -409,7 +415,10 @@ export const useCitas = () => {
         sesion_descontada: false,
         recordatorio_enviado: false,
         ubicacion: params.ubicacion || null,
-        enlace_videollamada: params.enlace_videollamada || null
+        enlace_videollamada: params.enlace_videollamada || null,
+        // Horario excepcional
+        es_horario_excepcional: params.es_horario_excepcional || false,
+        motivo_excepcional: params.motivo_excepcional || null
       }
 
       // 4️⃣ Insertar en la base de datos

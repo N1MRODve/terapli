@@ -567,16 +567,30 @@ const precioPorSesion = computed(() => {
 const guardando = ref(false)
 const error = ref('')
 
-// Cargar datos del paciente cuando se abre el modal
+// Cargar datos del paciente cuando se abre el modal o cuando cambia el paciente
 watch(() => props.mostrar, (nuevo) => {
   if (nuevo && props.paciente) {
     cargarDatosPaciente()
   }
-})
+}, { immediate: true })
+
+// También cargar cuando cambia el paciente mientras el modal está abierto
+watch(() => props.paciente, (nuevoPaciente) => {
+  if (props.mostrar && nuevoPaciente) {
+    cargarDatosPaciente()
+  }
+}, { deep: true })
 
 const cargarDatosPaciente = async () => {
+  if (!props.paciente) {
+    console.warn('[ModalEditarPaciente] No hay paciente para cargar')
+    return
+  }
+
   const p = props.paciente
   const metadata = p.metadata || {}
+
+  console.log('[ModalEditarPaciente] Cargando datos del paciente:', p.id, p)
 
   // Descomponer nombre_completo en nombre y apellido
   const nombreCompleto = p.nombre_completo || p.nombre || ''
@@ -585,13 +599,16 @@ const cargarDatosPaciente = async () => {
   // Retrocompatibilidad: buscar en metadata.apellido o apellido_paterno (datos antiguos)
   const apellido = partes.slice(1).join(' ') || metadata.apellido || metadata.apellido_paterno || ''
 
+  // tipo_bono puede estar en p.tipo_bono, p.frecuencia, o metadata.frecuencia
+  const tipoBono = p.tipo_bono || p.frecuencia || metadata.frecuencia || ''
+
   formulario.value = {
     nombre: nombre,
     apellido: apellido,
     email: p.email || '',
     telefono: p.telefono || '',
-    fecha_nacimiento: metadata.fecha_nacimiento || '',
-    tipo_bono: p.tipo_bono || '',
+    fecha_nacimiento: metadata.fecha_nacimiento || p.fecha_nacimiento || '',
+    tipo_bono: tipoBono,
     precio_sesion: p.precio_sesion || null,
     activo: p.activo ?? true,
     en_pausa: p.en_pausa || metadata.en_pausa || false,
@@ -601,6 +618,8 @@ const cargarDatosPaciente = async () => {
     bono_sesiones_usadas: 0
   }
   error.value = ''
+
+  console.log('[ModalEditarPaciente] Formulario cargado:', formulario.value)
 
   // Cargar bono activo del paciente
   await cargarBonoActivo()
@@ -669,6 +688,7 @@ const actualizarPaciente = async () => {
 
     // Actualizar registro en pacientes
     // NOTA: en_pausa se guarda SOLO en metadata, no como columna directa
+    // Guardamos tanto tipo_bono como frecuencia para compatibilidad
     const { data: pacienteData, error: pacienteError } = await supabase
       .from('pacientes')
       .update({
@@ -676,6 +696,7 @@ const actualizarPaciente = async () => {
         nombre_completo: nombreCompleto,
         telefono: formulario.value.telefono,
         tipo_bono: formulario.value.tipo_bono,
+        frecuencia: formulario.value.tipo_bono, // Sincronizar con tipo_bono
         precio_sesion: formulario.value.precio_sesion,
         activo: formulario.value.activo,
         metadata: {
@@ -683,6 +704,7 @@ const actualizarPaciente = async () => {
           nombre: formulario.value.nombre,
           apellido: formulario.value.apellido,
           fecha_nacimiento: formulario.value.fecha_nacimiento,
+          frecuencia: formulario.value.tipo_bono, // También en metadata
           en_pausa: formulario.value.en_pausa,
           fecha_pausa: fechaPausa,
           fecha_actualizacion: new Date().toISOString()

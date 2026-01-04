@@ -347,7 +347,8 @@ export function calculateOccupancyForRange(params: CalculateOccupancyParams): Oc
     endDate,
     settings,
     appointments,
-    excludeCancelled = true
+    excludeCancelled = true,
+    excludeExceptional = true  // Por defecto, excluir citas en horario excepcional
   } = params
 
   const dates = getDateRange(startDate, endDate)
@@ -362,6 +363,10 @@ export function calculateOccupancyForRange(params: CalculateOccupancyParams): Oc
     let dayAppointments = appointments.filter(apt => apt.fecha === date)
     if (excludeCancelled) {
       dayAppointments = dayAppointments.filter(apt => apt.estado !== 'cancelada')
+    }
+    // Excluir citas en horario excepcional (no cuentan para ocupación)
+    if (excludeExceptional) {
+      dayAppointments = dayAppointments.filter(apt => !apt.esHorarioExcepcional)
     }
 
     // Verificar estado del día
@@ -428,7 +433,7 @@ export function calculateOccupancyForRange(params: CalculateOccupancyParams): Oc
  */
 export function calculateExtendedOccupancy(params: CalculateOccupancyParams): ExtendedOccupancyResult {
   const baseResult = calculateOccupancyForRange(params)
-  const { appointments, excludeCancelled = true } = params
+  const { appointments, excludeCancelled = true, excludeExceptional = true } = params
 
   // Filtrar citas del rango
   let rangeAppointments = appointments.filter(apt =>
@@ -436,6 +441,10 @@ export function calculateExtendedOccupancy(params: CalculateOccupancyParams): Ex
   )
   if (excludeCancelled) {
     rangeAppointments = rangeAppointments.filter(apt => apt.estado !== 'cancelada')
+  }
+  // Excluir citas en horario excepcional para estadísticas de ocupación
+  if (excludeExceptional) {
+    rangeAppointments = rangeAppointments.filter(apt => !apt.esHorarioExcepcional)
   }
 
   // Desglose por modalidad
@@ -683,6 +692,7 @@ export function useAgendaSlots() {
         paciente_id,
         modalidad,
         estado,
+        es_horario_excepcional,
         pacientes!inner(nombre_completo)
       `)
       .eq('terapeuta_id', terapeutaId)
@@ -702,7 +712,8 @@ export function useAgendaSlots() {
       pacienteId: cita.paciente_id,
       pacienteNombre: cita.pacientes?.nombre_completo || 'Paciente',
       modalidad: cita.modalidad,
-      estado: cita.estado
+      estado: cita.estado,
+      esHorarioExcepcional: cita.es_horario_excepcional === true
     }))
   }
 
